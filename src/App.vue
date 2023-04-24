@@ -1,7 +1,25 @@
 <template>
-  Hello World!
+    <StartOverlay/>
+
+    <v-card title="Risk Factors" class="pa-5">
+        {{Store.csv.columns}}
+    </v-card>
+
 </template>
 
-<style scoped>
+<script>
+import StartOverlay from './components/StartOverlay.vue'
+import {useStore} from "@/stores/csvStore";
 
-</style>
+export default {
+    components: {
+        StartOverlay
+    },
+    setup() {
+        const Store = useStore()
+        return {Store}
+    }
+}
+</script>
+
+<style scoped></style>
