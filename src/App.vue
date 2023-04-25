@@ -1,30 +1,28 @@
 <template>
-  <v-app>
-    <start_overlay/>
+    <v-app>
+        <start_overlay/>
 
-    <v-app-bar>
-      <v-app-bar-title>Raccoon</v-app-bar-title>
-      <template v-slot:append>
-        <v-btn @click="this.Store.reset()">Reset</v-btn>
-      </template>
-    </v-app-bar>
-    <v-main>
-      <v-card title="Risk Factors" class="pa-5">
+        <v-app-bar>
+            <v-app-bar-title>Raccoon</v-app-bar-title>
+            <template v-slot:append>
+                <v-btn @click="this.Store.reset()">Reset</v-btn>
+            </template>
+        </v-app-bar>
+        <v-main>
+            <v-card title="Risk Factors" class="pa-5">
+                Percentage of people with a variable option who have fatty liver
+                <div v-for="column in Store.variable_summaries" v-bind:key="column" class="pt-4">
+                    <h4> {{ column["name"] }} </h4>
+                    <div class="d-flex flex-row">
+                        <vis_bar :data_map="column['occurrence']" :range="[0,this.Store.csv.length]" color="royalblue"/>
+                        <vis_bar :data_map="column['percent_target_option']" range="percent" color="MediumVioletRed"/>
+                    </div>
+                </div>
 
-        <div v-for="column in Store.variable_summaries" v-bind:key="column">
-            {{column["name"]}}:
-            <span v-for="(value, key) in column['percent_target_option']" v-bind:key="key">
-                {{key === ""? "null" : key }}:
-                <v-chip class="ma-1 ml-0"> {{(value*100).toFixed(0) + "%"}} </v-chip>
-                <vis_bar />
+            </v-card>
+        </v-main>
 
-            </span>
-        </div>
-
-      </v-card>
-    </v-main>
-
-  </v-app>
+    </v-app>
 </template>
 
 <script>
@@ -33,14 +31,14 @@ import vis_bar from "@/components/vis_bar.vue";
 import {useStore} from "@/stores/csvStore";
 
 export default {
-  components: {
-      vis_bar,
-      start_overlay
-  },
-  setup() {
-    const Store = useStore()
-    return {Store}
-  },
+    components: {
+        vis_bar,
+        start_overlay
+    },
+    setup() {
+        const Store = useStore()
+        return {Store}
+    },
 }
 </script>
 

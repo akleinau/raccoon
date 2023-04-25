@@ -14,6 +14,7 @@ export const useStore = defineStore('store', {
         calc_variable_summaries() {
             this.variable_summaries = []
             this.columns.forEach(column => {
+                //let options = [...new Set(this.csv.map(d => d[column]))]
                 let summary = {
                     name: column,
                     //how often each option occurs
