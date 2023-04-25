@@ -14,14 +14,17 @@ export const useStore = defineStore('store', {
         calc_variable_summaries() {
             this.variable_summaries = []
             this.columns.forEach(column => {
-                //let options = [...new Set(this.csv.map(d => d[column]))]
+                let options = [...new Set(this.csv.map(d => d[column]))]
                 let summary = {
                     name: column,
                     //how often each option occurs
-                    occurrence: this.csv.map(d => d[column]).reduce(this.get_occurrence_counts, {}),
+                    occurrence: Object.fromEntries(new Map(options.map(d => [d, 0]))),
                     //how often each option occurs together with the target option
-                    occurrence_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).reduce(this.get_occurrence_counts, {}),
+                    occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d, 0]))),
                 }
+                this.csv.forEach(d => summary.occurrence[d[column]]++)
+                this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
+
                 //only continue if each option occurs more than 10 times to make sure its statistically impactful
                 if (Object.values(summary.occurrence).every(d => d > 10)) {
                     //percentage how often each option occurs together with the target option
@@ -35,10 +38,6 @@ export const useStore = defineStore('store', {
             })
             //sort by significance_score
             this.variable_summaries.sort((a, b) => b.significance_score - a.significance_score)
-        },
-        get_occurrence_counts(counts, current) {
-            counts[current] = counts[current] ? counts[current] + 1 : 1
-            return counts
         },
         filter_for_target_option(d) {
             return d.filter(d => d[this.target_column] === this.target_option)
