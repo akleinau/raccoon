@@ -25,7 +25,7 @@
       </div>
 
       <v-card-actions>
-        <v-btn color="primary" @click="Store.start = false">Visualize</v-btn>
+        <v-btn color="primary" @click="visualize()">Visualize</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -64,7 +64,11 @@ export default {
       this.Store.target_all_options = [...new Set(this.Store.csv.map(d => d[this.Store.target_column]))]
       this.Store.target_all_options = this.Store.target_all_options.filter(d => !(d === null || d === ""))
       console.log(this.Store.target_all_options)
-    }
+    },
+      visualize() {
+        this.Store.start = false
+        this.Store.calc_variable_summaries()
+      }
   }
 }
 </script>
