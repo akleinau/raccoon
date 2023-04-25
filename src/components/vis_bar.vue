@@ -23,7 +23,7 @@ export default {
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
-            d3.select(this.$refs.container).node().append(svg)
+            d3.select(this.$refs.container).node().append(svg.node())
         }
     },
     mounted() {
