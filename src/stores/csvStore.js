@@ -3,6 +3,7 @@ import {defineStore} from 'pinia'
 export const useStore = defineStore('store', {
     state: () => ({
         start: true,
+        exclude_missing: true,
         csv: null,
         columns: [],
         target_column: null,
@@ -11,37 +12,64 @@ export const useStore = defineStore('store', {
         variable_summaries: []
     }),
     actions: {
+        /**
+         * calculates summary per variable
+         */
         calc_variable_summaries() {
             this.variable_summaries = []
             this.columns.forEach(column => {
                 let options = [...new Set(this.csv.map(d => d[column]))]
-                let summary = {
-                    name: column,
-                    //how often each option occurs
-                    occurrence: Object.fromEntries(new Map(options.map(d => [d, 0]))),
-                    //how often each option occurs together with the target option
-                    occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d, 0]))),
-                }
-                this.csv.forEach(d => summary.occurrence[d[column]]++)
-                this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
+                //only continue if there are less than 10 options to make sure it is categorical or ordinal
+                if (options.length <= 10) {
+                    let summary = {
+                        name: column,
+                        options: options,
+                        //how often each option occurs
+                        occurrence: Object.fromEntries(new Map(options.map(d => [d, 0]))),
+                        //how often each option occurs together with the target option
+                        occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d, 0]))),
+                    }
+                    this.csv.forEach(d => summary.occurrence[d[column]]++)
+                    this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
 
-                //only continue if each option occurs more than 10 times to make sure its statistically impactful
-                if (Object.values(summary.occurrence).every(d => d > 10)) {
+                    //exclude missing values
+                    if (this.exclude_missing) {
+                        summary.options = summary.options.filter(d => d !== "")
+                        delete summary.occurrence[""]
+                        delete summary.occurrence_target_option[""]
+                    }
+
+
                     //percentage how often each option occurs together with the target option
                     summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
+                    //standard deviance of percent_target_option
+
+
                     //significance_score: difference in percentages of percent_target_option
-                    let min = Math.min(...Object.values(summary.percent_target_option))
-                    let max = Math.max(...Object.values(summary.percent_target_option))
-                    summary.significance_score = max - min
+                    summary.significance = this.compute_significance_score(summary)
                     this.variable_summaries.push(summary)
                 }
+
             })
             //sort by significance_score
-            this.variable_summaries.sort((a, b) => b.significance_score - a.significance_score)
+            this.variable_summaries.sort((a, b) => b.significance.score - a.significance.score)
         },
+        /**
+         * filters table for only rows with target option selected
+         *
+         * @param d
+         * @returns {*}
+         */
         filter_for_target_option(d) {
             return d.filter(d => d[this.target_column] === this.target_option)
         },
+        /**
+         * divides values of two maps per key
+         *
+         * @param a
+         * @param b
+         * @returns {{}}
+         */
         divide_maps(a, b) {
             let result = {}
             Object.keys(a).forEach(key => {
@@ -49,6 +77,58 @@ export const useStore = defineStore('store', {
             })
             return result
         },
+        /**
+         * computes tuples with statistically significant differences and significance score
+         *
+         * @param summary
+         * @returns {{score: number, significant_tuples: []}}
+         */
+        compute_significance_score(summary) {
+            //create list of all tuples of percent_target_option and their significance_test_propotions
+            let tuples = []
+            for (let i = 0; i < summary.options.length; i++) {
+                for (let j = i + 1; j < summary.options.length; j++) {
+                    let o1 = summary.options[i]
+                    let o2 = summary.options[j]
+                    let p1 = summary.percent_target_option[o1]
+                    let p2 = summary.percent_target_option[o2]
+                    let n1 = summary.occurrence[o1]
+                    let n2 = summary.occurrence[o2]
+                    if (this.significance_test_proportions(p1, p2, n1, n2)) {
+                        tuples.push({
+                            "option1": o1,
+                            "option2": o2,
+                            "diff": Math.abs(p1 - p2)
+                        })
+                    }
+                }
+            }
+            if (tuples.length === 0) {
+                return {"significant_tuples": [], "score": -1}
+            }
+
+            return {"significant_tuples": tuples.map(d => [d.option1, d.option2]) , "score": Math.max(...tuples.map(d => d.diff))}
+        },
+        /**
+         * returns true if the difference in the percentage of the target option is significant
+         *
+         * @param p1 - percentage of target option in first group
+         * @param p2 - percentage of target option in second group
+         * @param n1 - number of elements in first group
+         * @param n2 - number of elements in second group
+         * @returns {boolean}
+         */
+        significance_test_proportions(p1, p2, n1, n2) {
+            let p = (p1 * n1 + p2 * n2) / (n1 + n2)
+            let se = Math.sqrt(p * (1 - p) * (1 / n1 + 1 / n2))
+            let z = (p1 - p2) / se
+            //for a normal distribution with mea 0 and sttdev 1, the z score boundary for 95% confidence is 1.96
+            const Z_SCORE_BOUNDARY = 1.64485
+            return Math.abs(z) >= Z_SCORE_BOUNDARY
+        },
+        /**
+         * resets all variables to their initial state
+         */
         reset() {
             this.start = true
             this.csv = null

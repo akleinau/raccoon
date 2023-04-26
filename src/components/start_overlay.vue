@@ -13,19 +13,25 @@
         <v-card-text>
           Select target:
         </v-card-text>
-        <v-select v-model="Store.target_column" class="px-5" label="Select" :items="Store.columns"
-                  @update:modelValue="target_selected"/>
+        <v-autocomplete v-model="Store.target_column" class="px-5" label="Select" :items="Store.columns"
+                        @update:modelValue="target_selected"/>
       </div>
 
       <div v-if="Store.target_all_options.length !== 0">
         <v-card-text>
           Select target option:
         </v-card-text>
-        <v-select v-model="Store.target_option" class="px-5" label="Select" :items="Store.target_all_options"/>
+        <v-autocomplete v-model="Store.target_option" class="px-5" label="Select" :items="Store.target_all_options"/>
+      </div>
+
+      <div v-if="Store.target_option">
+        <v-checkbox label="exclude missing values" v-model="Store.exclude_missing"></v-checkbox>
       </div>
 
       <v-card-actions>
-        <v-btn color="primary" @click="visualize()">Visualize</v-btn>
+        <div v-if="Store.target_option">
+          <v-btn color="primary" @click="visualize()">Visualize</v-btn>
+        </div>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -46,6 +52,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * gets called when a file is uploaded
+     */
     uploaded() {
       console.log("uploaded:")
       const csvFile = this.files[0];
@@ -59,16 +68,23 @@ export default {
       }
       reader.readAsText(csvFile)
     },
+    /**
+     * gets called when a target is selected
+     */
     target_selected() {
       console.log("target_selected")
       this.Store.target_all_options = [...new Set(this.Store.csv.map(d => d[this.Store.target_column]))]
       this.Store.target_all_options = this.Store.target_all_options.filter(d => !(d === null || d === ""))
       console.log(this.Store.target_all_options)
     },
-      visualize() {
-        this.Store.start = false
-        this.Store.calc_variable_summaries()
-      }
+    /**
+     *
+     */
+    visualize() {
+      this.Store.start = false
+      this.Store.calc_variable_summaries()
+      this.files = null
+    }
   }
 }
 </script>
