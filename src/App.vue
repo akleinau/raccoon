@@ -37,11 +37,11 @@
               </div>
               <div>
               <span class="d-flex justify-center">
-                <b>Percentage of people per option who have
+                <b>Proportion of people per option who have
                   <span style="color:darkblue"> {{ Store.target_column }} : {{ Store.target_option }} </span>
                 </b>
               </span>
-                <vis_bar :data_map="column['percent_target_option']" range="percent" color="MediumVioletRed"/>
+                <vis_pictograph :data_map="column['percent_target_option']" range="percent" color="MediumVioletRed" num_dots="10"/>
               </div>
             </div>
           </v-sheet>
@@ -56,11 +56,13 @@
 <script>
 import start_overlay from './components/start_overlay.vue'
 import vis_bar from "@/components/vis_bar.vue";
+import vis_pictograph from "@/components/vis_pictograph.vue";
 import {useStore} from "@/stores/csvStore";
 
 export default {
   components: {
     vis_bar,
+    vis_pictograph,
     start_overlay
   },
   setup() {
