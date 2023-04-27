@@ -9,7 +9,7 @@ export const useStore = defineStore('store', {
         target_column: null,
         target_all_options: [],
         target_option: null,
-        variable_summaries: []
+        variable_summaries: [],
     }),
     actions: {
         /**
@@ -23,6 +23,7 @@ export const useStore = defineStore('store', {
                 if (options.length <= 10) {
                     let summary = {
                         name: column,
+                        type: "categorical",
                         options: options,
                         //how often each option occurs
                         occurrence: Object.fromEntries(new Map(options.map(d => [d, 0]))),
@@ -48,6 +49,20 @@ export const useStore = defineStore('store', {
                     //significance_score: difference in percentages of percent_target_option
                     summary.significance = this.compute_significance_score(summary)
                     this.variable_summaries.push(summary)
+                }
+                else {
+                    let options_num = options.filter(d => !isNaN(d))
+                    if (options_num.length > 5) {
+                        let summary = {
+                            name: column,
+                            type: "continuous",
+                            options: options_num,
+                            data: this.csv.map(d => d[column]).filter(d => !isNaN(d)),
+                            data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).filter(d => !isNaN(d)),
+                            significance: {tuples: [], score: 2}
+                        }
+                        this.variable_summaries.push(summary)
+                    }
                 }
 
             })

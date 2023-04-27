@@ -29,11 +29,13 @@
                             <v-text-field type="number" label="#rows" v-model="significance_grid[0]" />
                             <v-text-field type="number"  label="#columns" v-model="significance_grid[1]"/>
                         </div>
+                        <v-checkbox v-model="show_continuous" label="show continuous variables"></v-checkbox>
                     </div>
 
 
                     <!-- Risk Factor Sheets -->
-                    <v-sheet border v-for="column in Store.variable_summaries" v-bind:key="column" class="pa-1 ma-2">
+                    <div  v-for="column in Store.variable_summaries" v-bind:key="column">
+                      <v-sheet border v-if="column.type === 'categorical'" class="ma-2">
                         <!-- additional information -->
                         <v-expansion-panels class="mb-3">
                             <v-expansion-panel>
@@ -84,7 +86,24 @@
                                          color="MediumVioletRed"/>
                             </div>
                         </div>
-                    </v-sheet>
+                      </v-sheet>
+
+                      <v-sheet border v-if="column.type === 'continuous' && show_continuous" class="ma-2">
+                        <!-- additional information -->
+                        <v-expansion-panels class="mb-3">
+                            <v-expansion-panel>
+                                <v-expansion-panel-title><h4> {{ column["name"] }} </h4></v-expansion-panel-title>
+                                <v-expansion-panel-text class="text-grey-darken-2">
+                                    pairs with statistically significant differences:
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+
+                        <vis_line :data="column.data" :target_data="column.data_with_target_option" />
+
+
+                      </v-sheet>
+                    </div>
 
                 </v-card>
             </v-lazy>
@@ -97,12 +116,14 @@
 import start_overlay from './components/start_overlay.vue'
 import vis_bar from "@/components/vis_bar.vue";
 import vis_pictograph from "@/components/vis_pictograph.vue";
+import vis_line from "@/components/vis_line.vue";
 import {useStore} from "@/stores/csvStore";
 
 export default {
     components: {
         vis_bar,
         vis_pictograph,
+        vis_line,
         start_overlay
     },
     setup() {
@@ -115,6 +136,7 @@ export default {
             significance_graph: "pictograph",
             impact_grid: [25, 4],
             significance_grid: [25, 4],
+            show_continuous: "false"
         }
     },
 }
