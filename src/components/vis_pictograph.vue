@@ -16,13 +16,14 @@ export default {
     watch: {
         data_map: function () {
             console.log("watch")
-            console.log(this.data_map)
             this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
         },
-        grid: function () {
-            console.log("watch")
-            console.log(this.data_map)
-            this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
+        grid: {
+            handler: function () {
+                console.log("watch")
+                this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
+            },
+            deep: true
         }
     },
     methods: {

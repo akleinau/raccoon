@@ -1,56 +1,92 @@
 <template>
-  <v-app>
-    <start_overlay/>
+    <v-app>
+        <start_overlay/>
 
-    <v-app-bar>
-      <v-app-bar-title>Raccoon</v-app-bar-title>
-      <template v-slot:append>
-        <v-btn @click="this.Store.reset()">Reset</v-btn>
-      </template>
-    </v-app-bar>
-    <v-main>
-      <v-lazy :min-height="200">
-        <v-card title="Risk Factors" class="pa-5 bg-blue-grey-lighten-5">
+        <v-app-bar>
+            <v-app-bar-title>Raccoon</v-app-bar-title>
+            <template v-slot:append>
+                <v-btn @click="this.Store.reset()">Reset</v-btn>
+            </template>
+        </v-app-bar>
+        <v-main>
+            <v-lazy :min-height="200">
+                <v-card title="Risk Factors" class="pa-5 bg-blue-grey-lighten-5">
+                    <!-- Choose Visualizations -->
+                    <div class="d-flex">
+                        <div class="mx-5">
+                            <v-radio-group v-model="impact_graph" label="Impact Graph">
+                                <v-radio label="bar" value="bar"></v-radio>
+                                <v-radio label="pictograph" value="pictograph"></v-radio>
+                            </v-radio-group>
+                            <v-text-field type="number" label="#rows" v-model="impact_grid[0]" />
+                            <v-text-field type="number" label="#columns" v-model="impact_grid[1]" />
+                        </div>
+                        <div class="mx-5">
+                            <v-radio-group v-model="significance_graph" label="Significance Graph">
+                                <v-radio label="bar" value="bar"></v-radio>
+                                <v-radio label="pictograph" value="pictograph"></v-radio>
+                            </v-radio-group>
+                            <v-text-field type="number" label="#rows" v-model="significance_grid[0]" />
+                            <v-text-field type="number"  label="#columns" v-model="significance_grid[1]"/>
+                        </div>
+                    </div>
 
-          <v-sheet border v-for="column in Store.variable_summaries" v-bind:key="column" class="pa-1 ma-2">
-            <v-expansion-panels class="mb-3">
-              <v-expansion-panel>
-                <v-expansion-panel-title><h4> {{ column["name"] }} </h4></v-expansion-panel-title>
-                <v-expansion-panel-text class="text-grey-darken-2">
-                  pairs with statistically significant differences:
-                  <span v-for="tuple in Object.values(column['significance'].significant_tuples)" v-bind:key="tuple">
-                      ({{ tuple[0] !== "" ? tuple[0] : "null" }} - {{ tuple[1] !== "" ? tuple[1] : "null" }})
-                  </span>
-                  <div> Score: {{ column['significance'].score.toFixed(2) }}</div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-            <div v-if="column['significance'].significant_tuples.length === 0">
-              <v-icon icon="mdi-alert" /> no statistically significant differences
-            </div>
-            <div class="d-flex flex-row mt-2">
-              <div>
-              <span class="d-flex justify-center">
-                <b>#people per option</b>
-              </span>
-                <vis_bar :data_map="column['occurrence']" :range="[0,this.Store.csv.length]" color="royalblue"/>
-              </div>
-              <div>
-              <span class="d-flex justify-center">
-                <b>Proportion of people per option who have
-                  <span style="color:darkblue"> {{ Store.target_column }} : {{ Store.target_option }} </span>
-                </b>
-              </span>
-                <vis_pictograph :data_map="column['percent_target_option']" range="percent" color="MediumVioletRed" :grid="[25,4]"/>
-              </div>
-            </div>
-          </v-sheet>
 
-        </v-card>
-      </v-lazy>
-    </v-main>
+                    <!-- Risk Factor Sheets -->
+                    <v-sheet border v-for="column in Store.variable_summaries" v-bind:key="column" class="pa-1 ma-2">
+                        <v-expansion-panels class="mb-3">
+                            <v-expansion-panel>
+                                <v-expansion-panel-title><h4> {{ column["name"] }} </h4></v-expansion-panel-title>
+                                <v-expansion-panel-text class="text-grey-darken-2">
+                                    pairs with statistically significant differences:
+                                    <span v-for="tuple in Object.values(column['significance'].significant_tuples)"
+                                          v-bind:key="tuple">
+                                        ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
+                                        {{ tuple[1] !== "" ? tuple[1] : "null" }})
+                                    </span>
+                                    <div> Score: {{ column['significance'].score.toFixed(2) }}</div>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
 
-  </v-app>
+                        <div v-if="column['significance'].significant_tuples.length === 0">
+                            <v-icon icon="mdi-alert"/>
+                            no statistically significant differences
+                        </div>
+                        <div class="d-flex flex-row mt-2">
+                            <div>
+                                <span class="d-flex justify-center"> <b>#people per option</b></span>
+                                <vis_bar v-if="impact_graph === 'bar'" :data_map="column['occurrence']"
+                                         :range="[0,this.Store.csv.length]"
+                                         color="royalblue"/>
+                                <vis_pictograph v-if="impact_graph === 'pictograph'"
+                                                :data_map="column['occurrence']"
+                                                :range="[0,this.Store.csv.length]" :grid="impact_grid"
+                                                color="royalblue"/>
+                            </div>
+                            <div>
+                                <span class="d-flex justify-center">
+                                    <b>Proportion of people per option who have
+                                      <span style="color:darkblue">
+                                          {{ Store.target_column }} : {{ Store.target_option }}
+                                      </span>
+                                    </b>
+                                </span>
+                                <vis_pictograph v-show="significance_graph === 'pictograph'"
+                                                :data_map="column['percent_target_option']" range="percent"
+                                                color="MediumVioletRed" :grid="significance_grid"/>
+                                <vis_bar v-if="significance_graph === 'bar'" :data_map="column['percent_target_option']"
+                                         range="percent"
+                                         color="MediumVioletRed"/>
+                            </div>
+                        </div>
+                    </v-sheet>
+
+                </v-card>
+            </v-lazy>
+        </v-main>
+
+    </v-app>
 </template>
 
 <script>
@@ -60,15 +96,23 @@ import vis_pictograph from "@/components/vis_pictograph.vue";
 import {useStore} from "@/stores/csvStore";
 
 export default {
-  components: {
-    vis_bar,
-    vis_pictograph,
-    start_overlay
-  },
-  setup() {
-    const Store = useStore()
-    return {Store}
-  },
+    components: {
+        vis_bar,
+        vis_pictograph,
+        start_overlay
+    },
+    setup() {
+        const Store = useStore()
+        return {Store}
+    },
+    data() {
+        return {
+            impact_graph: "bar",
+            significance_graph: "pictograph",
+            impact_grid: [25, 4],
+            significance_grid: [25, 4],
+        }
+    },
 }
 </script>
 
