@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import * as d3 from "d3";
 
 export const useStore = defineStore('store', {
     state: () => ({
@@ -43,24 +44,40 @@ export const useStore = defineStore('store', {
 
                     //percentage how often each option occurs together with the target option
                     summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
-                    //standard deviance of percent_target_option
-
 
                     //significance_score: difference in percentages of percent_target_option
                     summary.significance = this.compute_significance_score(summary)
                     this.variable_summaries.push(summary)
-                }
-                else {
-                    let options_num = options.filter(d => !isNaN(d))
+                } else {
+                    let options_num = options.filter(d => !isNaN(d) && d !== "")
+
+                    //continuous variables
                     if (options_num.length > 5) {
+                        //calculate bins
+                        let extent = d3.extent(options_num.map(d => +d))
+                        let steps = 5
+                        let options_bin = [...new Set(options_num.map(d => this.bin_value(d, extent, steps)))]
+                            .sort((a, b) => a.split("-")[0] - b.split("-")[0])
+
                         let summary = {
                             name: column,
                             type: "continuous",
-                            options: options_num,
-                            data: this.csv.map(d => d[column]).filter(d => !isNaN(d)),
-                            data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).filter(d => !isNaN(d)),
-                            significance: {tuples: [], score: 2}
+                            options: options_bin,
+                            data: this.csv.map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
+                            data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
+                            //how often each option occurs
+                            occurrence: Object.fromEntries(new Map(options_bin.map(d => [d, 0]))),
+                            //how often each option occurs together with the target option
+                            occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d, 0]))),
                         }
+                        summary.data.forEach(d => summary.occurrence[this.bin_value(d, extent, steps)]++)
+                        summary.data_with_target_option.forEach(d => summary.occurrence_target_option[this.bin_value(d, extent, steps)]++)
+
+                        //percentage how often each option occurs together with the target option
+                        summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
+
+                        //significance_score: difference in percentages of percent_target_option
+                        summary.significance = this.compute_significance_score(summary)
                         this.variable_summaries.push(summary)
                     }
                 }
@@ -122,7 +139,10 @@ export const useStore = defineStore('store', {
                 return {"significant_tuples": [], "score": -1}
             }
 
-            return {"significant_tuples": tuples.map(d => [d.option1, d.option2]) , "score": Math.max(...tuples.map(d => d.diff))}
+            return {
+                "significant_tuples": tuples.map(d => [d.option1, d.option2]),
+                "score": Math.max(...tuples.map(d => d.diff))
+            }
         },
         /**
          * returns true if the difference in the percentage of the target option is significant
@@ -134,12 +154,29 @@ export const useStore = defineStore('store', {
          * @returns {boolean}
          */
         significance_test_proportions(p1, p2, n1, n2) {
+            //test for too small sample sizes
+            if (n1 < 10 || n2 < 10) {
+                return false
+            }
+
             let p = (p1 * n1 + p2 * n2) / (n1 + n2)
             let se = Math.sqrt(p * (1 - p) * (1 / n1 + 1 / n2))
             let z = (p1 - p2) / se
             //for a normal distribution with mea 0 and sttdev 1, the z score boundary for 95% confidence is 1.96
             const Z_SCORE_BOUNDARY = 1.64485
             return Math.abs(z) >= Z_SCORE_BOUNDARY
+        },
+        /**
+         * bins a value into a range of steps
+         *
+         * @param value
+         * @param range
+         * @param steps
+         */
+        bin_value(value, range, steps) {
+            var step_size = (range[1] - range[0]) / steps
+            var step = Math.floor((value - range[0]) / step_size)
+            return (range[0] + step * step_size).toFixed(1) + "-" + (range[0] + (step + 1) * step_size).toFixed(1)
         },
         /**
          * resets all variables to their initial state
