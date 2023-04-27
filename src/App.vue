@@ -34,6 +34,7 @@
 
                     <!-- Risk Factor Sheets -->
                     <v-sheet border v-for="column in Store.variable_summaries" v-bind:key="column" class="pa-1 ma-2">
+                        <!-- additional information -->
                         <v-expansion-panels class="mb-3">
                             <v-expansion-panel>
                                 <v-expansion-panel-title><h4> {{ column["name"] }} </h4></v-expansion-panel-title>
@@ -49,10 +50,13 @@
                             </v-expansion-panel>
                         </v-expansion-panels>
 
+                        <!-- hints -->
                         <div v-if="column['significance'].significant_tuples.length === 0">
                             <v-icon icon="mdi-alert"/>
                             no statistically significant differences
                         </div>
+
+                        <!-- visualizations -->
                         <div class="d-flex flex-row mt-2">
                             <div>
                                 <span class="d-flex justify-center"> <b>#people per option</b></span>

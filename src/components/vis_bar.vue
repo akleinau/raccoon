@@ -20,6 +20,11 @@ export default {
         }
     },
     methods: {
+        /**
+         * returns the range of the data
+         *
+         * @returns {number[]|*}
+         */
         get_range() {
             if (this.range === "percent") {
                 return [0, 1]
@@ -27,12 +32,23 @@ export default {
                 return this.range
             }
         },
+        /**
+         * returns value as pretty text
+         *
+         * @param value
+         * @returns {*|string}
+         */
         get_value_text(value) {
             if (this.range === "percent") {
                 return (value*100).toFixed(0) + "%"
             }
             return value
         },
+        /**
+         * visualizes the data
+         *
+         * @param data
+         */
         visualize(data) {
             let marging_bottom = 15
             let height = data.length * 35
@@ -53,6 +69,7 @@ export default {
                 .range([0, height])
                 .padding(0.3)
 
+            //background
             svg.append("rect")
                 .attr("x", startBarX)
                 .attr("y", 0)
@@ -88,6 +105,7 @@ export default {
                 .style("fill", "white")
                 .attr("dy", y.bandwidth()-5)
 
+            //x axis texts
             svg.append("text")
                 .attr("x", startBarX)
                 .attr("y", height + marging_bottom)

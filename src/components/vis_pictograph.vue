@@ -34,16 +34,32 @@ export default {
                 return this.range
             }
         },
+        /**
+         * returns value in number of dots
+         *
+         * @param value
+         * @returns {string}
+         */
         get_value(value) {
             const nominator = (this.range === "percent") ? value : (value / this.get_range()[1])
-
             return (nominator * this.grid[0] * this.grid[1]).toFixed(0)
 
         },
 
+        /**
+         * returns value as frequency with nominator/denominator
+         *
+         * @param value
+         * @returns {string}
+         */
         get_value_text(value) {
             return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
         },
+        /**
+         * visualizes the data
+         *
+         * @param data
+         */
         visualize(data) {
             let marging_bottom = 15
             let margin_top = 10
@@ -124,6 +140,7 @@ export default {
                 .style("fill", "white")
                 .attr("dy", y_options.bandwidth()/2-5)
 
+            //x axis texts
             svg.append("text")
                 .attr("x", startBarX)
                 .attr("y", height + marging_bottom)
