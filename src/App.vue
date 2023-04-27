@@ -41,7 +41,7 @@
                   <span style="color:darkblue"> {{ Store.target_column }} : {{ Store.target_option }} </span>
                 </b>
               </span>
-                <vis_pictograph :data_map="column['percent_target_option']" range="percent" color="MediumVioletRed" num_dots="10"/>
+                <vis_pictograph :data_map="column['percent_target_option']" range="percent" color="MediumVioletRed" :grid="[25,4]"/>
               </div>
             </div>
           </v-sheet>

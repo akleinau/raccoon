@@ -11,7 +11,7 @@ export default {
     "data_map",
     "range",
     "color",
-    "num_dots"
+    "grid"
   ],
   watch: {
     data_map: function () {
@@ -19,7 +19,7 @@ export default {
       console.log(this.data_map)
       this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
     },
-    num_dots: function () {
+    grid: function () {
       console.log("watch")
       console.log(this.data_map)
       this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
@@ -36,12 +36,12 @@ export default {
     get_value(value) {
       const nominator = (this.range === "percent") ? value : (value / this.get_range()[1])
 
-      return (nominator * this.num_dots).toFixed(0)
+      return (nominator * this.grid[0] * this.grid[1]).toFixed(0)
 
     },
 
     get_value_text(value) {
-      return this.get_value(value) + "/" + this.num_dots
+      return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
     },
     visualize(data) {
       let marging_bottom = 15
@@ -55,17 +55,25 @@ export default {
           .attr("height", height + marging_bottom)
           .attr("viewBox", [0, 0, width + margin_right, height + marging_bottom])
 
-      const dot_range = d3.range(1, (+this.num_dots + 1), 1)
+      const dot_range_X = d3.range(0, (+this.grid[0]), 1)
+      const dot_range_Y = d3.range(0, (+this.grid[1]), 1)
+      const dot_range = d3.range(0, (this.grid[0]*this.grid[1]), 1)
+
+
+      let y_options = d3.scaleBand()
+          .domain(data.map(d => d.name))
+          .range([0, height])
+          .padding(0.3)
 
       let x = d3.scaleBand()
-          .domain(dot_range)
+          .domain(dot_range_X)
           .range([startBarX, width])
           .padding(0.3)
 
       let y = d3.scaleBand()
-          .domain(data.map(d => d.name))
-          .range([0, height])
-          .padding(0.3)
+          .domain(dot_range_Y)
+          .range([0, y_options.bandwidth()])
+          .padding(0.2)
 
       //background
       svg.append("rect")
@@ -80,15 +88,15 @@ export default {
           .data(data)
           .join("g")
           .attr("x", startBarX)
-          .attr("y", d => y(d.name))
+          .attr("y", d => y_options(d.name))
           .each((par, index, node) => {
             d3.select(node[index]).selectAll("circle")
                 .data(dot_range)
                 .join("circle")
-                .attr("cx", d => x(d))
-                .attr("cy", y(par.name) + y.bandwidth() / 2)
-                .attr("r", x.bandwidth() / 2)
-                .attr("fill", d => (d <= this.get_value(par.value)) ? this.color : "darkgray")
+                .attr("cx", d => x(Math.floor(d/this.grid[1])))
+                .attr("cy", d => y_options(par.name) + y(d % this.grid[1]))
+                .attr("r", x.bandwidth() / 5)
+                .attr("fill", d => ((d+1) <= this.get_value(par.value)) ? this.color : "darkgray")
           })
 
 
@@ -96,20 +104,20 @@ export default {
           .data(data)
           .join("text")
           .attr("x", startBarX - x.bandwidth() / 2 - 5)
-          .attr("y", d => y(d.name))
+          .attr("y", d => y_options(d.name))
           .text(d => (d.name === "") ? "null" : d.name)
           .style("text-anchor", "end")
-          .attr("dy", y.bandwidth() - 5)
+          .attr("dy", y_options.bandwidth() - 5)
 
       svg.selectAll("textValue")
           .data(data)
           .join("text")
           .attr("x", width - x.bandwidth() / 2)
-          .attr("y", d => y(d.name))
+          .attr("y", d => y_options(d.name))
           .text(d => this.get_value_text(d.value))
           .style("text-anchor", "start")
           .style("fill", "white")
-          .attr("dy", y.bandwidth() - 5)
+          .attr("dy", y_options.bandwidth() - 5)
 
       svg.append("text")
           .attr("x", startBarX)
