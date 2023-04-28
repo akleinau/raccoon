@@ -31,6 +31,7 @@
                         </div>
                         <div class="mx-5">
                             <v-checkbox v-model="show_continuous" label="show density plot"></v-checkbox>
+                            <v-checkbox label="exclude missing values" v-model="Store.exclude_missing"></v-checkbox>
                             <v-text-field type="number" label="minimal bin size" v-model="Store.min_bin_size"/>
                             <v-btn variant="outlined" @click="Store.calc_variable_summaries()">Recalculate</v-btn>
                         </div>
