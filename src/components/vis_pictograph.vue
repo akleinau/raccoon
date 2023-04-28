@@ -4,6 +4,7 @@
 
 <script>
 import * as d3 from "d3";
+import {useStore} from "@/stores/csvStore";
 
 export default {
     name: "vis_pictograph",
@@ -16,7 +17,9 @@ export default {
     watch: {
         data_map: function () {
             console.log("watch")
-            this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
+            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
+            data.sort((a, b) => this.Store.sort(a.name, b.name))
+            this.visualize(data)
         },
         grid: {
             handler: function () {
@@ -25,6 +28,10 @@ export default {
             },
             deep: true
         }
+    },
+        setup() {
+        const Store = useStore()
+        return {Store}
     },
     methods: {
         get_range() {
@@ -78,7 +85,7 @@ export default {
                 .range([startBarX, width])
                 .padding(padding)
 
-            const y_range = x.step()*this.grid[1]
+            const y_range = x.step() * this.grid[1]
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
                 .range([0, y_range])
@@ -128,7 +135,7 @@ export default {
                 .attr("y", d => y_options(d.name))
                 .text(d => (d.name === "") ? "null" : d.name)
                 .style("text-anchor", "end")
-                .attr("dy", y_options.bandwidth()/2-5)
+                .attr("dy", y_options.bandwidth() / 2 - 5)
 
             svg.selectAll("textValue")
                 .data(data)
@@ -138,7 +145,7 @@ export default {
                 .text(d => this.get_value_text(d.value))
                 .style("text-anchor", "start")
                 .style("fill", "white")
-                .attr("dy", y_options.bandwidth()/2-5)
+                .attr("dy", y_options.bandwidth() / 2 - 5)
 
             //x axis texts
             svg.append("text")
@@ -160,7 +167,9 @@ export default {
     },
     mounted() {
         if (this.data_map != null) {
-            this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
+            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
+            data.sort((a, b) => this.Store.sort(a.name, b.name))
+            this.visualize(data)
         }
     }
 }

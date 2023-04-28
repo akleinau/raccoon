@@ -65,6 +65,7 @@ export default {
         const data = d3.csvParse(event.target.result)
         this.Store.columns = data.columns
         this.Store.csv = data
+        this.Store.min_bin_size = Math.floor(data.length/100)
       }
       reader.readAsText(csvFile)
     },

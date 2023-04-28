@@ -6,6 +6,7 @@ export const useStore = defineStore('store', {
         start: true,
         exclude_missing: true,
         csv: null,
+        min_bin_size: 0,
         columns: [],
         target_column: null,
         target_all_options: [],
@@ -18,6 +19,7 @@ export const useStore = defineStore('store', {
          */
         calc_variable_summaries() {
             this.variable_summaries = []
+
             this.columns.forEach(column => {
                 let options = [...new Set(this.csv.map(d => d[column]))]
                 //only continue if there are less than 10 options to make sure it is categorical or ordinal
@@ -33,6 +35,7 @@ export const useStore = defineStore('store', {
                     }
                     this.csv.forEach(d => summary.occurrence[d[column]]++)
                     this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
+
 
                     //exclude missing values
                     if (this.exclude_missing) {
@@ -58,23 +61,8 @@ export const useStore = defineStore('store', {
                         //calculate bins
                         const steps = 2
                         let extent = this.calculate_pretty_extent(options_num, steps)
-                        let options_bin = [...new Set(options.map(d => this.bin_value(d, extent)))]
-                            .sort((a, b) => {
-                                let a_split = a.split("-")
-                                let b_split = b.split("-")
-                                let a_is_number = !isNaN(a_split[0]) && a_split[0] !== ""
-                                let b_is_number = !isNaN(b_split[0]) && b_split[0] !== ""
-                                if (a_is_number && b_is_number) {
-                                    return a_split[0] - b_split[0]
-                                }
-                                if (a_is_number) {
-                                    return -1
-                                }
-                                if (b_is_number) {
-                                    return 1
-                                }
-                                return a.localeCompare(b)
-                            })
+                        let options_bin = [...new Set(options.map(d => this.bin_value(d, extent)))].sort(this.sort)
+
 
                         let summary = {
                             name: column,
@@ -89,6 +77,7 @@ export const useStore = defineStore('store', {
                         }
                         this.csv.forEach(d => summary.occurrence[this.bin_value(d[column], extent)]++)
                         this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.bin_value(d[column], extent)]++)
+                        summary = this.bin_ends(summary, this.min_bin_size)
 
                         //exclude missing values
                         if (this.exclude_missing) {
@@ -214,6 +203,81 @@ export const useStore = defineStore('store', {
             let pretty_max = Math.ceil(extent[1] / pretty_stepsize) * pretty_stepsize
 
             return [pretty_min, pretty_max, pretty_stepsize]
+        },
+        /**
+         * bins continuous columns at start and end
+         *
+         * @param summary
+         * @param min_bin_size
+         * @returns {*}
+         */
+        bin_ends(summary, min_bin_size) {
+            let options_num = summary.options.filter(d => !isNaN(d.split("-")[0]) && !isNaN(d.split("-")[0]) && d !== "")
+
+            //iterate through options_num from behind
+            let i = options_num.length - 1
+            let occurrence_sum = 0
+            let occurrence_target_option_sum = 0
+            let name_end = options_num[i].split("-")[1]
+            let name_start = ""
+            while (occurrence_sum < min_bin_size && i > 0) {
+                occurrence_sum += summary['occurrence'][options_num[i]]
+                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i]]
+                name_start = options_num[i].split("-")[0]
+                delete summary.occurrence[options_num[i]]
+                delete summary.occurrence_target_option[options_num[i]]
+                i--
+            }
+            if (i < options_num.length -1) {
+                summary.occurrence[name_start + "-" + name_end] = occurrence_sum
+                summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
+            }
+
+            //iterate through options_num from front
+            i = 0
+            occurrence_sum = 0
+            occurrence_target_option_sum = 0
+            name_start = options_num[i].split("-")[0]
+            name_end = ""
+            while (occurrence_sum < min_bin_size && i < options_num.length - 1) {
+                occurrence_sum += summary['occurrence'][options_num[i]]
+                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i]]
+                name_end = options_num[i].split("-")[1]
+                delete summary.occurrence[options_num[i]]
+                delete summary.occurrence_target_option[options_num[i]]
+                i++
+            }
+
+            if (i > 0) {
+                summary.occurrence[name_start + "-" + name_end] = occurrence_sum
+                summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
+                summary.options = Object.keys(summary.occurrence)
+            }
+
+            return summary
+        },
+        /**
+         * sorts options first by number, then by their string name
+         *
+         * @param a
+         * @param b
+         * @returns {number}
+         */
+        sort(a, b) {
+            let a_split = a.split("-")
+            let b_split = b.split("-")
+            let a_is_number = !isNaN(a_split[0]) && a_split[0] !== ""
+            let b_is_number = !isNaN(b_split[0]) && b_split[0] !== ""
+            if (a_is_number && b_is_number) {
+                return a_split[0] - b_split[0]
+            }
+            if (a_is_number) {
+                return -1
+            }
+            if (b_is_number) {
+                return 1
+            }
+            return a.localeCompare(b)
         },
         /**
          * resets all variables to their initial state

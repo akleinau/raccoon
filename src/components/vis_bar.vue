@@ -4,6 +4,7 @@
 
 <script>
 import * as d3 from "d3";
+import {useStore} from "@/stores/csvStore";
 
 export default {
     name: "vis_bar",
@@ -16,8 +17,14 @@ export default {
         data_map: function () {
             console.log("watch")
             console.log(this.data_map)
-            this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
+            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
+            data.sort((a, b) => this.Store.sort(a.name, b.name))
+            this.visualize(data)
         }
+    },
+    setup() {
+        const Store = useStore()
+        return {Store}
     },
     methods: {
         /**
@@ -40,7 +47,7 @@ export default {
          */
         get_value_text(value) {
             if (this.range === "percent") {
-                return (value*100).toFixed(0) + "%"
+                return (value * 100).toFixed(0) + "%"
             }
             return value
         },
@@ -103,7 +110,7 @@ export default {
                 .text(d => this.get_value_text(d.value))
                 .style("text-anchor", "start")
                 .style("fill", "white")
-                .attr("dy", y.bandwidth()-5)
+                .attr("dy", y.bandwidth() - 5)
 
             //x axis texts
             svg.append("text")
@@ -124,7 +131,9 @@ export default {
     },
     mounted() {
         if (this.data_map != null) {
-            this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
+            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
+            data.sort((a, b) => this.Store.sort(a.name, b.name))
+            this.visualize(data)
         }
     }
 }
