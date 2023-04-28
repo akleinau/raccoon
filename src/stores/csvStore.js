@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
 
-export const useStore = defineStore('store', {
+export const useStore = defineStore('csvStore', {
     state: () => ({
         start: true,
         exclude_missing: true,
