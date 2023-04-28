@@ -36,16 +36,7 @@ export const useStore = defineStore('store', {
                     this.csv.forEach(d => summary.occurrence[d[column]]++)
                     this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
 
-
-                    //exclude missing values
-                    if (this.exclude_missing) {
-                        summary.options = summary.options.filter(d => d !== "" && d !== "NaN")
-                        delete summary.occurrence[""]
-                        delete summary.occurrence_target_option[""]
-                        delete summary.occurrence["NA"]
-                        delete summary.occurrence_target_option["NA"]
-                    }
-
+                    summary = this.summary_exclude_missing(summary)
 
                     //percentage how often each option occurs together with the target option
                     summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
@@ -53,6 +44,7 @@ export const useStore = defineStore('store', {
                     //significance_score: difference in percentages of percent_target_option
                     summary.significance = this.compute_significance_score(summary)
                     this.variable_summaries.push(summary)
+
                 } else {
                     let options_num = options.filter(d => !isNaN(d) && d !== "")
 
@@ -79,14 +71,7 @@ export const useStore = defineStore('store', {
                         this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.bin_value(d[column], extent)]++)
                         summary = this.bin_ends(summary, this.min_bin_size)
 
-                        //exclude missing values
-                        if (this.exclude_missing) {
-                            summary.options = summary.options.filter(d => d !== "" && d !== "NaN")
-                            delete summary.occurrence[""]
-                            delete summary.occurrence_target_option[""]
-                            delete summary.occurrence["NA"]
-                            delete summary.occurrence_target_option["NA"]
-                        }
+                        summary = this.summary_exclude_missing(summary)
 
                         //percentage how often each option occurs together with the target option
                         summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
@@ -195,6 +180,14 @@ export const useStore = defineStore('store', {
             var logStep = Math.max(0, -Math.floor(Math.log10(range[2])))
             return (range[0] + step * range[2]).toFixed(logStep) + "-" + (range[0] + (step + 1) * range[2]).toFixed(logStep)
         },
+        /**
+         * calculates pretty extents for continuous columns.
+         * Favors step sizes that are powers of 10 and ranges that are multiples of 10
+         *
+         * @param options
+         * @param steps
+         * @returns {(number|number)[]}
+         */
         calculate_pretty_extent(options, steps) {
             let extent = d3.extent(options.map(d => +d))
             let stepsize = (extent[1] - extent[0]) / steps
@@ -228,7 +221,7 @@ export const useStore = defineStore('store', {
                 delete summary.occurrence_target_option[options_num[i]]
                 i--
             }
-            if (i < options_num.length -1) {
+            if (i < options_num.length - 1) {
                 summary.occurrence[name_start + "-" + name_end] = occurrence_sum
                 summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
             }
@@ -251,9 +244,9 @@ export const useStore = defineStore('store', {
             if (i > 0) {
                 summary.occurrence[name_start + "-" + name_end] = occurrence_sum
                 summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
-                summary.options = Object.keys(summary.occurrence)
             }
 
+            summary.options = Object.keys(summary.occurrence)
             return summary
         },
         /**
@@ -278,6 +271,23 @@ export const useStore = defineStore('store', {
                 return 1
             }
             return a.localeCompare(b)
+        },
+        /**
+         * if missing values should be excluded, remove them from the summary
+         *
+         * @param summary
+         * @returns {*}
+         */
+        summary_exclude_missing(summary) {
+            //exclude missing values
+            if (this.exclude_missing) {
+                summary.options = summary.options.filter(d => d !== "" && d !== "NaN")
+                delete summary.occurrence[""]
+                delete summary.occurrence_target_option[""]
+                delete summary.occurrence["NA"]
+                delete summary.occurrence_target_option["NA"]
+            }
+            return summary
         },
         /**
          * resets all variables to their initial state
