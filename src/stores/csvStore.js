@@ -36,9 +36,11 @@ export const useStore = defineStore('store', {
 
                     //exclude missing values
                     if (this.exclude_missing) {
-                        summary.options = summary.options.filter(d => d !== "")
+                        summary.options = summary.options.filter(d => d !== "" && d !== "NaN")
                         delete summary.occurrence[""]
                         delete summary.occurrence_target_option[""]
+                        delete summary.occurrence["NA"]
+                        delete summary.occurrence_target_option["NA"]
                     }
 
 
@@ -54,10 +56,25 @@ export const useStore = defineStore('store', {
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
-                        let extent = d3.extent(options_num.map(d => +d))
-                        let steps = 5
-                        let options_bin = [...new Set(options_num.map(d => this.bin_value(d, extent, steps)))]
-                            .sort((a, b) => a.split("-")[0] - b.split("-")[0])
+                        const steps = 2
+                        let extent = this.calculate_pretty_extent(options_num, steps)
+                        let options_bin = [...new Set(options.map(d => this.bin_value(d, extent)))]
+                            .sort((a, b) => {
+                                let a_split = a.split("-")
+                                let b_split = b.split("-")
+                                let a_is_number = !isNaN(a_split[0]) && a_split[0] !== ""
+                                let b_is_number = !isNaN(b_split[0]) && b_split[0] !== ""
+                                if (a_is_number && b_is_number) {
+                                    return a_split[0] - b_split[0]
+                                }
+                                if (a_is_number) {
+                                    return -1
+                                }
+                                if (b_is_number) {
+                                    return 1
+                                }
+                                return a.localeCompare(b)
+                            })
 
                         let summary = {
                             name: column,
@@ -70,8 +87,17 @@ export const useStore = defineStore('store', {
                             //how often each option occurs together with the target option
                             occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d, 0]))),
                         }
-                        summary.data.forEach(d => summary.occurrence[this.bin_value(d, extent, steps)]++)
-                        summary.data_with_target_option.forEach(d => summary.occurrence_target_option[this.bin_value(d, extent, steps)]++)
+                        this.csv.forEach(d => summary.occurrence[this.bin_value(d[column], extent)]++)
+                        this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.bin_value(d[column], extent)]++)
+
+                        //exclude missing values
+                        if (this.exclude_missing) {
+                            summary.options = summary.options.filter(d => d !== "" && d !== "NaN")
+                            delete summary.occurrence[""]
+                            delete summary.occurrence_target_option[""]
+                            delete summary.occurrence["NA"]
+                            delete summary.occurrence_target_option["NA"]
+                        }
 
                         //percentage how often each option occurs together with the target option
                         summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
@@ -170,13 +196,24 @@ export const useStore = defineStore('store', {
          * bins a value into a range of steps
          *
          * @param value
-         * @param range
-         * @param steps
+         * @param range - [min, max, stepsize]
          */
-        bin_value(value, range, steps) {
-            var step_size = (range[1] - range[0]) / steps
-            var step = Math.floor((value - range[0]) / step_size)
-            return (range[0] + step * step_size).toFixed(1) + "-" + (range[0] + (step + 1) * step_size).toFixed(1)
+        bin_value(value, range) {
+            if (isNaN(value) || value === "") {
+                return value
+            }
+            var step = Math.floor((value - range[0]) / range[2])
+            var logStep = Math.max(0, -Math.floor(Math.log10(range[2])))
+            return (range[0] + step * range[2]).toFixed(logStep) + "-" + (range[0] + (step + 1) * range[2]).toFixed(logStep)
+        },
+        calculate_pretty_extent(options, steps) {
+            let extent = d3.extent(options.map(d => +d))
+            let stepsize = (extent[1] - extent[0]) / steps
+            let pretty_stepsize = Math.pow(10, Math.floor(Math.log10(stepsize)))
+            let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
+            let pretty_max = Math.ceil(extent[1] / pretty_stepsize) * pretty_stepsize
+
+            return [pretty_min, pretty_max, pretty_stepsize]
         },
         /**
          * resets all variables to their initial state
