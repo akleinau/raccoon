@@ -3,6 +3,8 @@ import {defineStore} from 'pinia'
 export const useStore = defineStore('visStore', {
     state: () => ({
         dashboard_items: [],
+        current_fact_group: null,
+        current_fact: null,
     }),
     actions: {
         add_dashboard_item(summary, visList) {

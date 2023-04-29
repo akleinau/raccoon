@@ -1,6 +1,8 @@
 <template>
     <v-app>
         <start_overlay/>
+        <fact_group_view v-if="this.visStore.current_fact_group !== null"/>
+        <fact_view v-if="this.visStore.current_fact !== null"/>
 
         <v-app-bar>
             <v-app-bar-title>Raccoon</v-app-bar-title>
@@ -58,6 +60,8 @@
 <script>
 import start_overlay from './components/start_overlay.vue'
 import fact_group from './components/fact_group.vue'
+import fact_group_view from './components/fact_group_view.vue'
+import fact_view from './components/fact_view.vue'
 import {useStore as csv_useStore} from "@/stores/csvStore";
 import {useStore as vis_useStore} from "@/stores/visStore";
 
@@ -65,7 +69,9 @@ import {useStore as vis_useStore} from "@/stores/visStore";
 export default {
     components: {
         fact_group,
-        start_overlay
+        start_overlay,
+        fact_group_view,
+        fact_view
     },
     setup() {
         const csvStore = csv_useStore()

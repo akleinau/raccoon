@@ -24,11 +24,11 @@
 
         <!-- visualizations -->
         <div class="d-flex flex-row mt-2">
-            <div>
+            <div @click="show_fact_group_view">
                 <span class="d-flex justify-center"> <b>#people per option</b></span>
                 <vis_parser :description="visList[0]"/>
             </div>
-            <div>
+            <div @click="show_fact_group_view">
                 <span class="d-flex justify-center">
                     <b>Proportion of people per option who have
                       <span style="color:darkblue">
@@ -38,7 +38,9 @@
                 </span>
                 <vis_parser :description="visList[1]"/>
             </div>
-            <v-btn v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name)"
+            <v-btn class="ma-2 ml-5" color="indigo-darken-3" @click="show_fact_group_view"> Show
+            </v-btn>
+          <v-btn v-if="!visStore.dashboard_items.map(item => item.name).includes(column.name)"
                    class="ma-2 ml-5" color="indigo-darken-3" @click="visStore.add_dashboard_item(column, visList)"> Add
             </v-btn>
             <v-btn v-if="visStore.dashboard_items.map(item => item.name).includes(column.name)"
@@ -69,6 +71,11 @@ export default {
         const csvStore = csv_useStore()
         return {csvStore, visStore}
     },
+  methods: {
+        show_fact_group_view() {
+            this.visStore.current_fact_group = {'column': this.column, 'visList': this.visList}
+        }
+    }
 }
 </script>
 
