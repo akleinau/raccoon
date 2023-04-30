@@ -1,6 +1,17 @@
 <template>
   <v-dialog v-model="display">
-    <v-card title="Fact Group View" class="flex mx-auto w-75">
+    <v-card class="flex mx-auto w-75">
+
+      <v-card-title>
+        Fact Group View: {{ visStore.current_fact_group.column['name'] }}
+      </v-card-title>
+
+      <!-- hints -->
+      <div v-if="visStore.current_fact_group.column['significance'].significant_tuples.length === 0">
+        <v-icon icon="mdi-alert"/>
+        no statistically significant differences
+      </div>
+
       <div v-for="vis in visStore.current_fact_group.visList" v-bind:key="vis">
         <div @click="show_fact_view(vis)" class="d-flex ma-2">
           <vis_parser :description="vis"/>
@@ -9,16 +20,30 @@
       </div>
 
       <v-expansion-panels class="ma-3">
-        <v-expansion-panel>
+        <v-expansion-panel class="ma-1">
+          <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
+          <v-expansion-panel-text class="text-grey-darken-2">
+            pairs with statistically significant differences:
+            <span v-for="tuple in Object.values(visStore.current_fact_group.column['significance'].significant_tuples)"
+                  v-bind:key="tuple">
+                                        ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
+                                        {{ tuple[1] !== "" ? tuple[1] : "null" }})
+                                    </span>
+            <div> Score: {{ visStore.current_fact_group.column['significance'].score.toFixed(2) }}</div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+        <v-expansion-panel class="ma-1">
           <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
           <v-expansion-panel-text>
-            ...
+            <vis_parser v-if="visStore.current_fact_group.column.type==='continuous'"
+                        :description="{graph: 'density', data: visStore.current_fact_group.column.data,
+                      data_with_target_option: visStore.current_fact_group.column.data_with_target_option}"/>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
 
       <v-card-actions>
-        <v-btn @click="add"> Add </v-btn>
+        <v-btn @click="add"> Add</v-btn>
         <v-btn @click="close">Close</v-btn>
       </v-card-actions>
 
@@ -49,12 +74,23 @@ export default {
     }
   },
   methods: {
+    /**
+     * shows fact view for the selected fact
+     *
+     * @param vis
+     */
     show_fact_view(vis) {
       this.visStore.current_fact = {'vis': vis, 'column': this.visStore.current_fact_group.column}
     },
+    /**
+     * closes the fact group view
+     */
     close() {
       this.visStore.current_fact_group = null
     },
+    /**
+     * adds the fact group to the dashboard
+     */
     add() {
       this.visStore.add_dashboard_item(this.visStore.current_fact_group.column, this.visStore.current_fact_group.visList)
       this.close()

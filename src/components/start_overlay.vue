@@ -79,7 +79,7 @@ export default {
       console.log(this.Store.target_all_options)
     },
     /**
-     *
+     * start the calculation of the visualizations and closes the overlay
      */
     visualize() {
       this.Store.start = false

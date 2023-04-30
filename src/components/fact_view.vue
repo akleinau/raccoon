@@ -42,6 +42,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * closes the fact view
+     */
     close() {
       this.visStore.current_fact = null
     }
