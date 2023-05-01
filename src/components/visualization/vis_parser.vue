@@ -1,9 +1,9 @@
 <template>
   <vis_bar v-if="description.graph === 'bar'" :data_map="description.data_map"
-           :range="description.range"
+           :range="description.range" :title="description.title"
            :color="description.color"/>
   <vis_pictograph v-if="description.graph === 'pictograph'"
-                  :data_map="description.data_map"
+                  :data_map="description.data_map" :title="description.title"
                   :range="description.range" :grid="description.grid"
                   :color="description.color"/>
   <vis_line v-if="description.graph === 'density'" :data="description.data"

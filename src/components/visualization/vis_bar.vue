@@ -11,7 +11,8 @@ export default {
     props: [
         "data_map",
         "range",
-        "color"
+        "color",
+        "title"
     ],
     watch: {
         data_map: function () {
@@ -57,15 +58,16 @@ export default {
          * @param data
          */
         visualize(data) {
-            let marging_bottom = 15
+            let margin_top = 30
+            let marging_bottom = 30
             let height = data.length * 35
             let width = 600
             let startBarX = 200
 
             let svg = d3.create("svg")
                 .attr("width", width)
-                .attr("height", height + marging_bottom)
-                .attr("viewBox", [0, 0, width, height + marging_bottom])
+                .attr("height", height + marging_bottom + margin_top)
+                .attr("viewBox", [0, -margin_top, width, height + marging_bottom + margin_top])
 
             let x = d3.scaleLinear()
                 .domain(this.get_range())
@@ -115,14 +117,20 @@ export default {
             //x axis texts
             svg.append("text")
                 .attr("x", startBarX)
-                .attr("y", height + marging_bottom)
+                .attr("y", height + 15)
                 .text(this.get_value_text(0))
 
             svg.append("text")
                 .attr("x", width)
-                .attr("y", height + marging_bottom)
+                .attr("y", height + 15)
                 .style("text-anchor", "end")
                 .text(this.get_value_text(this.get_range()[1]))
+
+            svg.append("text")
+                .attr("x", width/2)
+                .attr("y", -10)
+                .style("text-anchor", "middle")
+                .text(this.title)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

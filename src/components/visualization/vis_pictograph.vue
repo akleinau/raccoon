@@ -12,7 +12,8 @@ export default {
         "data_map",
         "range",
         "color",
-        "grid"
+        "grid",
+        "title"
     ],
     watch: {
         data_map: function () {
@@ -29,7 +30,7 @@ export default {
             deep: true
         }
     },
-        setup() {
+    setup() {
         const Store = useStore()
         return {Store}
     },
@@ -68,8 +69,9 @@ export default {
          * @param data
          */
         visualize(data) {
-            let marging_bottom = 15
-            let margin_top = 10
+            let marging_bottom = 20
+            let margin_top_grid = 10
+            let margin_top = 30
             let margin_right = 60
             let width = 600
             let startBarX = 200
@@ -95,13 +97,13 @@ export default {
 
             let y_options = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin_top, height])
+                .range([margin_top_grid, height])
 
 
             let svg = d3.create("svg")
                 .attr("width", width + margin_right)
-                .attr("height", height + marging_bottom)
-                .attr("viewBox", [0, 0, width + margin_right, height + marging_bottom])
+                .attr("height", height + marging_bottom + margin_top)
+                .attr("viewBox", [0, -margin_top, width + margin_right, height + marging_bottom + margin_top])
 
             //background
             svg.append("rect")
@@ -150,16 +152,21 @@ export default {
             //x axis texts
             svg.append("text")
                 .attr("x", startBarX)
-                .attr("y", height + marging_bottom)
+                .attr("y", height + 15)
                 .text(this.get_value_text(0))
-                .style("text-anchor", "center")
+                .style("text-anchor", "start")
 
             svg.append("text")
                 .attr("x", width - x.bandwidth() / 2)
-                .attr("y", height + marging_bottom)
+                .attr("y", height + 15)
                 .style("text-anchor", "end")
                 .text(this.get_value_text(this.get_range()[1]))
 
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", -10)
+                .style("text-anchor", "middle")
+                .text(this.title)
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
