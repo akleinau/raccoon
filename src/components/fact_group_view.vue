@@ -42,7 +42,8 @@
                     <v-expansion-panel-text>
                         <vis_parser v-if="visStore.current_fact_group.column.type==='continuous'"
                                     :description="{graph: 'density', data: visStore.current_fact_group.column.data,
-                      data_with_target_option: visStore.current_fact_group.column.data_with_target_option}"/>
+                      data_with_target_option: visStore.current_fact_group.column.data_with_target_option,
+                      title: 'Density'}"/>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>

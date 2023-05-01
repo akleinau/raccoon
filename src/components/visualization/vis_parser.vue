@@ -6,7 +6,7 @@
                   :data_map="description.data_map" :title="description.title"
                   :range="description.range" :grid="description.grid"
                   :color="description.color"/>
-  <vis_line v-if="description.graph === 'density'" :data="description.data"
+  <vis_line v-if="description.graph === 'density'" :data="description.data" :title="description.title"
             :target_data="description.data_with_target_option"/>
 </template>
 
