@@ -14,8 +14,12 @@
 
         <v-main>
             <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
-                <div v-for="item in visStore.dashboard_items" v-bind:key="item">
+                <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex">
                     <fact_group_preview :visList="item.visualizations" :column="item.summary"/>
+                    <v-btn class="ma-2 ml-5" color="indigo-darken-3"
+                           @click="visStore.remove_dashboard_item(item.name)"> Remove
+                    </v-btn>
+
                 </div>
             </v-card>
 
@@ -56,10 +60,19 @@
             <v-card title="Risk Factors" class="pa-5 bg-blue-grey-lighten-5">
 
                 <!-- Risk Factor Sheets -->
-                <div v-for="column in csvStore.variable_summaries" v-bind:key="column">
-                    <fact_group_preview v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name)"
-                                        :visList="generate_vis_from_settings(column)" :column="column"/>
-                </div>
+                <v-slide-group class="pa-4" show-arrows style="max-height:600px">
+                    <v-slide-group-item v-for="column in csvStore.variable_summaries.slice(1,10)" v-bind:key="column">
+                        <fact_group_preview class="pa-2"
+                                            v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name)"
+                                            :visList="visStore.generate_vis_from_settings(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
+                                            :column="column" :vertical="true"/>
+                    </v-slide-group-item>
+
+                    <v-slide-group-item>
+                        <all_risk_factor_view/>
+                    </v-slide-group-item>
+
+                </v-slide-group>
 
             </v-card>
         </v-main>
@@ -73,6 +86,7 @@ import fact_group_preview from './components/fact_group_preview.vue'
 import fact_group_view from './components/fact_group_view.vue'
 import fact_view from './components/fact_view.vue'
 import settings_view from "@/components/settings_view.vue";
+import all_risk_factor_view from "@/components/all_risk_factor_view.vue";
 import {useStore as csv_useStore} from "@/stores/csvStore";
 import {useStore as vis_useStore} from "@/stores/visStore";
 
@@ -83,44 +97,20 @@ export default {
         start_overlay,
         fact_group_view,
         fact_view,
-        settings_view
+        settings_view,
+        all_risk_factor_view
     },
     setup() {
         const csvStore = csv_useStore()
         const visStore = vis_useStore()
         return {csvStore, visStore}
-    },
-    methods: {
-        /**
-         * generates standard visualizations for risk factors from settings
-         *
-         * @param column
-         * @returns {*[]}
-         */
-        generate_vis_from_settings(column) {
-            let visList = []
-            visList.push(
-                {
-                    data_map: column['occurrence'],
-                    range: [0, this.csvStore.csv.length],
-                    grid: this.visStore.impact_settings.grid,
-                    graph: this.visStore.impact_settings.graph,
-                    color: "royalblue",
-                    title: "#people per option"
-                },
-                {
-                    data_map: column['percent_target_option'],
-                    range: "percent",
-                    grid: this.visStore.significance_settings.grid,
-                    graph: this.visStore.significance_settings.graph,
-                    color: "MediumVioletRed",
-                    title: "Proportion of people per option who have " + this.csvStore.target_column + ": " + this.csvStore.target_option
-                }
-            )
-            return visList
-        }
     }
 }
 </script>
 
-<style scoped></style>
+<style lang="sass" scoped>
+
+.v-card.on-hover
+  cursor: pointer
+
+</style>

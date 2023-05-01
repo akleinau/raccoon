@@ -1,16 +1,19 @@
 <template>
-        <!-- visualizations -->
-        <div class="d-flex mt-2">
-            <v-hover v-slot="{ isHovering, props }">
-                <v-card :elevation="isHovering ? 16 : 2" v-bind="props" :class="{ 'on-hover': isHovering }"
-                        @click="show_fact_group_view" class="pa-2 d-flex flex-column align-center" >
-                    <h4>{{column.name}}</h4>
+  <!-- visualizations -->
+    <div class="d-flex">
+        <v-hover v-slot="{ isHovering, props }">
+            <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
+                    :class="{ 'on-hover': isHovering}"
+                    @click="show_fact_group_view">
+                <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.name }}</h4>
+                <div class="pa-2 mr-2 d-flex align-center" :class="{ 'flex-column': vertical }">
                     <div v-for="vis in visList" v-bind:key="vis">
                         <vis_parser :description="vis"/>
                     </div>
-                </v-card>
-            </v-hover>
-        </div>
+                </div>
+            </v-card>
+        </v-hover>
+    </div>
 </template>
 
 <script>
@@ -23,7 +26,8 @@ export default {
     components: {vis_parser},
     props: [
         "visList",
-        "column"
+        "column",
+        "vertical"
     ],
     setup() {
         const visStore = vis_useStore()
