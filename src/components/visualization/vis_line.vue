@@ -8,14 +8,15 @@ import * as d3 from "d3";
 export default {
     name: "vis_line",
     props: [
-        "data",
-        "target_data",
-        "title"
+        "description", "width"
     ],
     watch: {
-        data: function () {
-            console.log("watch")
-            this.visualize(this.data, this.target_data)
+        description: {
+            handler: function () {
+                this.visualize(this.description.data, this.description.data_with_target_option)
+            }
+            ,
+            deep: true
         }
     },
     methods: {
@@ -25,7 +26,7 @@ export default {
             let margin_top = 40
             let margin_right = 30
             let height = 200
-            let width = 600
+            let width = this.width? this.width : 600
 
             let svg = d3.create("svg")
                 .attr("width", width + margin_left)
@@ -92,7 +93,7 @@ export default {
                 .attr("x", width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.title)
+                .text(this.description.title)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
@@ -116,8 +117,8 @@ export default {
         }
     },
     mounted() {
-        if (this.data != null) {
-            this.visualize(this.data, this.target_data)
+        if (this.description.data != null) {
+            this.visualize(this.description.data, this.description.data_with_target_option)
         }
     }
 }

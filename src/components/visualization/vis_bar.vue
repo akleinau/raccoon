@@ -4,27 +4,29 @@
 
 <script>
 import * as d3 from "d3";
-import {useStore} from "@/stores/csvStore";
+import {useStore as csv_useStore} from "@/stores/csvStore";
 
 export default {
     name: "vis_bar",
     props: [
-        "data_map",
-        "range",
-        "color",
-        "title"
+        "description", "width"
     ],
     watch: {
-        data_map: function () {
-            console.log("watch")
-            console.log(this.data_map)
-            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data.sort((a, b) => this.Store.sort(a.name, b.name))
-            this.visualize(data)
+        description: {
+            handler: function () {
+                let data = Object.entries(this.description.data_map).map(([key, value]) => ({
+                    "name": key,
+                    "value": value
+                }))
+                data.sort((a, b) => this.Store.sort(a.name, b.name))
+                this.visualize(data)
+            }
+            ,
+            deep: true
         }
     },
     setup() {
-        const Store = useStore()
+        const Store = csv_useStore()
         return {Store}
     },
     methods: {
@@ -34,10 +36,10 @@ export default {
          * @returns {number[]|*}
          */
         get_range() {
-            if (this.range === "percent") {
+            if (this.description.range === "percent") {
                 return [0, 1]
             } else {
-                return this.range
+                return this.description.range
             }
         },
         /**
@@ -47,7 +49,7 @@ export default {
          * @returns {*|string}
          */
         get_value_text(value) {
-            if (this.range === "percent") {
+            if (this.description.range === "percent") {
                 return (value * 100).toFixed(0) + "%"
             }
             return value
@@ -60,8 +62,8 @@ export default {
         visualize(data) {
             let margin_top = 30
             let marging_bottom = 30
-            let height = data.length * 35
-            let width = 600
+            let width = this.width ? this.width : 600
+            let height = data.length * (width / 20)
             let startBarX = 200
 
             let svg = d3.create("svg")
@@ -93,7 +95,7 @@ export default {
                 .attr("y", d => y(d.name))
                 .attr("width", d => x(d.value) - x(0))
                 .attr("height", y.bandwidth())
-                .attr("fill", this.color)
+                .attr("fill", this.description.color)
 
             svg.selectAll("textName")
                 .data(data)
@@ -127,10 +129,10 @@ export default {
                 .text(this.get_value_text(this.get_range()[1]))
 
             svg.append("text")
-                .attr("x", width/2)
+                .attr("x", width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.title)
+                .text(this.description.title)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
@@ -138,8 +140,8 @@ export default {
         }
     },
     mounted() {
-        if (this.data_map != null) {
-            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
+        if (this.description.data_map != null) {
+            let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
             data.sort((a, b) => this.Store.sort(a.name, b.name))
             this.visualize(data)
         }

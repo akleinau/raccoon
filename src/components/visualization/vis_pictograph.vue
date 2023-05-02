@@ -4,44 +4,41 @@
 
 <script>
 import * as d3 from "d3";
-import {useStore} from "@/stores/csvStore";
+import {useStore as csv_useStore} from "@/stores/csvStore";
 
 export default {
     name: "vis_pictograph",
     props: [
-        "data_map",
-        "range",
-        "color",
-        "grid",
-        "title"
+        "description", "width"
     ],
     watch: {
-        data_map: function () {
-            console.log("watch")
-            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data.sort((a, b) => this.Store.sort(a.name, b.name))
-            this.visualize(data)
-        },
-        grid: {
+        description: {
             handler: function () {
-                console.log("watch")
-                this.visualize(Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value})))
-            },
+                let data = Object.entries(this.description.data_map).map(([key, value]) => ({
+                    "name": key,
+                    "value": value
+                }))
+                data.sort((a, b) => this.Store.sort(a.name, b.name))
+                this.visualize(data)
+            }
+            ,
             deep: true
         }
     },
     setup() {
-        const Store = useStore()
+        const Store = csv_useStore()
         return {Store}
-    },
+    }
+    ,
     methods: {
         get_range() {
-            if (this.range === "percent") {
+            if (this.description.range === "percent") {
                 return [0, 1]
             } else {
-                return this.range
+                return this.description.range
             }
-        },
+        }
+        ,
         /**
          * returns value in number of dots
          *
@@ -49,10 +46,11 @@ export default {
          * @returns {string}
          */
         get_value(value) {
-            const nominator = (this.range === "percent") ? value : (value / this.get_range()[1])
-            return (nominator * this.grid[0] * this.grid[1]).toFixed(0)
+            const nominator = (this.description.range === "percent") ? value : (value / this.get_range()[1])
+            return (nominator * this.description.grid[0] * this.description.grid[1]).toFixed(0)
 
-        },
+        }
+        ,
 
         /**
          * returns value as frequency with nominator/denominator
@@ -61,8 +59,9 @@ export default {
          * @returns {string}
          */
         get_value_text(value) {
-            return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
-        },
+            return this.get_value(value) + "/" + this.description.grid[0] * this.description.grid[1]
+        }
+        ,
         /**
          * visualizes the data
          *
@@ -73,13 +72,13 @@ export default {
             let margin_top_grid = 10
             let margin_top = 30
             let margin_right = 60
-            let width = 600
+            let width = (this.width? this.width : 600) - margin_right
             let startBarX = 200
             const padding = 0.3
 
-            const dot_range_X = d3.range(0, this.grid[0], 1)
-            const dot_range_Y = d3.range(0, this.grid[1], 1)
-            const dot_range = d3.range(0, (this.grid[0] * this.grid[1]), 1)
+            const dot_range_X = d3.range(0, this.description.grid[0], 1)
+            const dot_range_Y = d3.range(0, this.description.grid[1], 1)
+            const dot_range = d3.range(0, (this.description.grid[0] * this.description.grid[1]), 1)
 
 
             let x = d3.scaleBand()
@@ -87,7 +86,7 @@ export default {
                 .range([startBarX, width])
                 .padding(padding)
 
-            const y_range = x.step() * this.grid[1]
+            const y_range = x.step() * this.description.grid[1]
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
                 .range([0, y_range])
@@ -123,10 +122,10 @@ export default {
                     d3.select(node[index]).selectAll("circle")
                         .data(dot_range)
                         .join("circle")
-                        .attr("cx", d => x(Math.floor(d / this.grid[1])))
-                        .attr("cy", d => y_options(par.name) + y(d % this.grid[1]))
+                        .attr("cx", d => x(Math.floor(d / this.description.grid[1])))
+                        .attr("cy", d => y_options(par.name) + y(d % this.description.grid[1]))
                         .attr("r", x.bandwidth() / 2)
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.color : "darkgray")
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.description.color : "darkgray")
                 })
 
 
@@ -166,15 +165,16 @@ export default {
                 .attr("x", width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.title)
+                .text(this.description.title)
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
         }
-    },
+    }
+    ,
     mounted() {
-        if (this.data_map != null) {
-            let data = Object.entries(this.data_map).map(([key, value]) => ({"name": key, "value": value}))
+        if (this.description.data_map != null) {
+            let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
             data.sort((a, b) => this.Store.sort(a.name, b.name))
             this.visualize(data)
         }

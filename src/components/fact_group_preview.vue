@@ -1,5 +1,5 @@
 <template>
-  <!-- visualizations -->
+  <!-- visualization preview -->
     <div class="d-flex">
         <v-hover v-slot="{ isHovering, props }">
             <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
@@ -8,7 +8,7 @@
                 <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.name }}</h4>
                 <div class="pa-2 mr-2 d-flex align-center" :class="{ 'flex-column': vertical }">
                     <div v-for="vis in visList" v-bind:key="vis">
-                        <vis_parser :description="vis"/>
+                        <vis_parser :description="vis" :width="600"/>
                     </div>
                 </div>
             </v-card>
