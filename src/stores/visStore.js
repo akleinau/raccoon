@@ -30,6 +30,9 @@ export const useStore = defineStore('visStore', {
          * generates standard visualizations for risk factors from settings
          *
          * @param column
+         * @param length
+         * @param target_column
+         * @param target_option
          * @returns {*[]}
          */
         generate_vis_from_settings(column, length, target_column, target_option) {
@@ -37,14 +40,16 @@ export const useStore = defineStore('visStore', {
             visList.push(
                 {
                     data_map: column['percent_target_option'],
+                    options: column['options'],
                     range: "percent",
                     grid: this.significance_settings.grid,
                     graph: this.significance_settings.graph,
                     color: "MediumVioletRed",
-                    title: "Proportion of people per option who have " + target_column + ": " + target_option
+                    title: "Frequency of " + target_column + ": " + target_option
                 },
                 {
                     data_map: column['occurrence'],
+                    options: column['options'],
                     range: [0, length],
                     grid: this.impact_settings.grid,
                     graph: this.impact_settings.graph,

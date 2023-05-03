@@ -14,12 +14,15 @@
 
         <v-main>
             <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
-                <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex">
-                    <fact_group_preview :visList="item.visualizations" :column="item.summary"/>
-                    <v-btn class="ma-2 ml-5" color="indigo-darken-3"
-                           @click="visStore.remove_dashboard_item(item.name)"> Remove
-                    </v-btn>
+                <div class="d-flex flex-wrap">
+                    <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
+                        <fact_group_preview :visList="item.visualizations" :column="item.summary"
+                                            style="height:500px" vertical="true"/>
+                        <v-btn class="mt-0" variant="tonal"
+                               @click="visStore.remove_dashboard_item(item.name)"> Remove
+                        </v-btn>
 
+                    </div>
                 </div>
             </v-card>
 
@@ -57,22 +60,36 @@
                 </div>
             </v-card>
 
-            <v-card title="Risk Factors" class="pa-5 bg-blue-grey-lighten-5">
+            <v-card title="Target" class="pa-5 bg-blue-grey-lighten-5" v-if="current_target_column">
+                <fact_group_preview class="pa-2"
+                                    v-if="!visStore.dashboard_items.map(item => item.name).includes(current_target_column.name)"
+                                    :visList="get_visList_target()"
+                                    :column="current_target_column"
+                                    :vertical="true"/>
+
+            </v-card>
+
+            <v-card class="pa-5 bg-blue-grey-lighten-5">
+
+                <v-card-title>Risk Factors
+                    <all_risk_factor_view text-button="true"/>
+                </v-card-title>
 
                 <!-- Risk Factor Sheets -->
-                <v-slide-group class="pa-4" show-arrows style="max-height:600px">
-                    <v-slide-group-item v-for="column in csvStore.variable_summaries.slice(1,10)" v-bind:key="column">
-                        <fact_group_preview class="pa-2"
-                                            v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name)"
+                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
+                    <div v-for="column in csvStore.variable_summaries.slice(1,20)" v-bind:key="column">
+                        <fact_group_preview class="pa-2" style="height:500px"
+                                            v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name) && column.name !== csvStore.target_column"
                                             :visList="visStore.generate_vis_from_settings(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
                                             :column="column" :vertical="true"/>
-                    </v-slide-group-item>
+                    </div>
 
-                    <v-slide-group-item>
-                        <all_risk_factor_view/>
-                    </v-slide-group-item>
+                    <all_risk_factor_view/>
+                </div>
 
-                </v-slide-group>
+            </v-card>
+
+            <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
 
             </v-card>
         </v-main>
@@ -104,6 +121,24 @@ export default {
         const csvStore = csv_useStore()
         const visStore = vis_useStore()
         return {csvStore, visStore}
+    },
+    computed: {
+        current_target_column() {
+            return this.csvStore.variable_summaries.find(a => a.name === this.csvStore.target_column)
+        }
+    },
+    methods: {
+        get_visList_target() {
+            return [{
+                data_map: this.current_target_column['occurrence'],
+                options: this.current_target_column['options'],
+                range: [0, this.csvStore.csv.length],
+                grid: this.visStore.impact_settings.grid,
+                graph: this.visStore.impact_settings.graph,
+                color: 'royalblue',
+                title: '#people per option'
+            }]
+        }
     }
 }
 </script>

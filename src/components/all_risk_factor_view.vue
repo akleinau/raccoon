@@ -3,7 +3,7 @@
     <v-dialog v-model="show">
         <template v-slot:activator="{ props }">
 
-            <v-btn v-bind="props" class="h-auto pa-4 ma-2">
+            <v-btn v-bind="props" class="h-auto pa-4 ma-2" :variant="textButton? 'plain' : 'elevated'" >
                 More...
             </v-btn>
 
@@ -20,10 +20,10 @@
                 </template>
             </v-virtual-scroll>
             -->
-            <div class="d-flex flex-wrap overflow-auto" style="height:800px">
-                <div v-for="column in csvStore.variable_summaries" v-bind:key="column">
-                    <fact_group_preview v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name)"
-                                        class="pa-2"
+            <div class="d-flex flex-wrap overflow-auto align-stretch" style="height:800px">
+                <div v-for="column in csvStore.variable_summaries" v-bind:key="column" class="relative">
+                    <fact_group_preview v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name) && column.name !== csvStore.target_column"
+                                        class="pa-2 h-100" :vertical="true"
                                         :visList="visStore.generate_vis_from_settings(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
                                         :column="column"/>
                 </div>
@@ -47,6 +47,9 @@ export default {
     components: {
         fact_group_preview
     },
+    props: [
+        "textButton"
+    ],
     setup() {
         const csvStore = csv_useStore()
         const visStore = vis_useStore()

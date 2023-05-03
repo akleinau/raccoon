@@ -72,8 +72,8 @@ export default {
             let margin_top_grid = 10
             let margin_top = 30
             let margin_right = 60
-            let width = (this.width? this.width : 600) - margin_right
-            let startBarX = 200
+            let width = (this.width? this.width : 300) - margin_right
+            let startBarX = this.Store.get_max_length(this.description.options) * 10
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.description.grid[0], 1)
@@ -83,7 +83,7 @@ export default {
 
             let x = d3.scaleBand()
                 .domain(dot_range_X)
-                .range([startBarX, width])
+                .range([startBarX, width + startBarX])
                 .padding(padding)
 
             const y_range = x.step() * this.description.grid[1]
@@ -100,15 +100,15 @@ export default {
 
 
             let svg = d3.create("svg")
-                .attr("width", width + margin_right)
+                .attr("width", width + startBarX + margin_right)
                 .attr("height", height + marging_bottom + margin_top)
-                .attr("viewBox", [0, -margin_top, width + margin_right, height + marging_bottom + margin_top])
+                .attr("viewBox", [0, -margin_top, width + startBarX + margin_right, height + marging_bottom + margin_top])
 
             //background
             svg.append("rect")
                 .attr("x", startBarX - x.bandwidth() / 2)
                 .attr("y", 0)
-                .attr("width", width)
+                .attr("width", width + margin_right)
                 .attr("height", height)
                 .attr("fill", "lightgray")
 
@@ -141,7 +141,7 @@ export default {
             svg.selectAll("textValue")
                 .data(data)
                 .join("text")
-                .attr("x", width - x.bandwidth() / 2)
+                .attr("x", width + startBarX - x.bandwidth() / 2)
                 .attr("y", d => y_options(d.name))
                 .text(d => this.get_value_text(d.value))
                 .style("text-anchor", "start")
@@ -156,13 +156,13 @@ export default {
                 .style("text-anchor", "start")
 
             svg.append("text")
-                .attr("x", width - x.bandwidth() / 2)
+                .attr("x", width + startBarX - x.bandwidth() / 2)
                 .attr("y", height + 15)
                 .style("text-anchor", "end")
                 .text(this.get_value_text(this.get_range()[1]))
 
             svg.append("text")
-                .attr("x", width / 2)
+                .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
                 .text(this.description.title)

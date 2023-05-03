@@ -62,23 +62,23 @@ export default {
         visualize(data) {
             let margin_top = 30
             let marging_bottom = 30
-            let width = this.width ? this.width : 600
-            let height = data.length * (width / 20)
-            let startBarX = 200
+            let width = this.width ? this.width : 300
+            let height = data.length * (width / 10)
+            let startBarX = this.Store.get_max_length(this.description.options) * 10
 
             let svg = d3.create("svg")
-                .attr("width", width)
+                .attr("width", width + startBarX)
                 .attr("height", height + marging_bottom + margin_top)
-                .attr("viewBox", [0, -margin_top, width, height + marging_bottom + margin_top])
+                .attr("viewBox", [0, -margin_top, width + startBarX, height + marging_bottom + margin_top])
 
             let x = d3.scaleLinear()
                 .domain(this.get_range())
-                .range([startBarX, width])
+                .range([startBarX, width + startBarX])
 
             let y = d3.scaleBand()
                 .domain(data.map(d => d.name))
                 .range([0, height])
-                .padding(0.3)
+                .padding(0.2)
 
             //background
             svg.append("rect")
@@ -123,13 +123,13 @@ export default {
                 .text(this.get_value_text(0))
 
             svg.append("text")
-                .attr("x", width)
+                .attr("x", width + startBarX)
                 .attr("y", height + 15)
                 .style("text-anchor", "end")
                 .text(this.get_value_text(this.get_range()[1]))
 
             svg.append("text")
-                .attr("x", width / 2)
+                .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
                 .text(this.description.title)

@@ -12,17 +12,17 @@
                 no statistically significant differences
             </div>
 
-
-            <div class="d-flex pa-1" v-for="vis in visStore.current_fact_group.visList" v-bind:key="vis">
-                <v-hover v-slot="{ isHovering, props }">
-                    <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
-                            :class="{ 'on-hover': isHovering }" class="pa-2">
-                        <vis_parser :description="vis"/>
-                    </v-card>
-                </v-hover>
-                <v-btn @click="show_fact_view(vis)" class="ml-2">Show</v-btn>
+            <div class="d-flex">
+                <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList" v-bind:key="vis">
+                    <v-hover v-slot="{ isHovering, props }">
+                        <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
+                                :class="{ 'on-hover': isHovering }" class="pa-2">
+                            <vis_parser :description="vis"/>
+                        </v-card>
+                    </v-hover>
+                    <v-btn @click="show_fact_view(vis)" class="mt-2">Show</v-btn>
+                </div>
             </div>
-
 
             <v-expansion-panels class="ma-3">
                 <v-expansion-panel class="ma-1">
@@ -107,6 +107,6 @@ export default {
 
 <style lang="sass" scoped>
 .v-card.on-hover
-    cursor: pointer
+  cursor: pointer
 
 </style>

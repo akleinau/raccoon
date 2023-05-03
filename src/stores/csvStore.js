@@ -300,6 +300,14 @@ export const useStore = defineStore('csvStore', {
             this.target_all_options = []
             this.target_option = null
             this.variable_summaries = []
+        },
+        /**
+         * calculates the maximum length of all options
+         * @param options
+         * @returns {*}
+         */
+        get_max_length(options) {
+            return options.reduce((max, option) => Math.max(max, option.length), 0)
         }
     }
 })
