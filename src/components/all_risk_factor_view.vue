@@ -24,7 +24,7 @@
                 <div v-for="column in csvStore.variable_summaries" v-bind:key="column" class="relative">
                     <fact_group_preview v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name) && column.name !== csvStore.target_column"
                                         class="pa-2 h-100" :vertical="true"
-                                        :visList="visStore.generate_vis_from_settings(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
+                                        :visList="visStore.generate_main_fact_visList(column)"
                                         :column="column"/>
                 </div>
             </div>

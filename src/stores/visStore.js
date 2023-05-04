@@ -5,15 +5,23 @@ export const useVisStore = defineStore('visStore', {
         dashboard_items: [],
         current_fact_group: null,
         current_fact: null,
-        impact_settings: {
-            graph: "bar",
-            grid: [25, 4],
-        },
-        significance_settings: {
-            graph: "pictograph",
-            grid: [25, 4],
-        },
-        show_continuous: false
+        show_continuous: false,
+        default_settings: {
+            impact: {
+                graph: "bar",
+                grid: [25, 4],
+                color: "royalblue",
+                range: [0, 100],
+                title: "#people per option"
+            },
+            significance: {
+                graph: "pictograph",
+                grid: [25, 4],
+                color: "MediumVioletRed",
+                range: "percent",
+                title: "Frequency"
+            }
+        }
     }),
     actions: {
         add_dashboard_item(summary, visList) {
@@ -30,34 +38,41 @@ export const useVisStore = defineStore('visStore', {
          * generates standard visualizations for risk factors from settings
          *
          * @param column
-         * @param length
-         * @param target_column
-         * @param target_option
          * @returns {*[]}
          */
-        generate_vis_from_settings(column, length, target_column, target_option) {
+        generate_main_fact_visList(column) {
             let visList = []
             visList.push(
                 {
+                    type: "significance",
                     data_map: column['percent_target_option'],
                     options: column['options'],
-                    range: "percent",
-                    grid: this.significance_settings.grid,
-                    graph: this.significance_settings.graph,
-                    color: "MediumVioletRed",
-                    title: "Frequency of " + target_column + ": " + target_option
                 },
                 {
+                    type: "impact",
                     data_map: column['occurrence'],
                     options: column['options'],
-                    range: [0, length],
-                    grid: this.impact_settings.grid,
-                    graph: this.impact_settings.graph,
-                    color: "royalblue",
-                    title: "#people per option"
                 },
             )
             return visList
+        },
+        generate_additional_fact_visList(column) {
+            let visList = []
+            if (column.type === "continuous") {
+                visList.push(
+                    {
+                        graph: 'density',
+                        data: column.data,
+                        data_with_target_option: column.data_with_target_option,
+                        title: 'Density'
+                    }
+                )
+            }
+            return visList
+        },
+        set_initial_default_settings(length, target_column, target_option) {
+            this.default_settings.significance.title = "Frequency of " + target_column + ": " + target_option
+            this.default_settings.impact.range = [0, length]
         }
     }
 })

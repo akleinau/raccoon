@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="Store.start">
+  <v-dialog v-model="csvStore.start">
     <v-card title="Raccoon" class="flex mx-auto w-75">
       <div>
         <v-card-text>
@@ -9,27 +9,27 @@
                       @update:modelValue="uploaded"></v-file-input>
       </div>
 
-      <div v-if="Store.columns.length !== 0">
+      <div v-if="csvStore.columns.length !== 0">
         <v-card-text>
           Select target:
         </v-card-text>
-        <v-autocomplete v-model="Store.target_column" class="px-5" label="Select" :items="Store.columns"
+        <v-autocomplete v-model="csvStore.target_column" class="px-5" label="Select" :items="csvStore.columns"
                         @update:modelValue="target_selected"/>
       </div>
 
-      <div v-if="Store.target_all_options.length !== 0">
+      <div v-if="csvStore.target_all_options.length !== 0">
         <v-card-text>
           Select target option:
         </v-card-text>
-        <v-autocomplete v-model="Store.target_option" class="px-5" label="Select" :items="Store.target_all_options"/>
+        <v-autocomplete v-model="csvStore.target_option" class="px-5" label="Select" :items="csvStore.target_all_options"/>
       </div>
 
-      <div v-if="Store.target_option">
-        <v-checkbox label="exclude missing values" v-model="Store.exclude_missing"></v-checkbox>
+      <div v-if="csvStore.target_option">
+        <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
       </div>
 
       <v-card-actions>
-        <div v-if="Store.target_option">
+        <div v-if="csvStore.target_option">
           <v-btn color="primary" @click="visualize()">Visualize</v-btn>
         </div>
       </v-card-actions>
@@ -39,12 +39,14 @@
 
 <script>
 import * as d3 from "d3";
-import {useCSVStore} from '@/stores/csvStore'
+import {useCSVStore} from '@/Stores/csvStore'
+import {useVisStore} from "@/Stores/visStore";
 
 export default {
   setup() {
-    const Store = useCSVStore()
-    return {Store}
+    const csvStore = useCSVStore()
+    const visStore = useVisStore()
+    return {csvStore, visStore}
   },
   data() {
     return {
@@ -63,9 +65,9 @@ export default {
       const reader = new FileReader();
       reader.onload = (event) => {
         const data = d3.csvParse(event.target.result)
-        this.Store.columns = data.columns
-        this.Store.csv = data
-        this.Store.min_bin_size = Math.floor(data.length/100)
+        this.csvStore.columns = data.columns
+        this.csvStore.csv = data
+        this.csvStore.min_bin_size = Math.floor(data.length/100)
       }
       reader.readAsText(csvFile)
     },
@@ -74,16 +76,17 @@ export default {
      */
     target_selected() {
       console.log("target_selected")
-      this.Store.target_all_options = [...new Set(this.Store.csv.map(d => d[this.Store.target_column]))]
-      this.Store.target_all_options = this.Store.target_all_options.filter(d => !(d === null || d === ""))
-      console.log(this.Store.target_all_options)
+      this.csvStore.target_all_options = [...new Set(this.csvStore.csv.map(d => d[this.csvStore.target_column]))]
+      this.csvStore.target_all_options = this.csvStore.target_all_options.filter(d => !(d === null || d === ""))
+      console.log(this.csvStore.target_all_options)
     },
     /**
      * start the calculation of the visualizations and closes the overlay
      */
     visualize() {
-      this.Store.start = false
-      this.Store.calc_variable_summaries()
+      this.csvStore.start = false
+      this.visStore.set_initial_default_settings(this.csvStore.csv.length, this.csvStore.target_column, this.csvStore.target_option)
+      this.csvStore.calc_variable_summaries()
       this.files = null
     }
   }

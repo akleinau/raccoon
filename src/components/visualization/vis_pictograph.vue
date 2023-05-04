@@ -5,6 +5,7 @@
 <script>
 import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
+import {useVisStore} from "@/stores/visStore";
 
 export default {
     name: "vis_pictograph",
@@ -27,15 +28,29 @@ export default {
     },
     setup() {
         const helperStore = useHelperStore()
-        return {helperStore}
-    }
-    ,
+        const visStore = useVisStore()
+        return {helperStore, visStore}
+    },
+    computed: {
+        color() {
+            return this.description.color ? this.description.color : this.visStore.default_settings[this.description.type].color
+        },
+        grid() {
+            return this.description.grid ? this.description.grid : this.visStore.default_settings[this.description.type].grid
+        },
+        range() {
+            return this.description.range ? this.description.range : this.visStore.default_settings[this.description.type].range
+        },
+        title() {
+            return this.description.title ? this.description.title : this.visStore.default_settings[this.description.type].title
+        }
+    },
     methods: {
         get_range() {
-            if (this.description.range === "percent") {
+            if (this.range === "percent") {
                 return [0, 1]
             } else {
-                return this.description.range
+                return this.range
             }
         }
         ,
@@ -46,8 +61,8 @@ export default {
          * @returns {string}
          */
         get_value(value) {
-            const nominator = (this.description.range === "percent") ? value : (value / this.get_range()[1])
-            return (nominator * this.description.grid[0] * this.description.grid[1]).toFixed(0)
+            const nominator = (this.range === "percent") ? value : (value / this.get_range()[1])
+            return (nominator * this.grid[0] * this.grid[1]).toFixed(0)
 
         }
         ,
@@ -59,7 +74,7 @@ export default {
          * @returns {string}
          */
         get_value_text(value) {
-            return this.get_value(value) + "/" + this.description.grid[0] * this.description.grid[1]
+            return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
         }
         ,
         /**
@@ -72,13 +87,13 @@ export default {
             let margin_top_grid = 10
             let margin_top = 30
             let margin_right = 60
-            let width = (this.width? this.width : 300) - margin_right
+            let width = (this.width ? this.width : 300) - margin_right
             let startBarX = this.helperStore.get_max_length(this.description.options) * 10
             const padding = 0.3
 
-            const dot_range_X = d3.range(0, this.description.grid[0], 1)
-            const dot_range_Y = d3.range(0, this.description.grid[1], 1)
-            const dot_range = d3.range(0, (this.description.grid[0] * this.description.grid[1]), 1)
+            const dot_range_X = d3.range(0, this.grid[0], 1)
+            const dot_range_Y = d3.range(0, this.grid[1], 1)
+            const dot_range = d3.range(0, (this.grid[0] * this.grid[1]), 1)
 
 
             let x = d3.scaleBand()
@@ -86,7 +101,7 @@ export default {
                 .range([startBarX, width + startBarX])
                 .padding(padding)
 
-            const y_range = x.step() * this.description.grid[1]
+            const y_range = x.step() * this.grid[1]
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
                 .range([0, y_range])
@@ -122,10 +137,10 @@ export default {
                     d3.select(node[index]).selectAll("circle")
                         .data(dot_range)
                         .join("circle")
-                        .attr("cx", d => x(Math.floor(d / this.description.grid[1])))
-                        .attr("cy", d => y_options(par.name) + y(d % this.description.grid[1]))
+                        .attr("cx", d => x(Math.floor(d / this.grid[1])))
+                        .attr("cy", d => y_options(par.name) + y(d % this.grid[1]))
                         .attr("r", x.bandwidth() / 2)
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.description.color : "darkgray")
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.color : "darkgray")
                 })
 
 
@@ -165,7 +180,7 @@ export default {
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.description.title)
+                .text(this.title)
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())

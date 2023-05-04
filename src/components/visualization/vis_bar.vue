@@ -5,6 +5,7 @@
 <script>
 import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
+import {useVisStore} from "@/stores/visStore";
 
 export default {
     name: "vis_bar",
@@ -27,7 +28,20 @@ export default {
     },
     setup() {
         const helperStore = useHelperStore()
-        return {helperStore}
+        const visStore = useVisStore()
+        return {helperStore, visStore}
+    },
+    computed: {
+        color() {
+            return this.description.color ? this.description.color : this.visStore.default_settings[this.description.type].color
+        },
+        range() {
+            return this.description.range ? this.description.range : this.visStore.default_settings[this.description.type].range
+        },
+        title() {
+            return this.description.title ? this.description.title : this.visStore.default_settings[this.description.type].title
+        }
+
     },
     methods: {
         /**
@@ -36,10 +50,10 @@ export default {
          * @returns {number[]|*}
          */
         get_range() {
-            if (this.description.range === "percent") {
+            if (this.range === "percent") {
                 return [0, 1]
             } else {
-                return this.description.range
+                return this.range
             }
         },
         /**
@@ -49,7 +63,7 @@ export default {
          * @returns {*|string}
          */
         get_value_text(value) {
-            if (this.description.range === "percent") {
+            if (this.range === "percent") {
                 return (value * 100).toFixed(0) + "%"
             }
             return value
@@ -95,7 +109,7 @@ export default {
                 .attr("y", d => y(d.name))
                 .attr("width", d => x(d.value) - x(0))
                 .attr("height", y.bandwidth())
-                .attr("fill", this.description.color)
+                .attr("fill", this.color)
 
             svg.selectAll("textName")
                 .data(data)
@@ -132,7 +146,7 @@ export default {
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.description.title)
+                .text(this.title)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

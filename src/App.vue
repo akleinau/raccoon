@@ -80,7 +80,7 @@
                     <div v-for="column in csvStore.variable_summaries.slice(1,20)" v-bind:key="column">
                         <fact_group_preview class="pa-2" style="height:500px"
                                             v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name) && column.name !== csvStore.target_column"
-                                            :visList="visStore.generate_vis_from_settings(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
+                                            :visList="visStore.generate_main_fact_visList(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
                                             :column="column" :vertical="true"/>
                     </div>
 
@@ -130,13 +130,9 @@ export default {
     methods: {
         get_visList_target() {
             return [{
+                type: 'impact',
                 data_map: this.current_target_column['occurrence'],
                 options: this.current_target_column['options'],
-                range: [0, this.csvStore.csv.length],
-                grid: this.visStore.impact_settings.grid,
-                graph: this.visStore.impact_settings.graph,
-                color: 'royalblue',
-                title: '#people per option'
             }]
         }
     }

@@ -13,7 +13,8 @@
             </div>
 
             <div class="d-flex">
-                <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList" v-bind:key="vis">
+                <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList"
+                     v-bind:key="vis">
                     <v-hover v-slot="{ isHovering, props }">
                         <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
                                 :class="{ 'on-hover': isHovering }" class="pa-2">
@@ -40,10 +41,19 @@
                 <v-expansion-panel class="ma-1">
                     <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
                     <v-expansion-panel-text>
-                        <vis_parser v-if="visStore.current_fact_group.column.type==='continuous'"
-                                    :description="{graph: 'density', data: visStore.current_fact_group.column.data,
-                      data_with_target_option: visStore.current_fact_group.column.data_with_target_option,
-                      title: 'Density'}"/>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column pa-1"
+                                 v-for="vis in visStore.generate_additional_fact_visList(visStore.current_fact_group.column)"
+                                 v-bind:key="vis">
+                                <v-hover v-slot="{ isHovering, props }">
+                                    <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
+                                            :class="{ 'on-hover': isHovering }" class="pa-2">
+                                        <vis_parser :description="vis"/>
+                                    </v-card>
+                                </v-hover>
+                                <v-btn @click="show_fact_view(vis)" class="mt-2">Show</v-btn>
+                            </div>
+                        </div>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>
