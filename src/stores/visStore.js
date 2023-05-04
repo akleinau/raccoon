@@ -5,7 +5,6 @@ export const useVisStore = defineStore('visStore', {
         dashboard_items: [],
         current_fact_group: null,
         current_fact: null,
-        show_continuous: false,
         default_settings: {
             impact: {
                 graph: "bar",

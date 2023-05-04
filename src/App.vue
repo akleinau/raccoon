@@ -7,7 +7,6 @@
         <v-app-bar>
             <v-app-bar-title>Raccoon</v-app-bar-title>
             <template v-slot:append>
-                <settings_view/>
                 <v-btn @click="this.csvStore.reset()">Reset</v-btn>
             </template>
         </v-app-bar>
@@ -28,26 +27,7 @@
 
             <v-card title="Adapt" class="pa-5">
                 <div class="d-flex">
-                    <v-expansion-panels class="ma-3 w-50">
-                        <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text class="text-grey-darken-2">
-                            </v-expansion-panel-text>
-                        </v-expansion-panel>
-
-                        <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Background </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text>
-                            </v-expansion-panel-text>
-                        </v-expansion-panel>
-
-                        <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Font </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text>
-                            </v-expansion-panel-text>
-                        </v-expansion-panel>
-
-                    </v-expansion-panels>
+                    <settings_view/>
 
                     <div class="w-50 pl-5">
                         <h3> Tips </h3>
