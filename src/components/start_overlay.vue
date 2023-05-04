@@ -39,11 +39,11 @@
 
 <script>
 import * as d3 from "d3";
-import {useStore} from '@/stores/csvStore'
+import {useCSVStore} from '@/stores/csvStore'
 
 export default {
   setup() {
-    const Store = useStore()
+    const Store = useCSVStore()
     return {Store}
   },
   data() {

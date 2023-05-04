@@ -39,8 +39,8 @@
 
 <script>
 import fact_group_preview from "@/components/fact_group_preview.vue";
-import {useStore as csv_useStore} from "@/stores/csvStore";
-import {useStore as vis_useStore} from "@/stores/visStore";
+import {useVisStore} from "@/stores/visStore";
+import {useCSVStore} from "@/stores/csvStore";
 
 export default {
     name: "settings_view",
@@ -51,8 +51,8 @@ export default {
         "textButton"
     ],
     setup() {
-        const csvStore = csv_useStore()
-        const visStore = vis_useStore()
+        const visStore = useVisStore()
+        const csvStore = useCSVStore()
         return {csvStore, visStore}
     },
     data() {

@@ -18,8 +18,8 @@
 
 <script>
 import vis_parser from "@/components/visualization/vis_parser.vue";
-import {useStore as vis_useStore} from "@/stores/visStore";
-import {useStore as csv_useStore} from "@/stores/csvStore";
+import {useVisStore} from "@/stores/visStore";
+import {useCSVStore} from "@/stores/csvStore";
 
 export default {
     name: "fact_group",
@@ -32,8 +32,8 @@ export default {
         "width"
     ],
     setup() {
-        const visStore = vis_useStore()
-        const csvStore = csv_useStore()
+        const visStore = useVisStore()
+        const csvStore = useCSVStore()
         return {csvStore, visStore}
     },
     methods: {

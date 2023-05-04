@@ -4,7 +4,7 @@
 
 <script>
 import * as d3 from "d3";
-import {useStore as csv_useStore} from "@/stores/csvStore";
+import {useHelperStore} from "@/stores/helperStore";
 
 export default {
     name: "vis_pictograph",
@@ -18,7 +18,7 @@ export default {
                     "name": key,
                     "value": value
                 }))
-                data.sort((a, b) => this.Store.sort(a.name, b.name))
+                data.sort((a, b) => this.helperStore.sort(a.name, b.name))
                 this.visualize(data)
             }
             ,
@@ -26,8 +26,8 @@ export default {
         }
     },
     setup() {
-        const Store = csv_useStore()
-        return {Store}
+        const helperStore = useHelperStore()
+        return {helperStore}
     }
     ,
     methods: {
@@ -73,7 +73,7 @@ export default {
             let margin_top = 30
             let margin_right = 60
             let width = (this.width? this.width : 300) - margin_right
-            let startBarX = this.Store.get_max_length(this.description.options) * 10
+            let startBarX = this.helperStore.get_max_length(this.description.options) * 10
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.description.grid[0], 1)
@@ -175,7 +175,7 @@ export default {
     mounted() {
         if (this.description.data_map != null) {
             let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data.sort((a, b) => this.Store.sort(a.name, b.name))
+            data.sort((a, b) => this.helperStore.sort(a.name, b.name))
             this.visualize(data)
         }
     }

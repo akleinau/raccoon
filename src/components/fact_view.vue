@@ -21,14 +21,14 @@
 </template>
 
 <script>
-import {useStore as vis_useStore} from "@/stores/visStore";
+import {useVisStore} from "@/stores/visStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 
 export default {
   name: "fact_view",
   components: {vis_parser},
   setup() {
-    const visStore = vis_useStore()
+    const visStore = useVisStore()
     return {visStore}
   },
   data() {

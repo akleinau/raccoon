@@ -104,8 +104,8 @@ import fact_group_view from './components/fact_group_view.vue'
 import fact_view from './components/fact_view.vue'
 import settings_view from "@/components/settings_view.vue";
 import all_risk_factor_view from "@/components/all_risk_factor_view.vue";
-import {useStore as csv_useStore} from "@/stores/csvStore";
-import {useStore as vis_useStore} from "@/stores/visStore";
+import {useVisStore} from "@/stores/visStore";
+import {useCSVStore} from "@/stores/csvStore";
 
 
 export default {
@@ -118,8 +118,8 @@ export default {
         all_risk_factor_view
     },
     setup() {
-        const csvStore = csv_useStore()
-        const visStore = vis_useStore()
+        const csvStore = useCSVStore()
+        const visStore = useVisStore()
         return {csvStore, visStore}
     },
     computed: {

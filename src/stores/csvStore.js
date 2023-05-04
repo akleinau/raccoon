@@ -1,7 +1,8 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
+import { useHelperStore } from './helperStore'
 
-export const useStore = defineStore('csvStore', {
+export const useCSVStore = defineStore('csvStore', {
     state: () => ({
         start: true,
         exclude_missing: true,
@@ -53,7 +54,7 @@ export const useStore = defineStore('csvStore', {
                         //calculate bins
                         const steps = 2
                         let extent = this.calculate_pretty_extent(options_num, steps)
-                        let options_bin = [...new Set(options.map(d => this.bin_value(d, extent)))].sort(this.sort)
+                        let options_bin = [...new Set(options.map(d => this.bin_value(d, extent)))].sort(useHelperStore().sort)
 
 
                         let summary = {
@@ -250,29 +251,6 @@ export const useStore = defineStore('csvStore', {
             return summary
         },
         /**
-         * sorts options first by number, then by their string name
-         *
-         * @param a
-         * @param b
-         * @returns {number}
-         */
-        sort(a, b) {
-            let a_split = a.split("-")
-            let b_split = b.split("-")
-            let a_is_number = !isNaN(a_split[0]) && a_split[0] !== ""
-            let b_is_number = !isNaN(b_split[0]) && b_split[0] !== ""
-            if (a_is_number && b_is_number) {
-                return a_split[0] - b_split[0]
-            }
-            if (a_is_number) {
-                return -1
-            }
-            if (b_is_number) {
-                return 1
-            }
-            return a.localeCompare(b)
-        },
-        /**
          * if missing values should be excluded, remove them from the summary
          *
          * @param summary
@@ -300,14 +278,6 @@ export const useStore = defineStore('csvStore', {
             this.target_all_options = []
             this.target_option = null
             this.variable_summaries = []
-        },
-        /**
-         * calculates the maximum length of all options
-         * @param options
-         * @returns {*}
-         */
-        get_max_length(options) {
-            return options.reduce((max, option) => Math.max(max, option.length), 0)
         }
     }
 })

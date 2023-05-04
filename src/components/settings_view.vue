@@ -43,14 +43,14 @@
 </template>
 
 <script>
-import {useStore as csv_useStore} from "@/stores/csvStore";
-import {useStore as vis_useStore} from "@/stores/visStore";
+import {useVisStore} from "@/stores/visStore";
+import {useCSVStore} from "@/stores/csvStore";
 
 export default {
   name: "settings_view",
   setup() {
-    const csvStore = csv_useStore()
-    const visStore = vis_useStore()
+    const csvStore = useVisStore()
+    const visStore = useCSVStore()
     return {csvStore, visStore}
   },
   data() {

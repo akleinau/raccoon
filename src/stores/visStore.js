@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 
-export const useStore = defineStore('visStore', {
+export const useVisStore = defineStore('visStore', {
     state: () => ({
         dashboard_items: [],
         current_fact_group: null,
