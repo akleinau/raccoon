@@ -192,7 +192,9 @@ export const useCSVStore = defineStore('csvStore', {
         calculate_pretty_extent(options, steps) {
             let extent = d3.extent(options.map(d => +d))
             let stepsize = (extent[1] - extent[0]) / steps
-            let pretty_stepsize = Math.pow(10, Math.floor(Math.log10(stepsize)))
+            let pretty_stepsize_10 = Math.pow(10, Math.floor(Math.log10(stepsize)))
+            let pretty_stepsize = Math.floor(stepsize/pretty_stepsize_10)*pretty_stepsize_10
+            //let pretty_stepsize = (stepsize).toFixed(-Math.min(0,Math.floor(Math.log10(stepsize))))
             let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
             let pretty_max = Math.ceil(extent[1] / pretty_stepsize) * pretty_stepsize
 
