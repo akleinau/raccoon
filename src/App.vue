@@ -70,7 +70,9 @@
             </v-card>
 
             <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
-
+                <div v-for="item in visStore.generate_context_visList()" v-bind:key="item">
+                    <fact_group_preview :visList="[item]" :column="{name:'context'}"/>
+                </div>
             </v-card>
         </v-main>
 

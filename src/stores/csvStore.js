@@ -45,6 +45,8 @@ export const useCSVStore = defineStore('csvStore', {
 
                     //significance_score: difference in percentages of percent_target_option
                     summary.significance = this.compute_significance_score(summary)
+                    summary.riskIncrease = this.compute_risk_increase(summary)
+
                     this.variable_summaries.push(summary)
 
                 } else {
@@ -82,6 +84,8 @@ export const useCSVStore = defineStore('csvStore', {
 
                         //significance_score: difference in percentages of percent_target_option
                         summary.significance = this.compute_significance_score(summary)
+                        summary.riskIncrease = this.compute_risk_increase(summary)
+
                         this.variable_summaries.push(summary)
                     }
                 }
@@ -283,6 +287,32 @@ export const useCSVStore = defineStore('csvStore', {
                 delete summary.occurrence_target_option["NA"]
             }
             return summary
+        },
+        /**
+         * binary percent risk increase when in specific groups
+         *
+         * @param summary
+         * @returns {{risk_difference: string, risk_factor_groups: string}}
+         */
+        compute_risk_increase(summary) {
+            const percent_range = d3.extent(Object.values(summary.percent_target_option))
+            const split_percent = percent_range[0] + (percent_range[1] - percent_range[0]) / 2
+
+            const groups_below = Object.entries(summary.percent_target_option).filter(d => d[1] < split_percent)
+            const groups_below_occurrence_sum = groups_below.reduce((a, b) => a + summary.occurrence[b[0]], 0)
+            const groups_below_target_option_occurrence_sum = groups_below.reduce((a, b) => a + summary.occurrence_target_option[b[0]], 0)
+            const below_percentage = groups_below_target_option_occurrence_sum / groups_below_occurrence_sum
+
+            const groups_above = Object.entries(summary.percent_target_option).filter(d => d[1] >= split_percent)
+            const groups_above_occurrence_sum = groups_above.reduce((a, b) => a + summary.occurrence[b[0]], 0)
+            const groups_above_target_option_occurrence_sum = groups_above.reduce((a, b) => a + summary.occurrence_target_option[b[0]], 0)
+            const above_percentage = groups_above_target_option_occurrence_sum / groups_above_occurrence_sum
+
+            const name_above = groups_above.reduce((a, b) => a + ", " + b[0], "")
+
+            const risk_multiplier = below_percentage === 0? null : (above_percentage/below_percentage).toFixed(2)
+
+            return {"risk_factor_groups": name_above, risk_difference: risk_multiplier}
         },
         /**
          * resets all variables to their initial state

@@ -15,13 +15,17 @@ export default {
     watch: {
         description: {
             handler: function () {
-                let data = Object.entries(this.description.data_map).map(([key, value]) => ({
-                    "name": key,
-                    "value": value
-                }))
-                data = data.sort((a, b) => this.helperStore.sort(
-                    this.description.options.find(x => x.name === a.name),
-                    this.description.options.find(x => x.name === b.name)))
+                let data = this.description.data
+                if (this.description.data_map !== undefined) {
+                    data = Object.entries(this.description.data_map).map(([key, value]) => ({
+                        "name": key,
+                        "value": value
+                    }))
+                    data = data.sort((a, b) => this.helperStore.sort(
+                        this.description.options.find(x => x.name === a.name),
+                        this.description.options.find(x => x.name === b.name)))
+                }
+
                 this.visualize(data)
             }
             ,
@@ -156,11 +160,18 @@ export default {
         }
     },
     mounted() {
-        if (this.description.data_map != null) {
-            let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data = data.sort((a, b) => this.helperStore.sort(
-                this.description.options.find(x => x.name === a.name),
-                this.description.options.find(x => x.name === b.name)))
+        if (this.description.data_map != null || this.description.data != null) {
+            let data = this.description.data
+            if (this.description.data_map !== undefined) {
+                data = Object.entries(this.description.data_map).map(([key, value]) => ({
+                    "name": key,
+                    "value": value
+                }))
+                data = data.sort((a, b) => this.helperStore.sort(
+                    this.description.options.find(x => x.name === a.name),
+                    this.description.options.find(x => x.name === b.name)))
+            }
+
             this.visualize(data)
         }
     }

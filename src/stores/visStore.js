@@ -72,6 +72,30 @@ export const useVisStore = defineStore('visStore', {
         set_initial_default_settings(length, target_column, target_option) {
             this.default_settings.significance.title = "Frequency of " + target_column + ": " + target_option
             this.default_settings.impact.range = [0, length]
+        },
+        generate_context_visList() {
+            let visList = []
+            if (this.dashboard_items.length > 0) {
+                const max_risk_increase = Math.max(...this.dashboard_items.map(item => item.summary.riskIncrease.risk_difference)) + 1
+                visList.push(
+                    {
+                        type: "context",
+                        data: this.dashboard_items.map(item => ({
+                            name: item.summary.riskIncrease.risk_factor_groups,
+                            value: item.summary.riskIncrease.risk_difference
+                        })),
+                        options: this.dashboard_items.map(item => ({
+                            "name": item.summary.riskIncrease.risk_factor_groups,
+                            "label": item.summary.name + ": " + item.summary.riskIncrease.risk_factor_groups
+                        })),
+                        graph: "bar",
+                        color: "green",
+                        range: [0, max_risk_increase],
+                        title: "Risk Increase"
+                    }
+                )
+            }
+            return visList
         }
     }
 })
