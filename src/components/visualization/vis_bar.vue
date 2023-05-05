@@ -19,7 +19,9 @@ export default {
                     "name": key,
                     "value": value
                 }))
-                data.sort((a, b) => this.helperStore.sort(a.name, b.name))
+                data = data.sort((a, b) => this.helperStore.sort(
+                    this.description.options.find(x => x.name === a.name),
+                    this.description.options.find(x => x.name === b.name)))
                 this.visualize(data)
             }
             ,
@@ -78,7 +80,7 @@ export default {
             let marging_bottom = 30
             let width = this.width ? this.width : 300
             let height = data.length * (width / 10)
-            let startBarX = this.helperStore.get_max_length(this.description.options) * 10 + 10
+            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.name)) * 10 + 10
 
             let svg = d3.create("svg")
                 .attr("width", width + startBarX)
@@ -116,7 +118,7 @@ export default {
                 .join("text")
                 .attr("x", startBarX - 5)
                 .attr("y", d => y(d.name))
-                .text(d => (d.name === "") ? "null" : d.name)
+                .text(d => (d.name === "") ? "null" : this.description.options.find(x => x.name === d.name).label)
                 .style("text-anchor", "end")
                 .attr("dy", y.bandwidth() - 5)
 
@@ -156,7 +158,9 @@ export default {
     mounted() {
         if (this.description.data_map != null) {
             let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data.sort((a, b) => this.helperStore.sort(a.name, b.name))
+            data = data.sort((a, b) => this.helperStore.sort(
+                this.description.options.find(x => x.name === a.name),
+                this.description.options.find(x => x.name === b.name)))
             this.visualize(data)
         }
     }

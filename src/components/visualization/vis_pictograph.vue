@@ -19,7 +19,9 @@ export default {
                     "name": key,
                     "value": value
                 }))
-                data.sort((a, b) => this.helperStore.sort(a.name, b.name))
+                data = data.sort((a, b) => this.helperStore.sort(
+                    this.description.options.find(x => x.name === a.name),
+                    this.description.options.find(x => x.name === b.name)))
                 this.visualize(data)
             }
             ,
@@ -88,7 +90,7 @@ export default {
             let margin_top = 30
             let margin_right = 60
             let width = (this.width ? this.width : 300) - margin_right
-            let startBarX = this.helperStore.get_max_length(this.description.options) * 10 + 10
+            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.name)) * 10 + 10
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.grid[0], 1)
@@ -149,7 +151,7 @@ export default {
                 .join("text")
                 .attr("x", startBarX - x.bandwidth() / 2 - 5)
                 .attr("y", d => y_options(d.name))
-                .text(d => (d.name === "") ? "null" : d.name)
+                .text(d => (d.name === "") ? "null" : this.description.options.find(x => x.name === d.name).label)
                 .style("text-anchor", "end")
                 .attr("dy", y_options.bandwidth() / 2 - 5)
 
@@ -190,7 +192,9 @@ export default {
     mounted() {
         if (this.description.data_map != null) {
             let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data.sort((a, b) => this.helperStore.sort(a.name, b.name))
+            data = data.sort((a, b) => this.helperStore.sort(
+                this.description.options.find(x => x.name === a.name),
+                this.description.options.find(x => x.name === b.name)))
             this.visualize(data)
         }
     }

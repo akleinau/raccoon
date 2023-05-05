@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
-import { useHelperStore } from './helperStore'
+import {useHelperStore} from './helperStore'
 
 export const useCSVStore = defineStore('csvStore', {
     state: () => ({
@@ -23,6 +23,7 @@ export const useCSVStore = defineStore('csvStore', {
 
             this.columns.forEach(column => {
                 let options = [...new Set(this.csv.map(d => d[column]))]
+                options = options.map(o => ({"name": o, "label": o}))
                 //only continue if there are less than 10 options to make sure it is categorical or ordinal
                 if (options.length <= 10) {
                     let summary = {
@@ -30,9 +31,9 @@ export const useCSVStore = defineStore('csvStore', {
                         type: "categorical",
                         options: options,
                         //how often each option occurs
-                        occurrence: Object.fromEntries(new Map(options.map(d => [d, 0]))),
+                        occurrence: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
                         //how often each option occurs together with the target option
-                        occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d, 0]))),
+                        occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
                     }
                     this.csv.forEach(d => summary.occurrence[d[column]]++)
                     this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
@@ -47,14 +48,16 @@ export const useCSVStore = defineStore('csvStore', {
                     this.variable_summaries.push(summary)
 
                 } else {
-                    let options_num = options.filter(d => !isNaN(d) && d !== "")
+                    let options_num = options.filter(d => !isNaN(d.name) && d.name !== "")
 
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
                         const steps = 2
                         let extent = this.calculate_pretty_extent(options_num, steps)
-                        let options_bin = [...new Set(options.map(d => this.bin_value(d, extent)))].sort(useHelperStore().sort)
+                        let options_bin = options.map(d => this.bin_value(d.name, extent))
+                        options_bin = options_bin.filter((a,i) => options_bin.findIndex(b => b.name === a.name) >= i)
+                        options_bin = options_bin.sort(useHelperStore().sort)
 
 
                         let summary = {
@@ -64,12 +67,12 @@ export const useCSVStore = defineStore('csvStore', {
                             data: this.csv.map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
                             data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
                             //how often each option occurs
-                            occurrence: Object.fromEntries(new Map(options_bin.map(d => [d, 0]))),
+                            occurrence: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                             //how often each option occurs together with the target option
-                            occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d, 0]))),
+                            occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                         }
-                        this.csv.forEach(d => summary.occurrence[this.bin_value(d[column], extent)]++)
-                        this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.bin_value(d[column], extent)]++)
+                        this.csv.forEach(d => summary.occurrence[this.bin_value(d[column], extent).name]++)
+                        this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.bin_value(d[column], extent).name]++)
                         summary = this.bin_ends(summary, this.min_bin_size)
 
                         summary = this.summary_exclude_missing(summary)
@@ -123,10 +126,10 @@ export const useCSVStore = defineStore('csvStore', {
                 for (let j = i + 1; j < summary.options.length; j++) {
                     let o1 = summary.options[i]
                     let o2 = summary.options[j]
-                    let p1 = summary.percent_target_option[o1]
-                    let p2 = summary.percent_target_option[o2]
-                    let n1 = summary.occurrence[o1]
-                    let n2 = summary.occurrence[o2]
+                    let p1 = summary.percent_target_option[o1.name]
+                    let p2 = summary.percent_target_option[o2.name]
+                    let n1 = summary.occurrence[o1.name]
+                    let n2 = summary.occurrence[o2.name]
                     if (this.significance_test_proportions(p1, p2, n1, n2)) {
                         tuples.push({
                             "option1": o1,
@@ -141,7 +144,7 @@ export const useCSVStore = defineStore('csvStore', {
             }
 
             return {
-                "significant_tuples": tuples.map(d => [d.option1, d.option2]),
+                "significant_tuples": tuples.map(d => [d.option1.label, d.option2.label]),
                 "score": Math.max(...tuples.map(d => d.diff))
             }
         },
@@ -175,11 +178,18 @@ export const useCSVStore = defineStore('csvStore', {
          */
         bin_value(value, range) {
             if (isNaN(value) || value === "") {
-                return value
+                return {"name": value, "label": value}
             }
-            var step = Math.floor((value - range[0]) / range[2])
-            var logStep = Math.max(0, -Math.floor(Math.log10(range[2])))
-            return (range[0] + step * range[2]).toFixed(logStep) + "-" + (range[0] + (step + 1) * range[2]).toFixed(logStep)
+            let step = Math.floor((value - range[0]) / range[2])
+            let logStep = Math.max(0, -Math.floor(Math.log10(range[2])))
+            let new_min = (range[0] + step * range[2]).toFixed(logStep)
+            let new_max = (range[0] + (step + 1) * range[2]).toFixed(logStep)
+
+            return {
+                "name": new_min + "-" + new_max,
+                "label": new_min + "-" + new_max,
+                "range": [new_min, new_max]
+            }
         },
         /**
          * calculates pretty extents for continuous columns.
@@ -190,10 +200,10 @@ export const useCSVStore = defineStore('csvStore', {
          * @returns {(number|number)[]}
          */
         calculate_pretty_extent(options, steps) {
-            let extent = d3.extent(options.map(d => +d))
+            let extent = d3.extent(options.map(d => +d.name))
             let stepsize = (extent[1] - extent[0]) / steps
             let pretty_stepsize_10 = Math.pow(10, Math.floor(Math.log10(stepsize)))
-            let pretty_stepsize = Math.floor(stepsize/pretty_stepsize_10)*pretty_stepsize_10
+            let pretty_stepsize = Math.floor(stepsize / pretty_stepsize_10) * pretty_stepsize_10
             //let pretty_stepsize = (stepsize).toFixed(-Math.min(0,Math.floor(Math.log10(stepsize))))
             let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
             let pretty_max = Math.ceil(extent[1] / pretty_stepsize) * pretty_stepsize
@@ -208,48 +218,53 @@ export const useCSVStore = defineStore('csvStore', {
          * @returns {*}
          */
         bin_ends(summary, min_bin_size) {
-            let options_num = summary.options.filter(d => !isNaN(d.split("-")[0]) && !isNaN(d.split("-")[0]) && d !== "")
+            let options_num = summary.options
+            let last_index_num= options_num.filter(a => a.range !== undefined).length - 1
 
             //iterate through options_num from behind
-            let i = options_num.length - 1
+            let i = last_index_num
             let occurrence_sum = 0
             let occurrence_target_option_sum = 0
-            let name_end = options_num[i].split("-")[1]
+            let name_end = options_num[i].range[1]
             let name_start = ""
             while (occurrence_sum < min_bin_size && i > 0) {
-                occurrence_sum += summary['occurrence'][options_num[i]]
-                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i]]
-                name_start = options_num[i].split("-")[0]
-                delete summary.occurrence[options_num[i]]
-                delete summary.occurrence_target_option[options_num[i]]
+                occurrence_sum += summary['occurrence'][options_num[i].name]
+                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i].name]
+                name_start = options_num[i].range[0]
+                delete summary.occurrence[options_num[i].name]
+                delete summary.occurrence_target_option[options_num[i].name]
+                options_num.splice(i,1)
                 i--
             }
-            if (i < options_num.length - 1) {
+            if (i < last_index_num) {
                 summary.occurrence[name_start + "-" + name_end] = occurrence_sum
                 summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
+                options_num.push({"name": name_start + "-" + name_end, "label": ">" + name_start, "range": [name_start, name_end]})
             }
 
             //iterate through options_num from front
             i = 0
             occurrence_sum = 0
             occurrence_target_option_sum = 0
-            name_start = options_num[i].split("-")[0]
+            name_start = options_num[i].range[0]
             name_end = ""
-            while (occurrence_sum < min_bin_size && i < options_num.length - 1) {
-                occurrence_sum += summary['occurrence'][options_num[i]]
-                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i]]
-                name_end = options_num[i].split("-")[1]
-                delete summary.occurrence[options_num[i]]
-                delete summary.occurrence_target_option[options_num[i]]
+            while (occurrence_sum < min_bin_size && i < last_index_num) {
+                occurrence_sum += summary['occurrence'][options_num[i].name]
+                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i].name]
+                name_end = options_num[i].range[1]
+                delete summary.occurrence[options_num[i].name]
+                delete summary.occurrence_target_option[options_num[i].name]
                 i++
             }
+            options_num.splice(0,i)
 
             if (i > 0) {
                 summary.occurrence[name_start + "-" + name_end] = occurrence_sum
                 summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
+                options_num.push({"name": name_start + "-" + name_end,  "label": "<" + name_end, "range": [name_start, name_end]})
             }
 
-            summary.options = Object.keys(summary.occurrence)
+            summary.options = options_num.sort(useHelperStore().sort)
             return summary
         },
         /**
@@ -261,7 +276,7 @@ export const useCSVStore = defineStore('csvStore', {
         summary_exclude_missing(summary) {
             //exclude missing values
             if (this.exclude_missing) {
-                summary.options = summary.options.filter(d => d !== "" && d !== "NaN")
+                summary.options = summary.options.filter(d => d.name !== "" && d.name !== "NaN")
                 delete summary.occurrence[""]
                 delete summary.occurrence_target_option[""]
                 delete summary.occurrence["NA"]

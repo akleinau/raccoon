@@ -11,20 +11,16 @@ export const useHelperStore = defineStore('helperStore', {
          * @returns {number}
          */
         sort(a, b) {
-            let a_split = a.split("-")
-            let b_split = b.split("-")
-            let a_is_number = !isNaN(a_split[0]) && a_split[0] !== ""
-            let b_is_number = !isNaN(b_split[0]) && b_split[0] !== ""
-            if (a_is_number && b_is_number) {
-                return a_split[0] - b_split[0]
+            if (a.range && b.range) {
+                return a.range[0] - b.range[0]
             }
-            if (a_is_number) {
+            if (a.range) {
                 return -1
             }
-            if (b_is_number) {
+            if (b.range) {
                 return 1
             }
-            return a.localeCompare(b)
+            return a.name.localeCompare(b.name)
         },
         /**
          * calculates the maximum length of all options
