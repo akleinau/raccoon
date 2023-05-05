@@ -84,7 +84,7 @@ export default {
             let marging_bottom = 30
             let width = this.width ? this.width : 300
             let height = data.length * (width / 10)
-            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.name)) * 10 + 10
+            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.label)) * 10 + 10
 
             let svg = d3.create("svg")
                 .attr("width", width + startBarX)

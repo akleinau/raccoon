@@ -90,7 +90,7 @@ export default {
             let margin_top = 30
             let margin_right = 60
             let width = (this.width ? this.width : 300) - margin_right
-            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.name)) * 10 + 10
+            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.label)) * 10 + 10
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.grid[0], 1)
