@@ -11,13 +11,13 @@ export const useHelperStore = defineStore('helperStore', {
          * @returns {number}
          */
         sort(a, b) {
-            if (a.range && b.range) {
+            if (a.range !== undefined && b.range !== undefined) {
                 return a.range[0] - b.range[0]
             }
-            if (a.range) {
+            if (a.range !== undefined) {
                 return -1
             }
-            if (b.range) {
+            if (b.range !== undefined) {
                 return 1
             }
             return a.name.localeCompare(b.name)

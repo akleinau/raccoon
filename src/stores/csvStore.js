@@ -247,6 +247,7 @@ export const useCSVStore = defineStore('csvStore', {
             }
 
             //iterate through options_num from front
+            last_index_num = i+1
             i = 0
             occurrence_sum = 0
             occurrence_target_option_sum = 0
@@ -280,7 +281,7 @@ export const useCSVStore = defineStore('csvStore', {
         summary_exclude_missing(summary) {
             //exclude missing values
             if (this.exclude_missing) {
-                summary.options = summary.options.filter(d => d.name !== "" && d.name !== "NaN")
+                summary.options = summary.options.filter(d => d.name !== "" && d.name !== "NA")
                 delete summary.occurrence[""]
                 delete summary.occurrence_target_option[""]
                 delete summary.occurrence["NA"]
