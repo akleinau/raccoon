@@ -5,10 +5,10 @@
             <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
                     :class="{ 'on-hover': isHovering}"
                     @click="show_fact_group_view">
-                <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.name }}</h4>
+                <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.label }}</h4>
                 <div class="pa-2 mr-2 d-flex align-center" :class="{ 'flex-column': vertical }">
                     <div v-for="vis in visList" v-bind:key="vis">
-                        <vis_parser :description="vis" :width="350"/>
+                        <vis_parser :vis="vis" :column="column" :width="350"/>
                     </div>
                 </div>
             </v-card>

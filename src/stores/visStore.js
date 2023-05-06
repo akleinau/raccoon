@@ -26,9 +26,10 @@ export const useVisStore = defineStore('visStore', {
         add_dashboard_item(summary, visList) {
             this.dashboard_items.push({
                 "name": summary.name,
-                "summary": summary,
-                "visualizations": visList
+                "column": summary,
+                "visList": visList
             })
+            console.log(this.dashboard_items)
         },
         remove_dashboard_item(name) {
             this.dashboard_items = this.dashboard_items.filter(item => item.name !== name)
@@ -39,18 +40,18 @@ export const useVisStore = defineStore('visStore', {
          * @param column
          * @returns {*[]}
          */
-        generate_main_fact_visList(column) {
+        generate_main_fact_visList() {
             let visList = []
             visList.push(
                 {
                     type: "significance",
-                    data_map: column['percent_target_option'],
-                    options: column['options'],
+                    data_map: 'percent_target_option',
+                    options: 'options',
                 },
                 {
                     type: "impact",
-                    data_map: column['occurrence'],
-                    options: column['options'],
+                    data_map: 'occurrence',
+                    options: 'options',
                 },
             )
             return visList
@@ -73,29 +74,33 @@ export const useVisStore = defineStore('visStore', {
             this.default_settings.significance.title = "Frequency of " + target_column + ": " + target_option
             this.default_settings.impact.range = [0, length]
         },
-        generate_context_visList() {
-            let visList = []
+        generate_context_facts() {
+            let facts = []
             if (this.dashboard_items.length > 0) {
-                const max_risk_increase = Math.max(...this.dashboard_items.map(item => item.summary.riskIncrease.risk_difference)) + 1
-                visList.push(
-                    {
+                const options = this.dashboard_items.map(item => ({
+                    "name": item.column.riskIncrease.risk_factor_groups,
+                    "label": item.column.label + ": " + item.column.riskIncrease.risk_factor_groups
+                }))
+                const column = {name: "Context", options: options}
+
+                const max_risk_increase = Math.max(...this.dashboard_items.map(item => item.column.riskIncrease.risk_difference)) + 1
+                facts.push({
+                    "visList": [{
                         type: "context",
                         data: this.dashboard_items.map(item => ({
-                            name: item.summary.riskIncrease.risk_factor_groups,
-                            value: item.summary.riskIncrease.risk_difference
-                        })),
-                        options: this.dashboard_items.map(item => ({
-                            "name": item.summary.riskIncrease.risk_factor_groups,
-                            "label": item.summary.name + ": " + item.summary.riskIncrease.risk_factor_groups
+                            name: item.column.riskIncrease.risk_factor_groups,
+                            value: item.column.riskIncrease.risk_difference
                         })),
                         graph: "bar",
                         color: "green",
                         range: [0, max_risk_increase],
                         title: "Risk Increase"
-                    }
-                )
+                    }],
+                    "column": column
+                })
             }
-            return visList
+
+            return facts
         }
     }
 })

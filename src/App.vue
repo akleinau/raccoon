@@ -15,7 +15,7 @@
             <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex flex-wrap">
                     <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
-                        <fact_group_preview :visList="item.visualizations" :column="item.summary"
+                        <fact_group_preview :visList="item.visList" :column="item.column"
                                             style="height:500px" vertical="true"/>
                         <v-btn class="mt-0" variant="tonal"
                                @click="visStore.remove_dashboard_item(item.name)"> Remove
@@ -60,7 +60,7 @@
                     <div v-for="column in csvStore.variable_summaries.slice(1,20)" v-bind:key="column">
                         <fact_group_preview class="pa-2" style="height:500px"
                                             v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name) && column.name !== csvStore.target_column"
-                                            :visList="visStore.generate_main_fact_visList(column, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
+                                            :visList="visStore.generate_main_fact_visList()"
                                             :column="column" :vertical="true"/>
                     </div>
 
@@ -70,8 +70,8 @@
             </v-card>
 
             <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
-                <div v-for="item in visStore.generate_context_visList()" v-bind:key="item">
-                    <fact_group_preview :visList="[item]" :column="{name:'context'}"/>
+                <div v-for="item in visStore.generate_context_facts()" v-bind:key="item">
+                    <fact_group_preview :visList="item.visList" :column="item.column"/>
                 </div>
             </v-card>
         </v-main>
@@ -113,8 +113,7 @@ export default {
         get_visList_target() {
             return [{
                 type: 'impact',
-                data_map: this.current_target_column['occurrence'],
-                options: this.current_target_column['options'],
+                data_map: 'occurrence'
             }]
         }
     }

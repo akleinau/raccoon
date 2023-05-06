@@ -28,6 +28,7 @@ export const useCSVStore = defineStore('csvStore', {
                 if (options.length <= 10) {
                     let summary = {
                         name: column,
+                        label: column,
                         type: "categorical",
                         options: options,
                         //how often each option occurs
@@ -58,12 +59,13 @@ export const useCSVStore = defineStore('csvStore', {
                         const steps = 2
                         let extent = this.calculate_pretty_extent(options_num, steps)
                         let options_bin = options.map(d => this.bin_value(d.name, extent))
-                        options_bin = options_bin.filter((a,i) => options_bin.findIndex(b => b.name === a.name) >= i)
+                        options_bin = options_bin.filter((a, i) => options_bin.findIndex(b => b.name === a.name) >= i)
                         options_bin = options_bin.sort(useHelperStore().sort)
 
 
                         let summary = {
                             name: column,
+                            label: column,
                             type: "continuous",
                             options: options_bin,
                             data: this.csv.map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
@@ -223,7 +225,7 @@ export const useCSVStore = defineStore('csvStore', {
          */
         bin_ends(summary, min_bin_size) {
             let options_num = summary.options
-            let last_index_num= options_num.filter(a => a.range !== undefined).length - 1
+            let last_index_num = options_num.filter(a => a.range !== undefined).length - 1
 
             //iterate through options_num from behind
             let i = last_index_num
@@ -237,17 +239,21 @@ export const useCSVStore = defineStore('csvStore', {
                 name_start = options_num[i].range[0]
                 delete summary.occurrence[options_num[i].name]
                 delete summary.occurrence_target_option[options_num[i].name]
-                options_num.splice(i,1)
+                options_num.splice(i, 1)
                 i--
             }
             if (i < last_index_num) {
                 summary.occurrence[name_start + "-" + name_end] = occurrence_sum
                 summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
-                options_num.push({"name": name_start + "-" + name_end, "label": ">" + name_start, "range": [name_start, name_end]})
+                options_num.push({
+                    "name": name_start + "-" + name_end,
+                    "label": "≥" + name_start,
+                    "range": [name_start, name_end]
+                })
             }
 
             //iterate through options_num from front
-            last_index_num = i+1
+            last_index_num = i + 1
             i = 0
             occurrence_sum = 0
             occurrence_target_option_sum = 0
@@ -261,12 +267,16 @@ export const useCSVStore = defineStore('csvStore', {
                 delete summary.occurrence_target_option[options_num[i].name]
                 i++
             }
-            options_num.splice(0,i)
+            options_num.splice(0, i)
 
             if (i > 0) {
                 summary.occurrence[name_start + "-" + name_end] = occurrence_sum
                 summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
-                options_num.push({"name": name_start + "-" + name_end,  "label": "<" + name_end, "range": [name_start, name_end]})
+                options_num.push({
+                    "name": name_start + "-" + name_end,
+                    "label": "<" + name_end,
+                    "range": [name_start, name_end]
+                })
             }
 
             summary.options = options_num.sort(useHelperStore().sort)
@@ -311,9 +321,48 @@ export const useCSVStore = defineStore('csvStore', {
 
             const name_above = groups_above.reduce((a, b) => a + ", " + b[0], "")
 
-            const risk_multiplier = below_percentage === 0? null : (above_percentage/below_percentage).toFixed(2)
+            const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(2)
 
             return {"risk_factor_groups": name_above, risk_difference: risk_multiplier}
+        },
+        recalculate_summary_after_option_change(summary) {
+            //only continue if there are less than 10 options to make sure it is categorical or ordinal
+            if (summary.type === "categorical") {
+                //not implemented yet
+                return summary
+
+            }
+            if (summary.type === "continuous") {
+
+                //update names
+                summary.options.forEach(d => d.name= d.range === undefined? d.name : d.range[0] + "-" + d.range[1])
+                summary.options.forEach(d => d.label= d.name)
+
+                summary.occurrence = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
+                summary.occurrence_target_option = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
+                summary.data.forEach(d => summary.occurrence[this.find_bin(d, summary.options)]++)
+                summary.data_with_target_option.forEach(d => summary.occurrence_target_option[this.find_bin(d, summary.options)]++)
+
+                //for now: just exclude null values
+                delete summary.occurrence[null]
+                delete summary.occurrence_target_option[null]
+
+                summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
+
+
+                summary = this.summary_exclude_missing(summary)
+                summary.significance = this.compute_significance_score(summary)
+                summary.riskIncrease = this.compute_risk_increase(summary)
+
+                console.log(summary)
+
+                return summary
+            }
+
+        },
+        find_bin(value, options) {
+            const option = options.find(d => +value >= +d.range[0] && +value < +d.range[1])
+            return option ? option.name : null
         },
         /**
          * resets all variables to their initial state

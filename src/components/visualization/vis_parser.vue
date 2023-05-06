@@ -1,7 +1,7 @@
 <template>
-    <vis_bar v-if="graph === 'bar'" :description="description" :width="width"/>
-    <vis_pictograph v-if="graph === 'pictograph'" :description="description" :width="width"/>
-    <vis_line v-if="graph === 'density'" :description="description" :width="width"/>
+    <vis_bar v-if="graph === 'bar'" :vis="vis" :column="column" :width="width"/>
+    <vis_pictograph v-if="graph === 'pictograph'" :vis="vis" :column="column" :width="width"/>
+    <vis_line v-if="graph === 'density'" :vis="vis" :column="column" :width="width"/>
 </template>
 
 <script>
@@ -13,7 +13,7 @@ import {useVisStore} from "@/stores/visStore";
 export default {
     name: "vis_parser",
     props: [
-        "description", "width"
+        "vis", "column", "width"
     ],
     setup() {
         const visStore = useVisStore()
@@ -22,7 +22,7 @@ export default {
     components: {vis_bar, vis_pictograph, vis_line},
     computed: {
         graph() {
-            return this.description.graph ? this.description.graph : this.visStore.default_settings[this.description.type].graph
+            return this.vis.graph ? this.vis.graph : this.visStore.default_settings[this.vis.type].graph
         }
     }
 }

@@ -10,19 +10,19 @@ import {useVisStore} from "@/stores/visStore";
 export default {
     name: "vis_pictograph",
     props: [
-        "description", "width"
+        "column", "vis", "width"
     ],
     watch: {
-        description: {
+        column: {
             handler: function () {
-                let data = Object.entries(this.description.data_map).map(([key, value]) => ({
-                    "name": key,
-                    "value": value
-                }))
-                data = data.sort((a, b) => this.helperStore.sort(
-                    this.description.options.find(x => x.name === a.name),
-                    this.description.options.find(x => x.name === b.name)))
-                this.visualize(data)
+                this.data_to_vis()
+            }
+            ,
+            deep: true
+        },
+        vis: {
+            handler: function () {
+                this.data_to_vis()
             }
             ,
             deep: true
@@ -35,16 +35,16 @@ export default {
     },
     computed: {
         color() {
-            return this.description.color ? this.description.color : this.visStore.default_settings[this.description.type].color
+            return this.vis.color ? this.vis.color : this.visStore.default_settings[this.vis.type].color
         },
         grid() {
-            return this.description.grid ? this.description.grid : this.visStore.default_settings[this.description.type].grid
+            return this.vis.grid ? this.vis.grid : this.visStore.default_settings[this.vis.type].grid
         },
         range() {
-            return this.description.range ? this.description.range : this.visStore.default_settings[this.description.type].range
+            return this.vis.range ? this.vis.range : this.visStore.default_settings[this.vis.type].range
         },
         title() {
-            return this.description.title ? this.description.title : this.visStore.default_settings[this.description.type].title
+            return this.vis.title ? this.vis.title : this.visStore.default_settings[this.vis.type].title
         }
     },
     methods: {
@@ -79,6 +79,20 @@ export default {
             return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
         }
         ,
+        data_to_vis() {
+            let data = this.vis.data
+            if (this.vis.data_map !== undefined) {
+                data = Object.entries(this.column[this.vis.data_map]).map(([key, value]) => ({
+                    "name": key,
+                    "value": value
+                }))
+                data = data.sort((a, b) => this.helperStore.sort(
+                    this.column.options.find(x => x.name === a.name),
+                    this.column.options.find(x => x.name === b.name)))
+            }
+
+            this.visualize(data)
+        },
         /**
          * visualizes the data
          *
@@ -90,7 +104,7 @@ export default {
             let margin_top = 30
             let margin_right = 60
             let width = (this.width ? this.width : 300) - margin_right
-            let startBarX = this.helperStore.get_max_length(this.description.options.map(a => a.label)) * 10 + 10
+            let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 10
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.grid[0], 1)
@@ -151,7 +165,7 @@ export default {
                 .join("text")
                 .attr("x", startBarX - x.bandwidth() / 2 - 5)
                 .attr("y", d => y_options(d.name))
-                .text(d => (d.name === "") ? "null" : this.description.options.find(x => x.name === d.name).label)
+                .text(d => (d.name === "") ? "null" : this.column.options.find(x => x.name === d.name).label)
                 .style("text-anchor", "end")
                 .attr("dy", y_options.bandwidth() / 2 - 5)
 
@@ -190,12 +204,8 @@ export default {
     }
     ,
     mounted() {
-        if (this.description.data_map != null) {
-            let data = Object.entries(this.description.data_map).map(([key, value]) => ({"name": key, "value": value}))
-            data = data.sort((a, b) => this.helperStore.sort(
-                this.description.options.find(x => x.name === a.name),
-                this.description.options.find(x => x.name === b.name)))
-            this.visualize(data)
+        if (this.vis != null && this.column != null) {
+            this.data_to_vis()
         }
     }
 }

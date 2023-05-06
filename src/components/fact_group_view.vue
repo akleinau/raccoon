@@ -3,7 +3,7 @@
         <v-card class="flex mx-auto w-75">
 
             <v-card-title>
-                Fact Group View: {{ visStore.current_fact_group.column['name'] }}
+                Fact Group View: {{ visStore.current_fact_group.column['label'] }}
             </v-card-title>
 
             <!-- hints -->
@@ -18,7 +18,7 @@
                     <v-hover v-slot="{ isHovering, props }">
                         <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
                                 :class="{ 'on-hover': isHovering }" class="pa-2">
-                            <vis_parser :description="vis"/>
+                            <vis_parser :vis="vis" :column="visStore.current_fact_group.column"/>
                         </v-card>
                     </v-hover>
                     <v-btn @click="show_fact_view(vis)" class="mt-2">Show</v-btn>
@@ -36,7 +36,7 @@
                                         {{ tuple[1] !== "" ? tuple[1] : "null" }})
                                     </span>
                         <div> Score: {{ visStore.current_fact_group.column['significance'].score.toFixed(2) }}</div>
-                        <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease']}}</div>
+                        <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
                 <v-expansion-panel class="ma-1">
@@ -49,12 +49,26 @@
                                 <v-hover v-slot="{ isHovering, props }">
                                     <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
                                             :class="{ 'on-hover': isHovering }" class="pa-2">
-                                        <vis_parser :description="vis"/>
+                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column"/>
                                     </v-card>
                                 </v-hover>
                                 <v-btn @click="show_fact_view(vis)" class="mt-2">Show</v-btn>
                             </div>
                         </div>
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+                <v-expansion-panel class="ma-1">
+                    <v-expansion-panel-title><h4> Adapt </h4></v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                        <div class="ml-2">Change risk factor label:</div>
+                        <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
+                        <div class="ml-2 mb-2">Change options:</div>
+                        <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i" class="d-flex">
+                            <v-text-field variant="outlined" :label="'label of: ' + item.name" v-model="visStore.current_fact_group.column.options[i].label"/>
+                            <v-text-field class="px-5" type="number" label="min" v-model="visStore.current_fact_group.column.options[i].range[0]"/>
+                            <v-text-field type="number" label="max" v-model="visStore.current_fact_group.column.options[i].range[1]"/>
+                        </div>
+                        <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -72,13 +86,15 @@
 <script>
 import {useVisStore} from "@/stores/visStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
+import {useCSVStore} from "@/stores/csvStore";
 
 export default {
     name: "fact_group_view",
     components: {vis_parser},
     setup() {
         const visStore = useVisStore()
-        return {visStore}
+        const csvStore = useCSVStore()
+        return {visStore, csvStore}
     },
     data() {
         return {
@@ -111,6 +127,12 @@ export default {
         add() {
             this.visStore.add_dashboard_item(this.visStore.current_fact_group.column, this.visStore.current_fact_group.visList)
             this.close()
+        },
+        /**
+         * recalculates the options for the risk factor
+         */
+        recalculate_options() {
+            this.visStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact_group.column)
         }
     }
 }
