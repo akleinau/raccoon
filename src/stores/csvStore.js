@@ -25,8 +25,9 @@ export const useCSVStore = defineStore('csvStore', {
                 let options = [...new Set(this.csv.map(d => d[column]))]
                 options = options.map(o => ({"name": o, "label": o}))
                 //only continue if there are less than 10 options to make sure it is categorical or ordinal
+                let summary = {}
                 if (options.length <= 10) {
-                    let summary = {
+                    summary = {
                         name: column,
                         label: column,
                         type: "categorical",
@@ -38,18 +39,6 @@ export const useCSVStore = defineStore('csvStore', {
                     }
                     this.csv.forEach(d => summary.occurrence[d[column]]++)
                     this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
-
-                    summary = this.summary_exclude_missing(summary)
-
-                    //percentage how often each option occurs together with the target option
-                    summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
-
-                    //significance_score: difference in percentages of percent_target_option
-                    summary.significance = this.compute_significance_score(summary)
-                    summary.riskIncrease = this.compute_risk_increase(summary)
-
-                    this.variable_summaries.push(summary)
-
                 } else {
                     let options_num = options.filter(d => !isNaN(d.name) && d.name !== "")
 
@@ -62,8 +51,7 @@ export const useCSVStore = defineStore('csvStore', {
                         options_bin = options_bin.filter((a, i) => options_bin.findIndex(b => b.name === a.name) >= i)
                         options_bin = options_bin.sort(useHelperStore().sort)
 
-
-                        let summary = {
+                        summary = {
                             name: column,
                             label: column,
                             type: "continuous",
@@ -75,23 +63,24 @@ export const useCSVStore = defineStore('csvStore', {
                             //how often each option occurs together with the target option
                             occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                         }
-                        this.csv.forEach(d => summary.occurrence[this.bin_value(d[column], extent).name]++)
-                        this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.bin_value(d[column], extent).name]++)
+                        this.csv.forEach(d => summary.occurrence[this.find_bin(d[column], options_bin)]++)
+                        this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.find_bin(d[column], options_bin)]++)
                         summary = this.bin_ends(summary, this.min_bin_size)
-
-                        summary = this.summary_exclude_missing(summary)
-
-                        //percentage how often each option occurs together with the target option
-                        summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
-
-                        //significance_score: difference in percentages of percent_target_option
-                        summary.significance = this.compute_significance_score(summary)
-                        summary.riskIncrease = this.compute_risk_increase(summary)
-
-                        this.variable_summaries.push(summary)
                     }
                 }
 
+                if (Object.keys(summary).length > 0) {
+                    summary = this.summary_exclude_missing(summary)
+
+                    //percentage how often each option occurs together with the target option
+                    summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
+
+                    //significance_score: difference in percentages of percent_target_option
+                    summary.significance = this.compute_significance_score(summary)
+                    summary.riskIncrease = this.compute_risk_increase(summary)
+
+                    this.variable_summaries.push(summary)
+                }
             })
             //sort by significance_score
             this.variable_summaries.sort((a, b) => b.significance.score - a.significance.score)
