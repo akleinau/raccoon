@@ -317,8 +317,9 @@ export const useCSVStore = defineStore('csvStore', {
             const name_above = groups_above.reduce((a, b) => a + ", " + b[0], "")
 
             const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(2)
+            const risk_difference = (above_percentage - below_percentage).toFixed(2)
 
-            return {"risk_factor_groups": name_above, risk_difference: risk_multiplier}
+            return {"risk_factor_groups": name_above, risk_difference: risk_difference, risk_multiplier: risk_multiplier}
         },
         recalculate_summary_after_option_change(summary) {
             //only continue if there are less than 10 options to make sure it is categorical or ordinal

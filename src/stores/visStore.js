@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import {useCSVStore} from "@/stores/csvStore";
 
 export const useVisStore = defineStore('visStore', {
     state: () => ({
@@ -19,6 +20,11 @@ export const useVisStore = defineStore('visStore', {
                 color: "MediumVioletRed",
                 range: "percent",
                 title: "Frequency"
+            },
+            context: {
+                graph: "bar",
+                grid: [25, 4],
+                color: "green"
             }
         }
     }),
@@ -76,28 +82,41 @@ export const useVisStore = defineStore('visStore', {
         },
         generate_context_facts() {
             let facts = []
+            let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
+                d.column.riskIncrease !== undefined)
             if (this.dashboard_items.length > 0) {
-                const options = this.dashboard_items.map(item => ({
+                const options = risk_factor_items.map(item => ({
                     "name": item.column.riskIncrease.risk_factor_groups,
                     "label": item.column.label + ": " + item.column.riskIncrease.risk_factor_groups
                 }))
                 const column = {name: "Context", options: options}
 
-                const max_risk_increase = Math.max(...this.dashboard_items.map(item => item.column.riskIncrease.risk_difference)) + 1
+                const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
+                const max_risk_difference = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_difference)) + 1
                 facts.push({
-                    "visList": [{
-                        type: "context",
-                        data: this.dashboard_items.map(item => ({
-                            name: item.column.riskIncrease.risk_factor_groups,
-                            value: item.column.riskIncrease.risk_difference
-                        })),
-                        graph: "bar",
-                        color: "green",
-                        range: [0, max_risk_increase],
-                        title: "Risk Increase"
-                    }],
-                    "column": column
-                })
+                        "visList": [{
+                            type: "context",
+                            data: risk_factor_items.map(item => ({
+                                name: item.column.riskIncrease.risk_factor_groups,
+                                value: item.column.riskIncrease.risk_difference
+                            })).sort((a, b) => b.value - a.value),
+                            range: [0, Math.round(max_risk_difference)],
+                            title: "maximal difference in risk between options"
+                        }],
+                        "column": column
+                    },
+                    {
+                        "visList": [{
+                            type: "context",
+                            data: risk_factor_items.map(item => ({
+                                name: item.column.riskIncrease.risk_factor_groups,
+                                value: item.column.riskIncrease.risk_multiplier
+                            })).sort((a, b) => b.value - a.value),
+                            range: [0, Math.round(max_risk_multiplier)],
+                            title: "risk increase through factor"
+                        }],
+                        "column": column
+                    })
             }
 
             return facts

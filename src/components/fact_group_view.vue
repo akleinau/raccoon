@@ -7,7 +7,8 @@
             </v-card-title>
 
             <!-- hints -->
-            <div v-if="visStore.current_fact_group.column['significance'].significant_tuples.length === 0">
+            <div v-if="visStore.current_fact_group.column.significance !== undefined &&
+                visStore.current_fact_group.column['significance'].significant_tuples.length === 0">
                 <v-icon icon="mdi-alert"/>
                 no statistically significant differences
             </div>
@@ -26,7 +27,7 @@
             </div>
 
             <v-expansion-panels class="ma-3">
-                <v-expansion-panel class="ma-1">
+                <v-expansion-panel class="ma-1" v-if="visStore.current_fact_group.column.significance !== undefined">
                     <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                     <v-expansion-panel-text class="text-grey-darken-2">
                         pairs with statistically significant differences:
@@ -35,7 +36,9 @@
                                         ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
                                         {{ tuple[1] !== "" ? tuple[1] : "null" }})
                                     </span>
-                        <div> Score: {{ visStore.current_fact_group.column['significance'].score[csvStore.score].toFixed(2) }}</div>
+                        <div> Score:
+                            {{ visStore.current_fact_group.column['significance'].score[csvStore.score].toFixed(2) }}
+                        </div>
                         <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -63,10 +66,16 @@
                         <div class="ml-2">Change risk factor label:</div>
                         <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
                         <div class="ml-2 mb-2">Change options:</div>
-                        <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i" class="d-flex">
-                            <v-text-field variant="outlined" :label="'label of: ' + item.name" v-model="visStore.current_fact_group.column.options[i].label"/>
-                            <v-text-field class="px-5" type="number" label="min" v-model="visStore.current_fact_group.column.options[i].range[0]"/>
-                            <v-text-field type="number" label="max" v-model="visStore.current_fact_group.column.options[i].range[1]"/>
+                        <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i"
+                             class="d-flex">
+                            <v-text-field variant="outlined" :label="'label of: ' + item.name"
+                                          v-model="visStore.current_fact_group.column.options[i].label"/>
+                            <v-text-field class="px-5" type="number" label="min"
+                                          v-if="visStore.current_fact_group.column.options[i].range !== undefined"
+                                          v-model="visStore.current_fact_group.column.options[i].range[0]"/>
+                            <v-text-field type="number" label="max"
+                                          v-if="visStore.current_fact_group.column.options[i].range !== undefined"
+                                          v-model="visStore.current_fact_group.column.options[i].range[1]"/>
                         </div>
                         <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
                     </v-expansion-panel-text>
