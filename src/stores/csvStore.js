@@ -13,6 +13,8 @@ export const useCSVStore = defineStore('csvStore', {
         target_all_options: [],
         target_option: null,
         variable_summaries: [],
+        score: "max_difference",
+        score_choices: ["max_difference", "entropy"]
     }),
     actions: {
         /**
@@ -83,7 +85,7 @@ export const useCSVStore = defineStore('csvStore', {
                 }
             })
             //sort by significance_score
-            this.variable_summaries.sort((a, b) => b.significance.score - a.significance.score)
+            this.variable_summaries.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
         },
         /**
          * filters table for only rows with target option selected
@@ -112,7 +114,7 @@ export const useCSVStore = defineStore('csvStore', {
          * computes tuples with statistically significant differences and significance score
          *
          * @param summary
-         * @returns {{score: number, significant_tuples: []}}
+         * @returns {{score: {}, significant_tuples: []}}
          */
         compute_significance_score(summary) {
             //create list of all tuples of percent_target_option and their significance_test_propotions
@@ -135,12 +137,15 @@ export const useCSVStore = defineStore('csvStore', {
                 }
             }
             if (tuples.length === 0) {
-                return {"significant_tuples": [], "score": -1}
+                return {"significant_tuples": [], "score": Object.fromEntries(new Map(this.score_choices.map(d => [d, -1])))}
             }
 
             return {
                 "significant_tuples": tuples.map(d => [d.option1.label, d.option2.label]),
-                "score": Math.max(...tuples.map(d => d.diff))
+                "score": {
+                    "max_difference": Math.max(...tuples.map(d => d.diff)),
+                    "entropy": -this.entropy(Object.values(summary.percent_target_option))
+                }
             }
         },
         /**
@@ -164,6 +169,16 @@ export const useCSVStore = defineStore('csvStore', {
             //for a normal distribution with mea 0 and sttdev 1, the z score boundary for 95% confidence is 1.96
             const Z_SCORE_BOUNDARY = 1.64485
             return Math.abs(z) >= Z_SCORE_BOUNDARY
+        },
+        entropy(array) {
+            let sum = 0
+            array.forEach(d => sum += d)
+            let result = 0
+            array.forEach(d => {
+                let p = d / sum
+                result -= p * Math.log(p)
+            })
+            return result
         },
         /**
          * calculates pretty extents for continuous columns.

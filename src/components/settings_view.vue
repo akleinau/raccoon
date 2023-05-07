@@ -57,6 +57,9 @@
                 <div class="d-flex">
                     <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
                     <v-text-field type="number" class="mx-5" label="minimal bin size" v-model="csvStore.min_bin_size"/>
+                    <v-radio-group v-model="csvStore.score" label="score">
+                        <v-radio v-for="score in csvStore.score_choices" :label="score" :value="score" v-bind:key="score" />
+                    </v-radio-group>
                     <v-btn variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate</v-btn>
                 </div>
             </v-expansion-panel-text>

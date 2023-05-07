@@ -35,7 +35,7 @@
                                         ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
                                         {{ tuple[1] !== "" ? tuple[1] : "null" }})
                                     </span>
-                        <div> Score: {{ visStore.current_fact_group.column['significance'].score.toFixed(2) }}</div>
+                        <div> Score: {{ visStore.current_fact_group.column['significance'].score[csvStore.score].toFixed(2) }}</div>
                         <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
