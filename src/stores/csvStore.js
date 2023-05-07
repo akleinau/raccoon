@@ -41,14 +41,14 @@ export const useCSVStore = defineStore('csvStore', {
                     this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
                 } else {
                     let options_num = options.filter(d => !isNaN(d.name) && d.name !== "")
+                    let options_other = options.filter(d => isNaN(d.name) || d.name === "")
 
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
                         const steps = 2
-                        let extent = this.calculate_pretty_extent(options_num, steps)
-                        let options_bin = options.map(d => this.bin_value(d.name, extent))
-                        options_bin = options_bin.filter((a, i) => options_bin.findIndex(b => b.name === a.name) >= i)
+                        let options_binned_num = this.calculate_pretty_bins(options_num, steps)
+                        let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
 
                         summary = {
@@ -166,27 +166,6 @@ export const useCSVStore = defineStore('csvStore', {
             return Math.abs(z) >= Z_SCORE_BOUNDARY
         },
         /**
-         * bins a value into a range of steps
-         *
-         * @param value
-         * @param range - [min, max, stepsize]
-         */
-        bin_value(value, range) {
-            if (isNaN(value) || value === "") {
-                return {"name": value, "label": value}
-            }
-            let step = Math.floor((value - range[0]) / range[2])
-            let logStep = Math.max(0, -Math.floor(Math.log10(range[2])))
-            let new_min = (range[0] + step * range[2]).toFixed(logStep)
-            let new_max = (range[0] + (step + 1) * range[2]).toFixed(logStep)
-
-            return {
-                "name": new_min + "-" + new_max,
-                "label": new_min + "-" + new_max,
-                "range": [new_min, new_max]
-            }
-        },
-        /**
          * calculates pretty extents for continuous columns.
          * Favors step sizes that are powers of 10 and ranges that are multiples of 10
          *
@@ -194,7 +173,7 @@ export const useCSVStore = defineStore('csvStore', {
          * @param steps
          * @returns {(number|number)[]}
          */
-        calculate_pretty_extent(options, steps) {
+        calculate_pretty_bins(options, steps) {
             let extent = d3.extent(options.map(d => +d.name))
             let stepsize = (extent[1] - extent[0]) / steps
             let pretty_stepsize_10 = Math.pow(10, Math.floor(Math.log10(stepsize)))
@@ -203,7 +182,19 @@ export const useCSVStore = defineStore('csvStore', {
             let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
             let pretty_max = Math.ceil(extent[1] / pretty_stepsize) * pretty_stepsize
 
-            return [pretty_min, pretty_max, pretty_stepsize]
+            let logStep = Math.max(0, -Math.floor(Math.log10(pretty_stepsize)))
+            let bins = []
+            for (let i = pretty_min; i <= pretty_max; i += pretty_stepsize) {
+                let i_min = i.toFixed(logStep)
+                let i_max = (i + pretty_stepsize).toFixed(logStep)
+                bins.push({
+                "name": i_min + "-" + i_max,
+                "label": i_min + "-" + i_max,
+                "range": [i_min, i_max]
+            })
+            }
+
+            return bins
         },
         /**
          * bins continuous columns at start and end
@@ -350,7 +341,7 @@ export const useCSVStore = defineStore('csvStore', {
 
         },
         find_bin(value, options) {
-            const option = options.find(d => +value >= +d.range[0] && +value < +d.range[1])
+            const option = options.find(d => d.range !== undefined? +value >= +d.range[0] && +value < +d.range[1]: d.name === value)
             return option ? option.name : null
         },
         /**
