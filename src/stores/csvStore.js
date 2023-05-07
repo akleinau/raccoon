@@ -188,10 +188,10 @@ export const useCSVStore = defineStore('csvStore', {
                 let i_min = i.toFixed(logStep)
                 let i_max = (i + pretty_stepsize).toFixed(logStep)
                 bins.push({
-                "name": i_min + "-" + i_max,
-                "label": i_min + "-" + i_max,
-                "range": [i_min, i_max]
-            })
+                    "name": i_min + "-" + i_max,
+                    "label": i_min + "-" + i_max,
+                    "range": [i_min, i_max]
+                })
             }
 
             return bins
@@ -315,8 +315,8 @@ export const useCSVStore = defineStore('csvStore', {
             if (summary.type === "continuous") {
 
                 //update names
-                summary.options.forEach(d => d.name= d.range === undefined? d.name : d.range[0] + "-" + d.range[1])
-                summary.options.forEach(d => d.label= d.name)
+                summary.options.forEach(d => d.name = d.range === undefined ? d.name : d.range[0] + "-" + d.range[1])
+                summary.options.forEach(d => d.label = d.name)
 
                 summary.occurrence = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
                 summary.occurrence_target_option = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
@@ -341,7 +341,7 @@ export const useCSVStore = defineStore('csvStore', {
 
         },
         find_bin(value, options) {
-            const option = options.find(d => d.range !== undefined? +value >= +d.range[0] && +value < +d.range[1]: d.name === value)
+            const option = options.find(d => d.range !== undefined ? +value >= +d.range[0] && +value < +d.range[1] : d.name === value)
             return option ? option.name : null
         },
         /**
