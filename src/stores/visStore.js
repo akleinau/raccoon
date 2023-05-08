@@ -72,6 +72,7 @@ export const useVisStore = defineStore('visStore', {
             if (column.type === "continuous") {
                 visList.push(
                     {
+                        type: 'density',
                         graph: 'density',
                         data: column.data,
                         data_with_target_option: column.data_with_target_option,

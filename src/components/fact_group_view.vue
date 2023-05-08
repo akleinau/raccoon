@@ -13,7 +13,7 @@
                 no statistically significant differences
             </div>
 
-            <div class="d-flex">
+            <div class="d-flex overflow-y-hidden pb-5">
                 <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList"
                      v-bind:key="vis">
                     <v-hover v-slot="{ isHovering, props }">
@@ -22,7 +22,9 @@
                             <vis_parser :vis="vis" :column="visStore.current_fact_group.column"/>
                         </v-card>
                     </v-hover>
-                    <v-btn @click="show_fact_view(vis)" class="mt-2">Show</v-btn>
+                    <div class="d-flex w-100 flex-wrap">
+                        <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="remove_vis(vis)">Remove</v-btn>
+                    </div>
                 </div>
             </div>
 
@@ -45,9 +47,9 @@
                 <v-expansion-panel class="ma-1">
                     <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
                     <v-expansion-panel-text>
-                        <div class="d-flex">
+                        <div class="d-flex overflow-y-hidden  pb-5">
                             <div class="d-flex flex-column pa-1"
-                                 v-for="vis in visStore.generate_additional_fact_visList(visStore.current_fact_group.column)"
+                                 v-for="vis in additional_visList"
                                  v-bind:key="vis">
                                 <v-hover v-slot="{ isHovering, props }">
                                     <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
@@ -55,7 +57,9 @@
                                         <vis_parser :vis="vis" :column="visStore.current_fact_group.column"/>
                                     </v-card>
                                 </v-hover>
-                                <v-btn @click="show_fact_view(vis)" class="mt-2">Show</v-btn>
+                                <div class="d-flex w-100 flex-wrap">
+                                    <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="add_vis(vis)">Add</v-btn>
+                                </div>
                             </div>
                         </div>
                     </v-expansion-panel-text>
@@ -107,13 +111,17 @@ export default {
     },
     data() {
         return {
-            display: true
+            display: true,
+            additional_visList: []
         }
     },
     watch: {
         display: function () {
             this.close()
-        }
+        },
+    },
+    created() {
+        this.additional_visList = this.visStore.generate_additional_fact_visList(this.visStore.current_fact_group.column)
     },
     methods: {
         /**
@@ -142,6 +150,14 @@ export default {
          */
         recalculate_options() {
             this.visStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact_group.column)
+        },
+        remove_vis(vis) {
+            this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
+            this.additional_visList.push(vis)
+        },
+        add_vis(vis) {
+            this.additional_visList = this.additional_visList.filter(item => item.type !== vis.type)
+            this.visStore.current_fact_group.visList.push(vis)
         }
     }
 }
