@@ -57,6 +57,10 @@
             </v-expansion-panels>
 
             <v-card-actions>
+                <v-btn v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)" @click="add_vis">Add
+                    fact
+                </v-btn>
+                <v-btn v-else @click="remove_vis">Remove fact</v-btn>
                 <v-btn @click="close">Close</v-btn>
             </v-card-actions>
 
@@ -111,6 +115,16 @@ export default {
          */
         recalculate_options() {
             this.visStore.current_fact.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact.column)
+        },
+        remove_vis() {
+            let vis = this.visStore.current_fact.vis
+            this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
+            this.visStore.current_fact_group.additional_vis_list.push(vis)
+        },
+        add_vis() {
+            let vis = this.visStore.current_fact.vis
+            this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
+            this.visStore.current_fact_group.visList.push(vis)
         }
     }
 }

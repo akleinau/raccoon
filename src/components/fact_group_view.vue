@@ -49,7 +49,7 @@
                     <v-expansion-panel-text>
                         <div class="d-flex overflow-y-hidden  pb-5">
                             <div class="d-flex flex-column pa-1"
-                                 v-for="vis in additional_visList"
+                                 v-for="vis in visStore.current_fact_group.additional_vis_list"
                                  v-bind:key="vis">
                                 <v-hover v-slot="{ isHovering, props }">
                                     <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
@@ -112,7 +112,6 @@ export default {
     data() {
         return {
             display: true,
-            additional_visList: []
         }
     },
     watch: {
@@ -121,7 +120,7 @@ export default {
         },
     },
     created() {
-        this.additional_visList = this.visStore.generate_additional_fact_visList(this.visStore.current_fact_group.column)
+        this.visStore.current_fact_group.additional_vis_list = this.visStore.generate_additional_fact_visList(this.visStore.current_fact_group.column)
     },
     methods: {
         /**
@@ -153,10 +152,10 @@ export default {
         },
         remove_vis(vis) {
             this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
-            this.additional_visList.push(vis)
+            this.visStore.current_fact_group.additional_vis_list.push(vis)
         },
         add_vis(vis) {
-            this.additional_visList = this.additional_visList.filter(item => item.type !== vis.type)
+            this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.visList.push(vis)
         }
     }
