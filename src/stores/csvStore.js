@@ -14,7 +14,7 @@ export const useCSVStore = defineStore('csvStore', {
         target_option: null,
         variable_summaries: [],
         score: "max_difference",
-        score_choices: ["max_difference", "entropy"]
+        score_choices: ["max_difference", "entropy", "max", "weighted_max"]
     }),
     actions: {
         /**
@@ -85,6 +85,9 @@ export const useCSVStore = defineStore('csvStore', {
                 }
             })
             //sort by significance_score
+            this.sort_summaries()
+        },
+        sort_summaries() {
             this.variable_summaries.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
         },
         /**
@@ -137,13 +140,18 @@ export const useCSVStore = defineStore('csvStore', {
                 }
             }
             if (tuples.length === 0) {
-                return {"significant_tuples": [], "score": Object.fromEntries(new Map(this.score_choices.map(d => [d, -1])))}
+                return {
+                    "significant_tuples": [],
+                    "score": Object.fromEntries(new Map(this.score_choices.map(d => [d, -1])))
+                }
             }
 
             return {
                 "significant_tuples": tuples.map(d => [d.option1.label, d.option2.label]),
                 "score": {
                     "max_difference": Math.max(...tuples.map(d => d.diff)),
+                    "max": Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0][1],
+                    "weighted_max": this.weighted_max_score(summary),
                     "entropy": -this.entropy(Object.values(summary.percent_target_option))
                 }
             }
@@ -179,6 +187,11 @@ export const useCSVStore = defineStore('csvStore', {
                 result -= p * Math.log(p)
             })
             return result
+        },
+        weighted_max_score(summary) {
+            let max_percent_option = Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0]
+            let max_percent_occurrence = summary.occurrence[max_percent_option[0]]
+            return max_percent_option[1] * max_percent_occurrence / this.csv.length
         },
         /**
          * calculates pretty extents for continuous columns.
