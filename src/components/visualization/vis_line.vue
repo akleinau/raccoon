@@ -8,12 +8,12 @@ import * as d3 from "d3";
 export default {
     name: "vis_line",
     props: [
-        "description", "width"
+        "vis", "column", "width"
     ],
     watch: {
-        description: {
+        vis: {
             handler: function () {
-                this.visualize(this.description.data, this.description.data_with_target_option)
+                this.visualize(this.vis.data, this.vis.data_with_target_option)
             }
             ,
             deep: true
@@ -93,7 +93,7 @@ export default {
                 .attr("x", width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.description.title)
+                .text(this.vis.title)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
@@ -117,8 +117,8 @@ export default {
         }
     },
     mounted() {
-        if (this.description.data != null) {
-            this.visualize(this.description.data, this.description.data_with_target_option)
+        if (this.vis.data != null) {
+            this.visualize(this.vis.data, this.vis.data_with_target_option)
         }
     }
 }
