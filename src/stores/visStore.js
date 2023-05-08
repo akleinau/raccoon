@@ -84,7 +84,7 @@ export const useVisStore = defineStore('visStore', {
             let facts = []
             let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
                 d.column.riskIncrease !== undefined)
-            if (this.dashboard_items.length > 0) {
+            if (risk_factor_items.length > 0) {
                 const options = risk_factor_items.map(item => ({
                     "name": item.column.riskIncrease.risk_factor_groups,
                     "label": item.column.label + ": " + item.column.riskIncrease.risk_factor_groups
@@ -120,6 +120,18 @@ export const useVisStore = defineStore('visStore', {
             }
 
             return facts
+        },
+        generate_general_factGroups() {
+            let target_column = useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
+            if (!target_column) { return [] }
+            return [{
+                "visList": [{
+                    type: 'impact',
+                    data_map: 'occurrence'
+                }],
+                "column": useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
+            }]
+
         }
     }
 })

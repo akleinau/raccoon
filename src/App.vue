@@ -40,12 +40,13 @@
                 </div>
             </v-card>
 
-            <v-card title="Target" class="pa-5 bg-blue-grey-lighten-5" v-if="current_target_column">
-                <fact_group_preview class="pa-2"
-                                    v-if="!visStore.dashboard_items.map(item => item.name).includes(current_target_column.name)"
-                                    :visList="get_visList_target()"
-                                    :column="current_target_column"
-                                    :vertical="true"/>
+            <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
+                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
+                    <div v-for="item in visStore.generate_general_factGroups()" v-bind:key="item">
+                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
+                         v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
+                    </div>
+                </div>
 
             </v-card>
 
@@ -72,7 +73,8 @@
             <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_context_facts()" v-bind:key="item">
-                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"/>
+                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
+                        v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
                     </div>
                 </div>
             </v-card>
@@ -105,19 +107,6 @@ export default {
         const csvStore = useCSVStore()
         const visStore = useVisStore()
         return {csvStore, visStore}
-    },
-    computed: {
-        current_target_column() {
-            return this.csvStore.variable_summaries.find(a => a.name === this.csvStore.target_column)
-        }
-    },
-    methods: {
-        get_visList_target() {
-            return [{
-                type: 'impact',
-                data_map: 'occurrence'
-            }]
-        }
     }
 }
 </script>
