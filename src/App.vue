@@ -43,7 +43,7 @@
             <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_general_factGroups()" v-bind:key="item">
-                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
+                        <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList" :column="item.column"
                          v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
                     </div>
                 </div>

@@ -25,6 +25,11 @@ export const useVisStore = defineStore('visStore', {
                 graph: "bar",
                 grid: [25, 4],
                 color: "green"
+            },
+            text: {
+                graph: "text",
+                font_size: 2,
+                color: "midnightblue"
             }
         }
     }),
@@ -122,15 +127,34 @@ export const useVisStore = defineStore('visStore', {
             return facts
         },
         generate_general_factGroups() {
+            let factGroups = []
+
+            //occurrence
             let target_column = useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
-            if (!target_column) { return [] }
-            return [{
-                "visList": [{
-                    type: 'impact',
-                    data_map: 'occurrence'
-                }],
-                "column": useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
-            }]
+            if (target_column) {
+                factGroups.push({
+                    "visList": [{
+                        type: 'impact',
+                        data_map: 'occurrence'
+                    }],
+                    "column": useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
+                })
+            }
+
+            //nr of participants
+            let csv = useCSVStore().csv
+            if (csv) {
+                factGroups.push({
+                    "visList": [{
+                        type: 'text',
+                        text: "The dataset consists of " + csv.length + " participants."
+                    }],
+                    "column": {name: "Nr of participants"}
+                })
+            }
+
+
+            return factGroups
 
         }
     }

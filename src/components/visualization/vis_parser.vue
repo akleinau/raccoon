@@ -2,12 +2,14 @@
     <vis_bar v-if="graph === 'bar'" :vis="vis" :column="column" :width="width"/>
     <vis_pictograph v-if="graph === 'pictograph'" :vis="vis" :column="column" :width="width"/>
     <vis_line v-if="graph === 'density'" :vis="vis" :column="column" :width="width"/>
+    <vis_text v-if="graph === 'text'" :vis="vis" :column="column" :width="width"/>
 </template>
 
 <script>
 import vis_pictograph from "@/components/visualization/vis_pictograph.vue";
 import vis_bar from "@/components/visualization/vis_bar.vue";
 import vis_line from "@/components/visualization/vis_line.vue";
+import vis_text from "@/components/visualization/vis_text.vue";
 import {useVisStore} from "@/stores/visStore";
 
 export default {
@@ -19,7 +21,7 @@ export default {
         const visStore = useVisStore()
         return {visStore}
     },
-    components: {vis_bar, vis_pictograph, vis_line},
+    components: {vis_bar, vis_pictograph, vis_line, vis_text},
     computed: {
         graph() {
             return this.vis.graph ? this.vis.graph : this.visStore.default_settings[this.vis.type].graph
