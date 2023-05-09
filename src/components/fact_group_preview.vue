@@ -41,7 +41,9 @@ export default {
          * shows the fact group view for the selected fact group
          */
         show_fact_group_view() {
-            this.visStore.current_fact_group = {'column': this.column, 'visList': this.visList}
+            this.visStore.current_fact_group = {'column': this.column,
+                'visList': this.visList,
+                'additional_vis_list': this.visStore.generate_additional_fact_visList(this.column)}
         }
     }
 }

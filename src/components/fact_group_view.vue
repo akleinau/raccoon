@@ -119,9 +119,6 @@ export default {
             this.close()
         },
     },
-    created() {
-        this.visStore.current_fact_group.additional_vis_list = this.visStore.generate_additional_fact_visList(this.visStore.current_fact_group.column)
-    },
     methods: {
         /**
          * shows fact view for the selected fact
