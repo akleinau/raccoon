@@ -179,19 +179,6 @@ export default {
                 .style("fill", "white")
                 .attr("dy", y_options.bandwidth() / 2 - 5)
 
-            //x axis texts
-            svg.append("text")
-                .attr("x", startBarX)
-                .attr("y", height + 15)
-                .text(this.get_value_text(0))
-                .style("text-anchor", "start")
-
-            svg.append("text")
-                .attr("x", width + startBarX - x.bandwidth() / 2)
-                .attr("y", height + 15)
-                .style("text-anchor", "end")
-                .text(this.get_value_text(this.get_range()[1]))
-
             svg.append("text")
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
