@@ -12,6 +12,9 @@
         </v-app-bar>
 
         <v-main>
+
+            <v-btn @click="regressionStore.train()" class="ma-5">Train</v-btn>
+
             <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex flex-wrap">
                     <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
@@ -92,6 +95,7 @@ import settings_view from "@/components/settings_view.vue";
 import all_risk_factor_view from "@/components/all_risk_factor_view.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
+import {useRegressionStore} from "@/stores/regressionStore";
 
 
 export default {
@@ -106,7 +110,8 @@ export default {
     setup() {
         const csvStore = useCSVStore()
         const visStore = useVisStore()
-        return {csvStore, visStore}
+        const regressionStore = useRegressionStore()
+        return {csvStore, visStore, regressionStore}
     }
 }
 </script>
