@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
+import * as d3 from "d3";
 
 export const useRegressionStore = defineStore('regressionStore', {
     state: () => ({}),
@@ -44,37 +45,61 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             //optimize weights using gradient descent
             //for each epoch
-            for (let epoch = 0; epoch < 10; epoch++) {
-                //for each row in data
-                for (let i = 0; i < Data[0].length; i++) {
-                    //multiplicate weights with data
-                    let x = Data.map(d => d[i])
-                    let pred = this.sigmoid(this.dot_product(weights, x) + b)
-                    let actual = y[i]
+            for (let epoch = 0; epoch < 20; epoch++) {
 
-                    let loss = this.loss(pred, actual)
+                let batchsize = 10
+                //for each batch of rows in data
+                for (let i = 0; i < Data[0].length; i += batchsize) {
+                    let loss = []
+                    let dW = []
+                    let db = []
+                    for (let j = 0; j < batchsize; j++) {
+                        //multiplicate weights with data
+                        let row = Data.map(d => d[j + i])
+                        let curr_pred = this.sigmoid(this.dot_product(weights, row) + b)
+                        let curr_actual = y[j + i]
 
+                        loss.push(this.loss(curr_pred, curr_actual))
+                        dW.push(row.map((d) => (curr_pred - curr_actual) * d))
+                        db.push(curr_actual - curr_pred)
+                    }
+
+                    let mean_dW = []
                     //compute derivates
-                    let dW = x.map(d => (pred - actual) * d)
-                    let db = actual - pred
+                    for (let k = 0; k < dW[0].length; k++) {
+                        mean_dW.push(d3.mean(dW.map(d => d[k])))
+                    }
+                    db = d3.mean(db)
+
 
                     //update weights
-                    weights = weights.map((d, i) => d - LEARNING_RATE * dW[i])
+                    weights = weights.map((d, i) => d - LEARNING_RATE * mean_dW[i])
                     b = b - LEARNING_RATE * db
 
-                    console.log(dW, db, weights, b)
+                    if (i % 20 === 0) {
+                        console.log("Loss: " + d3.mean(loss))
+                    }
 
-                    console.log("Loss: " + loss)
                 }
             }
 
+            //combine map with weights and then sort
+            let weights_map = map.map((d, i) =>
+                ({
+                    "type": d.type,
+                    "name": d.name,
+                    "option": d.option,
+                    "weight": weights[i],
+                })
+            ).sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
 
-            //return weights for each feature and bias
-            console.log("weights after training:")
-            console.log(weights, b)
+            console.log("weights map:", weights_map)
 
+            Object.entries(useCSVStore().variable_summaries).forEach(([key, summary]) => {
+                let influence = Math.max(weights_map.filter(d => d.name === key).map(d => d.weight))
+                summary.significance.score.regression = influence
+            })
 
-            return [map, Data, y]
         },
         /**
          * prepare data for training
