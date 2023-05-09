@@ -6,8 +6,10 @@
                 Fact View: {{ visStore.current_fact.column['label'] }}
             </v-card-title>
 
+            <!-- visualization -->
             <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column"/>
 
+            <!-- tabs -->
             <v-expansion-panels class="ma-3">
                 <v-expansion-panel>
                     <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
@@ -61,10 +63,10 @@
                 </v-expansion-panel>
             </v-expansion-panels>
 
+            <!-- actions -->
             <v-card-actions>
                 <v-btn v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)" @click="add_vis">
-                    Add
-                    fact
+                    Add fact
                 </v-btn>
                 <v-btn v-else @click="remove_vis">Remove fact</v-btn>
                 <v-btn @click="close">Close</v-btn>
@@ -122,11 +124,17 @@ export default {
         recalculate_options() {
             this.visStore.current_fact.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact.column)
         },
+        /**
+         * removes the current visualization from the current fact group
+         */
         remove_vis() {
             let vis = this.visStore.current_fact.vis
             this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.additional_vis_list.push(vis)
         },
+        /**
+         * adds the current visualization to the current fact group
+         */
         add_vis() {
             let vis = this.visStore.current_fact.vis
             this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)

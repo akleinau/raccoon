@@ -34,6 +34,12 @@ export const useVisStore = defineStore('visStore', {
         }
     }),
     actions: {
+        /**
+         * adds a new fact group to the dashboard
+         *
+         * @param summary
+         * @param visList
+         */
         add_dashboard_item(summary, visList) {
             this.dashboard_items.push({
                 "name": summary.name,
@@ -42,13 +48,17 @@ export const useVisStore = defineStore('visStore', {
             })
             console.log(this.dashboard_items)
         },
+        /**
+         * removes a fact group from the dashboard
+         *
+         * @param name
+         */
         remove_dashboard_item(name) {
             this.dashboard_items = this.dashboard_items.filter(item => item.name !== name)
         },
         /**
          * generates standard visualizations for risk factors from settings
          *
-         * @param column
          * @returns {*[]}
          */
         generate_main_fact_visList() {
@@ -67,6 +77,12 @@ export const useVisStore = defineStore('visStore', {
             )
             return visList
         },
+        /**
+         * generates additional visualizations for the fact group
+         *
+         * @param column
+         * @returns {*[]}
+         */
         generate_additional_fact_visList(column) {
             let visList = []
             if (column.type === "continuous") {
@@ -96,12 +112,24 @@ export const useVisStore = defineStore('visStore', {
 
             return visList
         },
+        /**
+         * sets default settings for visualizations to adapt them to current dataset
+         *
+         * @param length
+         * @param target_column
+         * @param target_option
+         */
         set_initial_default_settings(length, target_column, target_option) {
             this.default_settings.significance.title = "Frequency of " + target_column + ": " + target_option
             this.default_settings.impact.range = [0, length]
         },
-        generate_context_facts() {
-            let facts = []
+        /**
+         * generates context fact groups from selected risk factors
+         *
+         * @returns {*[]}
+         */
+        generate_context_fact_groups() {
+            let fact_groups = []
             let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
                 d.column.riskIncrease !== undefined)
             if (risk_factor_items.length > 0) {
@@ -113,7 +141,7 @@ export const useVisStore = defineStore('visStore', {
 
                 const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
                 const max_risk_difference = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_difference)) + 1
-                facts.push({
+                fact_groups.push({
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
@@ -139,12 +167,15 @@ export const useVisStore = defineStore('visStore', {
                     })
             }
 
-            return facts
+            return fact_groups
         },
+        /**
+         * generates fact groups for general information about the dataset and target
+         */
         generate_general_factGroups() {
             let factGroups = []
 
-            //occurrence
+            //occurrence of target
             let target_column = useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
             if (target_column) {
                 factGroups.push({
@@ -168,9 +199,7 @@ export const useVisStore = defineStore('visStore', {
                 })
             }
 
-
             return factGroups
-
         }
     }
 })

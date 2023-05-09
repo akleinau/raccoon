@@ -57,8 +57,8 @@
                 <div class="d-flex">
                     <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
                     <v-text-field type="number" class="mx-5" label="minimal bin size" v-model="csvStore.min_bin_size"/>
-                    <v-radio-group v-model="csvStore.score" label="score" @update:modelValue="csvStore.sort_summaries()">
-                        <v-radio v-for="score in csvStore.score_choices" :label="score" :value="score" v-bind:key="score" />
+                    <v-radio-group v-model="scoreStore.score" label="score" @update:modelValue="scoreStore.sort_summaries()">
+                        <v-radio v-for="score in scoreStore.score_choices" :label="score" :value="score" v-bind:key="score" />
                     </v-radio-group>
                     <v-btn variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate</v-btn>
                 </div>
@@ -70,13 +70,15 @@
 <script>
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
+import {useScoreStore} from "@/stores/scoreStore";
 
 export default {
     name: "settings_view",
     setup() {
         const csvStore = useCSVStore()
         const visStore = useVisStore()
-        return {csvStore, visStore}
+        const scoreStore = useScoreStore()
+        return {csvStore, visStore, scoreStore}
     },
     data() {
         return {

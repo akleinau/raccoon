@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
 import {useHelperStore} from './helperStore'
+import {useScoreStore} from "./scoreStore";
 
 export const useCSVStore = defineStore('csvStore', {
     state: () => ({
@@ -12,9 +13,7 @@ export const useCSVStore = defineStore('csvStore', {
         target_column: null,
         target_all_options: [],
         target_option: null,
-        variable_summaries: [],
-        score: "max_difference",
-        score_choices: ["max_difference", "entropy", "max", "weighted_max"]
+        variable_summaries: []
     }),
     actions: {
         /**
@@ -22,6 +21,7 @@ export const useCSVStore = defineStore('csvStore', {
          */
         calc_variable_summaries() {
             this.variable_summaries = []
+            let scoreStore = useScoreStore()
 
             this.columns.forEach(column => {
                 let options = [...new Set(this.csv.map(d => d[column]))]
@@ -78,17 +78,14 @@ export const useCSVStore = defineStore('csvStore', {
                     summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
 
                     //significance_score: difference in percentages of percent_target_option
-                    summary.significance = this.compute_significance_score(summary)
+                    summary.significance = scoreStore.compute_significance_score(summary)
                     summary.riskIncrease = this.compute_risk_increase(summary)
 
                     this.variable_summaries.push(summary)
                 }
             })
             //sort by significance_score
-            this.sort_summaries()
-        },
-        sort_summaries() {
-            this.variable_summaries.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
+            scoreStore.sort_summaries()
         },
         /**
          * filters table for only rows with target option selected
@@ -112,86 +109,6 @@ export const useCSVStore = defineStore('csvStore', {
                 result[key] = a[key] / b[key]
             })
             return result
-        },
-        /**
-         * computes tuples with statistically significant differences and significance score
-         *
-         * @param summary
-         * @returns {{score: {}, significant_tuples: []}}
-         */
-        compute_significance_score(summary) {
-            //create list of all tuples of percent_target_option and their significance_test_propotions
-            let tuples = []
-            for (let i = 0; i < summary.options.length; i++) {
-                for (let j = i + 1; j < summary.options.length; j++) {
-                    let o1 = summary.options[i]
-                    let o2 = summary.options[j]
-                    let p1 = summary.percent_target_option[o1.name]
-                    let p2 = summary.percent_target_option[o2.name]
-                    let n1 = summary.occurrence[o1.name]
-                    let n2 = summary.occurrence[o2.name]
-                    if (this.significance_test_proportions(p1, p2, n1, n2)) {
-                        tuples.push({
-                            "option1": o1,
-                            "option2": o2,
-                            "diff": Math.abs(p1 - p2)
-                        })
-                    }
-                }
-            }
-            if (tuples.length === 0) {
-                return {
-                    "significant_tuples": [],
-                    "score": Object.fromEntries(new Map(this.score_choices.map(d => [d, -1])))
-                }
-            }
-
-            return {
-                "significant_tuples": tuples.map(d => [d.option1.label, d.option2.label]),
-                "score": {
-                    "max_difference": Math.max(...tuples.map(d => d.diff)),
-                    "max": Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0][1],
-                    "weighted_max": this.weighted_max_score(summary),
-                    "entropy": -this.entropy(Object.values(summary.percent_target_option))
-                }
-            }
-        },
-        /**
-         * returns true if the difference in the percentage of the target option is significant
-         *
-         * @param p1 - percentage of target option in first group
-         * @param p2 - percentage of target option in second group
-         * @param n1 - number of elements in first group
-         * @param n2 - number of elements in second group
-         * @returns {boolean}
-         */
-        significance_test_proportions(p1, p2, n1, n2) {
-            //test for too small sample sizes
-            if (n1 < 10 || n2 < 10) {
-                return false
-            }
-
-            let p = (p1 * n1 + p2 * n2) / (n1 + n2)
-            let se = Math.sqrt(p * (1 - p) * (1 / n1 + 1 / n2))
-            let z = (p1 - p2) / se
-            //for a normal distribution with mea 0 and sttdev 1, the z score boundary for 95% confidence is 1.96
-            const Z_SCORE_BOUNDARY = 1.64485
-            return Math.abs(z) >= Z_SCORE_BOUNDARY
-        },
-        entropy(array) {
-            let sum = 0
-            array.forEach(d => sum += d)
-            let result = 0
-            array.forEach(d => {
-                let p = d / sum
-                result -= p * Math.log(p)
-            })
-            return result
-        },
-        weighted_max_score(summary) {
-            let max_percent_option = Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0]
-            let max_percent_occurrence = summary.occurrence[max_percent_option[0]]
-            return max_percent_option[1] * max_percent_occurrence / this.csv.length
         },
         /**
          * calculates pretty extents for continuous columns.
@@ -334,6 +251,13 @@ export const useCSVStore = defineStore('csvStore', {
 
             return {"risk_factor_groups": name_above, risk_difference: risk_difference, risk_multiplier: risk_multiplier}
         },
+        /**
+         * recalculates a variable summaries when the option bins are changed. For now, people that do not fit in any of
+         * the current bins are just ignored. This will be changed in the future.
+         *
+         * @param summary
+         * @returns {*}
+         */
         recalculate_summary_after_option_change(summary) {
             //only continue if there are less than 10 options to make sure it is categorical or ordinal
             if (summary.type === "categorical") {
@@ -369,6 +293,13 @@ export const useCSVStore = defineStore('csvStore', {
             }
 
         },
+        /**
+         * finds the option bin for a value
+         *
+         * @param value
+         * @param options
+         * @returns {*|null}
+         */
         find_bin(value, options) {
             const option = options.find(d => d.range !== undefined ? +value >= +d.range[0] && +value < +d.range[1] : d.name === value)
             return option ? option.name : null

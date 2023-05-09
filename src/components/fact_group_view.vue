@@ -17,7 +17,7 @@
                 Calculated frequencies are less accurate for options with less than 100 people.
             </div>
 
-
+            <!-- visualizations -->
             <div class="d-flex overflow-y-hidden pb-5">
                 <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList"
                      v-bind:key="vis">
@@ -33,6 +33,7 @@
                 </div>
             </div>
 
+            <!-- option tabs -->
             <v-expansion-panels class="ma-3">
                 <v-expansion-panel class="ma-1" v-if="visStore.current_fact_group.column.significance !== undefined">
                     <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
@@ -152,10 +153,20 @@ export default {
         recalculate_options() {
             this.visStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact_group.column)
         },
+        /**
+         * removes a visualization from the fact group visList
+         *
+         * @param vis
+         */
         remove_vis(vis) {
             this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.additional_vis_list.push(vis)
         },
+        /**
+         * adds a visualization to the fact group visList
+         *
+         * @param vis
+         */
         add_vis(vis) {
             this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.visList.push(vis)
