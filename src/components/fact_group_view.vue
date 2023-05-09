@@ -12,6 +12,11 @@
                 <v-icon icon="mdi-alert"/>
                 no statistically significant differences
             </div>
+            <div v-if="Object.values(visStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
+                <v-icon icon="mdi-alert"/>
+                Calculated frequencies are less accurate for options with less than 100 people.
+            </div>
+
 
             <div class="d-flex overflow-y-hidden pb-5">
                 <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList"
