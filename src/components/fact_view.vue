@@ -1,6 +1,11 @@
 <template>
     <v-dialog v-model="display">
-        <v-card title="Fact View" class="flex mx-auto w-75">
+        <v-card class="flex mx-auto w-75">
+
+            <v-card-title>
+                Fact View: {{ visStore.current_fact.column['label'] }}
+            </v-card-title>
+
             <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column"/>
 
             <v-expansion-panels class="ma-3">
@@ -57,7 +62,8 @@
             </v-expansion-panels>
 
             <v-card-actions>
-                <v-btn v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)" @click="add_vis">Add
+                <v-btn v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)" @click="add_vis">
+                    Add
                     fact
                 </v-btn>
                 <v-btn v-else @click="remove_vis">Remove fact</v-btn>
