@@ -55,11 +55,11 @@ export const useRegressionStore = defineStore('regressionStore', {
                     let loss = this.loss(pred, actual)
 
                     //compute derivates
-                    let dW = this.dot_product(x, [actual - pred])/Data.length
+                    let dW = x.map(d => (pred - actual) * d)
                     let db = actual - pred
 
                     //update weights
-                    weights = weights - LEARNING_RATE * dW
+                    weights = weights.map((d, i) => d - LEARNING_RATE * dW[i])
                     b = b - LEARNING_RATE * db
 
                     console.log(dW, db, weights, b)
