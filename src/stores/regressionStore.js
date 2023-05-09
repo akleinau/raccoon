@@ -95,9 +95,10 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             console.log("weights map:", weights_map)
 
-            Object.entries(useCSVStore().variable_summaries).forEach(([key, summary]) => {
-                let influence = Math.max(weights_map.filter(d => d.name === key).map(d => d.weight))
-                summary.significance.score.regression = influence
+            let csvStore = useCSVStore()
+            csvStore.variable_summaries.forEach( summary => {
+                let influence = d3.max(weights_map.filter(d => d.name === summary.name).map(d => Math.abs(d.weight)))
+                summary.significance.score["regression"] = influence
             })
 
         },
