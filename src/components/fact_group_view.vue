@@ -45,7 +45,7 @@
                                         {{ tuple[1] !== "" ? tuple[1] : "null" }})
                                     </span>
                         <div> Score:
-                            {{ visStore.current_fact_group.column['significance'].score[csvStore.score].toFixed(2) }}
+                            {{ visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2) }}
                         </div>
                         <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
                     </v-expansion-panel-text>
@@ -106,6 +106,7 @@
 import {useVisStore} from "@/stores/visStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 import {useCSVStore} from "@/stores/csvStore";
+import {useScoreStore} from "@/stores/scoreStore";
 
 export default {
     name: "fact_group_view",
@@ -113,7 +114,8 @@ export default {
     setup() {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
-        return {visStore, csvStore}
+        const scoreStore = useScoreStore()
+        return {visStore, csvStore, scoreStore}
     },
     data() {
         return {
