@@ -5,7 +5,9 @@ import {useScoreStore} from "@/stores/scoreStore";
 import {useVisStore} from "@/stores/visStore";
 
 export const useRegressionStore = defineStore('regressionStore', {
-    state: () => ({}),
+    state: () => ({
+        accuracy_diff: 0,
+    }),
     actions: {
         /**
          * calculates sigmoid function
@@ -78,7 +80,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         train(map, Data, y_pred, y_actual) {
 
             if (Data.length === 0) {
-                return y_pred
+                return [y_pred, 0]
             }
 
             //create weight matrix with one weight per feature plus bias
@@ -151,7 +153,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                 summary.significance.score["regression"] = influence
             })
 
-            return this.compute_new_prediction(weights, b, Data, y_pred)
+            return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy]
 
         },
         /**
@@ -183,38 +185,38 @@ export const useRegressionStore = defineStore('regressionStore', {
                         })
                         //handles feature data
                     } else {
-                        let data_item = null
-                        let map_item = null
+                        let data_items = []
+                        let map_items = []
                         if (summary.type === "categorical") {
                             // convert categorical data to one hot encoding
                             summary.options.forEach(option => {
-                                data_item = csvStore.csv.map(d => d[column] === option.name ? 1 : 0)
-                                map_item = {
+                                data_items.push(csvStore.csv.map(d => d[column] === option.name ? 1 : 0))
+                                map_items.push({
                                     "type": "categorical",
                                     "name": column,
                                     "option": option.name
-                                }
+                                })
                             })
 
                         } else if (summary.type === "continuous") {
                             //add data in bins for now to cope with missing data (just gets own bin)
                             summary.options.forEach(option => {
-                                data_item = csvStore.csv.map(d => csvStore.find_bin(d[column], summary.options) === option.name ? 1 : 0)
-                                map_item = {
+                                data_items.push(csvStore.csv.map(d => csvStore.find_bin(d[column], summary.options) === option.name ? 1 : 0))
+                                map_items.push({
                                     "type": "binned",
                                     "name": column,
                                     "option": option.name
-                                }
+                                })
                             })
                         }
 
-                        if (data_item && map_item) {
+                        if (data_items.length > 0) {
                             if (useVisStore().dashboard_items.find(d => d.name === column)) {
-                                dashboard_data.push(data_item)
-                                dashboard_map.push(map_item)
+                                dashboard_data.push(...data_items)
+                                dashboard_map.push(...map_items)
                             } else {
-                                Data.push(data_item)
-                                map.push(map_item)
+                                Data.push(...data_items)
+                                map.push(...map_items)
                             }
                         }
 
@@ -231,11 +233,12 @@ export const useRegressionStore = defineStore('regressionStore', {
         compute_score() {
             let [map, Data, dashboard_map, dashboard_data, y] = this.prepare_data()
             console.log("training on dashboard:")
-            let y_pred = this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y)
+            let [y_pred, accuracy] = this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y)
             console.log(y_pred)
             console.log("training on remaining data:")
-            let y_pred2 = this.train(map, Data, y_pred, y)
+            let [y_pred2, accuracy2] = this.train(map, Data, y_pred, y)
             console.log(y_pred2)
+            this.accuracy_diff = accuracy2 - accuracy
             let scoreStore = useScoreStore()
             scoreStore.score = "regression"
             scoreStore.sort_summaries()

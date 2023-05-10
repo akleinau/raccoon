@@ -6,6 +6,14 @@
                     :class="{ 'on-hover': isHovering}"
                     @click="show_fact_group_view">
                 <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.label }}</h4>
+
+                <!-- hint when column is excluded -->
+                <div v-if="visStore.excluded_columns.includes(column.name)"
+                     class="ml-4 mt-4 d-flex justify-center w-100 text-yellow-darken-4">
+                    <v-icon icon="mdi-alert" class="mr-2"/> [Excluded from risk factor calculations]
+                </div>
+
+                <!--visualization preview -->
                 <div class="pa-2 mr-2 d-flex align-center" :class="{ 'flex-column': vertical }">
                     <div v-for="vis in visList" v-bind:key="vis">
                         <vis_parser :vis="vis" :column="column" :width="350"/>

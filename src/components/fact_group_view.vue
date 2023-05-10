@@ -93,9 +93,11 @@
             </v-expansion-panels>
 
             <v-card-actions>
-                <v-btn @click="add"> Add</v-btn>
+                <v-btn @click="add" v-if="!visStore.dashboard_items.find(d => d.name === visStore.current_fact_group.column.name)"> Add</v-btn>
+                <v-btn @click="remove" v-else> Remove</v-btn>
                 <v-btn @click="close">Close</v-btn>
-                <v-btn @click="exclude">Exclude</v-btn>
+                <v-btn @click="exclude" v-if="!visStore.excluded_columns.includes(visStore.current_fact_group.column.name)">Exclude</v-btn>
+                <v-btn @click="include" v-else>include</v-btn>
             </v-card-actions>
 
 
@@ -151,6 +153,13 @@ export default {
             this.close()
         },
         /**
+         * excludes the fact group from the dashboard
+         */
+        remove() {
+            this.visStore.remove_dashboard_item(this.visStore.current_fact_group.column.name)
+            this.close()
+        },
+        /**
          * recalculates the options for the risk factor
          */
         recalculate_options() {
@@ -179,6 +188,13 @@ export default {
          */
         exclude() {
             this.visStore.exclude_column(this.visStore.current_fact_group.column)
+            this.close()
+        },
+        /**
+         * includes the fact group
+         */
+        include() {
+            this.visStore.restore_column(this.visStore.current_fact_group.column.name)
             this.close()
         }
     }

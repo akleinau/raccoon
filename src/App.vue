@@ -63,6 +63,12 @@
                     </div>
                 </v-card-title>
 
+                <div v-if="regressionStore.accuracy_diff < 0.01">
+                    <v-icon icon="mdi-alert"/>
+                    there are no more impactful risk factors. Remaining frequency differences are explained by
+                    correlations with currently selected factors.
+                </div>
+
                 <!-- Risk Factor Sheets -->
                 <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="column in csvStore.variable_summaries.slice(0,20)" v-bind:key="column">
