@@ -109,7 +109,7 @@ export const useRegressionStore = defineStore('regressionStore', {
 
                         loss.push(this.loss(curr_pred, curr_actual))
                         dW.push(row.map((d) => (curr_pred - curr_actual) * d))
-                        db.push(curr_actual - curr_pred)
+                        db.push(curr_pred - curr_actual)
                     }
 
                     let mean_dW = []
