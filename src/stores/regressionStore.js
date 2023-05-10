@@ -87,7 +87,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             let weights = Array(Data.length).fill(0)
             let b = 0
 
-            const TEST_SET_I = Data[0].length - Data[0].length / 10
+            const TEST_SET_I = Data[0].length - Math.floor(Data[0].length / 10)
             const BATCHSIZE = 10
             const LEARNING_RATE = 0.01
 
@@ -124,7 +124,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     weights = weights.map((d, i) => d - LEARNING_RATE * mean_dW[i])
                     b = b - LEARNING_RATE * db
 
-                    if (i % (30 * BATCHSIZE) === 0) {
+                    if (i % (Math.floor(Data[0].length / (BATCHSIZE))*20) === 0) {
                         console.log("Loss: " + d3.mean(loss) + " Accuracy: " + accuracy)
                     }
 
