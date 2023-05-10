@@ -58,6 +58,7 @@ export const useVisStore = defineStore('visStore', {
          */
         remove_dashboard_item(name) {
             this.dashboard_items = this.dashboard_items.filter(item => item.name !== name)
+            useRegressionStore().compute_score()
         },
         /**
          * generates standard visualizations for risk factors from settings
