@@ -3,9 +3,8 @@ import {useCSVStore} from "@/stores/csvStore";
 
 export const useScoreStore = defineStore('scoreStore', {
     state: () => ({
-        score: "regression",
-        score_choices: ["max_difference", "entropy", "max", "weighted_max", "regression"],
-        loading: false
+        score: "max_difference",
+        score_choices: ["max_difference", "entropy", "max", "weighted_max", "regression"]
     }),
     actions: {
         /**
