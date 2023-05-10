@@ -1,9 +1,12 @@
 import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
 import * as d3 from "d3";
+import {useScoreStore} from "@/stores/scoreStore";
 
 export const useRegressionStore = defineStore('regressionStore', {
-    state: () => ({}),
+    state: () => ({
+        excludedColumns: ["stea_alt75_s0"],
+    }),
     actions: {
         /**
          * calculates sigmoid function
@@ -28,32 +31,55 @@ export const useRegressionStore = defineStore('regressionStore', {
             return -(actual * Math.log(pred) + (1 - actual) * Math.log(1 - pred))
         },
         /**
+         * calculate accuracy
+         *
+         * @param TEST_SET_I
+         * @param Data
+         * @param weights
+         * @param b
+         * @param y
+         */
+        accuracy: function (TEST_SET_I, Data, weights, b, y) {
+            //check accuracy
+            let correct = 0
+            for (let i = TEST_SET_I; i < Data[0].length; i++) {
+                let row = Data.map(d => d[i])
+                let curr_pred = this.sigmoid(this.dot_product(weights, row) + b)
+                let curr_actual = y[i]
+                if (curr_pred > 0.5 && curr_actual === 1) {
+                    correct++
+                } else if (curr_pred < 0.5 && curr_actual === 0) {
+                    correct++
+                }
+            }
+            return (correct / (Data[0].length - TEST_SET_I))
+        },
+        /**
          * train
          */
         train() {
-            const LEARNING_RATE = 0.01
 
             let [map, Data, y] = this.prepare_data()
-            console.log("data:")
-            console.log(map, Data, y)
 
             //create weight matrix with one weight per feature plus bias
             let weights = Array(Data.length).fill(0)
             let b = 0
-            console.log("weights:")
-            console.log(weights, b)
+
+            const TEST_SET_I = Data[0].length - Data[0].length / 10
+            const BATCHSIZE = 10
+            const LEARNING_RATE = 0.01
 
             //optimize weights using gradient descent
             //for each epoch
-            for (let epoch = 0; epoch < 20; epoch++) {
+            for (let epoch = 0; epoch < 15; epoch++) {
+                let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y);
 
-                let batchsize = 10
                 //for each batch of rows in data
-                for (let i = 0; i < Data[0].length; i += batchsize) {
+                for (let i = 0; i < TEST_SET_I; i += BATCHSIZE) {
                     let loss = []
                     let dW = []
                     let db = []
-                    for (let j = 0; j < batchsize; j++) {
+                    for (let j = 0; j < BATCHSIZE; j++) {
                         //multiplicate weights with data
                         let row = Data.map(d => d[j + i])
                         let curr_pred = this.sigmoid(this.dot_product(weights, row) + b)
@@ -76,12 +102,15 @@ export const useRegressionStore = defineStore('regressionStore', {
                     weights = weights.map((d, i) => d - LEARNING_RATE * mean_dW[i])
                     b = b - LEARNING_RATE * db
 
-                    if (i % 20 === 0) {
-                        console.log("Loss: " + d3.mean(loss))
+                    if (i % (30 * BATCHSIZE) === 0) {
+                        console.log("Loss: " + d3.mean(loss) + " Accuracy: " + accuracy)
                     }
 
                 }
             }
+
+            let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y);
+            console.log("Final Accuracy: " + accuracy)
 
             //combine map with weights and then sort
             let weights_map = map.map((d, i) =>
@@ -96,8 +125,9 @@ export const useRegressionStore = defineStore('regressionStore', {
             console.log("weights map:", weights_map)
 
             let csvStore = useCSVStore()
-            csvStore.variable_summaries.forEach( summary => {
+            csvStore.variable_summaries.forEach(summary => {
                 let influence = d3.max(weights_map.filter(d => d.name === summary.name).map(d => Math.abs(d.weight)))
+                if (!influence) influence = 0
                 summary.significance.score["regression"] = influence
             })
 
@@ -114,7 +144,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             //gets csv data - categorical, numerical, ordinal data, and target
             csvStore.csv.columns.forEach(column => {
                 let summary = csvStore.variable_summaries.find(d => d.name === column)
-                if (summary) {
+                if (summary && !this.excludedColumns.includes(column)) {
 
                     //convert target to binary 1 - 0 values. Currently only works for binary targets
                     if (summary.name === csvStore.target_column) {
@@ -156,6 +186,15 @@ export const useRegressionStore = defineStore('regressionStore', {
             //create feature matrix and map to trace back each feature to its original column/ option
 
             return [map, Data, y]
+        },
+        /**
+         * score computation
+         */
+        compute_score() {
+            this.train()
+            let scoreStore = useScoreStore()
+            scoreStore.score = "regression"
+            scoreStore.sort_summaries()
         }
     }
 })

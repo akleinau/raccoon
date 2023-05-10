@@ -13,8 +13,6 @@
 
         <v-main>
 
-            <v-btn @click="regressionStore.train()" class="ma-5">Train</v-btn>
-
             <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex flex-wrap">
                     <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">

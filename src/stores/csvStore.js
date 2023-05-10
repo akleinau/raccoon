@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import * as d3 from "d3";
 import {useHelperStore} from './helperStore'
 import {useScoreStore} from "./scoreStore";
+import {useRegressionStore} from "@/stores/regressionStore";
 
 export const useCSVStore = defineStore('csvStore', {
     state: () => ({
@@ -86,6 +87,9 @@ export const useCSVStore = defineStore('csvStore', {
             })
             //sort by significance_score
             scoreStore.sort_summaries()
+
+            useRegressionStore().compute_score()
+
         },
         /**
          * filters table for only rows with target option selected
