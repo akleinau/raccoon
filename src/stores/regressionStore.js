@@ -230,18 +230,22 @@ export const useRegressionStore = defineStore('regressionStore', {
         /**
          * score computation
          */
-        compute_score() {
-            let [map, Data, dashboard_map, dashboard_data, y] = this.prepare_data()
+        async compute_score() {
+            useScoreStore().loading = true
+            setTimeout(this.compute_score_, 0)
+        },
+        async compute_score_() {
+            let scoreStore = useScoreStore()
+            let [map, Data, dashboard_map, dashboard_data, y] = await this.prepare_data()
             console.log("training on dashboard:")
-            let [y_pred, accuracy] = this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y)
+            let [y_pred, accuracy] = await this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y)
             console.log(y_pred)
             console.log("training on remaining data:")
-            let [y_pred2, accuracy2] = this.train(map, Data, y_pred, y)
+            let [y_pred2, accuracy2] = await this.train(map, Data, y_pred, y)
             console.log(y_pred2)
             this.accuracy_diff = accuracy2 - accuracy
-            let scoreStore = useScoreStore()
-            scoreStore.score = "regression"
             scoreStore.sort_summaries()
+            scoreStore.loading = false
         }
     }
 })

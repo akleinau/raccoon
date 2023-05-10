@@ -63,10 +63,14 @@
                     </div>
                 </v-card-title>
 
-                <div v-if="regressionStore.accuracy_diff < 0.01">
+                <div v-if="regressionStore.accuracy_diff < 0.01 && scoreStore.loading === false">
                     <v-icon icon="mdi-alert"/>
                     there are no more impactful risk factors. Remaining frequency differences are explained by
                     correlations with currently selected factors.
+                </div>
+
+                <div v-if="scoreStore.loading === true" class="ma-2">
+                    [loading]
                 </div>
 
                 <!-- Risk Factor Sheets -->
@@ -107,6 +111,7 @@ import excluded_column_overlay from "@/components/excluded_column_overlay.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
+import {useScoreStore} from "@/stores/scoreStore";
 
 
 export default {
@@ -123,7 +128,8 @@ export default {
         const csvStore = useCSVStore()
         const visStore = useVisStore()
         const regressionStore = useRegressionStore()
-        return {csvStore, visStore, regressionStore}
+        const scoreStore = useScoreStore()
+        return {csvStore, visStore, regressionStore, scoreStore}
     }
 }
 </script>
