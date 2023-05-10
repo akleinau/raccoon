@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
+import {useRegressionStore} from "@/stores/regressionStore";
 
 export const useVisStore = defineStore('visStore', {
     state: () => ({
@@ -46,6 +47,7 @@ export const useVisStore = defineStore('visStore', {
                 "column": summary,
                 "visList": visList
             })
+            useRegressionStore().compute_score()
             console.log(this.dashboard_items)
         },
         /**
