@@ -26,7 +26,7 @@ export default {
             let margin_top = 40
             let margin_right = 30
             let height = 200
-            let width = this.width? this.width : 600
+            let width = this.width ? this.width : 600
 
             let svg = d3.create("svg")
                 .attr("width", width + margin_left)
@@ -42,23 +42,29 @@ export default {
                 .attr("fill", "lightgray")
 
             // add the x Axis
-            var x = d3.scaleLinear()
+            let x = d3.scaleLinear()
                 .domain(d3.extent(data))
                 .range([0, width]);
             svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x));
 
+            // Compute kernel density estimation
+            let kde = this.kernelDensityEstimator(this.kernelEpanechnikov(7), x.ticks(40))
+            let density = kde(data)
+
+            let kde2 = this.kernelDensityEstimator(this.kernelEpanechnikov(7), x.ticks(40))
+            let density_target = kde2(target_data)
+
+            let max_density = d3.max([d3.max(density.map(d => d[1])), d3.max(density_target.map(d => d[1]))])
+
             // add the y Axis
-            var y = d3.scaleLinear()
+            let y = d3.scaleLinear()
                 .range([height, 0])
-                .domain([0, 1]);
+                .domain([0, max_density + 0.002]);
             svg.append("g")
                 .call(d3.axisLeft(y));
 
-            // Compute kernel density estimation
-            var kde = this.kernelDensityEstimator(this.kernelEpanechnikov(7), x.ticks(40))
-            var density = kde(data)
 
             // Plot the area
             svg.append("path")
@@ -72,9 +78,6 @@ export default {
                     .x(d => x(d[0]))
                     .y(d => y(d[1]))
                 );
-
-            var kde2 = this.kernelDensityEstimator(this.kernelEpanechnikov(7), x.ticks(40))
-            var density_target = kde2(target_data)
 
             // Plot the area
             svg.append("path")
