@@ -200,14 +200,13 @@ export const useRegressionStore = defineStore('regressionStore', {
 
                         } else if (summary.type === "continuous") {
                             //add data in bins for now to cope with missing data (just gets own bin)
-                            summary.options.forEach(option => {
-                                data_items.push(csvStore.csv.map(d => csvStore.find_bin(d[column], summary.options) === option.name ? 1 : 0))
+                                let mean = d3.mean(csvStore.csv.map(d => d[column]))
+                                let stddev = d3.deviation(csvStore.csv.map(d => d[column]))
+                                data_items.push(csvStore.csv.map(d => d[column]).map(d => isNaN(d) || d === "" ? 0 : (d-mean)/stddev))
                                 map_items.push({
-                                    "type": "binned",
+                                    "type": "continuous",
                                     "name": column,
-                                    "option": option.name
                                 })
-                            })
                         }
 
                         if (data_items.length > 0) {
