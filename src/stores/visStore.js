@@ -218,6 +218,13 @@ export const useVisStore = defineStore('visStore', {
         exclude_column(column) {
             this.excluded_columns.push(column.name)
             useRegressionStore().compute_score()
+        },
+        /**
+         * restore column
+         */
+        restore_column(column) {
+            this.excluded_columns = this.excluded_columns.filter(d => d !== column)
+            useRegressionStore().compute_score()
         }
     }
 })

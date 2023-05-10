@@ -95,7 +95,7 @@
             <v-card-actions>
                 <v-btn @click="add"> Add</v-btn>
                 <v-btn @click="close">Close</v-btn>
-                <v-btn @click="exclude">Delete</v-btn>
+                <v-btn @click="exclude">Exclude</v-btn>
             </v-card-actions>
 
 

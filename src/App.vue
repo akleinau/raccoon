@@ -53,8 +53,14 @@
 
             <v-card class="pa-5 bg-blue-grey-lighten-5">
 
-                <v-card-title>Risk Factors
-                    <all_risk_factor_view text-button="true"/>
+                <v-card-title>
+                    <div class="d-flex align-center">
+                        Risk Factors
+                        <all_risk_factor_view text-button="true"/>
+                        <div class="flex-grow-1 d-flex justify-end">
+                            <excluded_column_overlay/>
+                        </div>
+                    </div>
                 </v-card-title>
 
                 <!-- Risk Factor Sheets -->
@@ -91,6 +97,7 @@ import fact_group_view from './components/fact_group_view.vue'
 import fact_view from './components/fact_view.vue'
 import settings_view from "@/components/settings_view.vue";
 import all_risk_factor_view from "@/components/all_risk_factor_view.vue";
+import excluded_column_overlay from "@/components/excluded_column_overlay.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
@@ -98,6 +105,7 @@ import {useRegressionStore} from "@/stores/regressionStore";
 
 export default {
     components: {
+        excluded_column_overlay,
         fact_group_preview,
         start_overlay,
         fact_group_view,
