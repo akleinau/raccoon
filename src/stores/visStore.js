@@ -7,6 +7,7 @@ export const useVisStore = defineStore('visStore', {
         dashboard_items: [],
         current_fact_group: null,
         current_fact: null,
+        excluded_columns: [],
         default_settings: {
             impact: {
                 graph: "bar",
@@ -202,6 +203,21 @@ export const useVisStore = defineStore('visStore', {
             }
 
             return factGroups
+        },
+        /**
+         * check if column can be shown in recommendations
+         */
+        is_recommendation_column(column) {
+            return (! this.dashboard_items.map(item => item.name).includes(column.name) &&
+                column.name !== useCSVStore().target_column &&
+                !this.excluded_columns.includes(column.name))
+        },
+        /**
+         * exclude column
+         */
+        exclude_column(column) {
+            this.excluded_columns.push(column.name)
+            useRegressionStore().compute_score()
         }
     }
 })

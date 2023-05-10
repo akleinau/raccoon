@@ -22,7 +22,7 @@
             -->
             <div class="d-flex flex-wrap overflow-auto align-stretch" style="height:800px">
                 <div v-for="column in csvStore.variable_summaries" v-bind:key="column" class="relative">
-                    <fact_group_preview v-if="! visStore.dashboard_items.map(item => item.name).includes(column.name) && column.name !== csvStore.target_column"
+                    <fact_group_preview v-if="visStore.is_recommendation_column(column)"
                                         class="pa-2 h-100" :vertical="true"
                                         :visList="visStore.generate_main_fact_visList()"
                                         :column="column"/>

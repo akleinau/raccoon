@@ -95,6 +95,7 @@
             <v-card-actions>
                 <v-btn @click="add"> Add</v-btn>
                 <v-btn @click="close">Close</v-btn>
+                <v-btn @click="exclude">Delete</v-btn>
             </v-card-actions>
 
 
@@ -172,6 +173,13 @@ export default {
         add_vis(vis) {
             this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.visList.push(vis)
+        },
+        /**
+         * deletes the fact group
+         */
+        exclude() {
+            this.visStore.exclude_column(this.visStore.current_fact_group.column)
+            this.close()
         }
     }
 }

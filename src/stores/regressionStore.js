@@ -5,9 +5,7 @@ import {useScoreStore} from "@/stores/scoreStore";
 import {useVisStore} from "@/stores/visStore";
 
 export const useRegressionStore = defineStore('regressionStore', {
-    state: () => ({
-        excludedColumns: ["stea_alt75_s0"],
-    }),
+    state: () => ({}),
     actions: {
         /**
          * calculates sigmoid function
@@ -171,7 +169,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             csvStore.csv.columns.forEach(column => {
 
                 let summary = csvStore.variable_summaries.find(d => d.name === column)
-                if (summary && !this.excludedColumns.includes(column)) {
+                if (summary && !useVisStore().excluded_columns.includes(column)) {
 
                     //convert target to binary 1 - 0 values. Currently only works for binary targets
                     if (summary.name === csvStore.target_column) {
