@@ -7,10 +7,10 @@ import {useVisStore} from "@/stores/visStore";
 export const useRegressionStore = defineStore('regressionStore', {
     state: () => ({
         accuracy_diff: 0,
-        test_ratio : 0.1,
-        batch_size : 10,
-        learning_rate : 0.01,
-        epochs : 15,
+        test_ratio: 0.1,
+        batch_size: 10,
+        learning_rate: 0.01,
+        epochs: 15,
     }),
     actions: {
         /**
@@ -87,7 +87,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         /**
          * train
          */
-        train(map, Data, y_pred, y_actual) {
+        train(map, Data, y_pred, y_actual, summary_place) {
 
             if (Data.length === 0) {
                 return [y_pred, 0]
@@ -129,9 +129,9 @@ export const useRegressionStore = defineStore('regressionStore', {
                     weights = weights.map((d, i) => d - this.learning_rate * mean_dW[i])
                     b = b - this.learning_rate * db
 
-                  //  if (i % (Math.floor(Data[0].length / (this.batch_size)) * 20) === 0) {
-                 //       console.log("Loss: " + d3.mean(loss) + " Accuracy: " + accuracy)
-                 //   }
+                    //  if (i % (Math.floor(Data[0].length / (this.batch_size)) * 20) === 0) {
+                    //       console.log("Loss: " + d3.mean(loss) + " Accuracy: " + accuracy)
+                    //   }
 
                 }
             }
@@ -151,12 +151,26 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             console.log("weights map:", weights_map)
 
-            let csvStore = useCSVStore()
-            csvStore.variable_summaries.forEach(summary => {
-                let influence = d3.max(weights_map.filter(d => d.name === summary.name).map(d => Math.abs(d.weight)))
-                if (!influence) influence = 0
-                summary.significance.score["regression"] = influence
-            })
+            const visStore = useVisStore()
+
+            if (summary_place === "variable_summaries") {
+                useCSVStore().variable_summaries.forEach(summary => {
+                    if (visStore.is_recommendation_column(summary)) {
+                        let influence = d3.max(weights_map.filter(d => d.name === summary.name).map(d => Math.abs(d.weight)))
+                        if (!influence) influence = 0
+                        summary.significance.score["regression"] = influence
+                    }
+                })
+            }
+
+            if (summary_place === "dashboard") {
+                visStore.dashboard_items.forEach(item => {
+                    let influence = d3.max(weights_map.filter(d => d.name === item.name).map(d => Math.abs(d.weight)))
+                    if (!influence) influence = 0
+                    item.column.significance.score["regression"] = influence
+                    console.log("Added", influence, "to", item.column.significance.score["regression"])
+                })
+            }
 
             return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy]
 
@@ -244,10 +258,10 @@ export const useRegressionStore = defineStore('regressionStore', {
         compute_score() {
             let [map, Data, dashboard_map, dashboard_data, y] = this.prepare_data()
             console.log("training on dashboard:")
-            let [y_pred, accuracy] = this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y)
+            let [y_pred, accuracy] = this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
             console.log(y_pred)
             console.log("training on remaining data:")
-            let [y_pred2, accuracy2] = this.train(map, Data, y_pred, y)
+            let [y_pred2, accuracy2] = this.train(map, Data, y_pred, y, "variable_summaries")
             console.log(y_pred2)
             this.accuracy_diff = accuracy2 - accuracy
             let scoreStore = useScoreStore()
