@@ -14,7 +14,7 @@
         <v-main>
 
             <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
-                <div class="d-flex flex-wrap">
+                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
                                             style="height:500px" vertical="true"/>
