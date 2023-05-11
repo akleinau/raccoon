@@ -7,6 +7,10 @@ import {useVisStore} from "@/stores/visStore";
 export const useRegressionStore = defineStore('regressionStore', {
     state: () => ({
         accuracy_diff: 0,
+        test_ratio : 0.1,
+        batch_size : 10,
+        learning_rate : 0.01,
+        epochs : 15,
     }),
     actions: {
         /**
@@ -44,8 +48,8 @@ export const useRegressionStore = defineStore('regressionStore', {
         accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual) {
             //check accuracy
             let correct = 0
-            for (let i = TEST_SET_I; i < Data[0].length; i++) {
-                let row = Data.map(d => d[i])
+            for (let i = TEST_SET_I; i < Data.length; i++) {
+                let row = Data[i]
                 let curr_pred = this.sigmoid(this.dot_product(weights, row) + b + y_pred[i])
                 let curr_actual = y_actual[i]
                 if (curr_pred > 0.5 && curr_actual === 1) {
@@ -54,7 +58,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     correct++
                 }
             }
-            return (correct / (Data[0].length - TEST_SET_I))
+            return (correct / (Data.length - TEST_SET_I))
         },
         /**
          * compute predictions without sigma
@@ -67,8 +71,8 @@ export const useRegressionStore = defineStore('regressionStore', {
          */
         compute_new_prediction(weights, b, data, y_pred) {
             let y_new_pred = []
-            for (let i = 0; i < data[0].length; i++) {
-                let row = data.map(d => d[i])
+            for (let i = 0; i < data.length; i++) {
+                let row = data[i]
                 let curr_pred = this.dot_product(weights, row) + b + y_pred[i]
                 y_new_pred.push(curr_pred)
             }
@@ -90,26 +94,24 @@ export const useRegressionStore = defineStore('regressionStore', {
             }
 
             //create weight matrix with one weight per feature plus bias
-            let weights = Array(Data.length).fill(0)
+            let weights = Array(Data[0].length).fill(0)
             let b = 0
 
-            const TEST_SET_I = Data[0].length - Math.floor(Data[0].length / 10)
-            const BATCHSIZE = 10
-            const LEARNING_RATE = 0.01
+            const TEST_SET_I = Data.length - Math.floor(Data.length / (100 * this.test_ratio))
 
             //optimize weights using gradient descent
             //for each epoch
-            for (let epoch = 0; epoch < 15; epoch++) {
-                let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
+            for (let epoch = 0; epoch < this.epochs; epoch++) {
+                //let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
 
                 //for each batch of rows in data
-                for (let i = 0; i < TEST_SET_I; i += BATCHSIZE) {
+                for (let i = 0; i < TEST_SET_I; i += this.batch_size) {
                     let loss = []
                     let dW = []
                     let db = []
-                    for (let j = 0; j < BATCHSIZE; j++) {
+                    for (let j = 0; j < this.batch_size; j++) {
                         //multiplicate weights with data
-                        let row = Data.map(d => d[j + i])
+                        let row = Data[j + i]
                         let curr_pred = this.sigmoid(this.dot_product(weights, row) + b + y_pred[j + i])
                         let curr_actual = y_actual[j + i]
 
@@ -118,21 +120,18 @@ export const useRegressionStore = defineStore('regressionStore', {
                         db.push(curr_pred - curr_actual)
                     }
 
-                    let mean_dW = []
                     //compute derivates
-                    for (let k = 0; k < dW[0].length; k++) {
-                        mean_dW.push(d3.mean(dW.map(d => d[k])))
-                    }
+                    let mean_dW = dW[0].map((_, i) => d3.mean(dW.map(d => d[i])))
                     db = d3.mean(db)
 
 
                     //update weights
-                    weights = weights.map((d, i) => d - LEARNING_RATE * mean_dW[i])
-                    b = b - LEARNING_RATE * db
+                    weights = weights.map((d, i) => d - this.learning_rate * mean_dW[i])
+                    b = b - this.learning_rate * db
 
-                    if (i % (Math.floor(Data[0].length / (BATCHSIZE))*20) === 0) {
-                        console.log("Loss: " + d3.mean(loss) + " Accuracy: " + accuracy)
-                    }
+                  //  if (i % (Math.floor(Data[0].length / (this.batch_size)) * 20) === 0) {
+                 //       console.log("Loss: " + d3.mean(loss) + " Accuracy: " + accuracy)
+                 //   }
 
                 }
             }
@@ -148,7 +147,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     "option": d.option,
                     "weight": weights[i],
                 })
-            ).sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
+            ) //.sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
 
             console.log("weights map:", weights_map)
 
@@ -167,10 +166,10 @@ export const useRegressionStore = defineStore('regressionStore', {
          */
         prepare_data() {
             let csvStore = useCSVStore()
-            let map = []
+            let map = [] //create feature matrix and map to trace back each feature to its original column/ option
             let Data = []
             let y = []
-            let dashboard_map = []
+            let dashboard_map = [] //for first regression with dashboard risk factors
             let dashboard_data = []
 
             //gets csv data - categorical, numerical, ordinal data, and target
@@ -181,7 +180,6 @@ export const useRegressionStore = defineStore('regressionStore', {
 
                     //convert target to binary 1 - 0 values. Currently only works for binary targets
                     if (summary.name === csvStore.target_column) {
-
                         csvStore.csv.forEach(d => {
                             if (d[column] === csvStore.target_option) {
                                 y.push(1)
@@ -205,17 +203,18 @@ export const useRegressionStore = defineStore('regressionStore', {
                             })
 
                         } else if (summary.type === "continuous") {
-                            //add data in bins for now to cope with missing data (just gets own bin)
-                                let mean = d3.mean(csvStore.csv.map(d => d[column]))
-                                let stddev = d3.deviation(csvStore.csv.map(d => d[column]))
-                                data_items.push(csvStore.csv.map(d => d[column]).map(d => isNaN(d) || d === "" ? 0 : (d-mean)/stddev))
-                                map_items.push({
-                                    "type": "continuous",
-                                    "name": column,
-                                })
+                            //normalize continuous data
+                            let mean = d3.mean(csvStore.csv.map(d => d[column]))
+                            let stddev = d3.deviation(csvStore.csv.map(d => d[column]))
+                            data_items.push(csvStore.csv.map(d => d[column]).map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
+                            map_items.push({
+                                "type": "continuous",
+                                "name": column,
+                            })
                         }
 
                         if (data_items.length > 0) {
+                            //adds data to dashboard if it is a dashboard item
                             if (useVisStore().dashboard_items.find(d => d.name === column)) {
                                 dashboard_data.push(...data_items)
                                 dashboard_map.push(...map_items)
@@ -228,7 +227,14 @@ export const useRegressionStore = defineStore('regressionStore', {
                     }
                 }
             })
-            //create feature matrix and map to trace back each feature to its original column/ option
+
+            //transpose data for faster calculations later
+            if (Data.length > 0) {
+                Data = Data[0].map((_, i) => Data.map(row => row[i]))
+            }
+            if (dashboard_data.length > 0) {
+                dashboard_data = dashboard_data[0].map((_, i) => dashboard_data.map(row => row[i]))
+            }
 
             return [map, Data, dashboard_map, dashboard_data, y]
         },
