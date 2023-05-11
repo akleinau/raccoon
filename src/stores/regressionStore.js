@@ -82,7 +82,7 @@ export const useRegressionStore = defineStore('regressionStore', {
          * calculate pearson coefficient of normalized data
          */
         pearson_of_normalized(x, y) {
-            return x.reduce((a, b, i) => a + b * y[i], 0)
+            return x.reduce((a, b, i) => a + b * y[i], 0)/x.length
         },
         /**
          * train
@@ -168,7 +168,6 @@ export const useRegressionStore = defineStore('regressionStore', {
                     let influence = d3.max(weights_map.filter(d => d.name === item.name).map(d => Math.abs(d.weight)))
                     if (!influence) influence = 0
                     item.column.significance.score["regression"] = influence
-                    console.log("Added", influence, "to", item.column.significance.score["regression"])
                 })
             }
 

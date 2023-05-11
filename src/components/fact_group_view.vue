@@ -71,6 +71,25 @@
                     </v-expansion-panel-text>
                 </v-expansion-panel>
                 <v-expansion-panel class="ma-1">
+                    <v-expansion-panel-title><h4> Similar Variables </h4></v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                        <div class="d-flex overflow-y-hidden  pb-5">
+                            <div class="d-flex flex-column pa-1"
+                                 v-for="item in compute_similar_columns()"
+                                 v-bind:key="item">
+                                <v-hover v-slot="{ isHovering, props }">
+                                    <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
+                                            :class="{ 'on-hover': isHovering }" class="pa-2">
+                                        <fact_group_preview style="height:400px" class="pa-2" :visList="item.visList"
+                                                            :column="item.column" :vertical="true"/>
+                                        <div class="pl-2">Correlation: {{item.similarity.toFixed(2)}} </div>
+                                    </v-card>
+                                </v-hover>
+                            </div>
+                        </div>
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+                <v-expansion-panel class="ma-1">
                     <v-expansion-panel-title><h4> Adapt </h4></v-expansion-panel-title>
                     <v-expansion-panel-text>
                         <div class="ml-2">Change risk factor label:</div>
@@ -109,16 +128,19 @@
 import {useVisStore} from "@/stores/visStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 import {useCSVStore} from "@/stores/csvStore";
-import {useScoreStore} from "@/stores/scoreStore";
+import {useScoreStore} from "@/stores/scoreStore"
+import {useHelperStore} from "@/stores/helperStore"
+import fact_group_preview from "@/components/fact_group_preview.vue";
 
 export default {
     name: "fact_group_view",
-    components: {vis_parser},
+    components: {vis_parser, fact_group_preview},
     setup() {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
         const scoreStore = useScoreStore()
-        return {visStore, csvStore, scoreStore}
+        const helperStore = useHelperStore()
+        return {visStore, csvStore, scoreStore, helperStore}
     },
     data() {
         return {
@@ -196,6 +218,26 @@ export default {
         include() {
             this.visStore.restore_column(this.visStore.current_fact_group.column.name)
             this.close()
+        },
+        /**
+         * compute similar columns
+         */
+        compute_similar_columns() {
+            const current_column = this.csvStore.csv.map(d => d[this.visStore.current_fact_group.column.name])
+            if (this.visStore.current_fact_group.column.type === "continuous") {
+                return this.csvStore.variable_summaries
+                    .filter(item => item.name !== this.visStore.current_fact_group.column.name && item.type === "continuous")
+                    .map(item => {
+                        return {
+                            'item': item,
+                            'similarity': this.helperStore.pearson(current_column, this.csvStore.csv.map(d => d[item.name]))
+                        }
+                    })
+                    .filter(d => Math.abs(d.similarity) > 0.8)
+                    .sort((a, b) => b.similarity - a.similarity)
+                    .map(d => ({'column': d.item, 'visList': this.visStore.generate_main_fact_visList(), 'similarity': d.similarity}))
+            }
+            return []
         }
     }
 }
