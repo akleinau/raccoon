@@ -41,15 +41,17 @@ export const useVisStore = defineStore('visStore', {
          *
          * @param summary
          * @param visList
+         * @param recalculate
          */
-        add_dashboard_item(summary, visList) {
+        add_dashboard_item(summary, visList, recalculate = true) {
             this.dashboard_items.push({
                 "name": summary.name,
                 "column": summary,
                 "visList": visList
             })
-            useRegressionStore().compute_score()
-            console.log(this.dashboard_items)
+            if (recalculate) {
+                useRegressionStore().compute_score()
+            }
         },
         /**
          * removes a fact group from the dashboard
@@ -108,7 +110,7 @@ export const useVisStore = defineStore('visStore', {
                     {
                         type: "text",
                         text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
-                            (max_percent_option[1]*100).toFixed(0) + "% chance of having " +
+                            (max_percent_option[1] * 100).toFixed(0) + "% chance of having " +
                             csvStore.target_column + ": " + csvStore.target_option
                     }
                 )
@@ -209,7 +211,7 @@ export const useVisStore = defineStore('visStore', {
          * check if column can be shown in recommendations
          */
         is_recommendation_column(column) {
-            return (! this.dashboard_items.map(item => item.name).includes(column.name) &&
+            return (!this.dashboard_items.map(item => item.name).includes(column.name) &&
                 column.name !== useCSVStore().target_column &&
                 !this.excluded_columns.includes(column.name))
         },

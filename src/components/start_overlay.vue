@@ -41,12 +41,14 @@
 import * as d3 from "d3";
 import {useCSVStore} from '@/Stores/csvStore'
 import {useVisStore} from "@/Stores/visStore";
+import {useRegressionStore} from "@/stores/regressionStore";
 
 export default {
   setup() {
     const csvStore = useCSVStore()
     const visStore = useVisStore()
-    return {csvStore, visStore}
+    const regressionStore = useRegressionStore()
+    return {csvStore, visStore, regressionStore}
   },
   data() {
     return {
@@ -88,10 +90,11 @@ export default {
       this.visStore.set_initial_default_settings(this.csvStore.csv.length, this.csvStore.target_column, this.csvStore.target_option)
       this.csvStore.calc_variable_summaries()
       this.visStore.add_dashboard_item(this.csvStore.variable_summaries.find(d => d.name === useCSVStore().target_column),
-        [ {type: 'impact', data_map: 'occurrence'}])
+        [ {type: 'impact', data_map: 'occurrence'}], false)
       this.csvStore.variable_summaries.slice(0,5)
           .filter(summary => summary.significance.score["regression"] > 0.1)
-          .forEach(summary => this.visStore.add_dashboard_item(summary, this.visStore.generate_main_fact_visList()))
+          .forEach(summary => this.visStore.add_dashboard_item(summary, this.visStore.generate_main_fact_visList(), false))
+      this.regressionStore.compute_score()
 
       this.files = null
     }
