@@ -24,7 +24,7 @@
                     <v-hover v-slot="{ isHovering, props }">
                         <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
                                 :class="{ 'on-hover': isHovering }" class="pa-2">
-                            <vis_parser :vis="vis" :column="visStore.current_fact_group.column"/>
+                            <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="400"/>
                         </v-card>
                     </v-hover>
                     <div class="d-flex w-100 flex-wrap">
@@ -60,7 +60,7 @@
                                 <v-hover v-slot="{ isHovering, props }">
                                     <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
                                             :class="{ 'on-hover': isHovering }" class="pa-2">
-                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column"/>
+                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="300" :preview="true"/>
                                     </v-card>
                                 </v-hover>
                                 <div class="d-flex w-100 flex-wrap">

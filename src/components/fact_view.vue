@@ -7,7 +7,7 @@
             </v-card-title>
 
             <!-- visualization -->
-            <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column"/>
+            <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column" :width="600"/>
 
             <!-- tabs -->
             <v-expansion-panels class="ma-3">

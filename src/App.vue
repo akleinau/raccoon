@@ -13,7 +13,13 @@
 
         <v-main>
 
-            <v-card title="Dashboard" class="pa-5 bg-blue-grey-lighten-5">
+            <v-card class="pa-5 bg-blue-grey-lighten-5">
+
+                <v-card-title>
+                    Dashboard
+                    <dashboard_overlay text-button="true"/>
+                </v-card-title>
+
                 <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
@@ -23,6 +29,7 @@
                         </v-btn>
 
                     </div>
+                    <dashboard_overlay/>
                 </div>
             </v-card>
 
@@ -56,7 +63,7 @@
                 <v-card-title>
                     <div class="d-flex align-center">
                         Risk Factors
-                        <all_risk_factor_view text-button="true"/>
+                        <all_risk_factor_overlay text-button="true"/>
                         <div class="flex-grow-1 d-flex justify-end">
                             <excluded_column_overlay/>
                         </div>
@@ -78,7 +85,7 @@
                                             :column="column" :vertical="true"/>
                     </div>
 
-                    <all_risk_factor_view/>
+                    <all_risk_factor_overlay/>
                 </div>
 
             </v-card>
@@ -102,8 +109,9 @@ import fact_group_preview from './components/fact_group_preview.vue'
 import fact_group_view from './components/fact_group_view.vue'
 import fact_view from './components/fact_view.vue'
 import settings_view from "@/components/settings_view.vue";
-import all_risk_factor_view from "@/components/all_risk_factor_view.vue";
+import all_risk_factor_overlay from "@/components/all_risk_factor_overlay.vue";
 import excluded_column_overlay from "@/components/excluded_column_overlay.vue";
+import dashboard_overlay from "@/components/dashboard_overlay.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
@@ -117,7 +125,8 @@ export default {
         fact_group_view,
         fact_view,
         settings_view,
-        all_risk_factor_view
+        all_risk_factor_overlay,
+        dashboard_overlay
     },
     setup() {
         const csvStore = useCSVStore()

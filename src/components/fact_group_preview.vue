@@ -16,7 +16,7 @@
                 <!--visualization preview -->
                 <div class="pa-2 mr-2 d-flex align-center" :class="{ 'flex-column': vertical }">
                     <div v-for="vis in visList" v-bind:key="vis">
-                        <vis_parser :vis="vis" :column="column" :width="350" :preview="true"/>
+                        <vis_parser :vis="vis" :column="column" :width="300" :preview="true"/>
                     </div>
                 </div>
             </v-card>
