@@ -1,6 +1,6 @@
 <template>
-    <vis_bar v-if="graph === 'bar'" :vis="vis" :column="column" :width="width"/>
-    <vis_pictograph v-if="graph === 'pictograph'" :vis="vis" :column="column" :width="width"/>
+    <vis_bar v-if="graph === 'bar'" :vis="vis" :column="column" :width="width" :preview="preview"/>
+    <vis_pictograph v-if="graph === 'pictograph'" :vis="vis" :column="column" :width="width" :preview="preview"/>
     <vis_line v-if="graph === 'density'" :vis="vis" :column="column" :width="width"/>
     <vis_text v-if="graph === 'text'" :vis="vis" :column="column" :width="width"/>
 </template>
@@ -15,7 +15,7 @@ import {useVisStore} from "@/stores/visStore";
 export default {
     name: "vis_parser",
     props: [
-        "vis", "column", "width"
+        "vis", "column", "width", "preview"
     ],
     setup() {
         const visStore = useVisStore()

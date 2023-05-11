@@ -10,7 +10,7 @@ import {useVisStore} from "@/stores/visStore";
 export default {
     name: "vis_pictograph",
     props: [
-        "column", "vis", "width"
+        "column", "vis", "width", "preview"
     ],
     watch: {
         column: {
@@ -77,8 +77,17 @@ export default {
          */
         get_value_text(value) {
             return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
-        }
-        ,
+        },
+        /**
+         * returns the label of the column
+         *
+         * @param d
+         * @returns {string}
+         */
+        get_column_label(d) {
+            let label = (d.name === "") ? "null" : this.column.options.find(x => x.name === d.name).label
+            return (this.preview && label.length > 10) ? label.substring(0, 7) + "..." : label
+        },
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
@@ -102,9 +111,12 @@ export default {
             let marging_bottom = 20
             let margin_top_grid = 10
             let margin_top = 30
-            let margin_right = 60
+            let margin_right = this.preview ? 5 : 60
             let width = (this.width ? this.width : 300) - margin_right
             let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 10
+            if (this.preview && startBarX > 100) {
+                startBarX = 100
+            }
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.grid[0], 1)
@@ -165,19 +177,22 @@ export default {
                 .join("text")
                 .attr("x", startBarX - x.bandwidth() / 2 - 5)
                 .attr("y", d => y_options(d.name))
-                .text(d => (d.name === "") ? "null" : this.column.options.find(x => x.name === d.name).label)
+                .text(d => this.get_column_label(d))
                 .style("text-anchor", "end")
                 .attr("dy", y_options.bandwidth() / 2 - 5)
 
-            svg.selectAll("textValue")
-                .data(data)
-                .join("text")
-                .attr("x", width + startBarX - x.bandwidth() / 2)
-                .attr("y", d => y_options(d.name))
-                .text(d => this.get_value_text(d.value))
-                .style("text-anchor", "start")
-                .style("fill", "white")
-                .attr("dy", y_options.bandwidth() / 2 - 5)
+            if (!this.preview) {
+                svg.selectAll("textValue")
+                    .data(data)
+                    .join("text")
+                    .attr("x", width + startBarX - x.bandwidth() / 2)
+                    .attr("y", d => y_options(d.name))
+                    .text(d => this.get_value_text(d.value))
+                    .style("text-anchor", "start")
+                    .style("fill", "white")
+                    .attr("dy", y_options.bandwidth() / 2 - 5)
+            }
+
 
             svg.append("text")
                 .attr("x", startBarX + width / 2)
