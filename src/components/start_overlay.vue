@@ -87,6 +87,12 @@ export default {
       this.csvStore.start = false
       this.visStore.set_initial_default_settings(this.csvStore.csv.length, this.csvStore.target_column, this.csvStore.target_option)
       this.csvStore.calc_variable_summaries()
+      this.visStore.add_dashboard_item(this.csvStore.variable_summaries.find(d => d.name === useCSVStore().target_column),
+        [ {type: 'impact', data_map: 'occurrence'}])
+      this.csvStore.variable_summaries.slice(0,5)
+          .filter(summary => summary.significance.score["regression"] > 0.1)
+          .forEach(summary => this.visStore.add_dashboard_item(summary, this.visStore.generate_main_fact_visList()))
+
       this.files = null
     }
   }
