@@ -75,6 +75,12 @@ export const useRegressionStore = defineStore('regressionStore', {
             return y_new_pred
         },
         /**
+         * calculate pearson coefficient of normalized data
+         */
+        pearson_of_normalized(x, y) {
+            return x.reduce((a, b, i) => a + b * y[i], 0)
+        },
+        /**
          * train
          */
         train(map, Data, y_pred, y_actual) {
