@@ -5,7 +5,7 @@ import {useVisStore} from "@/stores/visStore";
 
 export const useSimilarityStore = defineStore('similarityStore', {
     state: () => ({
-        similarity_boundary: 0.8,
+        similarity_boundary: 0.7,
     }),
     actions: {
         /**
@@ -21,9 +21,17 @@ export const useSimilarityStore = defineStore('similarityStore', {
                 return useCSVStore().variable_summaries
                     .filter(item => item.name !== summary.name && item.type === "continuous")
                     .map(item => {
-                        return {
-                            'item': item,
-                            'similarity': this.pearson(current_column, csv.map(d => d[item.name]))
+                        if (item.type === "continuous") {
+                            return {
+                                'item': item,
+                                'similarity': this.pearson(current_column, csv.map(d => d[item.name]))
+                            }
+                        }
+                        if (item.type === "categorical") {
+                            return {
+                                'item': item,
+                                'similarity': this.cramers_v(summary, item)
+                            }
                         }
                     })
                     .filter(d => Math.abs(d.similarity) >= this.similarity_boundary)
@@ -38,14 +46,14 @@ export const useSimilarityStore = defineStore('similarityStore', {
             //categorical variables
             if (summary.type === "categorical") {
                 return useCSVStore().variable_summaries
-                    .filter(item => item.name !== summary.name && item.type === "categorical")
+                    .filter(item => item.name !== summary.name)
                     .map(item => {
                         return {
                             'item': item,
                             'similarity': this.cramers_v(summary, item)
                         }
                     })
-                    .filter(d => d.similarity >= this.similarity_boundary)
+                    .filter(d => Math.abs(d.similarity) >= this.similarity_boundary)
                     .sort((a, b) => b.similarity - a.similarity)
                     .map(d => ({
                         'column': d.item,
@@ -100,15 +108,20 @@ export const useSimilarityStore = defineStore('similarityStore', {
          * calculate confusion matrix
          */
         confusion_matrix(x, y) {
+            let csvStore = useCSVStore()
             let options_x_index = Object.fromEntries(new Map(x.options.map((d, i) => [d.name, i])))
             let options_y_index = Object.fromEntries(new Map(y.options.map((d, i) => [d.name, i])))
             let csv = useCSVStore().csv
             let matrix = Array.from(Array(x.options.length), () => new Array(y.options.length).fill(0))
             csv.forEach(row => {
-                let x_index = options_x_index[row[x.name]]
-                let y_index = options_y_index[row[y.name]]
-                if (x_index !== undefined && y_index !== undefined) {
-                    matrix[x_index][y_index]++
+                let x_item = x.type === "continuous" ? csvStore.find_bin(row[x.name], x.options) : row[x.name]
+                let y_item = y.type === "continuous" ? csvStore.find_bin(row[y.name], y.options) : row[y.name]
+                if (x_item !== null && y_item !== null) {
+                    let x_index = options_x_index[x_item]
+                    let y_index = options_y_index[y_item]
+                    if (x_index !== undefined && y_index !== undefined) {
+                        matrix[x_index][y_index]++
+                    }
                 }
             })
             return matrix
