@@ -1,6 +1,6 @@
 <template>
-    <v-dialog v-model="display">
-        <v-card class="flex mx-auto w-75">
+    <v-dialog scrollable v-model="display" height="100%" width="80%">
+        <v-card class="mx-auto w-100 h-100">
 
             <v-card-title>
                 Fact Group View: {{ visStore.current_fact_group.column['label'] }}
@@ -17,108 +17,134 @@
                 Calculated frequencies are less accurate for options with less than 100 people.
             </div>
 
-            <!-- visualizations -->
-            <div class="d-flex overflow-y-hidden pb-5">
-                <div class="d-flex flex-column pa-1" v-for="vis in visStore.current_fact_group.visList"
-                     v-bind:key="vis">
-                    <v-hover v-slot="{ isHovering, props }">
-                        <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
-                                :class="{ 'on-hover': isHovering }" class="pa-2">
-                            <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="400"/>
-                        </v-card>
-                    </v-hover>
-                    <div class="d-flex w-100 flex-wrap">
-                        <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="remove_vis(vis)">Remove</v-btn>
+            <div class="d-flex justify-space-evenly">
+                <div>
+                    <!-- visualizations -->
+                    <div class="d-flex flex-column pb-5">
+                        <div class="d-flex flex-column pa-1 ma-auto" v-for="vis in visStore.current_fact_group.visList"
+                             v-bind:key="vis">
+                            <v-hover v-slot="{ isHovering, props }">
+                                <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
+                                        :class="{ 'on-hover': isHovering }" class="pa-2">
+                                    <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="400"/>
+                                </v-card>
+                            </v-hover>
+                            <div class="d-flex w-100 flex-wrap">
+                                <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="remove_vis(vis)">Remove</v-btn>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- option tabs -->
-            <v-expansion-panels class="ma-3" v-model="panels">
-                <v-expansion-panel class="ma-1" v-if="visStore.current_fact_group.column.significance !== undefined">
-                    <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text class="text-grey-darken-2">
-                        pairs with statistically significant differences:
-                        <span v-for="tuple in Object.values(visStore.current_fact_group.column['significance'].significant_tuples)"
-                              v-bind:key="tuple">
+                </div>
+
+                <div class="w-50  pr-5">
+                    <!-- option tabs -->
+                    <v-expansion-panels class="ma-3" v-model="panels">
+                        <v-expansion-panel class="ma-1"
+                                           v-if="visStore.current_fact_group.column.significance !== undefined">
+                            <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text class="text-grey-darken-2">
+                                pairs with statistically significant differences:
+                                <span v-for="tuple in Object.values(visStore.current_fact_group.column['significance'].significant_tuples)"
+                                      v-bind:key="tuple">
                                         ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
                                         {{ tuple[1] !== "" ? tuple[1] : "null" }})
                                     </span>
-                        <div> Score:
-                            {{ visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2) }}
-                        </div>
-                        <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-                <v-expansion-panel class="ma-1">
-                    <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <div class="d-flex overflow-y-hidden  pb-5">
-                            <div class="d-flex flex-column pa-1"
-                                 v-for="vis in visStore.current_fact_group.additional_vis_list"
-                                 v-bind:key="vis">
-                                <v-hover v-slot="{ isHovering, props }">
-                                    <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
-                                            :class="{ 'on-hover': isHovering }" class="pa-2">
-                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="300"
-                                                    :preview="true"/>
-                                    </v-card>
-                                </v-hover>
-                                <div class="d-flex w-100 flex-wrap">
-                                    <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="add_vis(vis)">Add</v-btn>
+                                <div> Score:
+                                    {{
+                                    visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
+                                    }}
                                 </div>
-                            </div>
-                        </div>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-                <v-expansion-panel class="ma-1">
-                    <v-expansion-panel-title><h4> Similar Variables </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <div class="d-flex overflow-y-hidden  pb-5">
-                            <div class="d-flex flex-column pa-1"
-                                 v-for="item in visStore.current_fact_group.similar_columns"
-                                 v-bind:key="item">
-                                <fact_group_preview style="height:400px" class="pa-2" :visList="item.visList"
-                                                    :column="item.column" :vertical="true"/>
-                                <div class="d-flex pl-2 align-self-center">Correlation: {{ item.similarity.toFixed(2) }}</div>
-                            </div>
-                        </div>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-                <v-expansion-panel class="ma-1">
-                    <v-expansion-panel-title><h4> Adapt </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <div class="ml-2">Change risk factor label:</div>
-                        <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
-                        <div class="ml-2 mb-2">Change options:</div>
-                        <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i"
-                             class="d-flex">
-                            <v-text-field variant="outlined" :label="'label of: ' + item.name"
-                                          v-model="visStore.current_fact_group.column.options[i].label"/>
-                            <v-text-field class="px-5" type="number" label="min"
-                                          v-if="visStore.current_fact_group.column.options[i].range !== undefined"
-                                          v-model="visStore.current_fact_group.column.options[i].range[0]"/>
-                            <v-text-field type="number" label="max"
-                                          v-if="visStore.current_fact_group.column.options[i].range !== undefined"
-                                          v-model="visStore.current_fact_group.column.options[i].range[1]"/>
-                        </div>
-                        <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-            </v-expansion-panels>
+                                <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel class="ma-1">
+                            <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <div class="d-flex overflow-y-hidden  pb-5">
+                                    <div class="d-flex flex-column pa-1"
+                                         v-for="vis in visStore.current_fact_group.additional_vis_list"
+                                         v-bind:key="vis">
+                                        <v-hover v-slot="{ isHovering, props }">
+                                            <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
+                                                    @click="show_fact_view(vis)"
+                                                    :class="{ 'on-hover': isHovering }" class="pa-2">
+                                                <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
+                                                            :width="300"
+                                                            :preview="true"/>
+                                            </v-card>
+                                        </v-hover>
+                                        <div class="d-flex w-100 flex-wrap">
+                                            <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="add_vis(vis)">Add
+                                            </v-btn>
+                                        </div>
+                                    </div>
+                                </div>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel class="ma-1">
+                            <v-expansion-panel-title><h4> Similar Variables </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <div class="d-flex overflow-y-hidden  pb-5">
+                                    <div class="d-flex flex-column pa-1"
+                                         v-for="item in visStore.current_fact_group.similar_columns"
+                                         v-bind:key="item">
+                                        <fact_group_preview style="height:400px" class="pa-2" :visList="item.visList"
+                                                            :column="item.column" :vertical="true"/>
+                                        <div class="d-flex pl-2 align-self-center">Correlation:
+                                            {{ item.similarity.toFixed(2) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel class="ma-1">
+                            <v-expansion-panel-title><h4> Adapt </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <div class="ml-2">Change risk factor label:</div>
+                                <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
+                                <div class="ml-2 mb-2">Change options:</div>
+                                <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i"
+                                     class="d-flex">
+                                    <v-text-field variant="outlined" :label="'label of: ' + item.name"
+                                                  v-model="visStore.current_fact_group.column.options[i].label"/>
+                                    <v-text-field class="px-5" type="number" label="min"
+                                                  v-if="visStore.current_fact_group.column.options[i].range !== undefined"
+                                                  v-model="visStore.current_fact_group.column.options[i].range[0]"/>
+                                    <v-text-field type="number" label="max"
+                                                  v-if="visStore.current_fact_group.column.options[i].range !== undefined"
+                                                  v-model="visStore.current_fact_group.column.options[i].range[1]"/>
+                                </div>
+                                <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+                </div>
 
-            <v-card-actions>
-                <v-btn @click="add"
-                       v-if="!visStore.dashboard_items.find(d => d.name === visStore.current_fact_group.column.name)">
-                    Add
-                </v-btn>
-                <v-btn @click="remove" v-else> Remove</v-btn>
-                <v-btn @click="close">Close</v-btn>
-                <v-btn @click="exclude"
-                       v-if="!visStore.excluded_columns.includes(visStore.current_fact_group.column.name)">Exclude
-                </v-btn>
-                <v-btn @click="include" v-else>include</v-btn>
-            </v-card-actions>
+            </div>
+
+            <div class="d-flex flex-column-reverse h-100">
+                <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
+                    <div class="d-flex w-100">
+                        <v-btn variant="elevated" @click="close" class="px-9">Close</v-btn>
+                        <v-btn variant="elevated" @click="add" prepend-icon="mdi-plus"
+                               v-if="!visStore.dashboard_items.find(d => d.name === visStore.current_fact_group.column.name)">
+                            Add to dashboard
+                        </v-btn>
+                        <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus" v-else> Remove from
+                            dashboard
+                        </v-btn>
+                        <!-- end buttons -->
+                        <div class="flex-grow-1 d-flex justify-end">
+                            <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
+                                   v-if="!visStore.excluded_columns.includes(visStore.current_fact_group.column.name)">
+                                Exclude
+                            </v-btn>
+                            <v-btn variant="elevated" @click="include" prepend-icon="mdi-restore" v-else>restore</v-btn>
+                        </div>
+                    </div>
+                </v-card-actions>
+            </div>
 
 
         </v-card>

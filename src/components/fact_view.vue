@@ -1,77 +1,93 @@
 <template>
-    <v-dialog v-model="display">
-        <v-card class="flex mx-auto w-75">
+    <v-dialog v-model="display" height="85%" width="70%">
+        <v-card class="mx-auto w-100 h-100">
 
             <v-card-title>
                 Fact View: {{ visStore.current_fact.column['label'] }}
             </v-card-title>
 
-            <!-- visualization -->
-            <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column" :width="600"/>
-
-            <!-- tabs -->
-            <v-expansion-panels class="ma-3">
-                <v-expansion-panel>
-                    <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <v-radio-group v-model="visStore.current_fact.vis.graph">
-                            <v-radio label="bar" value="bar"></v-radio>
-                            <v-radio label="pictograph" value="pictograph"></v-radio>
-                            <v-radio label="default" value=""></v-radio>
-                        </v-radio-group>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-                <v-expansion-panel>
-                    <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <v-text-field label="Color" v-model="visStore.current_fact.vis.color"/>
-                        <v-btn @click="makeDefault_color"> set as default for {{ visStore.current_fact.vis.type }}
-                            Graphs
-                        </v-btn>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-                <v-expansion-panel>
-                    <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <v-text-field label="Title" v-model="visStore.current_fact.vis.title"/>
-                        <v-btn @click="makeDefault_title"> set as default for {{ visStore.current_fact.vis.type }}
-                            Graphs
-                        </v-btn>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-                <v-expansion-panel>
-                    <v-expansion-panel-title><h4> Change Option Labels </h4></v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <div class="pa-2">
-                            <v-icon icon="mdi-information"/>
-                            labels will be synced across all facts in the same fact group.
-                        </div>
-                        <div class="ml-2">Change risk factor label:</div>
-                        <v-text-field label="Label" v-model="visStore.current_fact.column.label"/>
-                        <div class="ml-2 mb-2">Change options:</div>
-                        <div v-for="(item,i) in visStore.current_fact.column.options" v-bind:key="i"
-                             class="d-flex">
-                            <v-text-field variant="outlined" :label="'label of: ' + item.name"
-                                          v-model="visStore.current_fact.column.options[i].label"/>
-                            <v-text-field class="px-5" type="number" label="min"
-                                          v-model="visStore.current_fact.column.options[i].range[0]"/>
-                            <v-text-field type="number" label="max"
-                                          v-model="visStore.current_fact.column.options[i].range[1]"/>
-                        </div>
-                        <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-            </v-expansion-panels>
+            <div class="d-flex justify-space-evenly w-100">
+                <div>
+                    <!-- visualization -->
+                    <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column" :width="500"/>
+                </div>
+                <div class="w-50 pr-5">
+                    <!-- tabs -->
+                    <v-expansion-panels class="ma-3">
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <v-radio-group v-model="visStore.current_fact.vis.graph">
+                                    <v-radio label="bar" value="bar"></v-radio>
+                                    <v-radio label="pictograph" value="pictograph"></v-radio>
+                                    <v-radio label="default" value=""></v-radio>
+                                </v-radio-group>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <v-text-field label="Color" v-model="visStore.current_fact.vis.color"/>
+                                <v-btn @click="makeDefault_color"> set as default for {{
+                                    visStore.current_fact.vis.type
+                                    }}
+                                    Graphs
+                                </v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <v-text-field label="Title" v-model="visStore.current_fact.vis.title"/>
+                                <v-btn @click="makeDefault_title"> set as default for {{
+                                    visStore.current_fact.vis.type
+                                    }}
+                                    Graphs
+                                </v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Option Labels </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <div class="pa-2">
+                                    <v-icon icon="mdi-information"/>
+                                    labels will be synced across all facts in the same fact group.
+                                </div>
+                                <div class="ml-2">Change risk factor label:</div>
+                                <v-text-field label="Label" v-model="visStore.current_fact.column.label"/>
+                                <div class="ml-2 mb-2">Change options:</div>
+                                <div v-for="(item,i) in visStore.current_fact.column.options" v-bind:key="i"
+                                     class="d-flex">
+                                    <v-text-field variant="outlined" :label="'label of: ' + item.name"
+                                                  v-model="visStore.current_fact.column.options[i].label"/>
+                                    <v-text-field class="px-5" type="number" label="min"
+                                                  v-model="visStore.current_fact.column.options[i].range[0]"/>
+                                    <v-text-field type="number" label="max"
+                                                  v-model="visStore.current_fact.column.options[i].range[1]"/>
+                                </div>
+                                <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+                </div>
+            </div>
 
             <!-- actions -->
-            <v-card-actions>
-                <v-btn v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)" @click="add_vis">
-                    Add fact
-                </v-btn>
-                <v-btn v-else @click="remove_vis">Remove fact</v-btn>
-                <v-btn @click="close">Close</v-btn>
-            </v-card-actions>
-
+            <div class="d-flex flex-column-reverse h-100">
+                <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
+                    <div class="d-flex">
+                        <v-btn variant="elevated" class="px-9" @click="close">Close</v-btn>
+                        <v-btn variant="elevated" prepend-icon="mdi-plus"
+                               v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)"
+                               @click="add_vis">
+                            Add fact
+                        </v-btn>
+                        <v-btn variant="elevated" v-else @click="remove_vis" prepend-icon="mdi-minus">
+                            Remove fact
+                        </v-btn>
+                    </div>
+                </v-card-actions>
+            </div>
         </v-card>
     </v-dialog>
 </template>
@@ -131,6 +147,7 @@ export default {
             let vis = this.visStore.current_fact.vis
             this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.additional_vis_list.push(vis)
+            this.close()
         },
         /**
          * adds the current visualization to the current fact group
