@@ -34,7 +34,7 @@
             </div>
 
             <!-- option tabs -->
-            <v-expansion-panels class="ma-3">
+            <v-expansion-panels class="ma-3" v-model="panels">
                 <v-expansion-panel class="ma-1" v-if="visStore.current_fact_group.column.significance !== undefined">
                     <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                     <v-expansion-panel-text class="text-grey-darken-2">
@@ -60,7 +60,8 @@
                                 <v-hover v-slot="{ isHovering, props }">
                                     <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
                                             :class="{ 'on-hover': isHovering }" class="pa-2">
-                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="300" :preview="true"/>
+                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="300"
+                                                    :preview="true"/>
                                     </v-card>
                                 </v-hover>
                                 <div class="d-flex w-100 flex-wrap">
@@ -75,16 +76,11 @@
                     <v-expansion-panel-text>
                         <div class="d-flex overflow-y-hidden  pb-5">
                             <div class="d-flex flex-column pa-1"
-                                 v-for="item in compute_similar_columns()"
+                                 v-for="item in visStore.current_fact_group.similar_columns"
                                  v-bind:key="item">
-                                <v-hover v-slot="{ isHovering, props }">
-                                    <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
-                                            :class="{ 'on-hover': isHovering }" class="pa-2">
-                                        <fact_group_preview style="height:400px" class="pa-2" :visList="item.visList"
-                                                            :column="item.column" :vertical="true"/>
-                                        <div class="pl-2">Correlation: {{item.similarity.toFixed(2)}} </div>
-                                    </v-card>
-                                </v-hover>
+                                <fact_group_preview style="height:400px" class="pa-2" :visList="item.visList"
+                                                    :column="item.column" :vertical="true"/>
+                                <div class="d-flex pl-2 align-self-center">Correlation: {{ item.similarity.toFixed(2) }}</div>
                             </div>
                         </div>
                     </v-expansion-panel-text>
@@ -112,10 +108,15 @@
             </v-expansion-panels>
 
             <v-card-actions>
-                <v-btn @click="add" v-if="!visStore.dashboard_items.find(d => d.name === visStore.current_fact_group.column.name)"> Add</v-btn>
+                <v-btn @click="add"
+                       v-if="!visStore.dashboard_items.find(d => d.name === visStore.current_fact_group.column.name)">
+                    Add
+                </v-btn>
                 <v-btn @click="remove" v-else> Remove</v-btn>
                 <v-btn @click="close">Close</v-btn>
-                <v-btn @click="exclude" v-if="!visStore.excluded_columns.includes(visStore.current_fact_group.column.name)">Exclude</v-btn>
+                <v-btn @click="exclude"
+                       v-if="!visStore.excluded_columns.includes(visStore.current_fact_group.column.name)">Exclude
+                </v-btn>
                 <v-btn @click="include" v-else>include</v-btn>
             </v-card-actions>
 
@@ -129,7 +130,6 @@ import {useVisStore} from "@/stores/visStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore"
-import {useHelperStore} from "@/stores/helperStore"
 import fact_group_preview from "@/components/fact_group_preview.vue";
 
 export default {
@@ -139,17 +139,25 @@ export default {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
         const scoreStore = useScoreStore()
-        const helperStore = useHelperStore()
-        return {visStore, csvStore, scoreStore, helperStore}
+        return {visStore, csvStore, scoreStore}
     },
     data() {
         return {
             display: true,
+            panels: []
         }
     },
     watch: {
         display: function () {
             this.close()
+        },
+        current_fact_group: function () {
+            this.panels = []
+        }
+    },
+    computed: {
+        current_fact_group() {
+            return this.visStore.current_fact_group
         },
     },
     methods: {
@@ -219,26 +227,6 @@ export default {
             this.visStore.restore_column(this.visStore.current_fact_group.column.name)
             this.close()
         },
-        /**
-         * compute similar columns
-         */
-        compute_similar_columns() {
-            const current_column = this.csvStore.csv.map(d => d[this.visStore.current_fact_group.column.name])
-            if (this.visStore.current_fact_group.column.type === "continuous") {
-                return this.csvStore.variable_summaries
-                    .filter(item => item.name !== this.visStore.current_fact_group.column.name && item.type === "continuous")
-                    .map(item => {
-                        return {
-                            'item': item,
-                            'similarity': this.helperStore.pearson(current_column, this.csvStore.csv.map(d => d[item.name]))
-                        }
-                    })
-                    .filter(d => Math.abs(d.similarity) > 0.8)
-                    .sort((a, b) => b.similarity - a.similarity)
-                    .map(d => ({'column': d.item, 'visList': this.visStore.generate_main_fact_visList(), 'similarity': d.similarity}))
-            }
-            return []
-        }
     }
 }
 </script>
