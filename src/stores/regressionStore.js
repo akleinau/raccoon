@@ -7,6 +7,7 @@ import {useVisStore} from "@/stores/visStore";
 export const useRegressionStore = defineStore('regressionStore', {
     state: () => ({
         accuracy_diff: 0,
+        dashboard_accuracy: 0,
         test_ratio: 0.1,
         batch_size: 10,
         learning_rate: 0.01,
@@ -82,12 +83,12 @@ export const useRegressionStore = defineStore('regressionStore', {
          * calculate pearson coefficient of normalized data
          */
         pearson_of_normalized(x, y) {
-            return x.reduce((a, b, i) => a + b * y[i], 0)/x.length
+            return x.reduce((a, b, i) => a + b * y[i], 0) / x.length
         },
         /**
          * train
          */
-        train(map, Data, y_pred, y_actual, summary_place) {
+        train(columns, map, Data, y_pred, y_actual, summary_place) {
 
             if (Data.length === 0) {
                 return [y_pred, 0]
@@ -137,7 +138,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             }
 
             let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
-            console.log("Final Accuracy: " + accuracy)
+            //console.log("Final Accuracy: " + accuracy)
 
             //combine map with weights and then sort
             let weights_map = map.map((d, i) =>
@@ -149,16 +150,17 @@ export const useRegressionStore = defineStore('regressionStore', {
                 })
             ) //.sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
 
-            console.log("weights map:", weights_map)
-
+            const csvStore = useCSVStore()
             const visStore = useVisStore()
 
             if (summary_place === "variable_summaries") {
-                useCSVStore().variable_summaries.forEach(summary => {
-                    if (visStore.is_recommendation_column(summary)) {
-                        let influence = d3.max(weights_map.filter(d => d.name === summary.name).map(d => Math.abs(d.weight)))
-                        if (!influence) influence = 0
-                        summary.significance.score["regression"] = influence
+                columns.forEach(column => {
+                    //let influence = d3.max(weights_map.filter(d => d.name === column).map(d => Math.abs(d.weight)))
+                    let summary = csvStore.variable_summaries.find(d => d.name === column)
+                    //console.log(influence)
+                    if (summary) {
+                        summary.significance.score["regression"] = accuracy - this.dashboard_accuracy
+                        //console.log(summary.significance.score["regression"])
                     }
                 })
             }
@@ -174,95 +176,99 @@ export const useRegressionStore = defineStore('regressionStore', {
             return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy]
 
         },
-        /**
-         * prepare data for training
-         */
-        prepare_data() {
+        prepare_target() {
+            let csvStore = useCSVStore()
+            let y = []
+            csvStore.csv.forEach(d => {
+                if (d[csvStore.target_column] === csvStore.target_option) {
+                    y.push(1)
+                } else {
+                    y.push(0)
+                }
+            })
+            return y
+        },
+        prepare_data(columns) {
             let csvStore = useCSVStore()
             let map = [] //create feature matrix and map to trace back each feature to its original column/ option
             let Data = []
-            let y = []
-            let dashboard_map = [] //for first regression with dashboard risk factors
-            let dashboard_data = []
 
             //gets csv data - categorical, numerical, ordinal data, and target
-            csvStore.csv.columns.forEach(column => {
+            columns.forEach(column => {
 
                 let summary = csvStore.variable_summaries.find(d => d.name === column)
-                if (summary && !useVisStore().excluded_columns.includes(column)) {
+                if (summary) {
 
-                    //convert target to binary 1 - 0 values. Currently only works for binary targets
-                    if (summary.name === csvStore.target_column) {
-                        csvStore.csv.forEach(d => {
-                            if (d[column] === csvStore.target_option) {
-                                y.push(1)
-                            } else {
-                                y.push(0)
-                            }
-                        })
-                        //handles feature data
-                    } else {
-                        let data_items = []
-                        let map_items = []
-                        if (summary.type === "categorical") {
-                            // convert categorical data to one hot encoding
-                            summary.options.forEach(option => {
-                                data_items.push(csvStore.csv.map(d => d[column] === option.name ? 1 : 0))
-                                map_items.push({
-                                    "type": "categorical",
-                                    "name": column,
-                                    "option": option.name
-                                })
-                            })
-
-                        } else if (summary.type === "continuous") {
-                            //normalize continuous data
-                            let mean = d3.mean(csvStore.csv.map(d => d[column]))
-                            let stddev = d3.deviation(csvStore.csv.map(d => d[column]))
-                            data_items.push(csvStore.csv.map(d => d[column]).map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
+                    let data_items = []
+                    let map_items = []
+                    if (summary.type === "categorical") {
+                        // convert categorical data to one hot encoding
+                        summary.options.forEach(option => {
+                            data_items.push(csvStore.csv.map(d => d[column] === option.name ? 1 : 0))
                             map_items.push({
-                                "type": "continuous",
+                                "type": "categorical",
                                 "name": column,
+                                "option": option.name
                             })
-                        }
+                        })
 
-                        if (data_items.length > 0) {
-                            //adds data to dashboard if it is a dashboard item
-                            if (useVisStore().dashboard_items.find(d => d.name === column)) {
-                                dashboard_data.push(...data_items)
-                                dashboard_map.push(...map_items)
-                            } else {
-                                Data.push(...data_items)
-                                map.push(...map_items)
-                            }
-                        }
+                    } else if (summary.type === "continuous") {
+                        //normalize continuous data
+                        let mean = d3.mean(csvStore.csv.map(d => d[column]))
+                        let stddev = d3.deviation(csvStore.csv.map(d => d[column]))
+                        data_items.push(csvStore.csv.map(d => d[column]).map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
+                        map_items.push({
+                            "type": "continuous",
+                            "name": column,
+                        })
+                    }
 
+                    if (data_items.length > 0) {
+                        Data.push(...data_items)
+                        map.push(...map_items)
                     }
                 }
+
+
             })
 
             //transpose data for faster calculations later
             if (Data.length > 0) {
                 Data = Data[0].map((_, i) => Data.map(row => row[i]))
             }
-            if (dashboard_data.length > 0) {
-                dashboard_data = dashboard_data[0].map((_, i) => dashboard_data.map(row => row[i]))
-            }
 
-            return [map, Data, dashboard_map, dashboard_data, y]
+            return [map, Data]
         },
         /**
          * score computation
          */
         compute_score() {
-            let [map, Data, dashboard_map, dashboard_data, y] = this.prepare_data()
+            let visStore = useVisStore()
+            let csvStore = useCSVStore()
+            let y = this.prepare_target()
+            let dashboard_columns = useVisStore().dashboard_items.map(d => d.name).filter(d => d !== csvStore.target_column && !visStore.excluded_columns.includes(d))
+            let [dashboard_map, dashboard_data] = this.prepare_data(dashboard_columns)
             console.log("training on dashboard:")
-            let [y_pred, accuracy] = this.train(dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
-            console.log(y_pred)
+            let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
+            this.dashboard_accuracy = accuracy
+            console.log("dashboard accuracy: " + accuracy)
+            //console.log(y_pred)
             console.log("training on remaining data:")
-            let [y_pred2, accuracy2] = this.train(map, Data, y_pred, y, "variable_summaries")
-            console.log(y_pred2)
-            this.accuracy_diff = accuracy2 - accuracy
+            useCSVStore().columns.forEach(column => {
+                if (!useVisStore().dashboard_items.map(d => d.name).includes(column) &&
+                    column !== useCSVStore().target_column) {
+                    if (!visStore.excluded_columns.includes(column)) {
+                        let [map, Data] = this.prepare_data([column])
+                        this.train([column], map, Data, y_pred, y, "variable_summaries")
+                    } else {
+                        let summary = csvStore.variable_summaries.find(d => d.name === column)
+                        if (summary) {
+                            summary.significance.score["regression"] = 0
+                        }
+                    }
+                }
+            })
+            this.accuracy_diff = 1
             let scoreStore = useScoreStore()
             scoreStore.score = "regression"
             scoreStore.sort_summaries()
