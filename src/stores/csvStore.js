@@ -49,7 +49,7 @@ export const useCSVStore = defineStore('csvStore', {
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
-                        const steps = 2
+                        const steps = 4
                         let options_binned_num = this.calculate_pretty_bins(options_num, steps)
                         let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
