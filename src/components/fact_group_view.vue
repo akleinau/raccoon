@@ -83,7 +83,7 @@
                                 </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
-                        <v-expansion-panel class="ma-1">
+                        <v-expansion-panel class="ma-1" @click="calculate_similar_facts()">
                             <v-expansion-panel-title><h4> Similar Variables </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <div class="d-flex overflow-y-hidden  pb-5">
@@ -158,6 +158,7 @@ import vis_parser from "@/components/visualization/vis_parser.vue";
 import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import fact_group_preview from "@/components/fact_group_preview.vue";
+import {useSimilarityStore} from "@/stores/similarityStore";
 
 export default {
     name: "fact_group_view",
@@ -254,6 +255,11 @@ export default {
             this.visStore.restore_column(this.visStore.current_fact_group.column.name)
             this.close()
         },
+        calculate_similar_facts() {
+            if (!this.visStore.current_fact_group['similar_columns']) {
+                this.visStore.current_fact_group['similar_columns'] = useSimilarityStore().compute_similar_columns(this.visStore.current_fact_group['column'])
+            }
+        }
     }
 }
 </script>

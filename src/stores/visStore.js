@@ -237,8 +237,7 @@ export const useVisStore = defineStore('visStore', {
             this.current_fact_group = {
                 'column': column,
                 'visList': visList,
-                'additional_vis_list': this.generate_additional_fact_visList(column),
-                'similar_columns': useSimilarityStore().compute_similar_columns(column)}
+                'additional_vis_list': this.generate_additional_fact_visList(column)}
         }
     }
 })
