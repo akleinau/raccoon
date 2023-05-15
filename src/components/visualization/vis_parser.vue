@@ -27,7 +27,8 @@ export default {
     components: {vis_bar, vis_pictograph, vis_line, vis_text},
     data() {
         return {
-            rerender: 0
+            rerender: 0,
+            color_type_map: {"impact": 0, "significance": 1, "context": 2}
         }
     },
     computed: {
@@ -45,6 +46,20 @@ export default {
                     vis[a] = this.visStore.default_settings[vis.type][a]
                 }
             })
+
+            //colors
+            if (!vis["background"]) {
+                vis["background"] = this.visStore.default_colors.background
+            }
+            if (!vis["color"]) {
+                if (vis.type === "text") {
+                    vis["color"] = this.visStore.default_colors.text
+                }
+                else {
+                    vis["color"] = this.visStore.default_colors.colors[this.color_type_map[vis.type]]
+                }
+            }
+
             return vis
         }
     },

@@ -101,7 +101,7 @@ export default {
                 .attr("y", 0)
                 .attr("width", width)
                 .attr("height", height)
-                .attr("fill", "lightgrey")
+                .attr("fill", this.vis.background)
 
             svg.selectAll("bar")
                 .data(data)

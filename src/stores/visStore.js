@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
+import * as d3 from "d3";
 
 export const useVisStore = defineStore('visStore', {
     state: () => ({
@@ -13,27 +14,28 @@ export const useVisStore = defineStore('visStore', {
             impact: {
                 graph: "bar",
                 grid: [25, 4],
-                color: "royalblue",
                 range: [0, 100],
                 title: "#people per option"
             },
             significance: {
                 graph: "pictograph",
                 grid: [25, 4],
-                color: "MediumVioletRed",
                 range: "percent",
                 title: "Frequency"
             },
             context: {
                 graph: "bar",
                 grid: [25, 4],
-                color: "green"
             },
             text: {
                 graph: "text",
                 font_size: 2,
-                color: "midnightblue"
             }
+        },
+        default_colors: {
+            "background": "Gainsboro",
+            "colors": d3.schemeDark2,
+            "text": "midnightBlue",
         }
     }),
     actions: {

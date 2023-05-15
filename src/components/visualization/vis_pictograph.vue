@@ -127,7 +127,7 @@ export default {
                 .attr("y", margin_top_grid)
                 .attr("width", width + margin_right)
                 .attr("height", height)
-                .attr("fill", "lightgray")
+                .attr("fill", this.vis.background)
 
             //one element per option
             svg.selectAll("option")
