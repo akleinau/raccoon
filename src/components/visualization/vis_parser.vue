@@ -39,7 +39,7 @@ export default {
             return this.csvStore.target
         },
         full_vis() {
-            let vis = this.vis
+            let vis = JSON.parse((JSON.stringify(this.vis)))
             let type_attr = ["title", "range", "color", "grid"]
             type_attr.forEach(a => {
                 if (!vis[a]) {
@@ -71,7 +71,7 @@ export default {
             ,
             deep: true
         },
-        vis: {
+        full_vis: {
             handler: function () {
                 this.rerender++
             }
