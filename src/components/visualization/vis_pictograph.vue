@@ -115,17 +115,19 @@ export default {
                 .range([startBarX, width + startBarX])
                 .padding(padding)
 
+            const radius = x.bandwidth() / 2
+
             const y_range = x.step() * this.grid[1]
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
                 .range([0, y_range])
-                .padding(padding)
-
-            let height = data.length * y_range + data.length * y.bandwidth()
+            let height = data.length * (y_range + y.bandwidth())
 
             let y_options = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin_top_grid, height])
+                .range([margin_top_grid + radius*3, height + margin_top_grid + radius*3]) //radius times three as outer padding
+
+
 
 
             let svg = d3.create("svg")
@@ -136,7 +138,7 @@ export default {
             //background
             svg.append("rect")
                 .attr("x", startBarX - x.bandwidth() / 2)
-                .attr("y", 0)
+                .attr("y", margin_top_grid)
                 .attr("width", width + margin_right)
                 .attr("height", height)
                 .attr("fill", "lightgray")
@@ -153,7 +155,7 @@ export default {
                         .join("circle")
                         .attr("cx", d => x(Math.floor(d / this.grid[1])))
                         .attr("cy", d => y_options(par.name) + y(d % this.grid[1]))
-                        .attr("r", x.bandwidth() / 2)
+                        .attr("r", radius)
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.color : "darkgray")
                 })
 
@@ -162,21 +164,19 @@ export default {
                 .data(data)
                 .join("text")
                 .attr("x", startBarX - x.bandwidth() / 2 - 5)
-                .attr("y", d => y_options(d.name))
+                .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
                 .text(d => this.get_column_label(d))
                 .style("text-anchor", "end")
-                .attr("dy", y_options.bandwidth() / 2 - 5)
 
             if (!this.preview) {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
                     .attr("x", width + startBarX - x.bandwidth() / 2)
-                    .attr("y", d => y_options(d.name))
+                    .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
                     .text(d => this.get_value_text(d.value))
                     .style("text-anchor", "start")
                     .style("fill", "white")
-                    .attr("dy", y_options.bandwidth() / 2 - 5)
             }
 
 
