@@ -5,11 +5,22 @@
             <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <div class="d-flex">
-                    <v-text-field class="mx-2" label="Impact Graphs" v-model="visStore.default_settings.impact.color"/>
-                    <v-text-field class="mx-2" label="Significance Graphs"
-                                  v-model="visStore.default_settings.significance.color"/>
-                    <v-btn class="mx-2" variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate
-                    </v-btn>
+                    <v-radio-group v-model="visStore.default_colors.colors" label="Colors">
+                        <v-radio v-for="colorList in this.colors" :key="colorList" :value="colorList">
+                            <template v-slot:label>
+                                <div v-for="color in colorList" :key="color">
+                                    <v-icon :color="color">mdi-circle</v-icon>
+                                </div>
+                            </template>
+                        </v-radio>
+                    </v-radio-group>
+                    <v-radio-group v-model="visStore.default_colors.background" label="Background">
+                        <v-radio v-for="color in this.background" :key="color" :value="color">
+                            <template v-slot:label>
+                                    <v-icon :color="color">mdi-circle</v-icon>
+                            </template>
+                        </v-radio>
+                    </v-radio-group>
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -95,6 +106,7 @@ import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
+import * as d3 from "d3";
 
 export default {
     name: "settings_view",
@@ -108,6 +120,8 @@ export default {
     data() {
         return {
             show: false,
+            colors: [d3.schemeDark2, d3.schemeCategory10, d3.schemeSet1],
+            background: ["lightgrey", "Gainsboro", "white"]
         }
     },
     methods: {
