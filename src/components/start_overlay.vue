@@ -90,7 +90,7 @@ export default {
       this.visStore.set_initial_default_settings(this.csvStore.csv.length, this.csvStore.target_column, this.csvStore.target_option)
       this.csvStore.calc_variable_summaries()
       this.visStore.add_dashboard_item(this.csvStore.variable_summaries.find(d => d.name === useCSVStore().target_column),
-        [ {type: 'impact', data_map: 'occurrence'}], true)
+        [ {type: 'impact', data_map: 'occurrence'}], false)
       let i = 0
       while (i < 5) {
           let j = 0
@@ -98,7 +98,7 @@ export default {
               j++
           }
           let best_summary =  this.csvStore.variable_summaries[j]
-          if (best_summary.significance.score["regression"] > 0.1) {
+          if (best_summary.significance.score["regression"] >= 0.01) {
               console.log("best_summary", best_summary)
               this.visStore.add_dashboard_item(best_summary, this.visStore.generate_main_fact_visList(), true)
               i++
