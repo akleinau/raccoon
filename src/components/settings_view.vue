@@ -17,7 +17,8 @@
                     <v-radio-group v-model="visStore.default_colors.background" label="Background">
                         <v-radio v-for="color in this.background" :key="color" :value="color">
                             <template v-slot:label>
-                                    <v-icon :color="color">mdi-circle</v-icon>
+                                <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
+                                {{ color }}
                             </template>
                         </v-radio>
                     </v-radio-group>
@@ -28,6 +29,14 @@
         <v-expansion-panel>
             <v-expansion-panel-title><h4> Change Font </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
+                <v-radio-group v-model="visStore.default_colors.text" label="Color">
+                    <v-radio v-for="color in this.fontColor" :key="color" :value="color">
+                        <template v-slot:label>
+                            <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
+                            {{ color }}
+                        </template>
+                    </v-radio>
+                </v-radio-group>
             </v-expansion-panel-text>
         </v-expansion-panel>
 
@@ -121,7 +130,8 @@ export default {
         return {
             show: false,
             colors: [d3.schemeDark2, d3.schemeCategory10, d3.schemeSet1],
-            background: ["lightgrey", "Gainsboro", "white"]
+            background: ["lightgrey", "Gainsboro", "white"],
+            fontColor: ["black", "midnightBlue", "darkblue"]
         }
     },
     methods: {
