@@ -1,9 +1,10 @@
 <template>
-  <div :style="'width: ' + width + 'px; font-size: ' + font_size + 'rem; color: ' + color"> {{vis.text}} </div>
+  <div :style="'width: ' + width + 'px; font-size: ' + font_size + 'rem; color: ' + color"> {{helperStore.parse_text(vis.text)}} </div>
 </template>
 
 <script>
 import {useVisStore} from "@/stores/visStore";
+import {useHelperStore} from "@/stores/helperStore";
 export default {
     name: "vis_text",
     props: [
@@ -11,7 +12,8 @@ export default {
     ],
     setup() {
         const visStore = useVisStore()
-        return {visStore}
+        const helperStore = useHelperStore()
+        return {visStore, helperStore}
     },
     computed: {
         font_size() {

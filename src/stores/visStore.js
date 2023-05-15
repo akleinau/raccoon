@@ -104,15 +104,13 @@ export const useVisStore = defineStore('visStore', {
                 )
             }
             //get option with max percent
-            let csvStore = useCSVStore()
             let max_percent_option = Object.entries(column.percent_target_option).sort((a, b) => b[1] - a[1])[0]
             if (max_percent_option) {
                 visList.push(
                     {
                         type: "text",
                         text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
-                            (max_percent_option[1] * 100).toFixed(0) + "% chance of having " +
-                            csvStore.target_column + ": " + csvStore.target_option
+                            (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
                     }
                 )
             }
@@ -123,11 +121,9 @@ export const useVisStore = defineStore('visStore', {
          * sets default settings for visualizations to adapt them to current dataset
          *
          * @param length
-         * @param target_column
-         * @param target_option
          */
-        set_initial_default_settings(length, target_column, target_option) {
-            this.default_settings.significance.title = "Frequency of " + target_column + ": " + target_option
+        set_initial_default_settings(length) {
+            this.default_settings.significance.title = "Frequency of $target_column: $target_option"
             this.default_settings.impact.range = [0, length]
         },
         /**

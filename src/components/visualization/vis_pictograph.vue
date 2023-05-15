@@ -6,32 +6,18 @@
 import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
 import {useVisStore} from "@/stores/visStore";
+import {useCSVStore} from "@/stores/csvStore";
 
 export default {
     name: "vis_pictograph",
     props: [
         "column", "vis", "width", "preview"
     ],
-    watch: {
-        column: {
-            handler: function () {
-                this.data_to_vis()
-            }
-            ,
-            deep: true
-        },
-        vis: {
-            handler: function () {
-                this.data_to_vis()
-            }
-            ,
-            deep: true
-        }
-    },
     setup() {
         const helperStore = useHelperStore()
         const visStore = useVisStore()
-        return {helperStore, visStore}
+        const csvStore = useCSVStore()
+        return {helperStore, visStore, csvStore}
     },
     computed: {
         color() {
@@ -45,7 +31,7 @@ export default {
         },
         title() {
             return this.vis.title ? this.vis.title : this.visStore.default_settings[this.vis.type].title
-        }
+        },
     },
     methods: {
         get_range() {
@@ -198,7 +184,7 @@ export default {
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.title)
+                .text(this.helperStore.parse_text(this.title))
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())

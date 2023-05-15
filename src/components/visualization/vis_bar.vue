@@ -12,22 +12,6 @@ export default {
     props: [
         "vis", "column", "width", "preview"
     ],
-    watch: {
-        column: {
-            handler: function () {
-                this.data_to_vis()
-            }
-            ,
-            deep: true
-        },
-        vis: {
-            handler: function () {
-                this.data_to_vis()
-            }
-            ,
-            deep: true
-        }
-    },
     setup() {
         const helperStore = useHelperStore()
         const visStore = useVisStore()

@@ -10,15 +10,6 @@ export default {
     props: [
         "vis", "column", "width"
     ],
-    watch: {
-        vis: {
-            handler: function () {
-                this.visualize(this.vis.data, this.vis.data_with_target_option)
-            }
-            ,
-            deep: true
-        }
-    },
     methods: {
         visualize(data, target_data) {
             let marging_bottom = 30

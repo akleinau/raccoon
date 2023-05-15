@@ -15,6 +15,7 @@ export const useCSVStore = defineStore('csvStore', {
         target_column: null,
         target_all_options: [],
         target_option: null,
+        target: null,
         variable_summaries: []
     }),
     actions: {
@@ -87,6 +88,7 @@ export const useCSVStore = defineStore('csvStore', {
 
             //go through summaries again to compute correlation with target
             let target_summary = this.variable_summaries.find(d => d.name === this.target_column)
+            this.target = target_summary
             console.log(target_summary)
             this.variable_summaries.forEach(summary => {
                 summary.correlation_with_target = useSimilarityStore().compute_similarity(target_summary, summary)
