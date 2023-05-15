@@ -160,6 +160,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     if (summary) {
                         summary.significance.score["regression"] = accuracy - this.dashboard_accuracy
                         //console.log(summary.significance.score["regression"])
+                        if (accuracy - this.dashboard_accuracy > this.accuracy_diff) this.accuracy_diff = accuracy - this.dashboard_accuracy
                     }
                 })
             }
@@ -242,6 +243,7 @@ export const useRegressionStore = defineStore('regressionStore', {
          * score computation
          */
         compute_score() {
+            this.accuracy_diff = 0
             let visStore = useVisStore()
             let csvStore = useCSVStore()
             let y = this.prepare_target()
@@ -273,7 +275,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     }
                 }
             })
-            this.accuracy_diff = d3.max(csvStore.variable_summaries.map(d => d.significance.score["regression"]))
+            console.log("accuracy diff: " + this.accuracy_diff)
             let scoreStore = useScoreStore()
             scoreStore.score = "regression"
             scoreStore.sort_summaries()
