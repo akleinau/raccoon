@@ -1,8 +1,9 @@
 <template>
-    <vis_bar v-if="graph === 'bar'" :vis="vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pictograph v-if="graph === 'pictograph'" :vis="vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_line v-if="graph === 'density'" :vis="vis" :column="column" :width="width" :key="rerender"/>
-    <vis_text v-if="graph === 'text'" :vis="vis" :column="column" :width="width" :key="rerender"/>
+    <vis_bar v-if="graph === 'bar'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_pictograph v-if="graph === 'pictograph'" :vis="full_vis" :column="column" :width="width" :preview="preview"
+                    :key="rerender"/>
+    <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
+    <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
 </template>
 
 <script>
@@ -25,9 +26,9 @@ export default {
     },
     components: {vis_bar, vis_pictograph, vis_line, vis_text},
     data() {
-      return {
-          rerender: 0
-      }
+        return {
+            rerender: 0
+        }
     },
     computed: {
         graph() {
@@ -35,26 +36,36 @@ export default {
         },
         target() {
             return this.csvStore.target
+        },
+        full_vis() {
+            let vis = this.vis
+            let type_attr = ["title", "range", "color", "grid"]
+            type_attr.forEach(a => {
+                if (!vis[a]) {
+                    vis[a] = this.visStore.default_settings[vis.type][a]
+                }
+            })
+            return vis
         }
     },
     watch: {
         column: {
             handler: function () {
-                this.rerender ++
+                this.rerender++
             }
             ,
             deep: true
         },
         vis: {
             handler: function () {
-                this.rerender ++
+                this.rerender++
             }
             ,
             deep: true
         },
         target: {
             handler: function () {
-                this.rerender ++
+                this.rerender++
             }
             ,
             deep: true

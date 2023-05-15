@@ -17,18 +17,6 @@ export default {
         const visStore = useVisStore()
         return {helperStore, visStore}
     },
-    computed: {
-        color() {
-            return this.vis.color ? this.vis.color : this.visStore.default_settings[this.vis.type].color
-        },
-        range() {
-            return this.vis.range ? this.vis.range : this.visStore.default_settings[this.vis.type].range
-        },
-        title() {
-            return this.vis.title ? this.vis.title : this.visStore.default_settings[this.vis.type].title
-        }
-
-    },
     methods: {
         /**
          * returns the range of the data
@@ -36,10 +24,10 @@ export default {
          * @returns {number[]|*}
          */
         get_range() {
-            if (this.range === "percent") {
+            if (this.vis.range === "percent") {
                 return [0, 1]
             } else {
-                return this.range
+                return this.vis.range
             }
         },
         /**
@@ -49,7 +37,7 @@ export default {
          * @returns {*|string}
          */
         get_value_text(value) {
-            if (this.range === "percent") {
+            if (this.vis.range === "percent") {
                 return (value * 100).toFixed(0) + "%"
             }
             return value
@@ -113,7 +101,7 @@ export default {
                 .attr("y", 0)
                 .attr("width", width)
                 .attr("height", height)
-                .attr("fill", "lightgray")
+                .attr("fill", "lightgrey")
 
             svg.selectAll("bar")
                 .data(data)
@@ -122,7 +110,7 @@ export default {
                 .attr("y", d => y(d.name))
                 .attr("width", d => x(d.value) - x(0))
                 .attr("height", y.bandwidth())
-                .attr("fill", this.color)
+                .attr("fill", this.vis.color)
 
             svg.selectAll("textName")
                 .data(data)
@@ -161,7 +149,7 @@ export default {
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.title)
+                .text(this.vis.title)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

@@ -19,26 +19,12 @@ export default {
         const csvStore = useCSVStore()
         return {helperStore, visStore, csvStore}
     },
-    computed: {
-        color() {
-            return this.vis.color ? this.vis.color : this.visStore.default_settings[this.vis.type].color
-        },
-        grid() {
-            return this.vis.grid ? this.vis.grid : this.visStore.default_settings[this.vis.type].grid
-        },
-        range() {
-            return this.vis.range ? this.vis.range : this.visStore.default_settings[this.vis.type].range
-        },
-        title() {
-            return this.vis.title ? this.vis.title : this.visStore.default_settings[this.vis.type].title
-        },
-    },
     methods: {
         get_range() {
-            if (this.range === "percent") {
+            if (this.vis.range === "percent") {
                 return [0, 1]
             } else {
-                return this.range
+                return this.vis.range
             }
         }
         ,
@@ -49,8 +35,8 @@ export default {
          * @returns {string}
          */
         get_value(value) {
-            const nominator = (this.range === "percent") ? value : (value / this.get_range()[1])
-            return (nominator * this.grid[0] * this.grid[1]).toFixed(0)
+            const nominator = (this.vis.range === "percent") ? value : (value / this.get_range()[1])
+            return (nominator * this.vis.grid[0] * this.vis.grid[1]).toFixed(0)
 
         }
         ,
@@ -62,7 +48,7 @@ export default {
          * @returns {string}
          */
         get_value_text(value) {
-            return this.get_value(value) + "/" + this.grid[0] * this.grid[1]
+            return this.get_value(value) + "/" + this.vis.grid[0] * this.vis.grid[1]
         },
         /**
          * returns the label of the column
@@ -105,9 +91,9 @@ export default {
             }
             const padding = 0.3
 
-            const dot_range_X = d3.range(0, this.grid[0], 1)
-            const dot_range_Y = d3.range(0, this.grid[1], 1)
-            const dot_range = d3.range(0, (this.grid[0] * this.grid[1]), 1)
+            const dot_range_X = d3.range(0, this.vis.grid[0], 1)
+            const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
+            const dot_range = d3.range(0, (this.vis.grid[0] * this.vis.grid[1]), 1)
 
 
             let x = d3.scaleBand()
@@ -117,7 +103,7 @@ export default {
 
             const radius = x.bandwidth() / 2
 
-            const y_range = x.step() * this.grid[1]
+            const y_range = x.step() * this.vis.grid[1]
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
                 .range([0, y_range])
@@ -153,10 +139,10 @@ export default {
                     d3.select(node[index]).selectAll("circle")
                         .data(dot_range)
                         .join("circle")
-                        .attr("cx", d => x(Math.floor(d / this.grid[1])))
-                        .attr("cy", d => y_options(par.name) + y(d % this.grid[1]))
+                        .attr("cx", d => x(Math.floor(d / this.vis.grid[1])))
+                        .attr("cy", d => y_options(par.name) + y(d % this.vis.grid[1]))
                         .attr("r", radius)
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.color : "darkgray")
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : "darkgray")
                 })
 
 
@@ -184,7 +170,7 @@ export default {
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.helperStore.parse_text(this.title))
+                .text(this.helperStore.parse_text(this.vis.title))
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
