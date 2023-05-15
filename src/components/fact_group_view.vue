@@ -56,6 +56,7 @@
                                     }}
                                 </div>
                                 <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
+                                <div> Correlation with Target: {{visStore.current_fact_group.column['correlation_with_target']}}</div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel class="ma-1">

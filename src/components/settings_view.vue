@@ -60,12 +60,14 @@
                     <div class="d-flex flex-column align-start align-content-start justify-start pb-5">
                         Data Preprocessing
                         <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
-                        <v-text-field type="number"  label="minimal bin size" class="align-self-stretch"
+                        <v-text-field type="number" label="minimal bin size" class="align-self-stretch"
                                       v-model="csvStore.min_bin_size"/>
                         <v-btn variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate</v-btn>
                     </div>
                     <div class="flex-grow-1">
                         Regression
+                        <v-text-field type="number" class="mx-5" label="min correlation with target"
+                                      v-model="regressionStore.correlation_boundary"/>
                         <v-text-field type="number" class="mx-5" label="epochs"
                                       v-model="regressionStore.epochs"/>
                         <v-text-field type="number" class="mx-5" label="test ratio"
