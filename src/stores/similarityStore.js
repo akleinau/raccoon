@@ -9,66 +9,49 @@ export const useSimilarityStore = defineStore('similarityStore', {
     }),
     actions: {
         /**
+         * compute similarity between two variables
+         *
+         * @param summary1
+         * @param summary2
+         */
+        compute_similarity(summary1, summary2) {
+            if (summary1.type === "continuous" && summary2.type === "continuous") {
+                return this.pearson(summary1, summary2)
+            } else {
+                return this.cramers_v(summary1, summary2)
+            }
+        },
+        /**
          * compute similar columns based on column types
          */
         compute_similar_columns(summary) {
-            const csv = useCSVStore().csv
             const visList = useVisStore().generate_main_fact_visList()
-            const current_column = csv.map(d => d[summary.name])
 
-            //continuous variables
-            if (summary.type === "continuous") {
-                return useCSVStore().variable_summaries
-                    .filter(item => item.name !== summary.name && item.type === "continuous")
-                    .map(item => {
-                        if (item.type === "continuous") {
-                            return {
-                                'item': item,
-                                'similarity': this.pearson(current_column, csv.map(d => d[item.name]))
-                            }
-                        }
-                        if (item.type === "categorical") {
-                            return {
-                                'item': item,
-                                'similarity': this.cramers_v(summary, item)
-                            }
-                        }
-                    })
-                    .filter(d => Math.abs(d.similarity) >= this.similarity_boundary)
-                    .sort((a, b) => b.similarity - a.similarity)
-                    .map(d => ({
-                        'column': d.item,
-                        'visList': visList,
-                        'similarity': d.similarity
-                    }))
-            }
+            return useCSVStore().variable_summaries
+                .filter(item => item.name !== summary.name)
+                .map(item => {
+                    return {
+                        'item': item,
+                        'similarity': this.compute_similarity(summary, item)
+                    }
+                })
+                .filter(d => Math.abs(d.similarity) >= this.similarity_boundary)
+                .sort((a, b) => b.similarity - a.similarity)
+                .map(d => ({
+                    'column': d.item,
+                    'visList': visList,
+                    'similarity': d.similarity
+                }))
 
-            //categorical variables
-            if (summary.type === "categorical") {
-                return useCSVStore().variable_summaries
-                    .filter(item => item.name !== summary.name)
-                    .map(item => {
-                        return {
-                            'item': item,
-                            'similarity': this.cramers_v(summary, item)
-                        }
-                    })
-                    .filter(d => Math.abs(d.similarity) >= this.similarity_boundary)
-                    .sort((a, b) => b.similarity - a.similarity)
-                    .map(d => ({
-                        'column': d.item,
-                        'visList': visList,
-                        'similarity': d.similarity
-                    }))
-            }
-            return []
         },
         /**
          * calculate pearson coefficient
          */
         pearson(x, y) {
+            let x_data = useCSVStore().csv.map(d => d[x.name])
+            let y_data = useCSVStore().csv.map(d => d[y.name])
             //handle missing data by deleting rows
-            let filtered = x.map((d, i) => [d, y[i]])
+            let filtered = x_data.map((d, i) => [d, y_data[i]])
                 .filter(d => !isNaN(d[0]) && !isNaN(d[1]))
                 .filter(d => d[0] !== "" && d[1] !== "")
             let xf = filtered.map(d => d[0])
