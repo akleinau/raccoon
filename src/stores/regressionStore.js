@@ -12,6 +12,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         batch_size: 10,
         learning_rate: 0.01,
         epochs: 15,
+        correlation_boundary: 0.25
     }),
     actions: {
         /**
@@ -195,7 +196,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             columns.forEach(column => {
 
                 let summary = csvStore.variable_summaries.find(d => d.name === column)
-                if (summary) {
+                if (summary && Math.abs(summary.correlation_with_target) >= this.correlation_boundary) {
 
                     let data_items = []
                     let map_items = []
@@ -257,7 +258,13 @@ export const useRegressionStore = defineStore('regressionStore', {
                     column !== useCSVStore().target_column) {
                     if (!visStore.excluded_columns.includes(column)) {
                         let [map, Data] = this.prepare_data([column])
-                        this.train([column], map, Data, y_pred, y, "variable_summaries")
+                        if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries")
+                        else {
+                            let summary = csvStore.variable_summaries.find(d => d.name === column)
+                            if (summary) {
+                                summary.significance.score["regression"] = 0
+                            }
+                        }
                     } else {
                         let summary = csvStore.variable_summaries.find(d => d.name === column)
                         if (summary) {
