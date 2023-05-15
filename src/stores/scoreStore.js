@@ -4,7 +4,7 @@ import {useCSVStore} from "@/stores/csvStore";
 export const useScoreStore = defineStore('scoreStore', {
     state: () => ({
         score: "max_difference",
-        score_choices: ["max_difference", "entropy", "max", "weighted_max", "regression"]
+        score_choices: ["max_difference", "entropy", "max", "weighted_max", "correlation", "regression"]
     }),
     actions: {
         /**
@@ -53,6 +53,7 @@ export const useScoreStore = defineStore('scoreStore', {
                     "max": Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0][1],
                     "weighted_max": this.weighted_max_score(summary),
                     "entropy": -this.entropy(Object.values(summary.percent_target_option)),
+                    "correlation": Math.abs(summary.correlation_with_target),
                     "regression": 0
                 }
             }

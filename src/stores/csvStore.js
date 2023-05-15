@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import {useHelperStore} from './helperStore'
 import {useScoreStore} from "./scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
+import {useSimilarityStore} from "@/stores/similarityStore";
 
 export const useCSVStore = defineStore('csvStore', {
     state: () => ({
@@ -78,13 +79,21 @@ export const useCSVStore = defineStore('csvStore', {
                     //percentage how often each option occurs together with the target option
                     summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
 
-                    //significance_score: difference in percentages of percent_target_option
-                    summary.significance = scoreStore.compute_significance_score(summary)
                     summary.riskIncrease = this.compute_risk_increase(summary)
 
                     this.variable_summaries.push(summary)
                 }
             })
+
+            //go through summaries again to compute correlation with target
+            let target_summary = this.variable_summaries.find(d => d.name === this.target_column)
+            console.log(target_summary)
+            this.variable_summaries.forEach(summary => {
+                summary.correlation_with_target = useSimilarityStore().compute_similarity(target_summary, summary)
+                summary.significance = scoreStore.compute_significance_score(summary)
+
+            })
+
             //sort by significance_score
             scoreStore.sort_summaries()
 
