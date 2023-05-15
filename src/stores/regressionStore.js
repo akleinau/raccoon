@@ -273,7 +273,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     }
                 }
             })
-            this.accuracy_diff = 1
+            this.accuracy_diff = d3.max(csvStore.variable_summaries.map(d => d.significance.score["regression"]))
             let scoreStore = useScoreStore()
             scoreStore.score = "regression"
             scoreStore.sort_summaries()
