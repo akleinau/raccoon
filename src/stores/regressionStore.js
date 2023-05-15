@@ -49,9 +49,9 @@ export const useRegressionStore = defineStore('regressionStore', {
         accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual) {
             //check accuracy
             let correct = 0
-            for (let i = TEST_SET_I; i < Data.length; i++) {
+            for (let i = TEST_SET_I; i < y_actual.length; i++) {
                 let row = Data[i]
-                let curr_pred = this.sigmoid(this.dot_product(weights, row) + b + y_pred[i])
+                let curr_pred = weights? this.sigmoid(this.dot_product(weights, row) + b + y_pred[i]) : this.sigmoid(b + y_pred[i])
                 let curr_actual = y_actual[i]
                 if (curr_pred > 0.5 && curr_actual === 1) {
                     correct++
@@ -59,7 +59,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     correct++
                 }
             }
-            return (correct / (Data.length - TEST_SET_I))
+            return (correct / (y_actual.length - TEST_SET_I))
         },
         /**
          * compute predictions without sigma
@@ -72,9 +72,9 @@ export const useRegressionStore = defineStore('regressionStore', {
          */
         compute_new_prediction(weights, b, data, y_pred) {
             let y_new_pred = []
-            for (let i = 0; i < data.length; i++) {
-                let row = data[i]
-                let curr_pred = this.dot_product(weights, row) + b + y_pred[i]
+            for (let i = 0; i < y_pred.length; i++) {
+                let row = weights? data[i] : null
+                let curr_pred = weights? this.dot_product(weights, row) + b + y_pred[i]: b + y_pred[i]
                 y_new_pred.push(curr_pred)
             }
             return y_new_pred
@@ -90,15 +90,13 @@ export const useRegressionStore = defineStore('regressionStore', {
          */
         train(columns, map, Data, y_pred, y_actual, summary_place) {
 
-            if (Data.length === 0) {
-                return [y_pred, 0]
-            }
+            const onlyBias = Data.length === 0
 
             //create weight matrix with one weight per feature plus bias
-            let weights = Array(Data[0].length).fill(0)
+            let weights = onlyBias? null : Array(Data[0].length).fill(0)
             let b = 0
 
-            const TEST_SET_I = Data.length - Math.floor(Data.length / (100 * this.test_ratio))
+            const TEST_SET_I = y_actual.length - Math.floor(y_actual.length / (100 * this.test_ratio))
 
             //optimize weights using gradient descent
             //for each epoch
@@ -113,21 +111,21 @@ export const useRegressionStore = defineStore('regressionStore', {
                     for (let j = 0; j < this.batch_size; j++) {
                         //multiplicate weights with data
                         let row = Data[j + i]
-                        let curr_pred = this.sigmoid(this.dot_product(weights, row) + b + y_pred[j + i])
+                        let curr_pred = onlyBias ? this.sigmoid(b + y_pred[j+i]) : this.sigmoid(this.dot_product(weights, row) + b + y_pred[j + i])
                         let curr_actual = y_actual[j + i]
 
                         loss.push(this.loss(curr_pred, curr_actual))
-                        dW.push(row.map((d) => (curr_pred - curr_actual) * d))
+                        if (!onlyBias) dW.push(row.map((d) => (curr_pred - curr_actual) * d))
                         db.push(curr_pred - curr_actual)
                     }
 
                     //compute derivates
-                    let mean_dW = dW[0].map((_, i) => d3.mean(dW.map(d => d[i])))
+                    if (!onlyBias) dW = dW[0].map((_, i) => d3.mean(dW.map(d => d[i])))
                     db = d3.mean(db)
 
 
                     //update weights
-                    weights = weights.map((d, i) => d - this.learning_rate * mean_dW[i])
+                    if (!onlyBias) weights = weights.map((d, i) => d - this.learning_rate * dW[i])
                     b = b - this.learning_rate * db
 
                     //  if (i % (Math.floor(Data[0].length / (this.batch_size)) * 20) === 0) {
