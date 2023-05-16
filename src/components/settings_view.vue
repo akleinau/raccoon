@@ -68,40 +68,6 @@
             </v-expansion-panel-text>
         </v-expansion-panel>
 
-        <!-- Graphs -->
-        <v-expansion-panel>
-            <v-expansion-panel-title><h4> Change Graphs </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
-                <div class="d-flex">
-                    <div class="mx-5">
-                        <v-radio-group v-model="visStore.default_settings.impact.graph" label="Impact Graph">
-                            <v-radio label="bar" value="bar"></v-radio>
-                            <v-radio label="pictograph" value="pictograph"></v-radio>
-                        </v-radio-group>
-                        <v-text-field v-if="visStore.default_settings.impact.graph === 'pictograph'"
-                                      type="number" label="#rows" v-model="visStore.default_settings.impact.grid[0]"/>
-                        <v-text-field v-if="visStore.default_settings.impact.graph === 'pictograph'"
-                                      type="number" label="#columns"
-                                      v-model="visStore.default_settings.impact.grid[1]"/>
-                    </div>
-                    <div class="mx-5">
-                        <v-radio-group v-model="visStore.default_settings.significance.graph"
-                                       label="Significance Graph">
-                            <v-radio label="bar" value="bar"></v-radio>
-                            <v-radio label="pictograph" value="pictograph"></v-radio>
-                        </v-radio-group>
-                        <v-text-field v-if="visStore.default_settings.significance.graph === 'pictograph'"
-                                      type="number" label="#rows"
-                                      v-model="visStore.default_settings.significance.grid[0]"/>
-                        <v-text-field v-if="visStore.default_settings.significance.graph === 'pictograph'"
-                                      type="number" label="#columns"
-                                      v-model="visStore.default_settings.significance.grid[1]"/>
-                    </div>
-                    <v-btn variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate</v-btn>
-                </div>
-            </v-expansion-panel-text>
-        </v-expansion-panel>
-
         <!-- Data Processing -->
         <v-expansion-panel>
             <v-expansion-panel-title><h4> Change Data Processing </h4></v-expansion-panel-title>
