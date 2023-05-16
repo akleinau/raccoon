@@ -1,5 +1,7 @@
 <template>
-  <div :style="'width: ' + width + 'px; font-size: ' + font_size + 'rem; color: ' + color"> {{helperStore.parse_text(vis.text)}} </div>
+  <div :style="'width: ' + width + 'px; font-size: ' + font_size + 'rem'">
+      <span v-for="item in helperStore.parse_text(vis.text)" v-bind:key=item :style="'color: ' + item.color">{{item.text}}</span>
+  </div>
 </template>
 
 <script>

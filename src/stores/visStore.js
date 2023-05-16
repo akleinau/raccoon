@@ -15,13 +15,13 @@ export const useVisStore = defineStore('visStore', {
                 graph: "bar",
                 grid: [25, 4],
                 range: [0, 100],
-                title: "#people per option"
+                title: [{text: "#people per option", color: "black"}]
             },
             significance: {
                 graph: "pictograph",
                 grid: [25, 4],
                 range: "percent",
-                title: "Frequency"
+                title: [{text: "Frequency", color: "black"}]
             },
             context: {
                 graph: "bar",
@@ -111,8 +111,9 @@ export const useVisStore = defineStore('visStore', {
                 visList.push(
                     {
                         type: "text",
-                        text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
+                        text: [{text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
                             (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
+                            color: "midnightblue"}]
                     }
                 )
             }
@@ -125,7 +126,8 @@ export const useVisStore = defineStore('visStore', {
          * @param length
          */
         set_initial_default_settings(length) {
-            this.default_settings.significance.title = "Frequency of $target_column: $target_option"
+            this.default_settings.significance.title = [{text: "Frequency of ", color: "black"},
+                {text: " $target_column: $target_option", color: "darkorange"}]
             this.default_settings.impact.range = [0, length]
         },
         /**
@@ -154,7 +156,7 @@ export const useVisStore = defineStore('visStore', {
                                 value: item.column.riskIncrease.risk_difference
                             })).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_difference)],
-                            title: "maximal difference in risk between options"
+                            title: [{text: "maximal difference in risk between options", color: "black"}]
                         }],
                         "column": column
                     },
@@ -166,7 +168,7 @@ export const useVisStore = defineStore('visStore', {
                                 value: item.column.riskIncrease.risk_multiplier
                             })).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
-                            title: "risk increase through factor"
+                            title: [{text: "risk increase through factor", color: "black"}]
                         }],
                         "column": column
                     })
@@ -198,7 +200,7 @@ export const useVisStore = defineStore('visStore', {
                 factGroups.push({
                     "visList": [{
                         type: 'text',
-                        text: "The dataset consists of " + csv.length + " participants."
+                        text: [{text: "The dataset consists of " + csv.length + " participants.", color: "midnightblue"}]
                     }],
                     "column": {name: "Nr of participants"}
                 })

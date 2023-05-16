@@ -145,11 +145,19 @@ export default {
                     .text(this.get_value_text(this.get_range()[1]))
             }
 
-            svg.append("text")
+            let title = svg.append("text")
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.vis.title)
+                .text("")
+
+            let title_array = this.helperStore.parse_text(this.vis.title)
+
+            title.selectAll("tspan")
+                .data(title_array)
+                .join("tspan")
+                .text(d => d.text)
+                .style("fill", d => d.color)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

@@ -45,10 +45,11 @@ export default {
          * returns value as frequency with nominator/denominator
          *
          * @param value
-         * @returns {string}
+         * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
-            return this.get_value(value) + "/" + this.vis.grid[0] * this.vis.grid[1]
+            return [{"text": this.get_value(value), "color": this.vis.color},
+                {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
         },
         /**
          * returns the label of the column
@@ -111,9 +112,7 @@ export default {
 
             let y_options = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin_top_grid + radius*3, height + margin_top_grid + radius*3]) //radius times three as outer padding
-
-
+                .range([margin_top_grid + radius * 3, height + margin_top_grid + radius * 3]) //radius times three as outer padding
 
 
             let svg = d3.create("svg")
@@ -160,17 +159,34 @@ export default {
                     .join("text")
                     .attr("x", width + startBarX - x.bandwidth() / 2)
                     .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
-                    .text(d => this.get_value_text(d.value))
+                    .text("")
                     .style("text-anchor", "start")
-                    .style("fill", "white")
+                    .style("fill", "black")
+                    .each((par, index, node) => {
+                        d3.select(node[index]).selectAll("textParts")
+                            .data(this.get_value_text(par.value))
+                            .join("tspan")
+                            .text(d => d.text)
+                            .style("fill", d => d.color)
+                    })
+
             }
 
 
-            svg.append("text")
+            let title = svg.append("text")
                 .attr("x", startBarX + width / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
-                .text(this.helperStore.parse_text(this.vis.title))
+                .text("")
+
+            let title_array = this.helperStore.parse_text(this.vis.title)
+
+            title.selectAll("tspan")
+                .data(title_array)
+                .join("tspan")
+                .text(d => d.text)
+                .style("fill", d => d.color)
+
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
