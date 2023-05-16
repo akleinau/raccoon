@@ -59,12 +59,13 @@ export default {
                 }
             }
 
+            vis = JSON.parse((JSON.stringify(vis))) //remove all possible direkt references to default settings
+
             let text_attr = ["text", "title"]
             text_attr.forEach(a => {
                 if (vis[a]) {
                     vis[a] = vis[a].map(t => {
-                        t.color = t.color.replace("$font", this.visStore.default_colors.text)
-                        t.color = t.color.replace("$color", this.visStore.default_colors.colors[this.color_type_map[vis.type]])
+                        t.color = t.color.replace("$color", vis.color)
                         return t
                     })
                 }

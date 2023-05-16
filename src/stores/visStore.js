@@ -102,7 +102,7 @@ export const useVisStore = defineStore('visStore', {
                         type: "text",
                         text: [{text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
                             (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
-                            color: "$font"}]
+                            color: "$color"}]
                     }
                 )
             }
@@ -189,7 +189,7 @@ export const useVisStore = defineStore('visStore', {
                 factGroups.push({
                     "visList": [{
                         type: 'text',
-                        text: [{text: "The dataset consists of " + csv.length + " participants.", color: "$font"}]
+                        text: [{text: "The dataset consists of " + csv.length + " participants.", color: "$color"}]
                     }],
                     "column": {name: "Nr of participants"}
                 })
