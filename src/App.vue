@@ -13,6 +13,7 @@
 
         <v-main>
 
+            <!-- Dashboard -->
             <v-card class="pa-5 bg-blue-grey-lighten-5">
 
                 <v-card-title>
@@ -33,7 +34,8 @@
                 </div>
             </v-card>
 
-            <v-card title="Adapt" class="pa-5">
+            <!-- Adaptation -->
+            <v-card class="pa-5">
                 <div class="d-flex">
                     <settings_view/>
 
@@ -48,6 +50,7 @@
                 </div>
             </v-card>
 
+            <!-- General -->
             <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_general_factGroups()" v-bind:key="item">
@@ -58,6 +61,7 @@
 
             </v-card>
 
+            <!-- Risk Factors -->
             <v-card class="pa-5 bg-blue-grey-lighten-5">
 
                 <v-card-title>
@@ -90,6 +94,7 @@
 
             </v-card>
 
+            <!-- Context -->
             <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_context_fact_groups()" v-bind:key="item">
