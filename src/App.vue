@@ -21,7 +21,7 @@
                     <dashboard_overlay text-button="true"/>
                 </v-card-title>
 
-                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
+                <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
                                             style="height:500px" vertical="true"/>
@@ -35,7 +35,7 @@
             </v-card>
 
             <!-- Adaptation -->
-            <v-card class="pa-5">
+            <v-card class="pa-4">
                 <div class="d-flex">
                     <settings_view/>
 
@@ -52,7 +52,7 @@
 
             <!-- General -->
             <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
-                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
+                <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_general_factGroups()" v-bind:key="item">
                         <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList" :column="item.column"
                          v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
@@ -81,7 +81,7 @@
                 </div>
 
                 <!-- Risk Factor Sheets -->
-                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
+                <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="column in csvStore.variable_summaries.slice(0,20)" v-bind:key="column">
                         <fact_group_preview class="pa-2" style="height:500px"
                                             v-if="visStore.is_recommendation_column(column)"
@@ -96,7 +96,7 @@
 
             <!-- Context -->
             <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
-                <div class="d-flex pa-4 overflow-x-auto overflow-y-hidden align-stretch">
+                <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_context_fact_groups()" v-bind:key="item">
                         <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
                         v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
