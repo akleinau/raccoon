@@ -17,18 +17,33 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <v-radio-group v-model="visStore.current_fact.vis.graph">
-                                    <v-radio label="bar" value="bar"></v-radio>
-                                    <v-radio label="pictograph" value="pictograph"></v-radio>
-                                    <v-radio label="default" value=""></v-radio>
-                                </v-radio-group>
+                                <div class="d-flex">
+                                    <v-radio-group v-model="visStore.current_fact.vis.graph">
+                                        <v-radio label="bar" value="bar"></v-radio>
+                                        <v-radio label="pictograph" value="pictograph" @click="add_grid"></v-radio>
+                                        <v-radio label="default" value=""></v-radio>
+                                    </v-radio-group>
+                                    <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50">
+                                        <v-text-field
+                                                type="number" label="#rows"
+                                                v-model="visStore.current_fact.vis.grid[0]"/>
+                                        <v-text-field
+                                                type="number" label="#columns"
+                                                v-model="visStore.current_fact.vis.grid[1]"/>
+                                    </div>
+                                </div>
+                                <v-btn @click="set_default_graph_settings"> set as default for {{
+                                    visStore.current_fact.vis.type
+                                    }}
+                                    Graphs
+                                </v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-text-field label="Color" v-model="visStore.current_fact.vis.color"/>
-                                <v-btn @click="makeDefault_color"> set as default for {{
+                                <v-btn @click="makeDefault('color')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
                                     Graphs
@@ -39,7 +54,7 @@
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-text-field label="Title" v-model="visStore.current_fact.vis.title"/>
-                                <v-btn @click="makeDefault_title"> set as default for {{
+                                <v-btn @click="makeDefault('title')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
                                     Graphs
@@ -125,14 +140,14 @@ export default {
         /**
          * sets the current title as default title for the current visualization type
          */
-        makeDefault_title() {
-            this.visStore.default_settings[this.visStore.current_fact.vis.type].title = this.visStore.current_fact.vis.title
+        makeDefault(attribute) {
+            this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute] = this.visStore.current_fact.vis[attribute]
         },
-        /**
-         * sets the current color as default color for the current visualization type
-         */
-        makeDefault_color() {
-            this.visStore.default_settings[this.visStore.current_fact.vis.type].color = this.visStore.current_fact.vis.color
+        set_default_graph_settings() {
+            this.makeDefault('graph')
+            if (this.visStore.current_fact.vis.graph === 'pictograph') {
+                this.makeDefault('grid')
+            }
         },
         /**
          * recalculates the options for the risk factor
@@ -156,6 +171,11 @@ export default {
             let vis = this.visStore.current_fact.vis
             this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.visList.push(vis)
+        },
+        add_grid() {
+            if (!this.visStore.current_fact.vis.grid) {
+                this.visStore.current_fact.vis.grid = this.visStore.default_settings[this.visStore.current_fact.vis.type].grid
+            }
         }
     }
 }
