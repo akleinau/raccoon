@@ -113,7 +113,7 @@ export const useVisStore = defineStore('visStore', {
                         type: "text",
                         text: [{text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
                             (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
-                            color: "midnightblue"}]
+                            color: "$font"}]
                     }
                 )
             }
@@ -127,7 +127,7 @@ export const useVisStore = defineStore('visStore', {
          */
         set_initial_default_settings(length) {
             this.default_settings.significance.title = [{text: "Frequency of ", color: "black"},
-                {text: " $target_column: $target_option", color: "darkorange"}]
+                {text: " $target_column: $target_option", color: "$color"}]
             this.default_settings.impact.range = [0, length]
         },
         /**
@@ -200,7 +200,7 @@ export const useVisStore = defineStore('visStore', {
                 factGroups.push({
                     "visList": [{
                         type: 'text',
-                        text: [{text: "The dataset consists of " + csv.length + " participants.", color: "midnightblue"}]
+                        text: [{text: "The dataset consists of " + csv.length + " participants.", color: "$font"}]
                     }],
                     "column": {name: "Nr of participants"}
                 })

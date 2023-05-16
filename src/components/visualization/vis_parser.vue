@@ -54,11 +54,21 @@ export default {
             if (!vis["color"]) {
                 if (vis.type === "text") {
                     vis["color"] = this.visStore.default_colors.text
-                }
-                else {
+                } else {
                     vis["color"] = this.visStore.default_colors.colors[this.color_type_map[vis.type]]
                 }
             }
+
+            let text_attr = ["text", "title"]
+            text_attr.forEach(a => {
+                if (vis[a]) {
+                    vis[a] = vis[a].map(t => {
+                        t.color = t.color.replace("$font", this.visStore.default_colors.text)
+                        t.color = t.color.replace("$color", this.visStore.default_colors.colors[this.color_type_map[vis.type]])
+                        return t
+                    })
+                }
+            })
 
             return vis
         }
