@@ -94,17 +94,6 @@ export const useVisStore = defineStore('visStore', {
          */
         generate_additional_fact_visList(column) {
             let visList = []
-            if (column.type === "continuous") {
-                visList.push(
-                    {
-                        type: 'density',
-                        graph: 'density',
-                        data: column.data,
-                        data_with_target_option: column.data_with_target_option,
-                        title: 'Density'
-                    }
-                )
-            }
             //get option with max percent
             let max_percent_option = Object.entries(column.percent_target_option).sort((a, b) => b[1] - a[1])[0]
             if (max_percent_option) {
