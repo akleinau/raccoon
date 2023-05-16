@@ -5,15 +5,23 @@
             <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <div class="d-flex">
-                    <v-radio-group v-model="visStore.default_colors.colors" label="Colors">
-                        <v-radio v-for="colorList in this.colors" :key="colorList" :value="colorList">
-                            <template v-slot:label>
-                                <div v-for="color in colorList" :key="color">
-                                    <v-icon :color="color">mdi-circle</v-icon>
-                                </div>
-                            </template>
-                        </v-radio>
-                    </v-radio-group>
+                    <!-- Color Scheme -->
+                    <div>
+                        <v-radio-group v-model="visStore.default_colors.colors" label="Colors">
+                            <v-radio v-for="colorList in this.colors" :key="colorList" :value="colorList">
+                                <template v-slot:label>
+                                    <div v-for="(color,i) in colorList" :key="i">
+                                        <v-icon :style="'color:' + color">mdi-circle</v-icon>
+                                        <color-dialog :color="color"
+                                                      @update="colorList[i] = $event; visStore.default_colors.colors=colorList; color=$event"></color-dialog>
+                                    </div>
+                                </template>
+                            </v-radio>
+                        </v-radio-group>
+                        <v-btn variant="tonal" class="ml-2 mt-0" @click="add_color_scheme">Add...</v-btn>
+                    </div>
+
+                    <!-- Background -->
                     <v-radio-group v-model="visStore.default_colors.background" label="Background">
                         <v-radio v-for="color in this.background" :key="color" :value="color">
                             <template v-slot:label>
@@ -21,11 +29,22 @@
                                 {{ color }}
                             </template>
                         </v-radio>
+                        <v-radio label="custom" :value="background_custom">
+                            <template v-slot:label>
+                                <v-icon class="mr-2" :style="'color:' + background_custom">mdi-circle</v-icon>
+                                custom ({{ background_custom }})
+                                <v-icon class="ml-2">mdi-pencil</v-icon>
+                            </template>
+                            <color-dialog :color="background_custom"
+                                          @update="background_custom = $event; visStore.default_colors.background = $event"></color-dialog>
+                        </v-radio>
+
                     </v-radio-group>
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
 
+        <!-- Text -->
         <v-expansion-panel>
             <v-expansion-panel-title><h4> Change Font </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
@@ -36,10 +55,20 @@
                             {{ color }}
                         </template>
                     </v-radio>
+                     <v-radio label="custom" :value="fontColor_custom">
+                            <template v-slot:label>
+                                <v-icon class="mr-2" :style="'color:' + fontColor_custom">mdi-circle</v-icon>
+                                custom ({{ fontColor_custom }})
+                                <v-icon class="ml-2">mdi-pencil</v-icon>
+                            </template>
+                            <color-dialog :color="fontColor_custom"
+                                          @update="fontColor_custom = $event; visStore.default_colors.text = $event"></color-dialog>
+                        </v-radio>
                 </v-radio-group>
             </v-expansion-panel-text>
         </v-expansion-panel>
 
+        <!-- Graphs -->
         <v-expansion-panel>
             <v-expansion-panel-title><h4> Change Graphs </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
@@ -73,6 +102,7 @@
             </v-expansion-panel-text>
         </v-expansion-panel>
 
+        <!-- Data Processing -->
         <v-expansion-panel>
             <v-expansion-panel-title><h4> Change Data Processing </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
@@ -116,9 +146,11 @@ import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import * as d3 from "d3";
+import ColorDialog from "@/components/helpers/color-dialog.vue";
 
 export default {
     name: "settings_view",
+    components: {ColorDialog},
     setup() {
         const csvStore = useCSVStore()
         const visStore = useVisStore()
@@ -131,12 +163,17 @@ export default {
             show: false,
             colors: [d3.schemeDark2, d3.schemeCategory10, d3.schemeSet1],
             background: ["lightgrey", "Gainsboro", "white"],
-            fontColor: ["black", "midnightBlue", "darkblue"]
+            background_custom: "#0099ff",
+            fontColor: ["black", "midnightBlue", "darkblue"],
+            fontColor_custom: "#000000"
         }
     },
     methods: {
         close() {
             this.show = false
+        },
+        add_color_scheme() {
+            this.colors.push(JSON.parse(JSON.stringify(d3.schemeDark2)))
         }
     }
 }
