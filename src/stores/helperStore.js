@@ -33,16 +33,18 @@ export const useHelperStore = defineStore('helperStore', {
             return options.reduce((max, option) => Math.max(max, option.length), 0)
         },
 
-        parse_text(text_array) {
+        parse_text(text_array, column) {
+            let new_text_array = JSON.parse(JSON.stringify(text_array))
             if (useCSVStore().target) {
-                text_array.forEach(d => {
+                new_text_array.forEach(d => {
                     d.text = d.text.replace("$target_column", useCSVStore().target.label)
                     d.text = d.text.replace("$target_option", useCSVStore().target.options.find(x => x.name === useCSVStore().target_option).label)
+                    d.text = d.text.replace("$column", column.label)
                     return d
                 })
 
             }
-            return text_array
+            return new_text_array
 
         },
 

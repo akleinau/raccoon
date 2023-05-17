@@ -151,7 +151,7 @@ export default {
                 .style("text-anchor", "middle")
                 .text("")
 
-            let title_array = this.helperStore.parse_text(this.vis.title)
+            let title_array = this.helperStore.parse_text(this.vis.title, this.column)
 
             title.selectAll("tspan")
                 .data(title_array)

@@ -97,15 +97,38 @@ export const useVisStore = defineStore('visStore', {
             //get option with max percent
             let max_percent_option = Object.entries(column.percent_target_option).sort((a, b) => b[1] - a[1])[0]
             if (max_percent_option) {
+                //get percentage of max percent
                 visList.push(
                     {
                         type: "text",
-                        text: [{text: "Participants with " + column.label + ": " + max_percent_option[0] + " have a " +
+                        graph: "text",
+                        text: [{text: "Participants with $column: " + max_percent_option[0] + " have a " +
                             (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
                             color: "$color"}]
                     }
                 )
+                //get occurrence of max percent
+                visList.push(
+                    {
+                        type: "text",
+                        text: [{text: column.occurrence[max_percent_option[0]] + " participants have $column: " + max_percent_option[0],
+                            color: "$color"}]
+                    },
+                    {
+                        type: "text",
+                        text: [{text: column.occurrence[max_percent_option[0]] + " of " + Object.values(column.occurrence).reduce((a, b) => a + b, 0) +
+                                " participants have $column: " + max_percent_option[0],
+                            color: "$color"}]
+                    },
+                    {
+                        type: "text",
+                        text: [{text: (column.occurrence[max_percent_option[0]]/Object.values(column.occurrence).reduce((a, b) => a + b, 0)*100).toFixed(0) +
+                                "% of participants have $column: " + max_percent_option[0],
+                            color: "$color"}]
+                    },
+                )
             }
+
 
             return visList
         },
