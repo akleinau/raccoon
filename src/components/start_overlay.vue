@@ -26,6 +26,7 @@
 
       <div v-if="csvStore.target_option">
         <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
+        <v-slider label="dashboard starting items" v-model="starting_items" :min="1" :max="5" :step="1" thumb-label="always"></v-slider>
       </div>
 
       <v-card-actions>
@@ -53,6 +54,7 @@ export default {
   data() {
     return {
       files: null,
+      starting_items: 1
     }
   },
   methods: {
@@ -92,7 +94,7 @@ export default {
       this.visStore.add_dashboard_item(this.csvStore.variable_summaries.find(d => d.name === useCSVStore().target_column),
         [ {type: 'impact', data_map: 'occurrence'}], false)
       let i = 0
-      while (i < 5) {
+      while (i < (this.starting_items-1)) {
           let j = 0
           while (!this.visStore.is_recommendation_column(this.csvStore.variable_summaries[j])) {
               j++
