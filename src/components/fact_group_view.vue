@@ -115,7 +115,9 @@
                                     <v-text-field type="number" label="max"
                                                   v-if="visStore.current_fact_group.column.options[i].range !== undefined"
                                                   v-model="visStore.current_fact_group.column.options[i].range[1]"/>
+                                    <v-btn @click="remove_option(item)" class="mt-2">Remove</v-btn>
                                 </div>
+                                <v-btn @click="add_option" class="mt-2">Add option</v-btn>
                                 <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
@@ -216,6 +218,17 @@ export default {
         remove() {
             this.visStore.remove_dashboard_item(this.visStore.current_fact_group.column.name)
             this.close()
+        },
+        add_option() {
+            this.visStore.current_fact_group.column.options.push({
+                'name': '0-1',
+                'label': '0-1',
+                'range': [0, 1]
+            })
+        },
+        remove_option(option) {
+            this.visStore.current_fact_group.column.options = this.visStore.current_fact_group.column.options.filter(item => item.name !== option.name)
+            this.recalculate_options()
         },
         /**
          * recalculates the options for the risk factor

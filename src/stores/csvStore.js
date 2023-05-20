@@ -299,7 +299,7 @@ export const useCSVStore = defineStore('csvStore', {
 
 
                 summary = this.summary_exclude_missing(summary)
-                summary.significance = this.compute_significance_score(summary)
+                summary.significance = useScoreStore().compute_significance_score(summary)
                 summary.riskIncrease = this.compute_risk_increase(summary)
 
                 console.log(summary)
