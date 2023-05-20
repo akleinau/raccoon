@@ -59,7 +59,7 @@ export default {
          */
         get_column_label(d) {
             let label = (d.name === "") ? "null" : this.column.options.find(x => x.name === d.name).label
-            return (this.preview && label.length > 10) ? label.substring(0, 7) + "..." : label
+            return (this.preview && label.length > 10) ? label.substring(0, 6) + "..." : label
         },
         data_to_vis() {
             let data = this.vis.data
@@ -86,7 +86,7 @@ export default {
             let margin_top = 30
             let margin_right = this.preview ? 5 : 60
             let width = (this.width ? this.width : 300) - margin_right
-            let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 10
+            let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 30
             if (this.preview && startBarX > 100) {
                 startBarX = 100
             }
@@ -169,6 +169,14 @@ export default {
                             .text(d => d.text)
                             .style("fill", d => d.color)
                     })
+
+                //column name
+                svg.append("text")
+                    .attr("x", -(margin_top_grid + height / 2))
+                    .attr("y", 20)
+                    .text(this.column.label)
+                    .style("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
 
             }
 
