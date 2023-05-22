@@ -40,7 +40,7 @@ export default {
         },
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
-            let type_attr = ["title", "range", "color", "grid"]
+            let type_attr = ["title", "range", "color", "grid", "axis"]
             type_attr.forEach(a => {
                 if (!vis[a]) {
                     vis[a] = this.visStore.default_settings[vis.type][a]
@@ -61,7 +61,7 @@ export default {
 
             vis = JSON.parse((JSON.stringify(vis))) //remove all possible direkt references to default settings
 
-            let text_attr = ["text", "title"]
+            let text_attr = ["text", "title", "axis"]
             text_attr.forEach(a => {
                 if (vis[a]) {
                     vis[a] = vis[a].map(t => {

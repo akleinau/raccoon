@@ -81,7 +81,7 @@ export default {
          * @param data
          */
         visualize(data) {
-            let marging_bottom = 20
+            let marging_bottom = this.preview? 20 : 50
             let margin_top_grid = 10
             let margin_top = 30
             let margin_right = this.preview ? 5 : 60
@@ -178,20 +178,39 @@ export default {
                     .style("text-anchor", "middle")
                     .attr("transform", "rotate(-90)")
 
+
+                //axis
+                let axis_title = svg.append("text")
+                    .attr("x", startBarX + width / 2)
+                    .attr("y", height + margin_top)
+                    .style("text-anchor", "middle")
+                    .text("")
+
+                let axis_title_array = this.helperStore.parse_text(this.vis.axis, this.column)
+
+                axis_title.selectAll(".xaxis")
+                    .data(axis_title_array)
+                    .join("tspan")
+                    .attr("class", "xaxis")
+                    .text(d => d.text)
+                    .style("fill", d => d.color)
+
             }
 
-
+            //title
             let title = svg.append("text")
-                .attr("x", startBarX + width / 2)
+                .attr("x", (width + startBarX + margin_right) / 2)
                 .attr("y", -10)
                 .style("text-anchor", "middle")
                 .text("")
+                .style("font-weight", this.preview? "": "bold")
 
             let title_array = this.helperStore.parse_text(this.vis.title, this.column)
 
-            title.selectAll("tspan")
+            title.selectAll(".title")
                 .data(title_array)
                 .join("tspan")
+                .attr("class", "title")
                 .text(d => d.text)
                 .style("fill", d => d.color)
 

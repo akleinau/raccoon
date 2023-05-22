@@ -15,16 +15,20 @@ export const useVisStore = defineStore('visStore', {
                 graph: "bar",
                 grid: [25, 4],
                 range: [0, 100],
-                title: [{text: "#people per option", color: "black"}]
+                axis: [{text: "#people", color: "black"}],
+                title: [{text: "How common is each option?", color: "black"}],
             },
             significance: {
                 graph: "pictograph",
                 grid: [25, 4],
                 range: "percent",
-                title: [{text: "Frequency", color: "black"}]
+                axis: [{text: "occurrence per 100 people", color: "black"}],
+                title: [{text: "Significance", color: "black"}]
             },
             context: {
                 graph: "bar",
+                axis: [{text: "Context", color: "black"}],
+                title: [{text: "Context", color: "black"}],
                 grid: [25, 4],
             },
             text: {
@@ -138,8 +142,8 @@ export const useVisStore = defineStore('visStore', {
          * @param length
          */
         set_initial_default_settings(length) {
-            this.default_settings.significance.title = [{text: "Frequency of ", color: "black"},
-                {text: " $target_column: $target_option", color: "$color"}]
+            this.default_settings.significance.title = [{text: "How frequent is ", color: "black"},
+                {text: " $target_column: $target_option", color: "$color"}, {text: "?", color: "black"}]
             this.default_settings.impact.range = [0, length]
         },
         /**
