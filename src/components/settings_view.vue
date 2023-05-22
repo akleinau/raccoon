@@ -22,17 +22,15 @@
                     </div>
 
                     <!-- Background -->
-                    <v-radio-group v-model="visStore.default_colors.background" label="Background">
+                    <v-radio-group v-model="visStore.default_colors.background" label="Background" class="ml-5">
                         <v-radio v-for="color in this.background" :key="color" :value="color">
                             <template v-slot:label>
-                                <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
-                                {{ color }}
+                                <div class="mr-2" :style="'background:' + color + '; border: 1px solid black; width: 200px; height: 30px'"/>
                             </template>
                         </v-radio>
                         <v-radio label="custom" :value="background_custom">
                             <template v-slot:label>
-                                <v-icon class="mr-2" :style="'color:' + background_custom">mdi-circle</v-icon>
-                                custom ({{ background_custom }})
+                                  <div class="mr-2" :style="'background:' + background_custom + '; border: 1px solid black; width: 200px; height: 30px'"/>
                                 <v-icon class="ml-2">mdi-pencil</v-icon>
                             </template>
                             <color-dialog :color="background_custom"
@@ -127,7 +125,7 @@ export default {
     data() {
         return {
             show: false,
-            colors: [d3.schemeDark2, d3.schemeCategory10, d3.schemeSet1],
+            colors: [d3.schemeDark2.slice(0,5), d3.schemeCategory10.slice(0,5), d3.schemeSet1.slice(0,5)],
             background: ["lightgrey", "Gainsboro", "white"],
             background_custom: "#0099ff",
             fontColor: ["black", "midnightBlue", "darkblue"],
@@ -139,7 +137,7 @@ export default {
             this.show = false
         },
         add_color_scheme() {
-            this.colors.push(JSON.parse(JSON.stringify(d3.schemeDark2)))
+            this.colors.push(JSON.parse(JSON.stringify(d3.schemeDark2)).slice(0,5))
         }
     }
 }
