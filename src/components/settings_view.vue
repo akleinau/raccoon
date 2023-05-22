@@ -125,7 +125,10 @@ export default {
     data() {
         return {
             show: false,
-            colors: [d3.schemeDark2.slice(0,5), d3.schemeCategory10.slice(0,5), d3.schemeSet1.slice(0,5)],
+            colors: [['#9ecae1','#6baed6','#4292c6','#2171b5','#084594'].reverse(),
+                ['#a1d99b','#74c476','#41ab5d','#238b45','#005a32'].reverse(),
+                ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']
+            ],
             background: ["lightgrey", "Gainsboro", "white"],
             background_custom: "#0099ff",
             fontColor: ["black", "midnightBlue", "darkblue"],
