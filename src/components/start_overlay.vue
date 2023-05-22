@@ -72,6 +72,12 @@ export default {
         this.csvStore.columns = data.columns
         this.csvStore.csv = data
         this.csvStore.min_bin_size = Math.floor(data.length/100)
+
+        if (name.includes("ship")) {
+          this.csvStore.target_column = "stea_s0"
+          this.target_selected()
+          this.csvStore.target_option = "US pos."
+        }
       }
       reader.readAsText(csvFile)
     },
