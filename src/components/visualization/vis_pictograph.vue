@@ -7,6 +7,7 @@ import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
+import {useVisHelperStore} from "@/stores/visHelperStore";
 
 export default {
     name: "vis_pictograph",
@@ -17,17 +18,10 @@ export default {
         const helperStore = useHelperStore()
         const visStore = useVisStore()
         const csvStore = useCSVStore()
-        return {helperStore, visStore, csvStore}
+        const visHelperStore = useVisHelperStore()
+        return {helperStore, visStore, csvStore, visHelperStore}
     },
     methods: {
-        get_range() {
-            if (this.vis.range === "percent") {
-                return [0, 1]
-            } else {
-                return this.vis.range
-            }
-        }
-        ,
         /**
          * returns value in number of dots
          *
@@ -35,7 +29,7 @@ export default {
          * @returns {string}
          */
         get_value(value) {
-            const nominator = (this.vis.range === "percent") ? value : (value / this.get_range()[1])
+            const nominator = (this.vis.range === "percent") ? value : (value / this.visHelperStore.get_range(this.vis)[1])
             return (nominator * this.vis.grid[0] * this.vis.grid[1]).toFixed(0)
 
         }
@@ -51,26 +45,10 @@ export default {
             return [{"text": this.get_value(value), "color": this.vis.color},
                 {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
         },
-        /**
-         * returns the label of the column
-         *
-         * @param d
-         * @returns {string}
-         */
-        get_column_label(d) {
-            let label = (d.name === "") ? "null" : this.column.options.find(x => x.name === d.name).label
-            return (this.preview && label.length > 10) ? label.substring(0, 6) + "..." : label
-        },
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
-                data = Object.entries(this.column[this.vis.data_map]).map(([key, value]) => ({
-                    "name": key,
-                    "value": value
-                }))
-                data = data.sort((a, b) => this.helperStore.sort(
-                    this.column.options.find(x => x.name === a.name),
-                    this.column.options.find(x => x.name === b.name)))
+                data = this.visHelperStore.datamap_to_array(this.column[this.vis.data_map], this.column.options)
             }
 
             this.visualize(data)
@@ -150,7 +128,7 @@ export default {
                 .join("text")
                 .attr("x", margin.left - x.bandwidth() / 2 - 5)
                 .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
-                .text(d => this.get_column_label(d))
+                .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
                 .style("text-anchor", "end")
 
             if (!this.preview) {
@@ -185,15 +163,7 @@ export default {
                     .attr("y", height + margin.top + margin.bottom / 2)
                     .style("text-anchor", "middle")
                     .text("")
-
-                let axis_title_array = this.helperStore.parse_text(this.vis.axis, this.column)
-
-                axis_title.selectAll(".xaxis")
-                    .data(axis_title_array)
-                    .join("tspan")
-                    .attr("class", "xaxis")
-                    .text(d => d.text)
-                    .style("fill", d => d.color)
+                this.visHelperStore.append_tspans(axis_title, this.vis.axis, this.column)
 
             }
 
@@ -204,15 +174,7 @@ export default {
                 .style("text-anchor", "middle")
                 .text("")
                 .style("font-weight", this.preview ? "" : "bold")
-
-            let title_array = this.helperStore.parse_text(this.vis.title, this.column)
-
-            title.selectAll(".title")
-                .data(title_array)
-                .join("tspan")
-                .attr("class", "title")
-                .text(d => d.text)
-                .style("fill", d => d.color)
+            this.visHelperStore.append_tspans(title, this.vis.title, this.column)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

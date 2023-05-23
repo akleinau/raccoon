@@ -6,6 +6,7 @@
 import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
 import {useVisStore} from "@/stores/visStore";
+import {useVisHelperStore} from "@/stores/visHelperStore";
 
 export default {
     name: "vis_bar",
@@ -15,21 +16,10 @@ export default {
     setup() {
         const helperStore = useHelperStore()
         const visStore = useVisStore()
-        return {helperStore, visStore}
+        const visHelperStore = useVisHelperStore()
+        return {helperStore, visStore, visHelperStore}
     },
     methods: {
-        /**
-         * returns the range of the data
-         *
-         * @returns {number[]|*}
-         */
-        get_range() {
-            if (this.vis.range === "percent") {
-                return [0, 1]
-            } else {
-                return this.vis.range
-            }
-        },
         /**
          * returns value as pretty text
          *
@@ -42,26 +32,10 @@ export default {
             }
             return value
         },
-        /**
-         * returns the label of the column
-         *
-         * @param d
-         * @returns {string}
-         */
-        get_column_label(d) {
-            let label = (d.name === "") ? "null" : this.column.options.find(x => x.name === d.name).label
-            return (this.preview && label.length > 10) ? label.substring(0, 6) + "..." : label
-        },
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
-                data = Object.entries(this.column[this.vis.data_map]).map(([key, value]) => ({
-                    "name": key,
-                    "value": value
-                }))
-                data = data.sort((a, b) => this.helperStore.sort(
-                    this.column.options.find(x => x.name === a.name),
-                    this.column.options.find(x => x.name === b.name)))
+                data = this.visHelperStore.datamap_to_array(this.column[this.vis.data_map], this.column.options)
             }
 
             this.visualize(data)
@@ -77,11 +51,11 @@ export default {
                 startBarX = 100
             }
             let margin_bottom = this.preview ? 20 : 50
-            let margin = {top: 30, bottom: margin_bottom, left: startBarX, right:5}
+            let margin = {top: 30, bottom: margin_bottom, left: startBarX, right: 5}
 
-            let width = (this.width ? this.width : 300)  - margin.right
+            let width = (this.width ? this.width : 300) - margin.right
             let height = data.length * (width / 10)
-            
+
 
             let svg = d3.create("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -89,7 +63,7 @@ export default {
                 .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top])
 
             let x = d3.scaleLinear()
-                .domain(this.get_range())
+                .domain(this.visHelperStore.get_range(this.vis))
                 .range([margin.left, width + margin.left])
 
             let y = d3.scaleBand()
@@ -119,7 +93,7 @@ export default {
                 .join("text")
                 .attr("x", margin.left - 5)
                 .attr("y", d => y(d.name))
-                .text(d => this.get_column_label(d))
+                .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
                 .style("text-anchor", "end")
                 .attr("dy", y.bandwidth() - 5)
 
@@ -137,14 +111,14 @@ export default {
                 //x axis texts
                 svg.append("text")
                     .attr("x", margin.left)
-                    .attr("y", height + margin.top + margin.bottom/2)
+                    .attr("y", height + margin.top + margin.bottom / 2)
                     .text(this.get_value_text(0))
 
                 svg.append("text")
                     .attr("x", width + margin.left)
-                    .attr("y", height + margin.top + margin.bottom/2)
+                    .attr("y", height + margin.top + margin.bottom / 2)
                     .style("text-anchor", "end")
-                    .text(this.get_value_text(this.get_range()[1]))
+                    .text(this.get_value_text(this.visHelperStore.get_range(this.vis)[1]))
 
                 //column name
                 svg.append("text")
@@ -158,37 +132,21 @@ export default {
                 //axis
                 let axis_title = svg.append("text")
                     .attr("x", margin.left + width / 2)
-                    .attr("y", height + margin.top + margin.bottom/2)
+                    .attr("y", height + margin.top + margin.bottom / 2)
                     .style("text-anchor", "middle")
                     .text("")
-
-                let axis_title_array = this.helperStore.parse_text(this.vis.axis, this.column)
-
-                axis_title.selectAll(".xaxis")
-                    .data(axis_title_array)
-                    .join("tspan")
-                    .attr("class", "xaxis")
-                    .text(d => d.text)
-                    .style("fill", d => d.color)
+                this.visHelperStore.append_tspans(axis_title, this.vis.axis, this.column)
             }
 
 
             //title
             let title = svg.append("text")
                 .attr("x", (margin.left + width) / 2)
-                .attr("y", margin.top/2)
+                .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
-                .style("font-weight", this.preview? "": "bold")
-
-            let title_array = this.helperStore.parse_text(this.vis.title, this.column)
-
-            title.selectAll(".title")
-                .data(title_array)
-                .join("tspan")
-                .attr("class", "title")
-                .text(d => d.text)
-                .style("fill", d => d.color)
+                .style("font-weight", this.preview ? "" : "bold")
+            this.visHelperStore.append_tspans(title, this.vis.title, this.column)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
