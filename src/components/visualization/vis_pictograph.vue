@@ -81,8 +81,7 @@ export default {
          * @param data
          */
         visualize(data) {
-            let marging_bottom = this.preview? 20 : 50
-            let margin_top_grid = 10
+            let margin_bottom = this.preview ? 20 : 50
             let margin_top = 30
             let margin_right = this.preview ? 5 : 60
             let width = (this.width ? this.width : 300) - margin_right
@@ -90,6 +89,7 @@ export default {
             if (this.preview && startBarX > 100) {
                 startBarX = 100
             }
+            let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
             const padding = 0.3
 
             const dot_range_X = d3.range(0, this.vis.grid[0], 1)
@@ -99,7 +99,7 @@ export default {
 
             let x = d3.scaleBand()
                 .domain(dot_range_X)
-                .range([startBarX, width + startBarX])
+                .range([margin.left, width + margin.left])
                 .padding(padding)
 
             const radius = x.bandwidth() / 2
@@ -112,19 +112,19 @@ export default {
 
             let y_options = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin_top_grid + radius * 3, height + margin_top_grid + radius * 3]) //radius times three as outer padding
+                .range([margin.top + radius * 3, height + margin.top]) //radius times three as outer padding
 
 
             let svg = d3.create("svg")
-                .attr("width", width + startBarX + margin_right)
-                .attr("height", height + marging_bottom + margin_top)
-                .attr("viewBox", [0, -margin_top, width + startBarX + margin_right, height + marging_bottom + margin_top])
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.bottom + margin.top)
+                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top])
 
             //background
             svg.append("rect")
-                .attr("x", startBarX - x.bandwidth() / 2)
-                .attr("y", margin_top_grid)
-                .attr("width", width + margin_right)
+                .attr("x", margin.left - radius)
+                .attr("y", margin.top)
+                .attr("width", width + margin.right)
                 .attr("height", height)
                 .attr("fill", this.vis.background)
 
@@ -132,7 +132,7 @@ export default {
             svg.selectAll("option")
                 .data(data)
                 .join("g")
-                .attr("x", startBarX)
+                .attr("x", margin.left)
                 .attr("y", d => y_options(d.name))
                 .each((par, index, node) => {
                     d3.select(node[index]).selectAll("circle")
@@ -148,7 +148,7 @@ export default {
             svg.selectAll("textName")
                 .data(data)
                 .join("text")
-                .attr("x", startBarX - x.bandwidth() / 2 - 5)
+                .attr("x", margin.left - x.bandwidth() / 2 - 5)
                 .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
                 .text(d => this.get_column_label(d))
                 .style("text-anchor", "end")
@@ -157,7 +157,7 @@ export default {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
-                    .attr("x", width + startBarX - x.bandwidth() / 2)
+                    .attr("x", width + margin.left - x.bandwidth() / 2)
                     .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
                     .text("")
                     .style("text-anchor", "start")
@@ -172,7 +172,7 @@ export default {
 
                 //column name
                 svg.append("text")
-                    .attr("x", -(margin_top_grid + height / 2))
+                    .attr("x", -(margin.top + height / 2))
                     .attr("y", 20)
                     .text(this.column.label)
                     .style("text-anchor", "middle")
@@ -181,8 +181,8 @@ export default {
 
                 //axis
                 let axis_title = svg.append("text")
-                    .attr("x", startBarX + width / 2)
-                    .attr("y", height + margin_top)
+                    .attr("x", margin.left + width / 2)
+                    .attr("y", height + margin.top + margin.bottom / 2)
                     .style("text-anchor", "middle")
                     .text("")
 
@@ -199,11 +199,11 @@ export default {
 
             //title
             let title = svg.append("text")
-                .attr("x", (width + startBarX + margin_right) / 2)
-                .attr("y", -10)
+                .attr("x", (width + margin.left + margin.right) / 2)
+                .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
-                .style("font-weight", this.preview? "": "bold")
+                .style("font-weight", this.preview ? "" : "bold")
 
             let title_array = this.helperStore.parse_text(this.vis.title, this.column)
 
