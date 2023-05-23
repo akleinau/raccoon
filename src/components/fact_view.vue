@@ -22,6 +22,7 @@
                                         <v-radio label="bar" value="bar"></v-radio>
                                         <v-radio label="pictograph" value="pictograph" @click="add_grid"></v-radio>
                                         <v-radio label="pie" value="pie"></v-radio>
+                                        <v-radio label="multiple pies" value="multiPie"></v-radio>
                                         <v-radio label="default" value=""></v-radio>
                                     </v-radio-group>
                                     <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50">

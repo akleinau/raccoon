@@ -5,6 +5,7 @@
     <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_multiple_pie v-if="graph === 'multiPie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
 </template>
 
 <script>
@@ -15,6 +16,7 @@ import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
+import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
 
 export default {
     name: "vis_parser",
@@ -26,7 +28,7 @@ export default {
         const csvStore = useCSVStore()
         return {visStore, csvStore}
     },
-    components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie},
+    components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie, vis_multiple_pie},
     data() {
         return {
             rerender: 0,
