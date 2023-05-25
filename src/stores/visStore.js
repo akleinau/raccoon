@@ -17,6 +17,7 @@ export const useVisStore = defineStore('visStore', {
                 title: [{text: "How common is each option?", color: "black"}],
                 detailLevel: "percent",
                 font_size: 2,
+                color: 0,
             },
             significance: {
                 graph: "pictograph",
@@ -26,12 +27,14 @@ export const useVisStore = defineStore('visStore', {
                 title: [{text: "Significance", color: "black"}],
                 detailLevel: "percent",
                 font_size: 2,
+                color: 1,
             },
             context: {
                 graph: "bar",
                 axis: [{text: "Context", color: "black"}],
                 title: [{text: "Context", color: "black"}],
                 grid: [25, 4],
+                color: 2,
             },
             text: {
                 graph: "text",
@@ -219,6 +222,15 @@ export const useVisStore = defineStore('visStore', {
                 'column': column,
                 'visList': visList,
                 'additional_vis_list': this.generate_additional_fact_visList(column)}
+        },
+        /**
+         * get color
+         */
+        get_color(color_name) {
+            if (!isNaN(color_name)) {
+                return this.default_colors.colors[color_name]
+            }
+            return color_name
         }
     }
 })

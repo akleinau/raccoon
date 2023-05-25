@@ -32,7 +32,6 @@ export default {
     data() {
         return {
             rerender: 0,
-            color_type_map: {"impact": 0, "significance": 1, "context": 2}
         }
     },
     computed: {
@@ -44,7 +43,7 @@ export default {
         },
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
-            let type_attr = ["title", "range", "color", "grid", "axis"]
+            let type_attr = ["title", "range", "grid", "axis"]
             type_attr.forEach(a => {
                 if (!vis[a]) {
                     vis[a] = this.visStore.default_settings[vis.type][a]
@@ -59,7 +58,7 @@ export default {
                 if (vis.type === "text") {
                     vis["color"] = this.visStore.default_colors.text
                 } else {
-                    vis["color"] = this.visStore.default_colors.colors[this.color_type_map[vis.type]]
+                    vis["color"] = this.visStore.get_color(this.visStore.default_settings[vis.type]["color"])
                 }
             }
 

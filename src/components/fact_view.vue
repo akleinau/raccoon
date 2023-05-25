@@ -63,7 +63,8 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <text_input :text="visStore.current_fact.vis.title"/>
+                                <text_input :text="visStore.current_fact.vis.title" :default="get_default_title()"
+                                @change="visStore.current_fact.vis.title = $event" :color="get_color()"/>
                                 <v-btn @click="makeDefault('title')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
@@ -132,6 +133,9 @@ export default {
         makeDefault(attribute) {
             this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute] = this.visStore.current_fact.vis[attribute]
         },
+        get_default_title() {
+            return this.visStore.default_settings[this.visStore.current_fact.vis.type]["title"]
+        },
         set_default_graph_settings() {
             this.makeDefault('graph')
             if (this.visStore.current_fact.vis.graph === 'pictograph') {
@@ -158,6 +162,13 @@ export default {
         add_grid() {
             if (!this.visStore.current_fact.vis.grid) {
                 this.visStore.current_fact.vis.grid = this.visStore.default_settings[this.visStore.current_fact.vis.type].grid
+            }
+        },
+        get_color() {
+            if (this.visStore.current_fact.vis.color) {
+                return this.visStore.get_color(this.visStore.current_fact.vis.color)
+            } else {
+                return this.visStore.get_color(this.visStore.default_settings[this.visStore.current_fact.vis.type].color)
             }
         }
     }
