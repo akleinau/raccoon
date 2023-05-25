@@ -23,6 +23,7 @@
                                         <v-radio label="pictograph" value="pictograph" @click="add_grid"></v-radio>
                                         <v-radio label="pie" value="pie"></v-radio>
                                         <v-radio label="multiple pies" value="multiPie"></v-radio>
+                                        <v-radio label="text" value="text"></v-radio>
                                         <v-radio label="default" value=""></v-radio>
                                     </v-radio-group>
                                     <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50">
@@ -32,6 +33,13 @@
                                         <v-text-field
                                                 type="number" label="#columns"
                                                 v-model="visStore.current_fact.vis.grid[1]"/>
+                                    </div>
+                                    <div v-if="visStore.current_fact.vis.graph === 'text'" class="w-50">
+                                        <v-radio-group v-model="visStore.current_fact.vis.detailLevel">
+                                            <v-radio label="nominator" value="nominator"></v-radio>
+                                            <v-radio label="denominator" value="denominator"></v-radio>
+                                            <v-radio label="percent" value="percent"></v-radio>
+                                        </v-radio-group>
                                     </div>
                                 </div>
                                 <v-btn @click="set_default_graph_settings"> set as default for {{

@@ -1,8 +1,6 @@
 import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
-import {useSimilarityStore} from "@/stores/similarityStore";
-import * as d3 from "d3";
 
 export const useVisStore = defineStore('visStore', {
     state: () => ({
@@ -17,13 +15,17 @@ export const useVisStore = defineStore('visStore', {
                 range: [0, 100],
                 axis: [{text: "#people", color: "black"}],
                 title: [{text: "How common is each option?", color: "black"}],
+                detailLevel: "percent",
+                font_size: 2,
             },
             significance: {
                 graph: "pictograph",
                 grid: [25, 4],
                 range: "percent",
                 axis: [{text: "occurrence per 100 people", color: "black"}],
-                title: [{text: "Significance", color: "black"}]
+                title: [{text: "Significance", color: "black"}],
+                detailLevel: "percent",
+                font_size: 2,
             },
             context: {
                 graph: "bar",
@@ -93,48 +95,11 @@ export const useVisStore = defineStore('visStore', {
         /**
          * generates additional visualizations for the fact group
          *
-         * @param column
          * @returns {*[]}
          */
-        generate_additional_fact_visList(column) {
-            let visList = []
-            //get option with max percent
-            let max_percent_option = Object.entries(column.percent_target_option).sort((a, b) => b[1] - a[1])[0]
-            if (max_percent_option) {
-                //get percentage of max percent
-                visList.push(
-                    {
-                        type: "text",
-                        graph: "text",
-                        text: [{text: "Participants with $column: " + max_percent_option[0] + " have a " +
-                            (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
-                            color: "$color"}]
-                    }
-                )
-                //get occurrence of max percent
-                visList.push(
-                    {
-                        type: "text",
-                        text: [{text: column.occurrence[max_percent_option[0]] + " participants have $column: " + max_percent_option[0],
-                            color: "$color"}]
-                    },
-                    {
-                        type: "text",
-                        text: [{text: column.occurrence[max_percent_option[0]] + " of " + Object.values(column.occurrence).reduce((a, b) => a + b, 0) +
-                                " participants have $column: " + max_percent_option[0],
-                            color: "$color"}]
-                    },
-                    {
-                        type: "text",
-                        text: [{text: (column.occurrence[max_percent_option[0]]/Object.values(column.occurrence).reduce((a, b) => a + b, 0)*100).toFixed(0) +
-                                "% of participants have $column: " + max_percent_option[0],
-                            color: "$color"}]
-                    },
-                )
-            }
+        generate_additional_fact_visList() {
 
-
-            return visList
+            return []
         },
         /**
          * sets default settings for visualizations to adapt them to current dataset
