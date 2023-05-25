@@ -54,7 +54,7 @@ export default {
             if (!vis["background"]) {
                 vis["background"] = this.visStore.default_colors.background
             }
-            if (!vis["color"]) {
+            if (vis["color"] === null || vis["color"] === undefined) {
                 if (vis.type === "text") {
                     vis["color"] = this.visStore.default_colors.text
                 } else {

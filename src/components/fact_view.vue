@@ -52,18 +52,28 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <div class="d-flex align-center">
-                                    <div>
-                                        <v-icon :style="'color:' + get_color()">
-                                            mdi-circle
-                                        </v-icon>
-                                        <color-dialog v-if="visStore.current_fact.vis.color !== '$color'"
-                                                      :color="get_color()"
-                                                      @update="visStore.current_fact.vis.color = $event"></color-dialog>
-                                    </div>
-                                    <v-text-field class="ml-2" label="Color" v-model="visStore.current_fact.vis.color"/>
+                                <v-radio-group v-model="visStore.current_fact.vis.color">
+                                    <v-radio label="default" :value="null"></v-radio>
+                                    <v-radio v-for="(el,i) in visStore.default_colors.colors" v-bind:key="el" :value="i">
+                                        <template v-slot:label>
+                                            <v-icon :style="'color:' + el">
+                                                mdi-circle
+                                            </v-icon>
+                                        </template>
+                                    </v-radio>
 
-                                </div>
+                                    <v-radio class="d-flex align-center" :value="custom_color">
+                                        <template v-slot:label>
+                                            <v-icon :style="'color:' + custom_color" class="mr-2">
+                                                mdi-circle
+                                            </v-icon>
+                                            custom <v-icon class="ml-2">mdi-pencil</v-icon>
+                                            <color-dialog v-if="visStore.current_fact.vis.color !== '$color'"
+                                                          :color="get_color()"
+                                                          @update="visStore.current_fact.vis.color = $event; custom_color= $event"></color-dialog>
+                                        </template>
+                                    </v-radio>
+                                </v-radio-group>
                                 <v-btn @click="makeDefault('color')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
@@ -136,7 +146,8 @@ export default {
     },
     data() {
         return {
-            display: true
+            display: true,
+            custom_color: '#000000'
         }
     },
     watch: {
