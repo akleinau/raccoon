@@ -63,9 +63,21 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <text_input :text="visStore.current_fact.vis.title" :default="get_default_title()"
+                                <text_input :text="visStore.current_fact.vis.title" :default="get_default('title')"
                                 @change="visStore.current_fact.vis.title = $event" :color="get_color()"/>
                                 <v-btn @click="makeDefault('title')"> set as default for {{
+                                    visStore.current_fact.vis.type
+                                    }}
+                                    Graphs
+                                </v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Axis </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <text_input :text="visStore.current_fact.vis.axis" :default="get_default('axis')"
+                                @change="visStore.current_fact.vis.axis = $event" :color="get_color()"/>
+                                <v-btn @click="makeDefault('axis')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
                                     Graphs
@@ -133,8 +145,8 @@ export default {
         makeDefault(attribute) {
             this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute] = this.visStore.current_fact.vis[attribute]
         },
-        get_default_title() {
-            return this.visStore.default_settings[this.visStore.current_fact.vis.type]["title"]
+        get_default(attribute) {
+            return this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute]
         },
         set_default_graph_settings() {
             this.makeDefault('graph')
