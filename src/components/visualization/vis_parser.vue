@@ -58,9 +58,11 @@ export default {
                 if (vis.type === "text") {
                     vis["color"] = this.visStore.default_colors.text
                 } else {
-                    vis["color"] = this.visStore.get_color(this.visStore.default_settings[vis.type]["color"])
+                    vis["color"] = this.visStore.default_settings[vis.type]["color"]
                 }
             }
+            vis["color"] = this.visStore.get_color(vis["color"])
+
 
             vis = JSON.parse((JSON.stringify(vis))) //remove all possible direkt references to default settings
 

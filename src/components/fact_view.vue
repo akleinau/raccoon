@@ -52,7 +52,18 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <v-text-field label="Color" v-model="visStore.current_fact.vis.color"/>
+                                <div class="d-flex align-center">
+                                    <div>
+                                        <v-icon :style="'color:' + get_color()">
+                                            mdi-circle
+                                        </v-icon>
+                                        <color-dialog v-if="visStore.current_fact.vis.color !== '$color'"
+                                                      :color="get_color()"
+                                                      @update="visStore.current_fact.vis.color = $event"></color-dialog>
+                                    </div>
+                                    <v-text-field class="ml-2" label="Color" v-model="visStore.current_fact.vis.color"/>
+
+                                </div>
                                 <v-btn @click="makeDefault('color')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
@@ -64,7 +75,7 @@
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <text_input :text="visStore.current_fact.vis.title" :default="get_default('title')"
-                                @change="visStore.current_fact.vis.title = $event" :color="get_color()"/>
+                                            @change="visStore.current_fact.vis.title = $event" :color="get_color()"/>
                                 <v-btn @click="makeDefault('title')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
@@ -76,7 +87,7 @@
                             <v-expansion-panel-title><h4> Change Axis </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <text_input :text="visStore.current_fact.vis.axis" :default="get_default('axis')"
-                                @change="visStore.current_fact.vis.axis = $event" :color="get_color()"/>
+                                            @change="visStore.current_fact.vis.axis = $event" :color="get_color()"/>
                                 <v-btn @click="makeDefault('axis')"> set as default for {{
                                     visStore.current_fact.vis.type
                                     }}
@@ -113,10 +124,11 @@ import {useVisStore} from "@/stores/visStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 import text_input from "@/components/helpers/text-input.vue";
 import {useCSVStore} from "@/stores/csvStore";
+import ColorDialog from "@/components/helpers/color-dialog.vue";
 
 export default {
     name: "fact_view",
-    components: {vis_parser, text_input},
+    components: {ColorDialog, vis_parser, text_input},
     setup() {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
