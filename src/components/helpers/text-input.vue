@@ -20,6 +20,7 @@ export default {
     name: "text-input",
     components: {ColorDialog},
     props: ['text', 'default', 'color'],
+    emits: ['change'],
     data() {
         return {
             old_text: this.text,
