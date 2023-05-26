@@ -3,11 +3,11 @@
         <v-text-field label="text" v-model="el.text" class="mx-2"/>
         <v-text-field label="color" v-model="el.color">
             <template v-slot:prepend>
-                 <v-icon :style="'color:' + get_color(el.color)">
-                     mdi-circle
-                 </v-icon>
+                <v-icon :style="'color:' + get_color(el.color)">
+                    mdi-circle
+                </v-icon>
                 <color-dialog v-if="el.color !== '$color'" :color="get_color(el.color)"
-                                   @update="el.color = $event"></color-dialog>
+                              @update="el.color = $event"></color-dialog>
             </template>
         </v-text-field>
     </div>
@@ -23,35 +23,45 @@ export default {
     emits: ['change'],
     data() {
         return {
-            old_text: this.text,
-            new_text: this.default
+            old_text: "",
+            new_text: ""
         }
     },
     watch: {
-        new_text() {
-            if (this.new_text !== this.default) {
-                this.$emit("change", this.new_text)
-            }
-            else {
-                this.$emit("change", "")
-            }
+        text: {
+            handler: function () {
+                this.update_texts()
+            },
+            deep: true
+
+        },
+        new_text: {
+            handler: function () {
+                if (this.new_text !== this.default) {
+                    this.$emit("change", this.new_text)
+                } else {
+                    this.$emit("change", "")
+                }
+            },
+            deep: true
         }
     },
     created() {
-        if ( this.text && this.text !== "") {
-            this.new_text = this.text
-        }
-        else {
-            this.new_text = JSON.parse(JSON.stringify(this.default))
-        }
+        this.update_texts()
     },
     methods: {
         get_color(color) {
             if (color === "$color") {
                 return this.color
-            }
-            else {
+            } else {
                 return color
+            }
+        },
+        update_texts() {
+            if (this.text && this.text !== "") {
+                this.new_text = this.text
+            } else {
+                this.new_text = JSON.parse(JSON.stringify(this.default))
             }
         }
     }
