@@ -31,7 +31,6 @@ export default {
         get_value(value) {
             const nominator = (this.vis.range === "percent") ? value : (value / this.visHelperStore.get_range(this.vis)[1])
             return (nominator * this.vis.grid[0] * this.vis.grid[1]).toFixed(0)
-
         }
         ,
 
@@ -45,6 +44,13 @@ export default {
             return [{"text": this.get_value(value), "color": this.vis.color},
                 {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
         },
+        /*
+        * returns value as float between 0 and 1
+         */
+        get_value_float(value) {
+            return (this.vis.range === "percent") ? value : (value / this.visHelperStore.get_range(this.vis)[1])
+        },
+
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
@@ -74,6 +80,7 @@ export default {
 
             let pie = d3.pie()
                 .value(d => d.value)
+                .sort(a => a.name === "value" ? 1 : -1)
 
             let height = data.length * (radius * 2 + 20)
 
@@ -109,7 +116,7 @@ export default {
                 .attr("y", d => y_options(d.name))
                 .each((par, index, node) => {
                         d3.select(node[index]).selectAll('pieParts')
-                            .data(pie([{"name": "value", "value": par.value}, {"name": "rest", "value": 1 - par.value}]))
+                            .data(pie([{"name": "value", "value": this.get_value_float(par.value)}, {"name": "rest", "value": 1 - this.get_value_float(par.value)}]))
                             .enter()
                             .append('path')
                             .attr('d', d3.arc()

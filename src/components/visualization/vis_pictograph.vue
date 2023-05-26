@@ -119,7 +119,7 @@ export default {
                         .attr("cx", d => x(Math.floor(d / this.vis.grid[1])))
                         .attr("cy", d => y_options(par.name) + y(d % this.vis.grid[1]))
                         .attr("r", radius)
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : "darkgray")
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color :d3.color("white").darker(0.1))
                 })
 
 
