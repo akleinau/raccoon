@@ -6,6 +6,10 @@
                     :class="{ 'on-hover': isHovering}"
                     @click="show_fact_group_view">
                 <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.label }}</h4>
+                <!-- risk factors -->
+                <span v-if="column.riskIncrease" class="ml-4 mb-1 d-flex flex-column align-center w-100">
+                    {{column.riskIncrease.risk_factor_groups}}
+                </span>
 
                 <!-- hint when column is excluded -->
                 <div v-if="visStore.excluded_columns.includes(column.name)"

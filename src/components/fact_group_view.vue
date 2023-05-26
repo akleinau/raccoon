@@ -4,6 +4,11 @@
 
             <v-card-title>
                 Fact Group View: {{ visStore.current_fact_group.column['label'] }}
+
+                <div v-if="column.riskIncrease">
+                    Risk Options:
+                    {{column.riskIncrease.risk_factor_groups}}
+                </div>
             </v-card-title>
 
             <!-- hints -->
@@ -12,7 +17,8 @@
                 <v-icon icon="mdi-alert"/>
                 no statistically significant differences
             </div>
-            <div v-if="Object.values(visStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
+            <div v-if="visStore.current_fact_group.column.occurrence !== undefined &&
+            Object.values(visStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
                 <v-icon icon="mdi-alert"/>
                 Calculated frequencies are less accurate for options with less than 100 people.
             </div>
@@ -41,7 +47,7 @@
                     <!-- option tabs -->
                     <v-expansion-panels class="ma-3" v-model="panels">
                         <v-expansion-panel class="ma-1"
-                                           v-if="visStore.current_fact_group.column.significance !== undefined">
+                                           v-if="column.significance !== undefined">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
                                 pairs with statistically significant differences:
@@ -50,13 +56,13 @@
                                         ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
                                         {{ tuple[1] !== "" ? tuple[1] : "null" }})
                                     </span>
-                                <div> Score:
+                                <div v-if="column.significance"> Score:
                                     {{
                                     visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
                                     }}
                                 </div>
-                                <div> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
-                                <div> Correlation with Target: {{visStore.current_fact_group.column['correlation_with_target']}}</div>
+                                <div v-if="column.riskIncrease"> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
+                                <div v-if="column.correlation_with_target"> Correlation with Target: {{visStore.current_fact_group.column['correlation_with_target']}}</div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel class="ma-1">
@@ -188,6 +194,9 @@ export default {
     computed: {
         current_fact_group() {
             return this.visStore.current_fact_group
+        },
+        column() {
+            return this.visStore.current_fact_group.column
         },
     },
     methods: {

@@ -52,7 +52,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             let correct = 0
             for (let i = TEST_SET_I; i < y_actual.length; i++) {
                 let row = Data[i]
-                let curr_pred = weights? this.sigmoid(this.dot_product(weights, row) + b + y_pred[i]) : this.sigmoid(b + y_pred[i])
+                let curr_pred = weights ? this.sigmoid(this.dot_product(weights, row) + b + y_pred[i]) : this.sigmoid(b + y_pred[i])
                 let curr_actual = y_actual[i]
                 if (curr_pred > 0.5 && curr_actual === 1) {
                     correct++
@@ -74,8 +74,8 @@ export const useRegressionStore = defineStore('regressionStore', {
         compute_new_prediction(weights, b, data, y_pred) {
             let y_new_pred = []
             for (let i = 0; i < y_pred.length; i++) {
-                let row = weights? data[i] : null
-                let curr_pred = weights? this.dot_product(weights, row) + b + y_pred[i]: b + y_pred[i]
+                let row = weights ? data[i] : null
+                let curr_pred = weights ? this.dot_product(weights, row) + b + y_pred[i] : b + y_pred[i]
                 y_new_pred.push(curr_pred)
             }
             return y_new_pred
@@ -94,7 +94,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             const onlyBias = Data.length === 0
 
             //create weight matrix with one weight per feature plus bias
-            let weights = onlyBias? null : Array(Data[0].length).fill(0)
+            let weights = onlyBias ? null : Array(Data[0].length).fill(0)
             let b = 0
 
             const TEST_SET_I = y_actual.length - Math.floor(y_actual.length / (100 * this.test_ratio))
@@ -112,7 +112,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     for (let j = 0; j < this.batch_size; j++) {
                         //multiplicate weights with data
                         let row = Data[j + i]
-                        let curr_pred = onlyBias ? this.sigmoid(b + y_pred[j+i]) : this.sigmoid(this.dot_product(weights, row) + b + y_pred[j + i])
+                        let curr_pred = onlyBias ? this.sigmoid(b + y_pred[j + i]) : this.sigmoid(this.dot_product(weights, row) + b + y_pred[j + i])
                         let curr_actual = y_actual[j + i]
 
                         loss.push(this.loss(curr_pred, curr_actual))
@@ -167,9 +167,11 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             if (summary_place === "dashboard") {
                 visStore.dashboard_items.forEach(item => {
-                    let influence = d3.max(weights_map.filter(d => d.name === item.name).map(d => Math.abs(d.weight)))
-                    if (!influence) influence = 0
-                    item.column.significance.score["regression"] = influence
+                    if (item.column.significance) {
+                        let influence = d3.max(weights_map.filter(d => d.name === item.name).map(d => Math.abs(d.weight)))
+                        if (!influence) influence = 0
+                        item.column.significance.score["regression"] = influence
+                    }
                 })
             }
 
@@ -247,7 +249,9 @@ export const useRegressionStore = defineStore('regressionStore', {
             let visStore = useVisStore()
             let csvStore = useCSVStore()
             let y = this.prepare_target()
-            let dashboard_columns = useVisStore().dashboard_items.map(d => d.name).filter(d => d !== csvStore.target_column && !visStore.excluded_columns.includes(d))
+            let dashboard_columns = useVisStore().dashboard_items
+                .map(d => d.name)
+                .filter(d => d !== csvStore.target_column && !visStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.prepare_data(dashboard_columns)
             console.log("training on dashboard:")
             let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")

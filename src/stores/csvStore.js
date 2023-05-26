@@ -246,25 +246,69 @@ export const useCSVStore = defineStore('csvStore', {
          * @returns {{risk_difference: string, risk_factor_groups: string}}
          */
         compute_risk_increase(summary) {
+            //calculate risk boundary differencing between risk factor and not risk factor
             const percent_range = d3.extent(Object.values(summary.percent_target_option))
             const split_percent = percent_range[0] + (percent_range[1] - percent_range[0]) / 2
 
+            //compute groups below risk boundary
             const groups_below = Object.entries(summary.percent_target_option).filter(d => d[1] < split_percent)
             const groups_below_occurrence_sum = groups_below.reduce((a, b) => a + summary.occurrence[b[0]], 0)
             const groups_below_target_option_occurrence_sum = groups_below.reduce((a, b) => a + summary.occurrence_target_option[b[0]], 0)
             const below_percentage = groups_below_target_option_occurrence_sum / groups_below_occurrence_sum
 
+            //compute groups above risk boundary
             const groups_above = Object.entries(summary.percent_target_option).filter(d => d[1] >= split_percent)
             const groups_above_occurrence_sum = groups_above.reduce((a, b) => a + summary.occurrence[b[0]], 0)
             const groups_above_target_option_occurrence_sum = groups_above.reduce((a, b) => a + summary.occurrence_target_option[b[0]], 0)
             const above_percentage = groups_above_target_option_occurrence_sum / groups_above_occurrence_sum
 
-            const name_above = groups_above.reduce((a, b) => a + ", " + b[0], "")
+            //create name of risk factor
+            const name_above = this.compute_group_name(groups_above, summary.options, summary.type)
 
+            //calculate metrics to compare risk factors
             const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(2)
             const risk_difference = (above_percentage - below_percentage).toFixed(2)
 
-            return {"risk_factor_groups": name_above, risk_difference: risk_difference, risk_multiplier: risk_multiplier}
+            return {
+                "risk_factor_groups": name_above,
+                risk_difference: risk_difference,
+                risk_multiplier: risk_multiplier
+            }
+        },
+        /**
+         * computes the name of a group
+         */
+        compute_group_name(groups, options, type) {
+            let group_options = groups.map(d => options.find(o => o.name === d[0]))
+            group_options = JSON.parse(JSON.stringify(group_options))
+            group_options = group_options.sort(useHelperStore().sort)
+
+            if (type === "continuous") {
+                let min = d3.min(options.map(d => +d.range[0]))
+                let max = d3.max(options.map(d => +d.range[1]))
+
+                //combine groups
+                let i = 0
+                while (i < group_options.length - 1) {
+                    if (group_options[i].range[1] === group_options[i + 1].range[0]) {
+                        group_options[i].range[1] = group_options[i + 1].range[1]
+                        group_options.splice(i + 1, 1)
+                    } else {
+                        i++
+                    }
+                }
+
+                //update names, labels
+                group_options = group_options.map(d => {
+                    d.name = d.range[0] + "-" + d.range[1]
+                    d.label = (+d.range[0] === min) ? "<" + d.range[1] :
+                              (+d.range[1] === max) ? "≥" + d.range[0] :
+                                d.range[0] + "-" + d.range[1]
+                    return d
+                })
+
+            }
+            return group_options.reduce((a, b) => a + ", " + b.label, "").substring(2) //remove first comma
         },
         /**
          * recalculates a variable summaries when the option bins are changed. For now, people that do not fit in any of

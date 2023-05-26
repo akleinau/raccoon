@@ -128,7 +128,7 @@ export const useVisStore = defineStore('visStore', {
                     "name": item.column.riskIncrease.risk_factor_groups,
                     "label": item.column.label + ": " + item.column.riskIncrease.risk_factor_groups
                 }))
-                const column = {name: "Context", options: options}
+                const column = {name: "Context", label:"Risk Factors", options: options}
 
                 const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
                 const max_risk_difference = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_difference)) + 1
@@ -140,7 +140,8 @@ export const useVisStore = defineStore('visStore', {
                                 value: item.column.riskIncrease.risk_difference
                             })).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_difference)],
-                            title: [{text: "maximal difference in risk between options", color: "black"}]
+                            title: [{text: "absolute risk increase", color: "black"}],
+                            axis: [{text: "maximal difference in risk between options", color: "black"}]
                         }],
                         "column": column
                     },
@@ -152,7 +153,8 @@ export const useVisStore = defineStore('visStore', {
                                 value: item.column.riskIncrease.risk_multiplier
                             })).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
-                            title: [{text: "risk increase through factor", color: "black"}]
+                            title: [{text: "relative risk increase", color: "black"}],
+                            axis: [{text: "risk increase through factor", color: "black"}]
                         }],
                         "column": column
                     })
