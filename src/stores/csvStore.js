@@ -80,6 +80,13 @@ export const useCSVStore = defineStore('csvStore', {
                     //percentage how often each option occurs together with the target option
                     summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
 
+                    //total values
+                    summary.total = {
+                        occurrence: d3.sum(Object.values(summary.occurrence)),
+                        occurrence_target_option: d3.sum(Object.values(summary.occurrence_target_option))
+                    }
+                    summary.total.percent_target_option = summary.total.occurrence_target_option / summary.total.occurrence
+
                     summary.riskIncrease = this.compute_risk_increase(summary)
 
                     this.variable_summaries.push(summary)

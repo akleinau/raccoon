@@ -50,11 +50,10 @@
                                            v-if="column.significance !== undefined">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
-                                pairs with statistically significant differences:
+                                options with statistically significant differences:
                                 <span v-for="tuple in Object.values(visStore.current_fact_group.column['significance'].significant_tuples)"
                                       v-bind:key="tuple">
-                                        ({{ tuple[0] !== "" ? tuple[0] : "null" }} -
-                                        {{ tuple[1] !== "" ? tuple[1] : "null" }})
+                                        {{ tuple !== "" ? tuple : "null" }},
                                     </span>
                                 <div v-if="column.significance"> Score:
                                     {{

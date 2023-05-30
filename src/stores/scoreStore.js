@@ -20,23 +20,22 @@ export const useScoreStore = defineStore('scoreStore', {
          * @returns {{score: {}, significant_tuples: []}}
          */
         compute_significance_score(summary) {
+
+            //total values
+            let p2 = summary.total.percent_target_option
+            let n2 = summary.total.occurrence
+
             //create list of all tuples of percent_target_option and their significance_test_propotions
             let tuples = []
             for (let i = 0; i < summary.options.length; i++) {
-                for (let j = i + 1; j < summary.options.length; j++) {
-                    let o1 = summary.options[i]
-                    let o2 = summary.options[j]
-                    let p1 = summary.percent_target_option[o1.name]
-                    let p2 = summary.percent_target_option[o2.name]
-                    let n1 = summary.occurrence[o1.name]
-                    let n2 = summary.occurrence[o2.name]
-                    if (this.significance_test_proportions(p1, p2, n1, n2)) {
-                        tuples.push({
-                            "option1": o1,
-                            "option2": o2,
-                            "diff": Math.abs(p1 - p2)
-                        })
-                    }
+                let o1 = summary.options[i]
+                let p1 = summary.percent_target_option[o1.name]
+                let n1 = summary.occurrence[o1.name]
+                if (this.significance_test_proportions(p1, p2, n1, n2)) {
+                    tuples.push({
+                        "option": o1,
+                        "diff": Math.abs(p1 - p2)
+                    })
                 }
             }
             if (tuples.length === 0) {
@@ -47,7 +46,7 @@ export const useScoreStore = defineStore('scoreStore', {
             }
 
             return {
-                "significant_tuples": tuples.map(d => [d.option1.label, d.option2.label]),
+                "significant_tuples": tuples.map(d => d.option.label),
                 "score": {
                     "max_difference": Math.max(...tuples.map(d => d.diff)),
                     "max": Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0][1],
