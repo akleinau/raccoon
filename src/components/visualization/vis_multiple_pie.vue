@@ -41,8 +41,17 @@ export default {
          * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
-            return [{"text": this.get_value(value), "color": this.vis.color},
-                {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
+             if (this.vis.detailLevel === "nominator") {
+                return [{"text": this.get_value(value), "color": this.vis.color}]
+            }
+            else if (this.vis.detailLevel === "denominator") {
+                return [{"text": this.get_value(value), "color": this.vis.color},
+                    {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
+            }
+            else if (this.vis.detailLevel === "percent") {
+                return [{"text": this.get_value(value), "color": this.vis.color},
+                    {"text": "%", "color": "black"}]
+            }
         },
         /*
         * returns value as float between 0 and 1
@@ -84,9 +93,11 @@ export default {
 
             let height = data.length * (radius * 2 + 20)
 
+            let emptyCircleColor = this.vis.detailLevel === "nominator"? this.vis.background: d3.color("white").darker(0.1)
+
             let color = d3.scaleOrdinal()
                 .domain(["value", "rest"])
-                .range([this.vis.color, d3.color("white").darker(0.1)])
+                .range([this.vis.color, emptyCircleColor])
 
 
             let y_options = d3.scaleBand()
