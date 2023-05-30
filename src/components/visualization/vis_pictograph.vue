@@ -42,8 +42,17 @@ export default {
          * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
-            return [{"text": this.get_value(value), "color": this.vis.color},
-                {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
+            if (this.vis.detailLevel === "nominator") {
+                return [{"text": this.get_value(value), "color": this.vis.color}]
+            }
+            else if (this.vis.detailLevel === "denominator") {
+                return [{"text": this.get_value(value), "color": this.vis.color},
+                    {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
+            }
+            else if (this.vis.detailLevel === "percent") {
+                return [{"text": (value * 100).toFixed(0), "color": this.vis.color},
+                    {"text": "%", "color": "black"}]
+            }
         },
         data_to_vis() {
             let data = this.vis.data
@@ -106,6 +115,8 @@ export default {
                 .attr("height", height)
                 .attr("fill", this.vis.background)
 
+            let emptyCircleColor = this.vis.detailLevel === "nominator"? this.vis.background: d3.color("white").darker(0.1)
+
             //one element per option
             svg.selectAll("option")
                 .data(data)
@@ -119,7 +130,7 @@ export default {
                         .attr("cx", d => x(Math.floor(d / this.vis.grid[1])))
                         .attr("cy", d => y_options(par.name) + y(d % this.vis.grid[1]))
                         .attr("r", radius)
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color :d3.color("white").darker(0.1))
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
                 })
 
 

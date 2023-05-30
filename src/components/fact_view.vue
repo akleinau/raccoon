@@ -34,7 +34,8 @@
                                                 type="number" label="#columns"
                                                 v-model="visStore.current_fact.vis.grid[1]"/>
                                     </div>
-                                    <div v-if="visStore.current_fact.vis.graph === 'text'" class="w-50">
+                                    <div class="w-50">
+                                        <b class="ml-2"> Detail Level</b>
                                         <v-radio-group v-model="visStore.current_fact.vis.detailLevel">
                                             <v-radio label="nominator" value="nominator"></v-radio>
                                             <v-radio label="denominator" value="denominator"></v-radio>
