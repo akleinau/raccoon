@@ -1,5 +1,9 @@
 <template>
     <div ref="container"/>
+    <div class="font-italic" style="font-size:1.5rem" v-for="annotation in untargeted_annoations"
+         v-bind:key="annotation">
+        {{ annotation.text }}
+    </div>
 </template>
 
 <script>
@@ -12,8 +16,13 @@ import {useVisHelperStore} from "@/stores/visHelperStore";
 export default {
     name: "vis_pictograph",
     props: [
-        "column", "vis", "width", "preview"
+        "column", "vis", "width", "preview", "annotations"
     ],
+    data() {
+        return {
+            untargeted_annoations: [],
+        }
+    },
     setup() {
         const helperStore = useHelperStore()
         const visStore = useVisStore()
@@ -44,12 +53,10 @@ export default {
         get_value_text(value) {
             if (this.vis.detailLevel === "nominator") {
                 return [{"text": this.get_value(value), "color": this.vis.color}]
-            }
-            else if (this.vis.detailLevel === "denominator") {
+            } else if (this.vis.detailLevel === "denominator") {
                 return [{"text": this.get_value(value), "color": this.vis.color},
                     {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
-            }
-            else if (this.vis.detailLevel === "percent") {
+            } else if (this.vis.detailLevel === "percent") {
                 return [{"text": (value * 100).toFixed(0), "color": this.vis.color},
                     {"text": "%", "color": "black"}]
             }
@@ -61,6 +68,7 @@ export default {
             }
 
             this.visualize(data)
+            this.untargeted_annoations = this.annotations.filter(a => a.target === [])
         },
         /**
          * visualizes the data
@@ -71,6 +79,7 @@ export default {
             let margin_bottom = this.preview ? 20 : 50
             let margin_top = 30
             let margin_right = this.preview ? 5 : 60
+            let annotation_width = this.preview ? 0 : 300
             let width = (this.width ? this.width : 300) - margin_right
             let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 30
             if (this.preview && startBarX > 100) {
@@ -103,9 +112,9 @@ export default {
 
 
             let svg = d3.create("svg")
-                .attr("width", width + margin.left + margin.right)
+                .attr("width", width + margin.left + margin.right + annotation_width)
                 .attr("height", height + margin.bottom + margin.top)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top])
+                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
 
             //background
             svg.append("rect")
@@ -115,7 +124,7 @@ export default {
                 .attr("height", height)
                 .attr("fill", this.vis.background)
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator"? this.vis.background: d3.color("white").darker(0.1)
+            let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background : d3.color("white").darker(0.1)
 
             //one element per option
             svg.selectAll("option")
@@ -186,6 +195,20 @@ export default {
                 .text("")
                 .style("font-weight", this.preview ? "" : "bold")
             this.visHelperStore.append_tspans(title, this.vis.title, this.column)
+
+            //annotations
+            //use this.getComputedTextLength to split up into multiple parts
+            if (!this.preview) {
+                this.annotations.forEach(a => {
+                    let targets_y = a.target.map(d => y_options(d) + y_options.bandwidth() / 2)
+                    let mean_y = d3.mean(targets_y)
+                    svg.append("text")
+                        .attr("x", width + margin.left + margin.right)
+                        .attr("y", mean_y)
+                        .attr("width", 200)
+                        .text(a.text)
+                })
+            }
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

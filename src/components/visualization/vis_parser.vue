@@ -1,7 +1,7 @@
 <template>
     <vis_bar v-if="graph === 'bar'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pictograph v-if="graph === 'pictograph'" :vis="full_vis" :column="column" :width="width" :preview="preview"
-                    :key="rerender"/>
+                    :key="rerender" :annotations="annotations"/>
     <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
@@ -16,6 +16,7 @@ import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
+import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
 
 export default {
@@ -26,12 +27,13 @@ export default {
     setup() {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
-        return {visStore, csvStore}
+        const annotationStore = useAnnotationStore()
+        return {visStore, csvStore, annotationStore}
     },
     components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie, vis_multiple_pie},
     data() {
         return {
-            rerender: 0,
+            rerender: 0
         }
     },
     computed: {
@@ -77,6 +79,13 @@ export default {
             })
 
             return vis
+        },
+        annotations() {
+            //annotations
+            if (this.vis.type === "significance") {
+                return this.annotationStore.compute_significance_annotations(this.column)
+            }
+            return []
         }
     },
     watch: {
