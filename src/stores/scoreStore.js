@@ -22,21 +22,25 @@ export const useScoreStore = defineStore('scoreStore', {
         compute_significance_score(summary) {
 
             //total values
-            let p2 = summary.total.percent_target_option
-            let n2 = summary.total.occurrence
+            let total_target = summary.total.occurrence_target_option
+            let total = summary.total.occurrence
 
-            //create list of all tuples of percent_target_option and their significance_test_propotions
+            //computes risk increase of each option vs without the option
             let tuples = []
             for (let i = 0; i < summary.options.length; i++) {
                 let o1 = summary.options[i]
                 let p1 = summary.percent_target_option[o1.name]
                 let n1 = summary.occurrence[o1.name]
-                if (this.significance_test_proportions(p1, p2, n1, n2)) {
-                    tuples.push({
-                        "option": o1,
-                        "diff": Math.abs(p1 - p2)
-                    })
-                }
+                let p2 = (total_target - summary.occurrence_target_option[o1.name]) / (total - n1)
+                let n2 = total - n1
+
+                tuples.push({
+                    "option": o1,
+                    "significant": this.significance_test_proportions(p1, p2, n1, n2),
+                    "diff": Math.abs(p1 - p2),
+                    "increase": (p1 / p2).toFixed(1)
+                })
+
             }
             if (tuples.length === 0) {
                 return {
@@ -46,7 +50,8 @@ export const useScoreStore = defineStore('scoreStore', {
             }
 
             return {
-                "significant_tuples": tuples.map(d => d.option.label),
+                "significant_tuples": tuples.filter(d => d.significant).map(d => d.option.label),
+                "tuples": tuples,
                 "score": {
                     "max_difference": Math.max(...tuples.map(d => d.diff)),
                     "max": Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0][1],
