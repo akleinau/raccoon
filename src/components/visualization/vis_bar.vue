@@ -30,6 +30,9 @@ export default {
             if (this.vis.range === "percent") {
                 return (value * 100).toFixed(0) + "%"
             }
+            if (this.vis.detailLevel === "percent") {
+                return (value / this.visHelperStore.get_range(this.vis)[1] * 100).toFixed(0) + "%"
+            }
             return value
         },
         data_to_vis() {
@@ -108,17 +111,19 @@ export default {
                     .style("fill", "white")
                     .attr("dy", y.bandwidth() - 5)
 
-                //x axis texts
-                svg.append("text")
-                    .attr("x", margin.left)
-                    .attr("y", height + margin.top + margin.bottom / 2)
-                    .text(this.get_value_text(0))
+                if (this.vis.detailLevel !== "nominator") {
+                    //x axis texts
+                    svg.append("text")
+                        .attr("x", margin.left)
+                        .attr("y", height + margin.top + margin.bottom / 2)
+                        .text(this.get_value_text(0))
 
-                svg.append("text")
-                    .attr("x", width + margin.left)
-                    .attr("y", height + margin.top + margin.bottom / 2)
-                    .style("text-anchor", "end")
-                    .text(this.get_value_text(this.visHelperStore.get_range(this.vis)[1]))
+                    svg.append("text")
+                        .attr("x", width + margin.left)
+                        .attr("y", height + margin.top + margin.bottom / 2)
+                        .style("text-anchor", "end")
+                        .text(this.get_value_text(this.visHelperStore.get_range(this.vis)[1]))
+                }
 
                 //column name
                 svg.append("text")

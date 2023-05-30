@@ -168,16 +168,19 @@ export default {
             this.visStore.current_fact = null
         },
         /**
-         * sets the current title as default title for the current visualization type
+         * sets the current attribute as default title for the current visualization type
          */
         makeDefault(attribute) {
-            this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute] = this.visStore.current_fact.vis[attribute]
+            if (this.visStore.current_fact.vis[attribute] !== undefined) {
+                this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute] = this.visStore.current_fact.vis[attribute]
+            }
         },
         get_default(attribute) {
             return this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute]
         },
         set_default_graph_settings() {
             this.makeDefault('graph')
+            this.makeDefault('detailLevel')
             if (this.visStore.current_fact.vis.graph === 'pictograph') {
                 this.makeDefault('grid')
             }
