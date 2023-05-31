@@ -12,7 +12,7 @@ import {useVisHelperStore} from "@/stores/visHelperStore";
 export default {
     name: "vis_pictograph",
     props: [
-        "column", "vis", "width", "preview", "annotations"
+        "column", "vis", "width", "preview"
     ],
     setup() {
         const helperStore = useHelperStore()
@@ -191,11 +191,11 @@ export default {
             //annotations
             //use this.getComputedTextLength to split up into multiple parts?
             let gap = 10
-            if (!this.preview) {
-                let targets_y = this.annotations.target.map(d => y_options(d))
+            if (!this.preview && this.vis.annotation !== undefined) {
+                let targets_y = this.vis.annotation.target.map(d => y_options(d))
                 let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
                 //text
-                this.annotations.text.forEach((t, i) => {
+                this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
                         .attr("x", width + margin.left + margin.right + gap)
                         .attr("y", mean_y + i * 15 + y_range / 2)

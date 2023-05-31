@@ -1,7 +1,7 @@
 <template>
     <vis_bar v-if="graph === 'bar'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pictograph v-if="graph === 'pictograph'" :vis="full_vis" :column="column" :width="width" :preview="preview"
-                    :key="rerender" :annotations="annotations"/>
+                    :key="rerender"/>
     <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
@@ -65,6 +65,10 @@ export default {
             }
             vis["color"] = this.visStore.get_color(vis["color"])
 
+            //annotations
+            if (!vis["annotation"]) {
+                vis.annotation = this.annotationStore.compute_annotations(this.column, this.vis.type)[0]
+            }
 
             vis = JSON.parse((JSON.stringify(vis))) //remove all possible direkt references to default settings
 
@@ -79,13 +83,6 @@ export default {
             })
 
             return vis
-        },
-        annotations() {
-            //annotations
-            if (this.vis.type === "significance") {
-                return this.annotationStore.compute_significance_annotations(this.column)
-            }
-            return []
         }
     },
     watch: {

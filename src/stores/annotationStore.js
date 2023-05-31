@@ -5,6 +5,12 @@ import * as d3 from "d3";
 export const useAnnotationStore = defineStore('annotationStore', {
     state: () => ({}),
     actions: {
+        compute_annotations(summary, type) {
+            if (type === "significance") {
+                return this.compute_significance_annotations(summary)
+            }
+            return []
+        },
         compute_significance_annotations(summary) {
             let annotations = []
 
@@ -27,7 +33,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 })
             }
 
-            return annotations[0]
+            return annotations.sort((a, b) => b.score - a.score)
         }
 
     }
