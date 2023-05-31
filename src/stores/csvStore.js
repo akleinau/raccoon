@@ -277,7 +277,8 @@ export const useCSVStore = defineStore('csvStore', {
             const risk_difference = (above_percentage - below_percentage).toFixed(2)
 
             return {
-                "risk_factor_groups": name_above,
+                risk_factor_groups: groups_above.map(d => d[0]),
+                name: name_above,
                 risk_difference: risk_difference,
                 risk_multiplier: risk_multiplier
             }

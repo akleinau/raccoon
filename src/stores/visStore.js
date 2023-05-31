@@ -125,8 +125,8 @@ export const useVisStore = defineStore('visStore', {
                 d.column.riskIncrease !== undefined)
             if (risk_factor_items.length > 0) {
                 const options = risk_factor_items.map(item => ({
-                    "name": item.column.riskIncrease.risk_factor_groups,
-                    "label": item.column.label + ": " + item.column.riskIncrease.risk_factor_groups
+                    "name": item.column.riskIncrease.name,
+                    "label": item.column.label + ": " + item.column.riskIncrease.name
                 }))
                 const column = {name: "Context", label:"Risk Factors", options: options}
 
@@ -136,7 +136,7 @@ export const useVisStore = defineStore('visStore', {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.riskIncrease.risk_factor_groups,
+                                name: item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.risk_difference
                             })).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_difference)],
@@ -149,7 +149,7 @@ export const useVisStore = defineStore('visStore', {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.riskIncrease.risk_factor_groups,
+                                name: item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.risk_multiplier
                             })).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],

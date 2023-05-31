@@ -7,7 +7,7 @@
 
                 <div v-if="column.riskIncrease">
                     Risk Options:
-                    {{column.riskIncrease.risk_factor_groups}}
+                    {{column.riskIncrease.name}}
                 </div>
             </v-card-title>
 

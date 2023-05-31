@@ -190,7 +190,7 @@ export default {
 
             //annotations
             //use this.getComputedTextLength to split up into multiple parts?
-            let gap = 10
+            let gap = 15
             if (!this.preview && this.vis.annotation !== undefined) {
                 let targets_y = this.vis.annotation.target.map(d => y_options(d))
                 let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
@@ -202,14 +202,17 @@ export default {
                         .attr("width", 200)
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
+
                 //lines
-                svg.append("line")
+                svg.selectAll("line")
                     .data(targets_y)
-                    .attr("x1", width + margin.left + margin.right + gap - 5)
+                    .join("line")
+                    .attr("x1", width + margin.left + margin.right + gap - 10)
                     .attr("y1", d => d)
-                    .attr("x2", width + margin.left + margin.right + gap - 5)
+                    .attr("x2", width + margin.left + margin.right + gap - 10)
                     .attr("y2", d => d + y_range)
-                    .attr("stroke", "black")
+                    .attr("stroke", "#505050")
+                    .attr("stroke-width", 3)
             }
 
 
