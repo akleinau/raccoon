@@ -82,6 +82,8 @@ export default {
             const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
             const dot_range = d3.range(0, (this.vis.grid[0] * this.vis.grid[1]), 1)
 
+            const half_text_height = 10
+
 
             let x = d3.scaleBand()
                 .domain(dot_range_X)
@@ -127,7 +129,7 @@ export default {
                         .data(dot_range)
                         .join("circle")
                         .attr("cx", d => x(Math.floor(d / this.vis.grid[1])))
-                        .attr("cy", d => y_options(par.name) + y(d % this.vis.grid[1]))
+                        .attr("cy", d => y_options(par.name) + y(d % this.vis.grid[1]) + radius)
                         .attr("r", radius)
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
                 })
@@ -137,7 +139,7 @@ export default {
                 .data(data)
                 .join("text")
                 .attr("x", margin.left - x.bandwidth() / 2 - 5)
-                .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
+                .attr("y", d => y_options(d.name) +y_range / 2)
                 .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
                 .style("text-anchor", "end")
 
@@ -146,7 +148,7 @@ export default {
                     .data(data)
                     .join("text")
                     .attr("x", width + margin.left - x.bandwidth() / 2)
-                    .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
+                    .attr("y", d => y_options(d.name) + y_range / 2)
                     .text("")
                     .style("text-anchor", "start")
                     .style("fill", "black")

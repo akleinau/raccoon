@@ -1,6 +1,5 @@
 import {defineStore} from 'pinia'
 import {useHelperStore} from "@/stores/helperStore";
-import * as d3 from "d3";
 
 export const useVisHelperStore = defineStore('VisHelperStore', {
     state: () => ({}),
