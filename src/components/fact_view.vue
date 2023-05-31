@@ -56,7 +56,8 @@
                             <v-expansion-panel-text>
                                 <v-radio-group v-model="visStore.current_fact.vis.color">
                                     <v-radio label="default" :value="null"></v-radio>
-                                    <v-radio v-for="(el,i) in visStore.default_colors.colors" v-bind:key="el" :value="i">
+                                    <v-radio v-for="(el,i) in visStore.default_colors.colors" v-bind:key="el"
+                                             :value="i">
                                         <template v-slot:label>
                                             <v-icon :style="'color:' + el">
                                                 mdi-circle
@@ -69,7 +70,8 @@
                                             <v-icon :style="'color:' + custom_color" class="mr-2">
                                                 mdi-circle
                                             </v-icon>
-                                            custom <v-icon class="ml-2">mdi-pencil</v-icon>
+                                            custom
+                                            <v-icon class="ml-2">mdi-pencil</v-icon>
                                             <color-dialog v-if="visStore.current_fact.vis.color !== '$color'"
                                                           :color="get_color()"
                                                           @update="visStore.current_fact.vis.color = $event; custom_color= $event"></color-dialog>
@@ -110,6 +112,36 @@
                                 <v-btn @click="visStore.current_fact.vis.axis = null" class="ml-3">Reset</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Annotation </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <div v-if="visStore.current_fact.vis.annotation !== undefined &&
+                                    visStore.current_fact.vis.annotation !== null">
+                                    <text_input v-for="(el,i) in visStore.current_fact.vis.annotation.text" :key="i"
+                                                :text="el" default=""
+                                                @change="visStore.current_fact.vis.annotation.text[i] = $event"
+                                                :color="get_color()"/>
+                                </div>
+                                <v-radio-group v-model="visStore.current_fact.vis.annotation">
+                                    <v-radio label="default" :value="null"></v-radio>
+                                    <v-radio
+                                            v-for="el in annotationStore.compute_annotations(visStore.current_fact.column, visStore.current_fact.vis.type)"
+                                            v-bind:key="el"
+                                            :value="el">
+                                        <template v-slot:label>
+                                            <div class="w-100">
+                                                <span v-for="text in el.text" v-bind:key="text">
+                                                    <span v-for="span in text" v-bind:key="span"
+                                                          :style="'color:' + span.color">
+                                                        {{ span.text }}
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </template>
+                                    </v-radio>
+                                </v-radio-group>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
                     </v-expansion-panels>
                 </div>
             </div>
@@ -140,6 +172,7 @@ import vis_parser from "@/components/visualization/vis_parser.vue";
 import text_input from "@/components/helpers/text-input.vue";
 import {useCSVStore} from "@/stores/csvStore";
 import ColorDialog from "@/components/helpers/color-dialog.vue";
+import {useAnnotationStore} from "@/stores/annotationStore";
 
 export default {
     name: "fact_view",
@@ -147,7 +180,8 @@ export default {
     setup() {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
-        return {visStore, csvStore}
+        const annotationStore = useAnnotationStore()
+        return {visStore, csvStore, annotationStore}
     },
     data() {
         return {
