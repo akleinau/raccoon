@@ -11,7 +11,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
             //significance
             if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0) {
                 annotations.push({
-                    "text": "No significant differences",
+                    "text": [[{"text": "Not statistically significant!", "color": "black"}]],
                     "target": [],
                     "score": 10,
                 })
@@ -19,13 +19,15 @@ export const useAnnotationStore = defineStore('annotationStore', {
             else {
                 let max_tuple = d3.greatest(summary.significance.tuples, d => d.increase)
                 annotations.push({
-                    "text": "People with " + max_tuple.option.label + " have a " + max_tuple.increase + " times higher risk than others",
+                    "text": [
+                        [{"text": "People with " + max_tuple.option.label + " have a " + max_tuple.increase + " times", "color": "black"}],
+                        [{"text": " higher risk than others", "color": "black"}]],
                     "target": [max_tuple.option.name],
                     "score": 10
                 })
             }
 
-            return annotations
+            return annotations[0]
         }
 
     }

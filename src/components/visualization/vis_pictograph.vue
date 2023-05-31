@@ -1,9 +1,5 @@
 <template>
     <div ref="container"/>
-    <div class="font-italic" style="font-size:1.5rem" v-for="annotation in untargeted_annoations"
-         v-bind:key="annotation">
-        {{ annotation.text }}
-    </div>
 </template>
 
 <script>
@@ -18,11 +14,6 @@ export default {
     props: [
         "column", "vis", "width", "preview", "annotations"
     ],
-    data() {
-        return {
-            untargeted_annoations: [],
-        }
-    },
     setup() {
         const helperStore = useHelperStore()
         const visStore = useVisStore()
@@ -68,7 +59,6 @@ export default {
             }
 
             this.visualize(data)
-            this.untargeted_annoations = this.annotations.filter(a => a.target === [])
         },
         /**
          * visualizes the data
@@ -197,17 +187,27 @@ export default {
             this.visHelperStore.append_tspans(title, this.vis.title, this.column)
 
             //annotations
-            //use this.getComputedTextLength to split up into multiple parts
+            //use this.getComputedTextLength to split up into multiple parts?
+            let gap = 10
             if (!this.preview) {
-                this.annotations.forEach(a => {
-                    let targets_y = a.target.map(d => y_options(d) + y_options.bandwidth() / 2)
-                    let mean_y = d3.mean(targets_y)
-                    svg.append("text")
-                        .attr("x", width + margin.left + margin.right)
-                        .attr("y", mean_y)
+                let targets_y = this.annotations.target.map(d => y_options(d))
+                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
+                //text
+                this.annotations.text.forEach((t, i) => {
+                    let annotation = svg.append("text")
+                        .attr("x", width + margin.left + margin.right + gap)
+                        .attr("y", mean_y + i * 15 + y_range / 2)
                         .attr("width", 200)
-                        .text(a.text)
+                    this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
+                //lines
+                svg.append("line")
+                    .data(targets_y)
+                    .attr("x1", width + margin.left + margin.right + gap - 5)
+                    .attr("y1", d => d)
+                    .attr("x2", width + margin.left + margin.right + gap - 5)
+                    .attr("y2", d => d + y_range)
+                    .attr("stroke", "black")
             }
 
 
