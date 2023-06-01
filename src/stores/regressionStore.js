@@ -12,6 +12,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         batch_size: 10,
         learning_rate: 0.01,
         epochs: 15,
+        fast_epochs: 3,
         correlation_boundary: 0.25
     }),
     actions: {
@@ -89,7 +90,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         /**
          * train
          */
-        train(columns, map, Data, y_pred, y_actual, summary_place) {
+        train(columns, map, Data, y_pred, y_actual, summary_place, epochs) {
 
             const onlyBias = Data.length === 0
 
@@ -101,7 +102,7 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             //optimize weights using gradient descent
             //for each epoch
-            for (let epoch = 0; epoch < this.epochs; epoch++) {
+            for (let epoch = 0; epoch < epochs; epoch++) {
                 //let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
 
                 //for each batch of rows in data
@@ -254,7 +255,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                 .filter(d => d !== csvStore.target_column && !visStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.prepare_data(dashboard_columns)
             console.log("training on dashboard:")
-            let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
+            let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard", this.epochs)
             this.dashboard_accuracy = accuracy
             console.log("dashboard accuracy: " + accuracy)
             //console.log(y_pred)
@@ -264,7 +265,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     column !== useCSVStore().target_column) {
                     if (!visStore.excluded_columns.includes(column)) {
                         let [map, Data] = this.prepare_data([column])
-                        if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries")
+                        if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries", this.fast_epochs)
                         else {
                             let summary = csvStore.variable_summaries.find(d => d.name === column)
                             if (summary) {
