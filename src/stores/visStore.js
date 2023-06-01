@@ -32,9 +32,12 @@ export const useVisStore = defineStore('visStore', {
             },
             context: {
                 graph: "bar",
+                grid: [25, 4],
+                range: [0,5],
                 axis: [{text: "Context", color: "black"}],
                 title: [{text: "Context", color: "black"}],
-                grid: [25, 4],
+                detailLevel: "denominator",
+                font_size: 2,
                 color: 2,
             },
             text: {
