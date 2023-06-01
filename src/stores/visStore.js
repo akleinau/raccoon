@@ -9,6 +9,7 @@ export const useVisStore = defineStore('visStore', {
         current_fact_group: null,
         current_fact: null,
         excluded_columns: [],
+        intention: "explore",
         default_settings: {
             impact: {
                 graph: "bar",
@@ -117,6 +118,31 @@ export const useVisStore = defineStore('visStore', {
             this.default_settings.significance.title = [{text: "How frequent is ", color: "black"},
                 {text: " $target_column: $target_option", color: "$color"}, {text: "?", color: "black"}]
             this.default_settings.impact.range = [0, length]
+
+            this.update_settings_by_intention()
+
+        },
+        update_settings_by_intention() {
+            //consider intention
+            if (this.intention === "explore") {
+                this.default_settings.impact.detailLevel = "denominator"
+                this.default_settings.impact.graph = "bar"
+                this.default_settings.significance.detailLevel = "percent"
+                this.default_settings.context.detailLevel = "denominator"
+                this.default_settings.text.detailLevel = "denominator"
+            } else if (this.intention === "convince") {
+                this.default_settings.impact.detailLevel = "nominator"
+                this.default_settings.impact.graph = "bar"
+                this.default_settings.significance.detailLevel = "nominator"
+                this.default_settings.context.detailLevel = "nominator"
+                this.default_settings.text.detailLevel = "nominator"
+            } else if (this.intention === "educate") {
+                this.default_settings.impact.detailLevel = "percent"
+                this.default_settings.impact.graph = "pie"
+                this.default_settings.significance.detailLevel = "denominator"
+                this.default_settings.context.detailLevel = "denominator"
+                this.default_settings.text.detailLevel = "denominator"
+            }
         },
         /**
          * generates context fact groups from selected risk factors

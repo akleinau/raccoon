@@ -103,6 +103,29 @@
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
+
+        <v-expansion-panel>
+            <v-expansion-panel-title> <h4>Change Intention </h4></v-expansion-panel-title>
+            <v-expansion-panel-text>
+                I want to...
+                <v-btn-toggle  v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()">
+                    <v-btn value="explore">
+                        <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
+                        Explore
+                    </v-btn>
+
+                    <v-btn value="convince">
+                        <v-icon class="mx-1" size="x-large">mdi-alert-octagram-outline</v-icon>
+                        Convince
+                    </v-btn>
+
+                    <v-btn value="educate">
+                        <v-icon class="mx-1" size="x-large">mdi-school</v-icon>
+                        Educate
+                    </v-btn>
+                </v-btn-toggle>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
     </v-expansion-panels>
 </template>
 
