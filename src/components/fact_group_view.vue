@@ -17,6 +17,11 @@
                 <v-icon icon="mdi-alert"/>
                 no statistically significant differences
             </div>
+            <div v-if="visStore.current_fact_group.column.significance !== undefined &&
+                visStore.current_fact_group.column['significance'].score['regression'] < 0.001 ">
+                <v-icon icon="mdi-alert"/>
+                Adding this factor will not improve risk prediction further.
+            </div>
             <div v-if="visStore.current_fact_group.column.occurrence !== undefined &&
             Object.values(visStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
                 <v-icon icon="mdi-alert"/>
