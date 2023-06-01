@@ -88,7 +88,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 .sort((a, b) => b.similarity - a.similarity)
             if (similar_dashboard_columns.length > 0) {
                 let name_string = similar_dashboard_columns
-                    .map(d => d.column.label + " (" + d.similarity.toFixed(1) + ")")
+                    .map(d => d.column.label)
                     .join(", ")
                 annotations.push({
                     "text": [
