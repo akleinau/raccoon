@@ -273,8 +273,8 @@ export const useCSVStore = defineStore('csvStore', {
             const name_above = this.compute_group_name(groups_above, summary.options, summary.type)
 
             //calculate metrics to compare risk factors
-            const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(2)
-            const risk_difference = (above_percentage - below_percentage).toFixed(2)
+            const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(1)
+            const risk_difference = (above_percentage - below_percentage).toFixed(1)
 
             return {
                 risk_factor_groups: groups_above.map(d => d[0]),

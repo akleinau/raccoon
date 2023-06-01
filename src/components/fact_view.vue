@@ -124,6 +124,7 @@
                                 </div>
                                 <v-radio-group v-model="visStore.current_fact.vis.annotation">
                                     <v-radio label="default" :value="null"></v-radio>
+                                    <v-radio label="no annotation" value="None"></v-radio>
                                     <v-radio
                                             v-for="el in annotationStore.compute_annotations(visStore.current_fact.column, visStore.current_fact.vis.type)"
                                             v-bind:key="el"
