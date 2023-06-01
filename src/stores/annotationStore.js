@@ -32,7 +32,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         }],
                         [{"text": " higher risk than others", "color": "black"}]],
                     "target": [max_tuple.option.name],
-                    "score": 10
+                    "score": 6
                 })
             }
 
@@ -44,7 +44,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "text": [
                             [{"text": "Based on only " + under_hundred[0][1] + " people.", "color": "black"}]],
                         "target": [under_hundred[0][0]],
-                        "score": 8
+                        "score": 7
                     })
                 } else {
                     let upper_boundary = d3.max(under_hundred.map(([_, value]) => value))
@@ -60,7 +60,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "black"
                             }]],
                         "target": under_hundred.map(([key, _]) => key),
-                        "score": 8
+                        "score": 7
                     })
                 }
             }
@@ -78,7 +78,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }]],
                     "target": summary.riskIncrease.risk_factor_groups,
-                    "score": 7
+                    "score": 8
                 })
 
             }
@@ -101,7 +101,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }]],
                     "target": [],
-                    "score": 11
+                    "score": 9
                 })
             }
 
