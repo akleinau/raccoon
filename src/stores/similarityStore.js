@@ -45,6 +45,30 @@ export const useSimilarityStore = defineStore('similarityStore', {
 
         },
         /**
+         * compute similar dashboard columns based on column types
+         */
+        compute_similar_dashboard_columns(summary) {
+            const visList = useVisStore().generate_main_fact_visList()
+
+            return useVisStore().dashboard_items
+                .map(item => item.column)
+                .filter(item => item.name !== summary.name)
+                .map(item => {
+                    return {
+                        'item': item,
+                        'similarity': this.compute_similarity(summary, item)
+                    }
+                })
+                .filter(d => Math.abs(d.similarity) >= this.similarity_boundary)
+                .sort((a, b) => b.similarity - a.similarity)
+                .map(d => ({
+                    'column': d.item,
+                    'visList': visList,
+                    'similarity': d.similarity
+                }))
+
+        },
+        /**
          * calculate pearson coefficient
          */
         pearson(x, y) {

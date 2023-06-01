@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
+import {useSimilarityStore} from "@/stores/similarityStore";
 
 
 export const useAnnotationStore = defineStore('annotationStore', {
@@ -80,6 +81,28 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     "score": 7
                 })
 
+            }
+
+            //similar dashboard columns
+            let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(summary)
+                .sort((a, b) => b.similarity - a.similarity)
+            if (similar_dashboard_columns.length > 0) {
+                let name_string = similar_dashboard_columns
+                    .map(d => d.column.label + " (" + d.similarity.toFixed(1) + ")")
+                    .join(", ")
+                annotations.push({
+                    "text": [
+                        [{
+                            "text": "Correlates strongly with ",
+                            "color": "black"
+                        }],
+                        [{
+                            "text": name_string,
+                            "color": "black"
+                        }]],
+                    "target": [],
+                    "score": 11
+                })
             }
 
             return annotations.sort((a, b) => b.score - a.score)

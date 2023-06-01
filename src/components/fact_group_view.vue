@@ -22,6 +22,14 @@
                 <v-icon icon="mdi-alert"/>
                 Calculated frequencies are less accurate for options with less than 100 people.
             </div>
+            <div v-if="visStore.current_fact_group.similar_dashboard_columns !== undefined &&
+                visStore.current_fact_group.similar_dashboard_columns.length > 0">
+                <v-icon icon="mdi-alert"/>
+                Correlates strongly with dashboard items:
+                {{visStore.current_fact_group.similar_dashboard_columns
+                    .map(d => d.column.label + " (" + d.similarity.toFixed(1) + ")")
+                    .join(", ")}}
+            </div>
 
             <div class="d-flex justify-space-evenly">
                 <div>

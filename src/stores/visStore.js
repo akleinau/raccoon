@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
+import {useSimilarityStore} from "@/stores/similarityStore";
 
 export const useVisStore = defineStore('visStore', {
     state: () => ({
@@ -223,7 +224,8 @@ export const useVisStore = defineStore('visStore', {
             this.current_fact_group = {
                 'column': column,
                 'visList': visList,
-                'additional_vis_list': this.generate_additional_fact_visList(column)}
+                'additional_vis_list': this.generate_additional_fact_visList(column),
+                'similar_dashboard_columns': useSimilarityStore().compute_similar_dashboard_columns(column)}
         },
         /**
          * get color
