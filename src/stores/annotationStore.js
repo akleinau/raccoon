@@ -17,7 +17,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
         },
         compute_significance_annotations(summary) {
             let annotations = []
-            annotations.push({"text": [[{"text": "custom", "color": "black"}]] , "target": [], "score": 0}) //empty annotation
+            annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
 
             //significance
             if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0) {
@@ -26,21 +26,16 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     "target": [],
                     "score": 10,
                 })
-            } else {
-                let max_tuple = d3.greatest(summary.significance.tuples, d => d.increase)
-                annotations.push({
-                    "text": [
-                        [{
-                            "text": "People with " + max_tuple.option.label + " have a " + max_tuple.increase + " times",
-                            "color": "black"
-                        }],
-                        [{"text": " higher risk than others", "color": "black"}]],
-                    "target": [max_tuple.option.name],
-                    "score": 6
-                })
             }
 
             //occurrence
+            let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
+            annotations.push({
+                "text": [[{"text": "Most common option", "color": "black"}]],
+                "target": [greatest_occurrence[0]],
+                "score": 6
+            })
+
             let under_hundred = Object.entries(summary.occurrence).filter(([_, value]) => value < 100)
             if (under_hundred.length > 0) {
                 if (under_hundred.length === 1) {
@@ -82,7 +77,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }]],
                     "target": summary.riskIncrease.risk_factor_groups,
-                    "score": 8
+                    "score": 5
                 })
 
             }
@@ -105,7 +100,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }]],
                     "target": [],
-                    "score": 9
+                    "score": 4
                 })
             }
 
@@ -114,9 +109,16 @@ export const useAnnotationStore = defineStore('annotationStore', {
 
         compute_impact_annotations(summary) {
             let annotations = []
-            annotations.push({"text": [[{"text": "custom", "color": "black"}]] , "target": [], "score": 0}) //empty annotation
+            annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
 
             //occurrence
+            let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
+            annotations.push({
+                "text": [[{"text": "Most common option", "color": "black"}]],
+                "target": [greatest_occurrence[0]],
+                "score": 5
+            })
+
             let under_hundred = Object.entries(summary.occurrence).filter(([_, value]) => value < 100)
             if (under_hundred.length > 0) {
                 if (under_hundred.length === 1) {
@@ -181,7 +183,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }]],
                     "target": [],
-                    "score": 9
+                    "score": 10
                 })
             }
 
