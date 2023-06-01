@@ -55,15 +55,16 @@ export default {
             }
             let margin_bottom = this.preview ? 20 : 50
             let margin = {top: 30, bottom: margin_bottom, left: startBarX, right: 5}
+            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
 
             let width = (this.width ? this.width : 300) - margin.right
             let height = data.length * (width / 10)
 
 
             let svg = d3.create("svg")
-                .attr("width", width + margin.left + margin.right)
+                .attr("width", width + margin.left + margin.right + annotation_width)
                 .attr("height", height + margin.bottom + margin.top)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top])
+                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
 
             let x = d3.scaleLinear()
                 .domain(this.visHelperStore.get_range(this.vis))
@@ -152,6 +153,34 @@ export default {
                 .text("")
                 .style("font-weight", this.preview ? "" : "bold")
             this.visHelperStore.append_tspans(title, this.vis.title, this.column)
+
+            //annotations
+            //use this.getComputedTextLength to split up into multiple parts?
+            let gap = 15
+            if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
+                let targets_y = this.vis.annotation.target.map(d => y(d))
+                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
+                //text
+                this.vis.annotation.text.forEach((t, i) => {
+                    let annotation = svg.append("text")
+                        .attr("x", width + margin.left + margin.right + gap)
+                        .attr("y", mean_y + i * 15 + y.bandwidth() / 2)
+                        .attr("width", 200)
+                        .style("font-style", "italic")
+                    this.visHelperStore.append_tspans(annotation, t, this.column)
+                })
+
+                //lines
+                svg.selectAll("line")
+                    .data(targets_y)
+                    .join("line")
+                    .attr("x1", width + margin.left + margin.right + gap - 10)
+                    .attr("y1", d => d)
+                    .attr("x2", width + margin.left + margin.right + gap - 10)
+                    .attr("y2", d => d + y.bandwidth())
+                    .attr("stroke", "#505050")
+                    .attr("stroke-width", 3)
+            }
 
 
             d3.select(this.$refs.container).selectAll("*").remove()

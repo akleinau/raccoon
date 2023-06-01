@@ -83,6 +83,7 @@ export default {
                 startBarX = 100
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
+            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
 
 
             const radius = 30
@@ -106,9 +107,9 @@ export default {
 
 
             let svg = d3.create("svg")
-                .attr("width", width + margin.left + margin.right)
+                .attr("width", width + margin.left + margin.right + annotation_width)
                 .attr("height", height + margin.bottom + margin.top)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top])
+                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
 
             //background
             svg.append("rect")
@@ -191,6 +192,33 @@ export default {
                 .style("font-weight", this.preview ? "" : "bold")
             this.visHelperStore.append_tspans(title, this.vis.title, this.column)
 
+            //annotations
+            //use this.getComputedTextLength to split up into multiple parts?
+            let gap = 15
+            if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
+                let targets_y = this.vis.annotation.target.map(d => y_options(d))
+                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
+                //text
+                this.vis.annotation.text.forEach((t, i) => {
+                    let annotation = svg.append("text")
+                        .attr("x", radius*7 + margin.left + gap)
+                        .attr("y", mean_y + i * 15 + y_options.bandwidth() / 2)
+                        .attr("width", 200)
+                        .style("font-style", "italic")
+                    this.visHelperStore.append_tspans(annotation, t, this.column)
+                })
+
+                //lines
+                svg.selectAll("line")
+                    .data(targets_y)
+                    .join("line")
+                    .attr("x1", radius*7 + margin.left + gap - 10)
+                    .attr("y1", d => d)
+                    .attr("x2", radius*7 + margin.left + gap - 10)
+                    .attr("y2", d => d + y_options.bandwidth())
+                    .attr("stroke", "#505050")
+                    .attr("stroke-width", 3)
+            }
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())

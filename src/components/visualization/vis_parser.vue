@@ -67,7 +67,13 @@ export default {
 
             //annotations
             if (!vis["annotation"]) {
-                vis.annotation = this.annotationStore.compute_annotations(this.column, this.vis.type)[0]
+                let annotations = this.annotationStore.compute_annotations(this.column, this.vis.type)
+                if (annotations.length > 1) { //greater than 1 because of the custom annotation
+                    vis["annotation"] = annotations[0]
+                }
+                else {
+                    vis["annotation"] = "None"
+                }
             }
 
             vis = JSON.parse((JSON.stringify(vis))) //remove all possible direkt references to default settings

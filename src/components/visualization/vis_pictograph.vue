@@ -69,7 +69,7 @@ export default {
             let margin_bottom = this.preview ? 20 : 50
             let margin_top = 30
             let margin_right = this.preview ? 5 : 60
-            let annotation_width = this.preview ? 0 : 300
+            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
             let width = (this.width ? this.width : 300) - margin_right
             let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 30
             if (this.preview && startBarX > 100) {
@@ -81,8 +81,6 @@ export default {
             const dot_range_X = d3.range(0, this.vis.grid[0], 1)
             const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
             const dot_range = d3.range(0, (this.vis.grid[0] * this.vis.grid[1]), 1)
-
-            const half_text_height = 10
 
 
             let x = d3.scaleBand()
@@ -191,7 +189,7 @@ export default {
             //annotations
             //use this.getComputedTextLength to split up into multiple parts?
             let gap = 15
-            if (!this.preview && this.vis.annotation !== undefined) {
+            if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
                 let targets_y = this.vis.annotation.target.map(d => y_options(d))
                 let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
                 //text
