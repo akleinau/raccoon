@@ -280,7 +280,8 @@ export const useCSVStore = defineStore('csvStore', {
                 risk_factor_groups: groups_above.map(d => d[0]),
                 name: name_above,
                 risk_difference: risk_difference,
-                risk_multiplier: risk_multiplier
+                risk_multiplier: risk_multiplier,
+                absolute_risk: above_percentage.toFixed(3)
             }
         },
         /**

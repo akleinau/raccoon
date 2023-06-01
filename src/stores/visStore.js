@@ -135,30 +135,48 @@ export const useVisStore = defineStore('visStore', {
                 const column = {name: "Context", label:"Risk Factors", options: options}
 
                 const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
-                const max_risk_difference = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_difference)) + 1
-                fact_groups.push({
-                        "visList": [{
-                            type: "context",
-                            data: risk_factor_items.map(item => ({
-                                name: item.column.riskIncrease.name,
-                                value: item.column.riskIncrease.risk_difference
-                            })).sort((a, b) => b.value - a.value),
-                            range: [0, Math.round(max_risk_difference)],
-                            title: [{text: "absolute risk increase", color: "black"}],
-                            axis: [{text: "maximal difference in risk between options", color: "black"}]
-                        }],
-                        "column": column
-                    },
+                fact_groups.push(
+                    //relative risk increase
                     {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
                                 name: item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.risk_multiplier
-                            })).sort((a, b) => b.value - a.value),
+                            })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
-                            title: [{text: "relative risk increase", color: "black"}],
+                            title: [{text: "By how many times is the risk increased?", color: "black"}],
                             axis: [{text: "risk increase through factor", color: "black"}]
+                        }],
+                        "column": column
+                    },
+                    //absolute risk increase
+                    {
+                        "visList": [{
+                            type: "context",
+                            data: risk_factor_items.map(item => ({
+                                name: item.column.riskIncrease.name,
+                                value: item.column.riskIncrease.risk_difference
+                            })).sort((a, b) => b.value - a.value),
+                            range: [0, 1],
+                            detailLevel: "percent",
+                            title: [{text: "How much is the risk increased?", color: "black"}],
+                            axis: [{text: "difference in risk with/ without factor", color: "black"}]
+                        }],
+                        "column": column
+                    },
+                    //absolute risk
+                    {
+                        "visList": [{
+                            type: "context",
+                            data: risk_factor_items.map(item => ({
+                                name: item.column.riskIncrease.name,
+                                value: item.column.riskIncrease.absolute_risk
+                            })).sort((a, b) => b.value - a.value),
+                            range: [0, 1],
+                            graph: "pictograph",
+                            title: [{text: "What is the risk per risk factor?", color: "black"}],
+                            axis: [{text: "absolute risk through factor", color: "black"}]
                         }],
                         "column": column
                     })
