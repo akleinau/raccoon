@@ -209,6 +209,8 @@ export default {
                 d3.quantize(d3.interpolatePlasma, 5).map(d => d3.color(d).hex()),
                 d3.quantize(d3.interpolateViridis, 5).map(d => d3.color(d).hex()),
                 d3.quantize(d3.interpolateSpectral, 5).map(d => d3.color(d).hex()),
+                d3.quantize(d3.interpolateRainbow, 5).map(d => d3.color(d).hex()),
+                d3.quantize(d3.interpolateSinebow, 5).map(d => d3.color(d).hex()),
             ],
             custom_color_list: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
             background: [{color: "Gainsboro", stroke: "None"}, {color: "#D3D9E6", stroke: "None"}, {
