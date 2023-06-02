@@ -40,12 +40,7 @@
                     <settings_view/>
 
                     <div class="w-50 pl-5">
-                        <h3> Tips </h3>
-                        <ul class="pl-5">
-                            <li>...</li>
-                            <li>...</li>
-                            <li>...</li>
-                        </ul>
+                        <tips-view/>
                     </div>
                 </div>
             </v-card>
@@ -120,6 +115,7 @@ import settings_view from "@/components/settings_view.vue";
 import all_risk_factor_overlay from "@/components/all_risk_factor_overlay.vue";
 import excluded_column_overlay from "@/components/excluded_column_overlay.vue";
 import dashboard_overlay from "@/components/dashboard_overlay.vue";
+import tipsView from "@/components/tipsView.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
@@ -135,7 +131,8 @@ export default {
         fact_view,
         settings_view,
         all_risk_factor_overlay,
-        dashboard_overlay
+        dashboard_overlay,
+        tipsView
     },
     setup() {
         const csvStore = useCSVStore()
