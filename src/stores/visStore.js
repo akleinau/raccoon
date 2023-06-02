@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
+import * as d3 from "d3";
 
 export const useVisStore = defineStore('visStore', {
     state: () => ({
@@ -48,7 +49,7 @@ export const useVisStore = defineStore('visStore', {
         },
         default_colors: {
             "background": {color: "Gainsboro", stroke: "None"},
-            "colors": ['#9ecae1','#6baed6','#4292c6','#2171b5','#084594'].reverse(),
+            "colors": d3.quantize(d3.interpolateCool,5).map(d => d3.color(d).hex()),
             "text": "midnightBlue",
         }
     }),
