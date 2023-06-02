@@ -49,7 +49,7 @@ export const useVisStore = defineStore('visStore', {
         },
         default_colors: {
             "background": {color: "Gainsboro", stroke: "None"},
-            "colors": d3.quantize(d3.interpolateCool,5).map(d => d3.color(d).hex()),
+            "colors": [ "#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502" ] ,
             "text": "midnightBlue",
         }
     }),

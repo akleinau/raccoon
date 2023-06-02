@@ -7,61 +7,62 @@
                 <div class="d-flex">
                     <!-- Color Scheme -->
                     <div>
-                        <v-radio-group v-model="visStore.default_colors.colors" label="Colors">
-                            <v-radio :value="scheme">
-                                <template v-slot:label>
-                                    <div>
-                                        <div>Color scheme:</div>
-                                        <v-select v-model="scheme" :items="colors" dense variant="underlined">
-                                            <template v-slot:selection="{item}">
-                                                <v-icon class="mb-2" :style="'color:' + item.value">mdi-circle</v-icon>
-                                            </template>
-                                            <template v-slot:item="{item}">
-                                                <div>
-                                                    <v-btn @click="scheme = item.value; visStore.default_colors.colors=scheme"
-                                                           variant="plain">
-                                                        <v-icon v-for="color in item.value" :key="color"
-                                                                :style="'color:' + color">
-                                                            mdi-circle
-                                                        </v-icon>
-                                                    </v-btn>
-                                                </div>
-                                            </template>
-                                        </v-select>
-                                    </div>
-                                </template>
-                            </v-radio>
-                            <v-radio :value="neighbor_color_list">
-                                <template v-slot:label>
-                                    <div>
-                                        <div>Color based:</div>
-                                        <div class="d-flex w-100 justify-center">
-                                            <v-icon :style="'color:' + neighborColor">mdi-circle</v-icon>
-                                            <v-icon class="ml-2">mdi-pencil</v-icon>
-                                            <color-dialog :color="neighborColor"
-                                                          @update="neighborColor = $event; visStore.default_colors.colors=neighbor_color_list "></color-dialog>
-                                        </div>
-                                    </div>
-                                </template>
-                            </v-radio>
-                            <v-radio :value="custom_color_list">
-                                <template v-slot:label>
-                                    <div>
-                                        <div>Custom:</div>
-                                        <span v-for="(color,i) in custom_color_list" :key="i">
-                                        <v-icon :style="'color:' + color">mdi-circle</v-icon>
-                                        <color-dialog :color="color"
-                                                      @update="custom_color_list[i] = $event; visStore.default_colors.colors=custom_color_list; color=$event"></color-dialog>
-                                    </span>
-                                    </div>
-                                </template>
-                            </v-radio>
+                        <v-radio-group v-model="color_mode" label="Colors" class="mr-5" inline>
+                            <v-radio value="oneColor" label="color based"
+                                     @click="visStore.default_colors.colors=neighbor_color_list"/>
+                            <v-radio value="scheme" label="scheme"
+                                     @click="visStore.default_colors.colors=scheme"/>
+                            <v-radio value="custom" label="custom"
+                                     @click="custom_color_list=visStore.default_colors.colors"/>
                         </v-radio-group>
 
-                        <div class="d-flex w-100 justify-center mt-2">
+                        <div v-if="color_mode === 'oneColor'" class="mr-5">
+                            <div class="d-flex w-100 justify-center">
+                                Color based:
+                                <v-icon class="ml-2" :style="'color:' + neighborColor">mdi-circle</v-icon>
+                                <v-icon class="ml-1">mdi-pencil</v-icon>
+                                <color-dialog :color="neighborColor"
+                                              @update="neighborColor = $event; visStore.default_colors.colors=neighbor_color_list "></color-dialog>
+                            </div>
+                            <v-slider v-model="color_spread" label="spread" start="20" end="100" step="5"
+                                      @click="visStore.default_colors.colors=neighbor_color_list"
+                                        style="max-width:200px"/>
+                            <v-divider class="mt-2"></v-divider>
+                            <div class="d-flex w-100 justify-center mt-2">
                             <span v-for="(color,i) in visStore.default_colors.colors" :key="i">
                                 <v-icon :style="'color:' + color">mdi-circle</v-icon>
                             </span>
+                            </div>
+                        </div>
+
+                         <div v-if="color_mode === 'scheme'" class="mr-5">
+                            <div>Color scheme:</div>
+                            <v-select v-model="scheme" :items="colors" dense variant="underlined">
+                                <template v-slot:selection="{item}">
+                                    <v-icon class="mb-2" :style="'color:' + item.value">mdi-circle</v-icon>
+                                </template>
+                                <template v-slot:item="{item}">
+                                    <div>
+                                        <v-btn @click="scheme = item.value; visStore.default_colors.colors=scheme"
+                                               variant="plain">
+                                            <v-icon v-for="color in item.value" :key="color"
+                                                    :style="'color:' + color">
+                                                mdi-circle
+                                            </v-icon>
+                                        </v-btn>
+                                    </div>
+                                </template>
+                            </v-select>
+                        </div>
+
+                        <div v-if="color_mode === 'custom'">
+                            <div>Custom:</div>
+                            <span v-for="(color,i) in custom_color_list" :key="i">
+                                        <v-icon :style="'color:' + color">mdi-circle</v-icon>
+                                        <v-icon class="mr-2">mdi-pencil</v-icon>
+                                        <color-dialog :color="color"
+                                                      @update="custom_color_list[i] = $event; visStore.default_colors.colors=custom_color_list; color=$event"></color-dialog>
+                                    </span>
                         </div>
                     </div>
 
@@ -199,7 +200,9 @@ export default {
     data() {
         return {
             show: false,
-            neighborColor: "#612087",
+            color_mode: "oneColor",
+            color_spread: 45,
+            neighborColor: "#1302B5",
             scheme: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
             colors: [
                 d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
@@ -228,7 +231,7 @@ export default {
             let list = []
             for (let i = 0; i < 5; i++) {
                 list.push(color.formatHex())
-                color.h -= 40
+                color.h -= this.color_spread
                 if (color.h < 0) color.h += 360
             }
             return list
