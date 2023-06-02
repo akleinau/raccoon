@@ -81,7 +81,8 @@ export default {
                 .attr("y", margin.top)
                 .attr("width", width)
                 .attr("height", height)
-                .attr("fill", this.vis.background)
+                .attr("fill", this.vis.background.color)
+                .attr("stroke", this.vis.background.stroke)
 
             svg.selectAll("bar")
                 .data(data)

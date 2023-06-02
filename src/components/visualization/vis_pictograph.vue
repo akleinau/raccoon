@@ -112,9 +112,13 @@ export default {
                 .attr("y", margin.top)
                 .attr("width", width + margin.right)
                 .attr("height", height)
-                .attr("fill", this.vis.background)
+                .attr("fill", this.vis.background.color)
+                .attr("stroke", this.vis.background.stroke)
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background : d3.color("white").darker(0.1)
+            let brightness_background = d3.hsl(this.vis.background.color).l
+            let contrasting_color = brightness_background > 0.9 ? "#b3b3b3" : "#fafafa"
+
+            let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background.color : contrasting_color
 
             //one element per option
             svg.selectAll("option")

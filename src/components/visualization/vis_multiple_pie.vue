@@ -117,7 +117,8 @@ export default {
                 .attr("y", margin.top)
                 .attr("width", radius*7)
                 .attr("height", height)
-                .attr("fill", this.vis.background)
+                .attr("fill", this.vis.background.color)
+                .attr("stroke", this.vis.background.stroke)
 
             //one element per option
             svg.selectAll("option")

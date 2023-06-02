@@ -23,20 +23,20 @@
 
                     <!-- Background -->
                     <v-radio-group v-model="visStore.default_colors.background" label="Background" class="ml-5">
-                        <v-radio v-for="color in this.background" :key="color" :value="color">
+                        <v-radio v-for="item in this.background" :key="item" :value="item">
                             <template v-slot:label>
                                 <div class="mr-2"
-                                     :style="'background:' + color + '; border: 1px solid black; width: 200px; height: 30px'"/>
+                                     :style="'background:' + item.color + '; border: 1px solid ' + item.stroke + '; width: 200px; height: 30px'"/>
                             </template>
                         </v-radio>
                         <v-radio label="custom" :value="background_custom">
                             <template v-slot:label>
                                 <div class="mr-2"
-                                     :style="'background:' + background_custom + '; border: 1px solid black; width: 200px; height: 30px'"/>
+                                     :style="'background:' + background_custom.color + '; border: 1px solid ' + background_custom.stroke + '; width: 200px; height: 30px'"/>
                                 <v-icon class="ml-2">mdi-pencil</v-icon>
                             </template>
-                            <color-dialog :color="background_custom"
-                                          @update="background_custom = $event; visStore.default_colors.background = $event"></color-dialog>
+                            <color-dialog :color="background_custom.color"
+                                          @update="background_custom.color = $event; visStore.default_colors.background.color = $event"></color-dialog>
                         </v-radio>
 
                     </v-radio-group>
@@ -159,8 +159,8 @@ export default {
                 ['#a1d99b', '#74c476', '#41ab5d', '#238b45', '#005a32'].reverse(),
                 ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00']
             ],
-            background: ["lightgrey", "Gainsboro", "white"],
-            background_custom: "#0099ff",
+            background: [{color: "lightgrey", stroke: "None"},{color: "Gainsboro", stroke: "None"},{color: "white", stroke: "black"}],
+            background_custom: {color: "#0099ff", stroke: "None"},
             fontColor: ["black", "midnightBlue", "darkblue"],
             fontColor_custom: "#000000"
         }

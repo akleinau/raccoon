@@ -47,7 +47,7 @@ export const useVisStore = defineStore('visStore', {
             }
         },
         default_colors: {
-            "background": "Gainsboro",
+            "background": {color: "Gainsboro", stroke: "None"},
             "colors": ['#9ecae1','#6baed6','#4292c6','#2171b5','#084594'].reverse(),
             "text": "midnightBlue",
         }
