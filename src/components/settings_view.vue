@@ -2,7 +2,7 @@
   <!-- Choose Visualizations -->
     <v-expansion-panels class="ma-3 w-50">
         <v-expansion-panel>
-            <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
+            <v-expansion-panel-title><h4>Design </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <div class="d-flex">
                     <!-- Color Scheme -->
@@ -25,12 +25,14 @@
                     <v-radio-group v-model="visStore.default_colors.background" label="Background" class="ml-5">
                         <v-radio v-for="color in this.background" :key="color" :value="color">
                             <template v-slot:label>
-                                <div class="mr-2" :style="'background:' + color + '; border: 1px solid black; width: 200px; height: 30px'"/>
+                                <div class="mr-2"
+                                     :style="'background:' + color + '; border: 1px solid black; width: 200px; height: 30px'"/>
                             </template>
                         </v-radio>
                         <v-radio label="custom" :value="background_custom">
                             <template v-slot:label>
-                                  <div class="mr-2" :style="'background:' + background_custom + '; border: 1px solid black; width: 200px; height: 30px'"/>
+                                <div class="mr-2"
+                                     :style="'background:' + background_custom + '; border: 1px solid black; width: 200px; height: 30px'"/>
                                 <v-icon class="ml-2">mdi-pencil</v-icon>
                             </template>
                             <color-dialog :color="background_custom"
@@ -38,22 +40,16 @@
                         </v-radio>
 
                     </v-radio-group>
-                </div>
-            </v-expansion-panel-text>
-        </v-expansion-panel>
 
-        <!-- Text -->
-        <v-expansion-panel>
-            <v-expansion-panel-title><h4> Change Font </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
-                <v-radio-group v-model="visStore.default_colors.text" label="Color">
-                    <v-radio v-for="color in this.fontColor" :key="color" :value="color">
-                        <template v-slot:label>
-                            <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
-                            {{ color }}
-                        </template>
-                    </v-radio>
-                     <v-radio label="custom" :value="fontColor_custom">
+                    <!-- Text -->
+                    <v-radio-group v-model="visStore.default_colors.text" label="Color">
+                        <v-radio v-for="color in this.fontColor" :key="color" :value="color">
+                            <template v-slot:label>
+                                <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
+                                {{ color }}
+                            </template>
+                        </v-radio>
+                        <v-radio label="custom" :value="fontColor_custom">
                             <template v-slot:label>
                                 <v-icon class="mr-2" :style="'color:' + fontColor_custom">mdi-circle</v-icon>
                                 custom ({{ fontColor_custom }})
@@ -62,53 +58,62 @@
                             <color-dialog :color="fontColor_custom"
                                           @update="fontColor_custom = $event; visStore.default_colors.text = $event"></color-dialog>
                         </v-radio>
-                </v-radio-group>
+                    </v-radio-group>
+                </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
 
         <!-- Data Processing -->
         <v-expansion-panel>
-            <v-expansion-panel-title><h4> Change Data Processing </h4></v-expansion-panel-title>
+            <v-expansion-panel-title><h4>Calculation </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <div class="d-flex">
-                    <div class="d-flex flex-column align-start align-content-start justify-start pb-5">
-                        Data Preprocessing
+                    <div>
                         <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
+
+
+                    </div>
+                    <div style="width:200px" class="ml-2">
                         <v-text-field type="number" label="minimal bin size" class="align-self-stretch"
                                       v-model="csvStore.min_bin_size"/>
+                    </div>
+                    <div class="flex-grow-1 ml-5">
+                        <v-expansion-panels>
+                            <v-expansion-panel>
+                                <v-expansion-panel-title>Regression</v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-text-field type="number" class="mx-5" label="min correlation with target"
+                                                  v-model="regressionStore.correlation_boundary"/>
+                                    <v-text-field type="number" class="mx-5" label="epochs"
+                                                  v-model="regressionStore.epochs"/>
+                                    <v-text-field type="number" class="mx-5"
+                                                  label="fast epochs (for quickly finding risk factors)"
+                                                  v-model="regressionStore.fast_epochs"/>
+                                    <v-text-field type="number" class="mx-5" label="test ratio"
+                                                  v-model="regressionStore.test_ratio"/>
+                                    <v-text-field type="number" class="mx-5" label="batch size"
+                                                  v-model="regressionStore.batch_size"/>
+                                    <v-text-field type="number" class="mx-5" label="learning rate"
+                                                  v-model="regressionStore.learning_rate"/>
+                                    <v-btn variant="outlined" @click="regressionStore.compute_score()">Recalculate
+                                    </v-btn>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                    </div>
+                    <div class="ml-5">
                         <v-btn variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate</v-btn>
                     </div>
-                    <div class="flex-grow-1">
-                        Regression
-                        <v-text-field type="number" class="mx-5" label="min correlation with target"
-                                      v-model="regressionStore.correlation_boundary"/>
-                        <v-text-field type="number" class="mx-5" label="epochs"
-                                      v-model="regressionStore.epochs"/>
-                        <v-text-field type="number" class="mx-5" label="fast epochs (for quickly finding risk factors)"
-                                      v-model="regressionStore.fast_epochs"/>
-                        <v-text-field type="number" class="mx-5" label="test ratio"
-                                      v-model="regressionStore.test_ratio"/>
-                        <v-text-field type="number" class="mx-5" label="batch size"
-                                      v-model="regressionStore.batch_size"/>
-                        <v-text-field type="number" class="mx-5" label="learning rate"
-                                      v-model="regressionStore.learning_rate"/>
-                        <v-btn variant="outlined" @click="regressionStore.compute_score()">Recalculate</v-btn>
-                    </div>
-                    <v-radio-group v-model="scoreStore.score" label="score"
-                                   @update:modelValue="scoreStore.sort_summaries()">
-                        <v-radio v-for="score in scoreStore.score_choices" :label="score" :value="score"
-                                 v-bind:key="score"/>
-                    </v-radio-group>
 
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
 
         <v-expansion-panel>
-            <v-expansion-panel-title> <h4>Change Intention </h4></v-expansion-panel-title>
+            <v-expansion-panel-title><h4>Intention </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 I want to...
-                <v-btn-toggle  v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()">
+                <v-btn-toggle v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()">
                     <v-btn value="explore">
                         <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
                         Explore
@@ -150,9 +155,9 @@ export default {
     data() {
         return {
             show: false,
-            colors: [['#9ecae1','#6baed6','#4292c6','#2171b5','#084594'].reverse(),
-                ['#a1d99b','#74c476','#41ab5d','#238b45','#005a32'].reverse(),
-                ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']
+            colors: [['#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#084594'].reverse(),
+                ['#a1d99b', '#74c476', '#41ab5d', '#238b45', '#005a32'].reverse(),
+                ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00']
             ],
             background: ["lightgrey", "Gainsboro", "white"],
             background_custom: "#0099ff",
@@ -165,7 +170,7 @@ export default {
             this.show = false
         },
         add_color_scheme() {
-            this.colors.push(JSON.parse(JSON.stringify(d3.schemeDark2)).slice(0,5))
+            this.colors.push(JSON.parse(JSON.stringify(d3.schemeDark2)).slice(0, 5))
         }
     }
 }

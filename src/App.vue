@@ -69,6 +69,9 @@
                         Risk Factors
                         <all_risk_factor_overlay text-button="true"/>
                         <div class="flex-grow-1 d-flex justify-end">
+                            <v-select class="flex-grow-0" label="Sort by..." variant="solo-filled"
+                            v-model="scoreStore.score" @update:modelValue="scoreStore.sort_summaries()"
+                            :items="scoreStore.score_choices"></v-select>
                             <excluded_column_overlay/>
                         </div>
                     </div>
@@ -120,6 +123,7 @@ import dashboard_overlay from "@/components/dashboard_overlay.vue";
 import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
+import {useScoreStore} from "@/stores/scoreStore";
 
 
 export default {
@@ -136,8 +140,9 @@ export default {
     setup() {
         const csvStore = useCSVStore()
         const visStore = useVisStore()
+        const scoreStore = useScoreStore()
         const regressionStore = useRegressionStore()
-        return {csvStore, visStore, regressionStore}
+        return {csvStore, visStore, regressionStore, scoreStore}
     }
 }
 </script>
