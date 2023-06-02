@@ -159,7 +159,6 @@ export const useVisStore = defineStore('visStore', {
                     "name": item.column.riskIncrease.name,
                     "label": item.column.label + ": " + item.column.riskIncrease.name
                 }))
-                const column = {name: "Context", label:"Risk Factors", options: options}
 
                 const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
                 fact_groups.push(
@@ -175,7 +174,7 @@ export const useVisStore = defineStore('visStore', {
                             title: [{text: "By how many times is the risk increased?", color: "black"}],
                             axis: [{text: "risk increase through factor", color: "black"}]
                         }],
-                        "column": column
+                        "column": {name: "RelativeIncrease", label:"Risk Factors", options: options}
                     },
                     //absolute risk increase
                     {
@@ -190,7 +189,7 @@ export const useVisStore = defineStore('visStore', {
                             title: [{text: "How much is the risk increased?", color: "black"}],
                             axis: [{text: "difference in risk with/ without factor", color: "black"}]
                         }],
-                        "column": column
+                        "column": {name: "AbsoluteIncrease", label:"Risk Factors", options: options}
                     },
                     //absolute risk
                     {
@@ -205,7 +204,7 @@ export const useVisStore = defineStore('visStore', {
                             title: [{text: "What is the risk per risk factor?", color: "black"}],
                             axis: [{text: "absolute risk through factor", color: "black"}]
                         }],
-                        "column": column
+                        "column": {name: "AbsoluteValues", label:"Risk Factors", options: options}
                     })
             }
 
