@@ -211,11 +211,9 @@ export default {
                 d3.quantize(d3.interpolateSpectral, 5).map(d => d3.color(d).hex()),
             ],
             custom_color_list: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
-            background: [{color: "silver", stroke: "None"}, {color: "Gainsboro", stroke: "None"}, {
-                color: "white",
-                stroke: "black"
-            }],
-            background_custom: {color: "#0099ff", stroke: "None"},
+            background: [{color: "Gainsboro", stroke: "None"}, {color: "#D3D9E6", stroke: "None"}, {
+                color: "white", stroke: "gray"}],
+            background_custom: {color: "#efe7de", stroke: "None"},
             fontColor: ["black", "midnightBlue", "darkblue"],
             fontColor_custom: "#000000"
         }
