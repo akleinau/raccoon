@@ -16,8 +16,8 @@ export const useVisStore = defineStore('visStore', {
                 graph: "bar",
                 grid: [25, 4],
                 range: [0, 100],
-                axis: [{text: "#people", color: "black"}],
-                title: [{text: "How common is each option?", color: "black"}],
+                axis: [{text: "amount of people", color: "black"}],
+                title: [{text: "How common is each option in the dataset?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 0,
@@ -27,7 +27,8 @@ export const useVisStore = defineStore('visStore', {
                 grid: [25, 4],
                 range: "percent",
                 axis: [{text: "occurrence per 100 people", color: "black"}],
-                title: [{text: "Significance", color: "black"}],
+                title: [{text: "How frequent is ", color: "black"},
+                {text: " $target_column: $target_option", color: "$color"}, {text: " per group?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 1,
@@ -116,8 +117,6 @@ export const useVisStore = defineStore('visStore', {
          * @param length
          */
         set_initial_default_settings(length) {
-            this.default_settings.significance.title = [{text: "How frequent is ", color: "black"},
-                {text: " $target_column: $target_option", color: "$color"}, {text: "?", color: "black"}]
             this.default_settings.impact.range = [0, length]
 
             this.update_settings_by_intention()
