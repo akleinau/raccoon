@@ -119,6 +119,7 @@ export default {
                 .attr("height", height)
                 .attr("fill", this.vis.background.color)
                 .attr("stroke", this.vis.background.stroke)
+                .attr("stroke-width", 2)
 
             //one element per option
             svg.selectAll("option")

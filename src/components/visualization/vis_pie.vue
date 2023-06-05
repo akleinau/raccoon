@@ -87,6 +87,7 @@ export default {
                 .attr("height", height)
                 .attr("fill", this.vis.background.color)
                 .attr("stroke", this.vis.background.stroke)
+                .attr("stroke-width", 2)
 
             svg.selectAll("textName")
                 .data(data)

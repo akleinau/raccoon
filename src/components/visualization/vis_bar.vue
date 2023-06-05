@@ -83,6 +83,7 @@ export default {
                 .attr("height", height)
                 .attr("fill", this.vis.background.color)
                 .attr("stroke", this.vis.background.stroke)
+                .attr("stroke-width", 2)
 
             svg.selectAll("bar")
                 .data(data)
@@ -160,7 +161,7 @@ export default {
             let gap = 15
             if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
                 let targets_y = this.vis.annotation.target.map(d => y(d))
-                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
+                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height / 2
                 //text
                 this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")

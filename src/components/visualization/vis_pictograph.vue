@@ -114,9 +114,10 @@ export default {
                 .attr("height", height)
                 .attr("fill", this.vis.background.color)
                 .attr("stroke", this.vis.background.stroke)
+                .attr("stroke-width", 2)
 
             let brightness_background = d3.hsl(this.vis.background.color).l
-            let contrasting_color = brightness_background > 0.9 ? "#b3b3b3" : "#fafafa"
+            let contrasting_color = brightness_background > 0.9 ? "#bebebe" : "#fafafa"
 
             let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background.color : contrasting_color
 
