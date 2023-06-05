@@ -158,7 +158,7 @@
             <v-expansion-panel-title><h4>Intention </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 I want to...
-                <v-btn-toggle v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()">
+                <v-btn-toggle v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()" class="mb-1">
                     <v-btn value="explore">
                         <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
                         Explore
@@ -174,6 +174,30 @@
                         Educate
                     </v-btn>
                 </v-btn-toggle>
+
+                <div v-if="visStore.intention === 'explore'">
+                    For scientists to explore the data. Showing detailed information about the dataset.
+                     <ul class="ml-5">
+                        <li>Pictographs with percentages</li>
+                        <li>Bar charts showing absolute numbers of participants</li>
+                    </ul>
+                </div>
+                <div v-if="visStore.intention === 'convince'">
+                    Visualizations to convince the public about a certain topic.
+                    <ul class="ml-5">
+                        <li>showing only nominators increases perceived risk</li>
+                        <li>Pictographs and bar charts are easy to understand</li>
+                    </ul>
+                </div>
+                <div v-if="visStore.intention === 'educate'">
+                    For scientists to educate the public about their findings. Showing only the most important
+                    information about the dataset.
+                    <ul class="ml-5">
+                        <li>Pictographs showing natural frequencies (eg 22/100) best for understanding risks</li>
+                        <li>Pie Charts for best overview over a distribution (on cost of accuracy) </li>
+                    </ul>
+                </div>
+
             </v-expansion-panel-text>
         </v-expansion-panel>
     </v-expansion-panels>
