@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {useHelperStore} from "@/stores/helperStore";
+import * as d3 from "d3";
 
 export const useVisHelperStore = defineStore('VisHelperStore', {
     state: () => ({}),
@@ -51,6 +52,15 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 .join("tspan")
                 .text(d => d.text)
                 .style("fill", d => d.color)
+        },
+        get_bgcolor(background, foreground) {
+            let bgcolor = background
+            if (background === "auto") {
+                bgcolor = d3.hsl(foreground)
+                bgcolor.s = bgcolor.s * 0.2
+                bgcolor.l += (1 - bgcolor.l) * 0.8
+            }
+            return bgcolor
         }
     }
 })

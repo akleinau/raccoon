@@ -112,12 +112,14 @@ export default {
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
 
             //background
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+
             svg.append("rect")
                 .attr("x", margin.left)
                 .attr("y", margin.top)
                 .attr("width", radius*7)
                 .attr("height", height)
-                .attr("fill", this.vis.background.color)
+                .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
                 .attr("stroke-width", 2)
 

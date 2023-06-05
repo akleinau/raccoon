@@ -106,20 +106,22 @@ export default {
                 .attr("height", height + margin.bottom + margin.top)
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
 
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+
             //background
             svg.append("rect")
                 .attr("x", margin.left - radius)
                 .attr("y", margin.top)
                 .attr("width", width + margin.right)
                 .attr("height", height)
-                .attr("fill", this.vis.background.color)
+                .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
                 .attr("stroke-width", 2)
 
-            let brightness_background = d3.hsl(this.vis.background.color).l
+            let brightness_background = d3.hsl(bgcolor).l
             let contrasting_color = brightness_background > 0.9 ? "#bebebe" : "#fafafa"
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background.color : contrasting_color
+            let emptyCircleColor = this.vis.detailLevel === "nominator" ? bgcolor: contrasting_color
 
             //one element per option
             svg.selectAll("option")

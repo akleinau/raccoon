@@ -26,7 +26,7 @@
                             </div>
                             <v-slider v-model="color_spread" label="spread" start="20" end="100" step="5"
                                       @click="visStore.default_colors.colors=neighbor_color_list"
-                                        style="max-width:200px"/>
+                                      style="max-width:200px"/>
                             <v-divider class="mt-2"></v-divider>
                             <div class="d-flex w-100 justify-center mt-2">
                             <span v-for="(color,i) in visStore.default_colors.colors" :key="i">
@@ -35,7 +35,7 @@
                             </div>
                         </div>
 
-                         <div v-if="color_mode === 'scheme'" class="mr-5">
+                        <div v-if="color_mode === 'scheme'" class="mr-5">
                             <div>Color scheme:</div>
                             <v-select v-model="scheme" :items="colors" dense variant="underlined">
                                 <template v-slot:selection="{item}">
@@ -68,6 +68,11 @@
 
                     <!-- Background -->
                     <v-radio-group v-model="visStore.default_colors.background" label="Background" class="ml-5">
+                        <v-radio label="auto" :value="background_auto">
+                            <template v-slot:label>
+                                Auto
+                            </template>
+                        </v-radio>
                         <v-radio v-for="item in this.background" :key="item" :value="item">
                             <template v-slot:label>
                                 <div class="mr-2"
@@ -158,7 +163,8 @@
             <v-expansion-panel-title><h4>Intention </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 I want to...
-                <v-btn-toggle v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()" class="mb-1">
+                <v-btn-toggle v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()"
+                              class="mb-1">
                     <v-btn value="explore">
                         <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
                         Explore
@@ -177,7 +183,7 @@
 
                 <div v-if="visStore.intention === 'explore'">
                     For scientists to explore the data. Showing detailed information about the dataset.
-                     <ul class="ml-5">
+                    <ul class="ml-5">
                         <li>Pictographs with percentages</li>
                         <li>Bar charts showing absolute numbers of participants</li>
                     </ul>
@@ -194,7 +200,7 @@
                     information about the dataset.
                     <ul class="ml-5">
                         <li>Pictographs showing natural frequencies (eg 22/100) best for understanding risks</li>
-                        <li>Pie Charts for best overview over a distribution (on cost of accuracy) </li>
+                        <li>Pie Charts for best overview over a distribution (on cost of accuracy)</li>
                     </ul>
                 </div>
 
@@ -238,8 +244,10 @@ export default {
             ],
             custom_color_list: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
             background: [{color: "Gainsboro", stroke: "None"}, {color: "#D3D9E6", stroke: "None"}, {
-                color: "white", stroke: "darkgray"}],
+                color: "white", stroke: "darkgray"
+            }],
             background_custom: {color: "#efe7de", stroke: "None"},
+            background_auto: {color: "auto", stroke: "None"},
             fontColor: ["black", "midnightBlue", "darkblue"],
             fontColor_custom: "#000000"
         }
