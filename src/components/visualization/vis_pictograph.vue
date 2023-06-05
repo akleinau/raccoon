@@ -105,6 +105,7 @@ export default {
                 .attr("width", width + margin.left + margin.right + annotation_width)
                 .attr("height", height + margin.bottom + margin.top)
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
+                .attr("font-family", this.vis.font_family)
 
             let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
 

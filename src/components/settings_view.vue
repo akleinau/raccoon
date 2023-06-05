@@ -92,23 +92,33 @@
                     </v-radio-group>
 
                     <!-- Text -->
-                    <v-radio-group v-model="visStore.default_colors.text" label="Color">
+                    <v-radio-group v-model="visStore.default_colors.text" label="Font Color">
                         <v-radio v-for="color in this.fontColor" :key="color" :value="color">
                             <template v-slot:label>
                                 <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
-                                {{ color }}
                             </template>
                         </v-radio>
                         <v-radio label="custom" :value="fontColor_custom">
                             <template v-slot:label>
                                 <v-icon class="mr-2" :style="'color:' + fontColor_custom">mdi-circle</v-icon>
-                                custom ({{ fontColor_custom }})
-                                <v-icon class="ml-2">mdi-pencil</v-icon>
+                                <v-icon>mdi-pencil</v-icon>
                             </template>
                             <color-dialog :color="fontColor_custom"
                                           @update="fontColor_custom = $event; visStore.default_colors.text = $event"></color-dialog>
                         </v-radio>
                     </v-radio-group>
+
+                    <v-radio-group v-model="visStore.default_colors.font_family" label="Font Family" class="ml-5 mr-2"  style="min-width:120px">
+                        <v-radio v-for="font in this.font_families" :key="font" :label="font" :value="font" :style="'font-family: ' + font" />
+                        <v-radio label="custom" :value="font_family_custom">
+                            <template v-slot:label>
+                                <v-text-field v-model="font_family_custom" variant="underlined" style="min-width:100px"
+                                              @update:modelValue="visStore.default_colors.font_family = font_family_custom"/>
+                                <v-icon>mdi-pencil</v-icon>
+                            </template>
+                        </v-radio>
+                    </v-radio-group>
+
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -249,7 +259,9 @@ export default {
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
             fontColor: ["black", "midnightBlue", "darkblue"],
-            fontColor_custom: "#000000"
+            fontColor_custom: "#000000",
+            font_families: ["inherit", "Aerial", "Georgia", "monospace", "Comic Sans MS"],
+            font_family_custom: "custom",
         }
     },
     methods: {

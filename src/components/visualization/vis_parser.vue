@@ -65,6 +65,11 @@ export default {
             }
             vis["color"] = this.visStore.get_color(vis["color"])
 
+            //font
+            if (!vis["font_family"]) {
+                vis["font_family"] = this.visStore.default_colors["font_family"]
+            }
+
             //annotations
             if (!this.preview && !vis["annotation"]) {
                 let annotations = this.annotationStore.compute_annotations(this.column, this.vis.type)

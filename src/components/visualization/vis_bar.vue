@@ -65,6 +65,7 @@ export default {
                 .attr("width", width + margin.left + margin.right + annotation_width)
                 .attr("height", height + margin.bottom + margin.top)
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
+                .attr("font-family", this.vis.font_family)
 
             let x = d3.scaleLinear()
                 .domain(this.visHelperStore.get_range(this.vis))
