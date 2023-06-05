@@ -17,9 +17,10 @@ export const useSimilarityStore = defineStore('similarityStore', {
         compute_similarity(summary1, summary2) {
             if (summary1.type === "continuous" && summary2.type === "continuous") {
                 return this.pearson(summary1, summary2)
-            } else {
+            } else if (summary1.type !== undefined && summary2.type !== undefined){
                 return this.cramers_v(summary1, summary2)
             }
+            else return 0
         },
         /**
          * compute similar columns based on column types
