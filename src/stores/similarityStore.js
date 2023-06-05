@@ -115,14 +115,13 @@ export const useSimilarityStore = defineStore('similarityStore', {
          * calculate confusion matrix
          */
         confusion_matrix(x, y) {
-            let csvStore = useCSVStore()
             let options_x_index = Object.fromEntries(new Map(x.options.map((d, i) => [d.name, i])))
             let options_y_index = Object.fromEntries(new Map(y.options.map((d, i) => [d.name, i])))
-            let csv = useCSVStore().csv
             let matrix = Array.from(Array(x.options.length), () => new Array(y.options.length).fill(0))
-            csv.forEach(row => {
-                let x_item = x.type === "continuous" ? csvStore.find_bin(row[x.name], x.options) : row[x.name]
-                let y_item = y.type === "continuous" ? csvStore.find_bin(row[y.name], y.options) : row[y.name]
+            for (let i = 0; i < x.data.length; i++) {
+                let x_item = x.type === "continuous" ? x.data_binned[i] : x.data[i]
+                let y_item = y.type === "continuous" ? y.data_binned[i] : y.data[i]
+
                 if (x_item !== null && y_item !== null) {
                     let x_index = options_x_index[x_item]
                     let y_index = options_y_index[y_item]
@@ -130,7 +129,7 @@ export const useSimilarityStore = defineStore('similarityStore', {
                         matrix[x_index][y_index]++
                     }
                 }
-            })
+            }
             return matrix
         }
 
