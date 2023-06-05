@@ -48,9 +48,9 @@
             <!-- General -->
             <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="item in visStore.generate_general_factGroups()" v-bind:key="item">
-                        <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList" :column="item.column"
-                         v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
+                    <div v-for="item in general_list" v-bind:key="item">
+                        <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList"
+                                            :column="item.column"/>
                     </div>
                 </div>
 
@@ -65,8 +65,8 @@
                         <all_risk_factor_overlay text-button="true"/>
                         <div class="flex-grow-1 d-flex justify-end">
                             <v-select class="flex-grow-0" label="Sort by..." variant="solo-filled"
-                            v-model="scoreStore.score" @update:modelValue="scoreStore.sort_summaries()"
-                            :items="scoreStore.score_choices"></v-select>
+                                      v-model="scoreStore.score" @update:modelValue="scoreStore.sort_summaries()"
+                                      :items="scoreStore.score_choices"></v-select>
                             <excluded_column_overlay/>
                         </div>
                     </div>
@@ -80,11 +80,10 @@
 
                 <!-- Risk Factor Sheets -->
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="column in csvStore.variable_summaries.slice(0,20)" v-bind:key="column">
+                    <div v-for="item in risk_list" v-bind:key="item">
                         <fact_group_preview class="pa-2" style="height:500px"
-                                            v-if="visStore.is_recommendation_column(column)"
-                                            :visList="visStore.generate_main_fact_visList()"
-                                            :column="column" :vertical="true"/>
+                                            :visList="item.visList"
+                                            :column="item.column" :vertical="true"/>
                     </div>
 
                     <all_risk_factor_overlay/>
@@ -97,7 +96,7 @@
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in visStore.generate_context_fact_groups()" v-bind:key="item">
                         <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
-                        v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
+                                            v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
                     </div>
                 </div>
             </v-card>
@@ -140,6 +139,22 @@ export default {
         const scoreStore = useScoreStore()
         const regressionStore = useRegressionStore()
         return {csvStore, visStore, regressionStore, scoreStore}
+    },
+    computed: {
+        risk_list: function () {
+            return this.csvStore.variable_summaries
+                .filter(d => this.visStore.is_recommendation_column(d)).slice(0, 20).map(column => {
+                return {
+                    column: column,
+                    visList: this.visStore.generate_main_fact_visList(column)
+                }
+            })
+
+        },
+        general_list: function () {
+            return this.visStore.generate_general_factGroups()
+                .filter(d => !this.visStore.dashboard_items.map(i => i.name).includes(d.column.name))
+        }
     }
 }
 </script>

@@ -37,6 +37,7 @@ export const useCSVStore = defineStore('csvStore', {
                         label: column,
                         type: "categorical",
                         options: options,
+                        data: this.csv.map(d => d[column]),
                         //how often each option occurs
                         occurrence: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
                         //how often each option occurs together with the target option
@@ -61,15 +62,17 @@ export const useCSVStore = defineStore('csvStore', {
                             label: column,
                             type: "continuous",
                             options: options_bin,
-                            data: this.csv.map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
+                            data: this.csv.map(d => d[column]),
+                            data_binned: this.csv.map(d => this.find_bin(d[column], options_bin)),
                             data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
+                            data_with_target_option_binned: this.filter_for_target_option(this.csv).map(d => this.find_bin(d[column], options_bin)),
                             //how often each option occurs
                             occurrence: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                             //how often each option occurs together with the target option
                             occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                         }
-                        this.csv.forEach(d => summary.occurrence[this.find_bin(d[column], options_bin)]++)
-                        this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[this.find_bin(d[column], options_bin)]++)
+                        summary.data_binned.forEach(d => summary.occurrence[d]++)
+                        summary.data_with_target_option_binned.forEach(d => summary.occurrence_target_option[d]++)
                         summary = this.bin_ends(summary, this.min_bin_size)
                     }
                 }
@@ -106,6 +109,7 @@ export const useCSVStore = defineStore('csvStore', {
             //sort by significance_score
             scoreStore.sort_summaries()
 
+            useRegressionStore().prepare_data()
             useRegressionStore().compute_score()
 
         },
@@ -341,8 +345,10 @@ export const useCSVStore = defineStore('csvStore', {
 
                 summary.occurrence = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
                 summary.occurrence_target_option = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
-                summary.data.forEach(d => summary.occurrence[this.find_bin(d, summary.options)]++)
-                summary.data_with_target_option.forEach(d => summary.occurrence_target_option[this.find_bin(d, summary.options)]++)
+                summary.data_binned = summary.data.map(d => this.find_bin(d, summary.options))
+                summary.data_binned.forEach(d => summary.occurrence[d]++)
+                summary.data_with_target_option_binned = summary.data_with_target_option.map(d => this.find_bin(d, summary.options))
+                summary.data_with_target_option_binned.forEach(d => summary.occurrence_target_option[d]++)
 
                 //for now: just exclude null values
                 delete summary.occurrence[null]

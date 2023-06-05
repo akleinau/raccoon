@@ -13,7 +13,8 @@ export const useRegressionStore = defineStore('regressionStore', {
         learning_rate: 0.01,
         epochs: 15,
         fast_epochs: 3,
-        correlation_boundary: 0.25
+        correlation_boundary: 0.25,
+        prepared_data: {}
     }),
     actions: {
         /**
@@ -191,15 +192,12 @@ export const useRegressionStore = defineStore('regressionStore', {
             })
             return y
         },
-        prepare_data(columns) {
+        prepare_data() {
             let csvStore = useCSVStore()
-            let map = [] //create feature matrix and map to trace back each feature to its original column/ option
-            let Data = []
 
             //gets csv data - categorical, numerical, ordinal data, and target
-            columns.forEach(column => {
+            csvStore.variable_summaries.forEach(summary => {
 
-                let summary = csvStore.variable_summaries.find(d => d.name === column)
                 if (summary && Math.abs(summary.correlation_with_target) >= this.correlation_boundary) {
 
                     let data_items = []
@@ -207,32 +205,47 @@ export const useRegressionStore = defineStore('regressionStore', {
                     if (summary.type === "categorical") {
                         // convert categorical data to one hot encoding
                         summary.options.forEach(option => {
-                            data_items.push(csvStore.csv.map(d => d[column] === option.name ? 1 : 0))
+                            data_items.push(summary.data.map(d => d === option.name ? 1 : 0))
                             map_items.push({
                                 "type": "categorical",
-                                "name": column,
+                                "name": summary.name,
                                 "option": option.name
                             })
                         })
 
                     } else if (summary.type === "continuous") {
                         //normalize continuous data
-                        let mean = d3.mean(csvStore.csv.map(d => d[column]))
-                        let stddev = d3.deviation(csvStore.csv.map(d => d[column]))
-                        data_items.push(csvStore.csv.map(d => d[column]).map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
+                        let mean = d3.mean(summary.data)
+                        let stddev = d3.deviation(summary.data)
+                        data_items.push(summary.data.map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
                         map_items.push({
                             "type": "continuous",
-                            "name": column,
+                            "name": summary.name,
                         })
                     }
 
+
                     if (data_items.length > 0) {
-                        Data.push(...data_items)
-                        map.push(...map_items)
+                        this.prepared_data[summary.name] = [data_items, map_items]
                     }
                 }
 
 
+            })
+
+
+        },
+
+        get_prepared_data_subset(columns) {
+            let map = [] //create feature matrix and map to trace back each feature to its original column/ option
+            let Data = []
+
+            columns.forEach(column => {
+                let prep = this.prepared_data[column]
+                if (prep) {
+                    Data.push(...prep[0])
+                    map.push(...prep[1])
+                }
             })
 
             //transpose data for faster calculations later
@@ -242,6 +255,7 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             return [map, Data]
         },
+
         /**
          * score computation
          */
@@ -253,7 +267,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             let dashboard_columns = useVisStore().dashboard_items
                 .map(d => d.name)
                 .filter(d => d !== csvStore.target_column && !visStore.excluded_columns.includes(d))
-            let [dashboard_map, dashboard_data] = this.prepare_data(dashboard_columns)
+            let [dashboard_map, dashboard_data] = this.get_prepared_data_subset(dashboard_columns)
             console.log("training on dashboard:")
             let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard", this.epochs)
             this.dashboard_accuracy = accuracy
@@ -264,7 +278,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                 if (!useVisStore().dashboard_items.map(d => d.name).includes(column) &&
                     column !== useCSVStore().target_column) {
                     if (!visStore.excluded_columns.includes(column)) {
-                        let [map, Data] = this.prepare_data([column])
+                        let [map, Data] = this.get_prepared_data_subset([column])
                         if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries", this.fast_epochs)
                         else {
                             let summary = csvStore.variable_summaries.find(d => d.name === column)
