@@ -66,7 +66,7 @@ export default {
             vis["color"] = this.visStore.get_color(vis["color"])
 
             //annotations
-            if (!vis["annotation"]) {
+            if (!this.preview && !vis["annotation"]) {
                 let annotations = this.annotationStore.compute_annotations(this.column, this.vis.type)
                 if (annotations.length > 1) { //greater than 1 because of the custom annotation
                     vis["annotation"] = annotations[0]
