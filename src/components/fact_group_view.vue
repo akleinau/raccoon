@@ -32,9 +32,11 @@
                 visStore.current_fact_group.similar_dashboard_columns.length > 0">
                 <v-icon icon="mdi-alert"/>
                 Correlates strongly with dashboard items:
-                {{visStore.current_fact_group.similar_dashboard_columns
+                {{
+                visStore.current_fact_group.similar_dashboard_columns
                     .map(d => d.column.label + " (" + d.similarity.toFixed(1) + ")")
-                    .join(", ")}}
+                    .join(", ")
+                }}
             </div>
 
             <div class="d-flex justify-space-evenly">
@@ -74,8 +76,12 @@
                                     visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
                                     }}
                                 </div>
-                                <div v-if="column.riskIncrease"> Risk Increase: {{ visStore.current_fact_group.column['riskIncrease'] }}</div>
-                                <div v-if="column.correlation_with_target"> Correlation with Target: {{visStore.current_fact_group.column['correlation_with_target']}}</div>
+                                <div v-if="column.riskIncrease"> Risk Increase:
+                                    {{ visStore.current_fact_group.column['riskIncrease'] }}
+                                </div>
+                                <div v-if="column.correlation_with_target"> Correlation with Target:
+                                    {{ visStore.current_fact_group.column['correlation_with_target'] }}
+                                </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel class="ma-1">
@@ -124,17 +130,29 @@
                                 <div class="ml-2">Change risk factor label:</div>
                                 <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
                                 <div class="ml-2 mb-3">Change options:</div>
-                                <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i">
-                                    <div class="d-flex">
-                                        <v-text-field variant="outlined" :label="item.name" class="mr-2" density="compact"
-                                                      v-model="visStore.current_fact_group.column.options[i].label"/>
-                                        <v-btn @click="add_step(i)" class="mt-2" v-if="option_steps.length !== 0"
-                                               variant="text" icon="mdi-arrow-split-horizontal" density="compact"></v-btn>
-                                    </div>
-                                    <div class="d-flex justify-center" v-if="option_steps[i] !== undefined">
-                                        <v-text-field type="number" style="max-width: 100px" class="mr-2" density="compact"
-                                                      v-model="option_steps[i]" @change="update_step(i)"/>
-                                        <v-btn @click="remove_step(i)" variant="text" density="compact" class="mt-1" icon="mdi-delete"></v-btn>
+                                <div class="d-flex w-100">
+                                    <div class="bg-grey-darken-2 mr-2 mb-5 rounded-pill" style="width:10px"></div>
+                                    <div class="flex-grow-1">
+                                        <div v-for="(item,i) in visStore.current_fact_group.column.options"
+                                             v-bind:key="i">
+                                            <div class="d-flex">
+                                                <v-text-field variant="outlined" :label="item.name" class="mr-2"
+                                                              density="compact"
+                                                              v-model="visStore.current_fact_group.column.options[i].label"/>
+                                                <v-btn @click="add_step(i)" class="mt-2"
+                                                       v-if="option_steps.length !== 0"
+                                                       variant="text" icon="mdi-arrow-split-horizontal"
+                                                       density="compact"></v-btn>
+                                            </div>
+                                            <div class="d-flex justify-center" v-if="option_steps[i] !== undefined">
+                                                <v-text-field type="number" style="max-width: 100px" class="mr-2"
+                                                              density="compact"
+                                                              v-model="option_steps[i]" @change="update_step(i)"/>
+                                                <v-btn @click="remove_step(i)" variant="text" density="compact"
+                                                       class="mt-1"
+                                                       icon="mdi-delete"></v-btn>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
@@ -314,7 +332,7 @@ export default {
             this.recalculate_options()
         },
         add_step(i) {
-            let min = (i-1) < 0 ? this.visStore.current_fact_group.column.options[0].range[0] : this.option_steps[i-1]
+            let min = (i - 1) < 0 ? this.visStore.current_fact_group.column.options[0].range[0] : this.option_steps[i - 1]
             let max = (i >= this.option_steps.length) ? this.visStore.current_fact_group.column.options[this.visStore.current_fact_group.column.options.length - 1].range[1] : this.option_steps[i]
             let new_step = +min + (+max - +min) / 2
             this.option_steps.splice(i, 0, new_step)
