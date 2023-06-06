@@ -340,8 +340,20 @@ export const useCSVStore = defineStore('csvStore', {
             if (summary.type === "continuous") {
 
                 //update names
-                summary.options.forEach(d => d.name = d.range === undefined ? d.name : d.range[0] + "-" + d.range[1])
-                summary.options.forEach(d => d.label = d.name)
+                if (summary.type === "continuous") {
+                    summary.options.forEach(d => d.name = d.range === undefined ? d.name : d.range[0] + "-" + d.range[1])
+                    summary.options.forEach((d, i) => {
+                        if (i === 0) {
+                            d.label = "<" + d.range[1]
+                        }
+                        else if (i === summary.options.length - 1) {
+                            d.label = "≥" + d.range[0]
+                        }
+                        else {
+                            d.label = d.name
+                        }
+                    })
+                }
 
                 summary.occurrence = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
                 summary.occurrence_target_option = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))

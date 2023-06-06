@@ -7,7 +7,7 @@
 
                 <div v-if="column.riskIncrease">
                     Risk Options:
-                    {{column.riskIncrease.name}}
+                    {{ column.riskIncrease.name }}
                 </div>
             </v-card-title>
 
@@ -123,20 +123,20 @@
                             <v-expansion-panel-text>
                                 <div class="ml-2">Change risk factor label:</div>
                                 <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
-                                <div class="ml-2 mb-2">Change options:</div>
-                                <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i"
-                                     class="d-flex">
-                                    <v-text-field variant="outlined" :label="'label of: ' + item.name"
-                                                  v-model="visStore.current_fact_group.column.options[i].label"/>
-                                    <v-text-field class="px-5" type="number" label="min"
-                                                  v-if="visStore.current_fact_group.column.options[i].range !== undefined"
-                                                  v-model="visStore.current_fact_group.column.options[i].range[0]"/>
-                                    <v-text-field type="number" label="max"
-                                                  v-if="visStore.current_fact_group.column.options[i].range !== undefined"
-                                                  v-model="visStore.current_fact_group.column.options[i].range[1]"/>
-                                    <v-btn @click="remove_option(item)" class="mt-2">Remove</v-btn>
+                                <div class="ml-2 mb-3">Change options:</div>
+                                <div v-for="(item,i) in visStore.current_fact_group.column.options" v-bind:key="i">
+                                    <div class="d-flex">
+                                        <v-text-field variant="outlined" :label="item.name" class="mr-2" density="compact"
+                                                      v-model="visStore.current_fact_group.column.options[i].label"/>
+                                        <v-btn @click="add_step(i)" class="mt-2" v-if="option_steps.length !== 0"
+                                               variant="text" icon="mdi-arrow-split-horizontal" density="compact"></v-btn>
+                                    </div>
+                                    <div class="d-flex justify-center" v-if="option_steps[i] !== undefined">
+                                        <v-text-field type="number" style="max-width: 100px" class="mr-2" density="compact"
+                                                      v-model="option_steps[i]" @change="update_step(i)"/>
+                                        <v-btn @click="remove_step(i)" variant="text" density="compact" class="mt-1" icon="mdi-delete"></v-btn>
+                                    </div>
                                 </div>
-                                <v-btn @click="add_option" class="mt-2">Add option</v-btn>
                                 <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
@@ -193,8 +193,12 @@ export default {
     data() {
         return {
             display: true,
-            panels: []
+            panels: [],
+            option_steps: []
         }
+    },
+    created() {
+        this.options_to_steps()
     },
     watch: {
         display: function () {
@@ -248,10 +252,6 @@ export default {
                 'range': [0, 1]
             })
         },
-        remove_option(option) {
-            this.visStore.current_fact_group.column.options = this.visStore.current_fact_group.column.options.filter(item => item.name !== option.name)
-            this.recalculate_options()
-        },
         /**
          * recalculates the options for the risk factor
          */
@@ -294,6 +294,37 @@ export default {
             if (!this.visStore.current_fact_group['similar_columns']) {
                 this.visStore.current_fact_group['similar_columns'] = useSimilarityStore().compute_similar_columns(this.visStore.current_fact_group['column'])
             }
+        },
+        options_to_steps() {
+            if (this.visStore.current_fact_group.column.type === 'continuous') {
+                let steps = this.visStore.current_fact_group.column.options.map(d => d.range[1])
+                steps.pop()
+                this.option_steps = steps
+            } else this.option_steps = []
+        },
+        update_step(i) {
+            this.visStore.current_fact_group.column.options[i].range[1] = this.option_steps[i]
+            this.visStore.current_fact_group.column.options[i + 1].range[0] = this.option_steps[i]
+            this.recalculate_options()
+        },
+        remove_step(i) {
+            this.visStore.current_fact_group.column.options[i + 1].range[0] = this.visStore.current_fact_group.column.options[i].range[0]
+            this.visStore.current_fact_group.column.options.splice(i, 1)
+            this.option_steps.splice(i, 1)
+            this.recalculate_options()
+        },
+        add_step(i) {
+            let min = (i-1) < 0 ? this.visStore.current_fact_group.column.options[0].range[0] : this.option_steps[i-1]
+            let max = (i >= this.option_steps.length) ? this.visStore.current_fact_group.column.options[this.visStore.current_fact_group.column.options.length - 1].range[1] : this.option_steps[i]
+            let new_step = +min + (+max - +min) / 2
+            this.option_steps.splice(i, 0, new_step)
+            this.visStore.current_fact_group.column.options[i].range[0] = new_step
+            this.visStore.current_fact_group.column.options.splice(i, 0, {
+                'name': min + '-' + new_step,
+                'label': min + '-' + new_step,
+                'range': [min, new_step]
+            })
+            this.recalculate_options()
         }
     }
 }
