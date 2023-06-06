@@ -78,14 +78,50 @@
                                         </template>
                                     </v-radio>
                                 </v-radio-group>
-                                <v-btn @click="makeDefault('color')"> set as default for {{
-                                    visStore.current_fact.vis.type
-                                    }}
-                                    Graphs
+                                <v-btn @click="makeDefault('color')"> set as default for
+                                    {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
                                 <v-btn @click="visStore.current_fact.vis.color = null" class="ml-3">Reset</v-btn>
+
                             </v-expansion-panel-text>
                         </v-expansion-panel>
+
+                        <!-- Background -->
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Change Background </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <v-radio-group v-model="visStore.current_fact.vis.background" label="Background"
+                                               class="ml-5">
+                                    <v-radio label="auto" :value="background_auto">
+                                        <template v-slot:label>
+                                            Auto
+                                        </template>
+                                    </v-radio>
+                                    <v-radio v-for="item in this.background" :key="item" :value="item">
+                                        <template v-slot:label>
+                                            <div class="mr-2"
+                                                 :style="'background:' + item.color + '; border: 1px solid ' + item.stroke + '; width: 100px; height: 30px'"/>
+                                        </template>
+                                    </v-radio>
+                                    <v-radio label="custom" :value="background_custom">
+                                        <template v-slot:label>
+                                            <div class="mr-2"
+                                                 :style="'background:' + background_custom.color + '; border: 1px solid ' + background_custom.stroke + '; width: 100px; height: 30px'"/>
+                                            <v-icon class="ml-2">mdi-pencil</v-icon>
+                                        </template>
+                                        <color-dialog :color="background_custom.color"
+                                                      @update="background_custom.color = $event; visStore.current_fact.vis.background = $event"></color-dialog>
+                                    </v-radio>
+
+                                </v-radio-group>
+                                <v-btn @click="makeDefault('background')"> set as default for
+                                    {{ visStore.current_fact.vis.type }} Graphs
+                                </v-btn>
+                                <v-btn @click="visStore.current_fact.vis.background = null" class="ml-3">Reset</v-btn>
+
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
@@ -187,7 +223,12 @@ export default {
     data() {
         return {
             display: true,
-            custom_color: '#000000'
+            custom_color: '#000000',
+            background: [{color: "Gainsboro", stroke: "None"}, {color: "#D3D9E6", stroke: "None"}, {
+                color: "white", stroke: "darkgray"
+            }],
+            background_custom: {color: "#efe7de", stroke: "None"},
+            background_auto: {color: "auto", stroke: "None"},
         }
     },
     watch: {
