@@ -28,7 +28,7 @@ export const useVisStore = defineStore('visStore', {
                 range: "percent",
                 axis: [{text: "occurrence per 100 people", color: "black"}],
                 title: [{text: "How frequent is ", color: "black"},
-                {text: " $target_column: $target_option", color: "$color"}, {text: " per group?", color: "black"}],
+                    {text: " $target_column: $target_option", color: "$color"}, {text: " per group?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 1,
@@ -36,7 +36,7 @@ export const useVisStore = defineStore('visStore', {
             context: {
                 graph: "bar",
                 grid: [25, 4],
-                range: [0,5],
+                range: [0, 5],
                 axis: [{text: "Context", color: "black"}],
                 title: [{text: "Context", color: "black"}],
                 detailLevel: "denominator",
@@ -50,7 +50,7 @@ export const useVisStore = defineStore('visStore', {
         },
         default_colors: {
             "background": {color: "auto", stroke: "None"},
-            "colors": [ "#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502" ] ,
+            "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
             "text": "midnightBlue",
             "font_family": "inherit",
         }
@@ -69,6 +69,7 @@ export const useVisStore = defineStore('visStore', {
                 "column": summary,
                 "visList": visList
             })
+            this.update_dashboard_context()
             if (recalculate) {
                 useRegressionStore().compute_score()
             }
@@ -81,6 +82,7 @@ export const useVisStore = defineStore('visStore', {
         remove_dashboard_item(name) {
             this.dashboard_items = this.dashboard_items.filter(item => item.name !== name)
             useRegressionStore().compute_score()
+            this.update_dashboard_context()
         },
         /**
          * generates standard visualizations for risk factors from settings
@@ -174,7 +176,7 @@ export const useVisStore = defineStore('visStore', {
                             title: [{text: "By how many times is the risk increased?", color: "black"}],
                             axis: [{text: "risk increase through factor", color: "black"}]
                         }],
-                        "column": {name: "RelativeIncrease", label:"Risk Factors", options: options}
+                        "column": {name: "RelativeIncrease", label: "Risk Factors", options: options}
                     },
                     //absolute risk increase
                     {
@@ -189,7 +191,7 @@ export const useVisStore = defineStore('visStore', {
                             title: [{text: "How much is the risk increased?", color: "black"}],
                             axis: [{text: "difference in risk with/ without factor", color: "black"}]
                         }],
-                        "column": {name: "AbsoluteIncrease", label:"Risk Factors", options: options}
+                        "column": {name: "AbsoluteIncrease", label: "Risk Factors", options: options}
                     },
                     //absolute risk
                     {
@@ -204,11 +206,53 @@ export const useVisStore = defineStore('visStore', {
                             title: [{text: "What is the risk per risk factor?", color: "black"}],
                             axis: [{text: "absolute risk through factor", color: "black"}]
                         }],
-                        "column": {name: "AbsoluteValues", label:"Risk Factors", options: options}
+                        "column": {name: "AbsoluteValues", label: "Risk Factors", options: options}
                     })
             }
 
             return fact_groups
+        },
+        update_dashboard_context() {
+            let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
+                d.column.riskIncrease !== undefined)
+
+            const options = risk_factor_items.map(item => ({
+                    "name": item.column.riskIncrease.name,
+                    "label": item.column.label + ": " + item.column.riskIncrease.name
+                }))
+
+            const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
+            this.dashboard_items.forEach(item => {
+                if (item.column.name === "RelativeIncrease") {
+                    item.visList.forEach(vis => {
+                        vis.data = risk_factor_items.map(item => ({
+                            name: item.column.riskIncrease.name,
+                            value: item.column.riskIncrease.risk_multiplier
+                        })).filter(d => d.value !== null).sort((a, b) => b.value - a.value)
+                        vis.range = [0, Math.round(max_risk_multiplier)]
+                    })
+                    item.column.options = options
+                }
+                if (item.column.name === "AbsoluteIncrease") {
+                    item.visList.forEach(vis => {
+                        vis.data = risk_factor_items.map(item => ({
+                            name: item.column.riskIncrease.name,
+                            value: item.column.riskIncrease.risk_difference
+                        })).sort((a, b) => b.value - a.value)
+                    })
+                    item.column.options = options
+                }
+                if (item.column.name === "AbsoluteValues") {
+                    item.visList.forEach(vis => {
+                        vis.data = risk_factor_items.map(item => ({
+                            name: item.column.riskIncrease.name,
+                            value: item.column.riskIncrease.absolute_risk
+                        })).sort((a, b) => b.value - a.value)
+                    })
+                    item.column.options = options
+                }
+
+            })
         },
         /**
          * generates fact groups for general information about the dataset and target
@@ -272,7 +316,8 @@ export const useVisStore = defineStore('visStore', {
                 'column': column,
                 'visList': visList,
                 'additional_vis_list': this.generate_additional_fact_visList(column),
-                'similar_dashboard_columns': useSimilarityStore().compute_similar_dashboard_columns(column)}
+                'similar_dashboard_columns': useSimilarityStore().compute_similar_dashboard_columns(column)
+            }
         },
         /**
          * get color
