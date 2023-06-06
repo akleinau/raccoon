@@ -143,6 +143,11 @@
                                                        v-if="item.range !== undefined"
                                                        variant="text" icon="mdi-arrow-split-horizontal"
                                                        density="compact"></v-btn>
+                                                <div class="d-flex align-start" density="compact">
+                                                    <span class="mt-2 ml-5 mr-1"> Risk group </span>
+                                                    <v-checkbox v-model="item.risk_group" density="compact"/>
+                                                </div>
+
                                             </div>
                                             <div class="d-flex justify-center" v-if="option_steps[i] !== undefined">
                                                 <v-text-field type="number" style="max-width: 100px" class="mr-2"
@@ -213,7 +218,7 @@ export default {
         return {
             display: true,
             panels: [],
-            option_steps: []
+            option_steps: [],
         }
     },
     created() {
@@ -225,6 +230,11 @@ export default {
         },
         current_fact_group: function () {
             this.panels = []
+        },
+        risk_groups: function () {
+            if (this.column) {
+                this.csvStore.compute_risk_increase(this.column)
+            }
         }
     },
     computed: {
@@ -232,8 +242,17 @@ export default {
             return this.visStore.current_fact_group
         },
         column() {
-            return this.visStore.current_fact_group.column
+            if (this.visStore.current_fact_group) {
+                return this.visStore.current_fact_group.column
+            }
+            else return null
         },
+        risk_groups() {
+            if (this.column) {
+                return this.visStore.current_fact_group.column.options.map(o => o.risk_group)
+            } else return []
+
+        }
     },
     methods: {
         /**
@@ -344,7 +363,7 @@ export default {
                 'range': [min, new_step]
             })
             this.recalculate_options()
-        }
+        },
     }
 }
 </script>

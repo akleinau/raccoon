@@ -90,7 +90,8 @@ export const useCSVStore = defineStore('csvStore', {
                     }
                     summary.total.percent_target_option = summary.total.occurrence_target_option / summary.total.occurrence
 
-                    summary.riskIncrease = this.compute_risk_increase(summary)
+                    this.compute_initial_risk_groups(summary)
+                    this.compute_risk_increase(summary)
 
                     this.variable_summaries.push(summary)
                 }
@@ -250,6 +251,17 @@ export const useCSVStore = defineStore('csvStore', {
             }
             return summary
         },
+        compute_initial_risk_groups(summary) {
+            //calculate risk boundary differencing between risk factor and not risk factor
+            const percent_range = d3.extent(Object.values(summary.percent_target_option))
+            const split_percent = percent_range[0] + (percent_range[1] - percent_range[0]) / 2
+            const groups_true = Object.entries(summary.percent_target_option).filter(d => d[1] >= split_percent).map(d => d[0])
+
+            summary.options.forEach(d => {
+                d.risk_group = groups_true.includes(d.name)
+            })
+
+        },
         /**
          * binary percent risk increase when in specific groups
          *
@@ -257,31 +269,28 @@ export const useCSVStore = defineStore('csvStore', {
          * @returns {{risk_difference: string, risk_factor_groups: string}}
          */
         compute_risk_increase(summary) {
-            //calculate risk boundary differencing between risk factor and not risk factor
-            const percent_range = d3.extent(Object.values(summary.percent_target_option))
-            const split_percent = percent_range[0] + (percent_range[1] - percent_range[0]) / 2
 
             //compute groups below risk boundary
-            const groups_below = Object.entries(summary.percent_target_option).filter(d => d[1] < split_percent)
-            const groups_below_occurrence_sum = groups_below.reduce((a, b) => a + summary.occurrence[b[0]], 0)
-            const groups_below_target_option_occurrence_sum = groups_below.reduce((a, b) => a + summary.occurrence_target_option[b[0]], 0)
+            const groups_false = summary.options.filter(d => d.risk_group === false).map(d => d.name)
+            const groups_below_occurrence_sum = groups_false.reduce((a, b) => a + summary.occurrence[b], 0)
+            const groups_below_target_option_occurrence_sum = groups_false.reduce((a, b) => a + summary.occurrence_target_option[b], 0)
             const below_percentage = groups_below_target_option_occurrence_sum / groups_below_occurrence_sum
 
             //compute groups above risk boundary
-            const groups_above = Object.entries(summary.percent_target_option).filter(d => d[1] >= split_percent)
-            const groups_above_occurrence_sum = groups_above.reduce((a, b) => a + summary.occurrence[b[0]], 0)
-            const groups_above_target_option_occurrence_sum = groups_above.reduce((a, b) => a + summary.occurrence_target_option[b[0]], 0)
+            const groups_true = summary.options.filter(d => d.risk_group === true).map(d => d.name)
+            const groups_above_occurrence_sum = groups_true.reduce((a, b) => a + summary.occurrence[b], 0)
+            const groups_above_target_option_occurrence_sum = groups_true.reduce((a, b) => a + summary.occurrence_target_option[b], 0)
             const above_percentage = groups_above_target_option_occurrence_sum / groups_above_occurrence_sum
 
             //create name of risk factor
-            const name_above = this.compute_group_name(groups_above, summary.options, summary.type)
+            const name_above = this.compute_group_name(summary.options, summary.type)
 
             //calculate metrics to compare risk factors
             const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(1)
             const risk_difference = (above_percentage - below_percentage).toFixed(1)
 
-            return {
-                risk_factor_groups: groups_above.map(d => d[0]),
+            summary.riskIncrease = {
+                risk_factor_groups: groups_true,
                 name: name_above,
                 risk_difference: risk_difference,
                 risk_multiplier: risk_multiplier,
@@ -291,8 +300,8 @@ export const useCSVStore = defineStore('csvStore', {
         /**
          * computes the name of a group
          */
-        compute_group_name(groups, options, type) {
-            let group_options = groups.map(d => options.find(o => o.name === d[0]))
+        compute_group_name(options, type) {
+            let group_options = options.filter(d => d.risk_group === true)
             group_options = JSON.parse(JSON.stringify(group_options))
             group_options = group_options.sort(useHelperStore().sort)
 
@@ -303,7 +312,7 @@ export const useCSVStore = defineStore('csvStore', {
                 //combine groups
                 let i = 0
                 while (i < group_options.length - 1) {
-                    if (group_options[i].range !== undefined && group_options[i+1].range !== undefined &&
+                    if (group_options[i].range !== undefined && group_options[i + 1].range !== undefined &&
                         group_options[i].range[1] === group_options[i + 1].range[0]) {
                         group_options[i].range[1] = group_options[i + 1].range[1]
                         group_options.splice(i + 1, 1)
@@ -316,8 +325,8 @@ export const useCSVStore = defineStore('csvStore', {
                 group_options = group_options.filter(d => d.range !== undefined).map(d => {
                     d.name = d.range[0] + "-" + d.range[1]
                     d.label = (+d.range[0] === min) ? "<" + d.range[1] :
-                              (+d.range[1] === max) ? "≥" + d.range[0] :
-                                d.range[0] + "-" + d.range[1]
+                        (+d.range[1] === max) ? "≥" + d.range[0] :
+                            d.range[0] + "-" + d.range[1]
                     return d
                 })
 
@@ -346,11 +355,9 @@ export const useCSVStore = defineStore('csvStore', {
                     summary.options.filter(d => d.range !== undefined).forEach((d, i) => {
                         if (i === 0) {
                             d.label = "<" + d.range[1]
-                        }
-                        else if (i === summary.options.length - 1) {
+                        } else if (i === summary.options.length - 1) {
                             d.label = "≥" + d.range[0]
-                        }
-                        else {
+                        } else {
                             d.label = d.name
                         }
                     })
@@ -372,7 +379,7 @@ export const useCSVStore = defineStore('csvStore', {
 
                 summary = this.summary_exclude_missing(summary)
                 summary.significance = useScoreStore().compute_significance_score(summary)
-                summary.riskIncrease = this.compute_risk_increase(summary)
+                this.compute_risk_increase(summary)
 
                 console.log(summary)
 
