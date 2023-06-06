@@ -140,7 +140,7 @@
                                                               density="compact"
                                                               v-model="visStore.current_fact_group.column.options[i].label"/>
                                                 <v-btn @click="add_step(i)" class="mt-2"
-                                                       v-if="option_steps.length !== 0"
+                                                       v-if="item.range !== undefined"
                                                        variant="text" icon="mdi-arrow-split-horizontal"
                                                        density="compact"></v-btn>
                                             </div>
@@ -198,6 +198,7 @@ import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import fact_group_preview from "@/components/fact_group_preview.vue";
 import {useSimilarityStore} from "@/stores/similarityStore";
+import * as d3 from "d3";
 
 export default {
     name: "fact_group_view",
@@ -315,7 +316,7 @@ export default {
         },
         options_to_steps() {
             if (this.visStore.current_fact_group.column.type === 'continuous') {
-                let steps = this.visStore.current_fact_group.column.options.map(d => d.range[1])
+                let steps = this.visStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])
                 steps.pop()
                 this.option_steps = steps
             } else this.option_steps = []
@@ -333,7 +334,7 @@ export default {
         },
         add_step(i) {
             let min = (i - 1) < 0 ? this.visStore.current_fact_group.column.options[0].range[0] : this.option_steps[i - 1]
-            let max = (i >= this.option_steps.length) ? this.visStore.current_fact_group.column.options[this.visStore.current_fact_group.column.options.length - 1].range[1] : this.option_steps[i]
+            let max = (i >= this.option_steps.length) ? d3.max(this.visStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])) : this.option_steps[i]
             let new_step = +min + (+max - +min) / 2
             this.option_steps.splice(i, 0, new_step)
             this.visStore.current_fact_group.column.options[i].range[0] = new_step

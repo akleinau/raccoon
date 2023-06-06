@@ -297,13 +297,14 @@ export const useCSVStore = defineStore('csvStore', {
             group_options = group_options.sort(useHelperStore().sort)
 
             if (type === "continuous") {
-                let min = d3.min(options.map(d => +d.range[0]))
-                let max = d3.max(options.map(d => +d.range[1]))
+                let min = d3.min(options.filter(d => d.range !== undefined).map(d => +d.range[0]))
+                let max = d3.max(options.filter(d => d.range !== undefined).map(d => +d.range[1]))
 
                 //combine groups
                 let i = 0
                 while (i < group_options.length - 1) {
-                    if (group_options[i].range[1] === group_options[i + 1].range[0]) {
+                    if (group_options[i].range !== undefined && group_options[i+1].range !== undefined &&
+                        group_options[i].range[1] === group_options[i + 1].range[0]) {
                         group_options[i].range[1] = group_options[i + 1].range[1]
                         group_options.splice(i + 1, 1)
                     } else {
@@ -312,7 +313,7 @@ export const useCSVStore = defineStore('csvStore', {
                 }
 
                 //update names, labels
-                group_options = group_options.map(d => {
+                group_options = group_options.filter(d => d.range !== undefined).map(d => {
                     d.name = d.range[0] + "-" + d.range[1]
                     d.label = (+d.range[0] === min) ? "<" + d.range[1] :
                               (+d.range[1] === max) ? "≥" + d.range[0] :
@@ -341,8 +342,8 @@ export const useCSVStore = defineStore('csvStore', {
 
                 //update names
                 if (summary.type === "continuous") {
-                    summary.options.forEach(d => d.name = d.range === undefined ? d.name : d.range[0] + "-" + d.range[1])
-                    summary.options.forEach((d, i) => {
+                    summary.options.filter(d => d.range !== undefined).forEach(d => d.name = d.range[0] + "-" + d.range[1])
+                    summary.options.filter(d => d.range !== undefined).forEach((d, i) => {
                         if (i === 0) {
                             d.label = "<" + d.range[1]
                         }
