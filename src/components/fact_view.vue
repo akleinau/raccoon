@@ -1,17 +1,17 @@
 <template>
-    <v-dialog v-model="display" height="85%" width="70%">
+    <v-dialog v-model="display" height="85%" width="75%">
         <v-card class="mx-auto w-100 h-100">
 
             <v-card-title>
                 Fact View: {{ visStore.current_fact.column['label'] }}
             </v-card-title>
 
-            <div class="d-flex justify-space-evenly w-100">
-                <div>
+            <div class="d-flex justify-end w-100">
+                <div class="flex-shrink-1">
                     <!-- visualization -->
-                    <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column" :width="500"/>
+                    <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column" :width="400"/>
                 </div>
-                <div class="w-50 pr-5">
+                <div class="pr-5 flex-grow-1">
                     <!-- tabs -->
                     <v-expansion-panels class="ma-3">
                         <v-expansion-panel>
@@ -78,10 +78,11 @@
                                         </template>
                                     </v-radio>
                                 </v-radio-group>
-                                <v-btn @click="makeDefault('color')"> set as default for
+                                <v-btn @click="visStore.current_fact.vis.color = null" class="mx-3 bg-grey-lighten-2">Reset</v-btn>
+                                <v-btn @click="makeDefault('color')" > set as default for
                                     {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
-                                <v-btn @click="visStore.current_fact.vis.color = null" class="ml-3">Reset</v-btn>
+
 
                             </v-expansion-panel-text>
                         </v-expansion-panel>
