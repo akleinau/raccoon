@@ -17,8 +17,10 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
+                                <v-switch v-model="has_attribute['graph']" label="Custom"/>
                                 <div class="d-flex">
-                                    <v-radio-group v-model="visStore.current_fact.vis.graph">
+                                    <v-radio-group v-model="visStore.current_fact.vis.graph"
+                                                   :disabled="!has_attribute['graph']">
                                         <v-radio label="default" :value="null"></v-radio>
                                         <v-radio label="bar" value="bar"></v-radio>
                                         <v-radio label="pictograph" value="pictograph" @click="add_grid"></v-radio>
@@ -26,7 +28,8 @@
                                         <v-radio label="multiple pies" value="multiPie"></v-radio>
                                         <v-radio label="text" value="text"></v-radio>
                                     </v-radio-group>
-                                    <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50">
+                                    <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50"
+                                         :disabled="!has_attribute['graph']">
                                         <v-text-field
                                                 type="number" label="#rows"
                                                 v-model="visStore.current_fact.vis.grid[0]"/>
@@ -35,27 +38,31 @@
                                                 v-model="visStore.current_fact.vis.grid[1]"/>
                                     </div>
                                     <div class="w-50">
-                                        <b class="ml-2"> Detail Level</b>
-                                        <v-radio-group v-model="visStore.current_fact.vis.detailLevel">
+                                        <b class="ml-2" v-if="has_attribute['graph']"> Detail Level</b>
+                                        <div class="ml-2 text-grey" v-else>Detail Level</div>
+                                        <v-radio-group v-model="visStore.current_fact.vis.detailLevel"
+                                                       :disabled="!has_attribute['graph']">
                                             <v-radio label="nominator" value="nominator"></v-radio>
                                             <v-radio label="denominator" value="denominator"></v-radio>
                                             <v-radio label="percent" value="percent"></v-radio>
                                         </v-radio-group>
                                     </div>
                                 </div>
-                                <v-btn @click="set_default_graph_settings"> set as default for {{
-                                    visStore.current_fact.vis.type
-                                    }}
+                                <v-btn @click="set_default_graph_settings" variant="tonal"
+                                       :disabled="!has_attribute['graph']">
+                                    set as default for {{ visStore.current_fact.vis.type }}
                                     Graphs
                                 </v-btn>
-                                <v-btn @click="visStore.current_fact.vis.graph = null" class="ml-3">Reset</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
+
+                        <!-- Color -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <v-radio-group v-model="visStore.current_fact.vis.color">
-                                    <v-radio label="default" :value="null"></v-radio>
+                                <v-switch v-model="has_attribute['color']" label="Custom"/>
+                                <v-radio-group v-model="visStore.current_fact.vis.color"
+                                               :disabled="!has_attribute['color']">
                                     <v-radio v-for="(el,i) in visStore.default_colors.colors" v-bind:key="el"
                                              :value="i">
                                         <template v-slot:label>
@@ -78,8 +85,8 @@
                                         </template>
                                     </v-radio>
                                 </v-radio-group>
-                                <v-btn @click="visStore.current_fact.vis.color = null" class="mx-3 bg-grey-lighten-2">Reset</v-btn>
-                                <v-btn @click="makeDefault('color')" > set as default for
+                                <v-btn @click="makeDefault('color')" variant="tonal"
+                                       :disabled="!has_attribute['color']"> set as default for
                                     {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
 
@@ -91,8 +98,9 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Background </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
+                                <v-switch v-model="has_attribute['background']" label="Custom"/>
                                 <v-radio-group v-model="visStore.current_fact.vis.background" label="Background"
-                                               class="ml-5">
+                                               class="ml-5" :disabled="!has_attribute['background']">
                                     <v-radio label="auto" :value="background_auto">
                                         <template v-slot:label>
                                             Auto
@@ -115,10 +123,10 @@
                                     </v-radio>
 
                                 </v-radio-group>
-                                <v-btn @click="makeDefault('background')"> set as default for
+                                <v-btn @click="makeDefault('background')" :disabled="!has_attribute['background']"
+                                       variant="tonal"> set as default for
                                     {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
-                                <v-btn @click="visStore.current_fact.vis.background = null" class="ml-3">Reset</v-btn>
 
                             </v-expansion-panel-text>
                         </v-expansion-panel>
@@ -126,27 +134,27 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
+                                <v-switch v-model="has_attribute['title']" label="Custom"/>
                                 <text_input :text="visStore.current_fact.vis.title" :default="get_default('title')"
-                                            @change="visStore.current_fact.vis.title = $event" :color="get_color()"/>
-                                <v-btn @click="makeDefault('title')"> set as default for {{
-                                    visStore.current_fact.vis.type
-                                    }}
-                                    Graphs
+                                            @change="visStore.current_fact.vis.title = $event" :color="get_color()"
+                                            :disabled="!has_attribute['title']"/>
+                                <v-btn @click="makeDefault('title')" :disabled="!has_attribute['title']"
+                                       variant="tonal">
+                                    set as default for {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
-                                <v-btn @click="visStore.current_fact.vis.title = null" class="ml-3">Reset</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Axis </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
+                                <v-switch v-model="has_attribute['axis']" label="Custom"/>
                                 <text_input :text="visStore.current_fact.vis.axis" :default="get_default('axis')"
-                                            @change="visStore.current_fact.vis.axis = $event" :color="get_color()"/>
-                                <v-btn @click="makeDefault('axis')"> set as default for {{
-                                    visStore.current_fact.vis.type
-                                    }}
-                                    Graphs
+                                            @change="visStore.current_fact.vis.axis = $event" :color="get_color()"
+                                            :disabled="!has_attribute['axis']"/>
+                                <v-btn @click="makeDefault('axis')" :disabled="!has_attribute['axis']"
+                                       variant="tonal">
+                                    set as default for {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
-                                <v-btn @click="visStore.current_fact.vis.axis = null" class="ml-3">Reset</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel>
@@ -225,6 +233,7 @@ export default {
         return {
             display: true,
             custom_color: '#000000',
+            has_attribute: {},
             background: [{color: "Gainsboro", stroke: "None"}, {color: "#D3D9E6", stroke: "None"}, {
                 color: "white", stroke: "darkgray"
             }],
@@ -235,7 +244,30 @@ export default {
     watch: {
         display: function () {
             this.close()
-        }
+        },
+        has_attribute: {
+            handler: function (val) {
+                let type = this.visStore.current_fact.vis.type
+
+                Object.keys(val).forEach(attr => {
+                    if (val[attr]) {
+                        if (this.visStore.current_fact.vis[attr] === undefined) {
+                            // when the attribute is not defined, set it to the default value
+                            this.visStore.current_fact.vis[attr] = this.visStore.default_settings[type][attr]
+                        }
+                    } else {
+                        this.visStore.current_fact.vis[attr] = undefined
+                    }
+                })
+            },
+            deep: true
+        },
+    },
+    created() {
+        let attributes = ["graph", "color", "background", "title", "axis"]
+        attributes.forEach(key => {
+            this.has_attribute[key] = this.visStore.current_fact.vis[key] !== undefined
+        })
     },
     methods: {
         /**
@@ -251,6 +283,8 @@ export default {
             if (this.visStore.current_fact.vis[attribute] !== undefined) {
                 this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute] = this.visStore.current_fact.vis[attribute]
             }
+            this.visStore.current_fact.vis[attribute] = undefined
+            this.has_attribute[attribute] = false
         },
         get_default(attribute) {
             return this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute]
