@@ -14,6 +14,8 @@
                 <div class="pr-5 flex-grow-1">
                     <!-- tabs -->
                     <v-expansion-panels class="ma-3">
+
+                        <!-- Graph -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
@@ -89,8 +91,6 @@
                                        :disabled="!has_attribute['color']"> set as default for
                                     {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
-
-
                             </v-expansion-panel-text>
                         </v-expansion-panel>
 
@@ -99,7 +99,7 @@
                             <v-expansion-panel-title><h4> Change Background </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['background']" label="Custom"/>
-                                <v-radio-group v-model="visStore.current_fact.vis.background" label="Background"
+                                <v-radio-group v-model="visStore.current_fact.vis.background"
                                                class="ml-5" :disabled="!has_attribute['background']">
                                     <v-radio label="auto" :value="background_auto">
                                         <template v-slot:label>
@@ -131,6 +131,7 @@
                             </v-expansion-panel-text>
                         </v-expansion-panel>
 
+                        <!-- Title -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
@@ -144,6 +145,8 @@
                                 </v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
+
+                        <!-- Axis -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Axis </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
@@ -157,6 +160,8 @@
                                 </v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
+
+                        <!-- Annotation -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Annotation </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
