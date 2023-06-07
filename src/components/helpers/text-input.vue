@@ -1,7 +1,7 @@
 <template>
     <div v-for="el in new_text" v-bind:key="el" class="d-flex">
-        <v-text-field label="text" v-model="el.text" class="mx-2"/>
-        <v-text-field label="color" v-model="el.color">
+        <v-text-field label="text" v-model="el.text" class="mx-2" :disabled="disabled"/>
+        <v-text-field label="color" v-model="el.color" :disabled="disabled">
             <template v-slot:prepend>
                 <v-icon :style="'color:' + get_color(el.color)">
                     mdi-circle
@@ -19,7 +19,7 @@ import ColorDialog from "@/components/helpers/color-dialog.vue";
 export default {
     name: "text-input",
     components: {ColorDialog},
-    props: ['text', 'default', 'color'],
+    props: ['text', 'default', 'color', 'disabled'],
     emits: ['change'],
     data() {
         return {
@@ -37,10 +37,8 @@ export default {
         },
         new_text: {
             handler: function () {
-                if (this.new_text !== this.default) {
+                if (this.text !== undefined) {
                     this.$emit("change", this.new_text)
-                } else {
-                    this.$emit("change", "")
                 }
             },
             deep: true
