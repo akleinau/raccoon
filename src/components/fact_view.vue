@@ -64,6 +64,9 @@
                                                     </template>
                                                 </v-text-field>
                                             </div>
+                                            <v-slider v-model="visStore.current_fact.vis.ratio" min="0" max="2"
+                                                      step="0.01"
+                                                      label="ratio" thumb-label></v-slider>
                                             <div class=" mt-2">presets:</div>
                                             <v-btn-toggle v-model="visStore.current_fact.vis.icon" inline class="mb-5">
                                                 <v-btn v-for="icon in icons" v-bind:key="icon"
@@ -301,6 +304,7 @@ export default {
                             if (attr === "graph" && this.visStore.default_settings[type][attr] === "pictograph") {
                                 this.visStore.current_fact.vis["grid"] = JSON.parse(JSON.stringify(this.visStore.default_settings[type]["grid"]))
                                 this.visStore.current_fact.vis["icon"] = this.visStore.default_settings[type]["icon"]
+                                this.visStore.current_fact.vis["ratio"] = this.visStore.default_settings[type]["ratio"]
                             }
                         }
                     } else {
@@ -341,7 +345,7 @@ export default {
             if (this.visStore.current_fact.vis.graph === 'pictograph') {
                 this.makeDefault('grid')
                 this.makeDefault('icon')
-                console.log(this.visStore.default_settings[this.visStore.current_fact.vis.type]['icon'])
+                this.makeDefault('ratio')
             }
             this.makeDefault('graph')
             this.makeDefault('detailLevel')
