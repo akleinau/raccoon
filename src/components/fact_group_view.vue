@@ -131,30 +131,31 @@
                                 <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
                                 <div class="ml-2 mb-3">Change options:</div>
                                 <div class="d-flex w-100">
-                                    <div class="bg-grey-darken-2 mr-2 mb-5 rounded-pill" style="width:10px"></div>
+                                    <div class="bg-grey-darken-2 mb-5 rounded-pill" style="width:10px"></div>
                                     <div class="flex-grow-1">
                                         <div v-for="(item,i) in visStore.current_fact_group.column.options"
                                              v-bind:key="i">
                                             <div class="d-flex">
-                                                <v-text-field variant="outlined" :label="item.name" class="mr-2"
-                                                              density="compact"
-                                                              v-model="visStore.current_fact_group.column.options[i].label"/>
-                                                <v-btn @click="add_step(i)" class="mt-2"
+                                                <v-btn @click="add_step(i)" class="mt-2 mr-2"
                                                        v-if="item.range !== undefined"
                                                        variant="text" icon="mdi-arrow-split-horizontal"
                                                        density="compact"></v-btn>
+                                                <v-text-field variant="outlined"  class="mr-2" density="compact"
+                                                              :label="item.type === 'categorical' ? item.name : ''"
+                                                              v-model="visStore.current_fact_group.column.options[i].label"/>
                                                 <div class="d-flex align-start" density="compact">
                                                     <span class="mt-2 ml-5 mr-1"> Risk group </span>
                                                     <v-checkbox v-model="item.risk_group" density="compact"/>
                                                 </div>
 
                                             </div>
-                                            <div class="d-flex justify-center" v-if="option_steps[i] !== undefined">
+                                            <div class="d-flex justify-start" v-if="option_steps[i] !== undefined">
+                                                <div class="bg-grey-darken-2 rounded-e-pill mt-4 mr-2" style="width:10px; height:20px"></div>
                                                 <v-text-field type="number" style="max-width: 100px" class="mr-2"
-                                                              density="compact"
+                                                              density="compact" variant="underlined"
                                                               v-model="option_steps[i]" @change="update_step(i)"/>
                                                 <v-btn @click="remove_step(i)" variant="text" density="compact"
-                                                       class="mt-1"
+                                                       class="mt-3"
                                                        icon="mdi-delete"></v-btn>
                                             </div>
                                         </div>
