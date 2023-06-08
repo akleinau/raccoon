@@ -41,36 +41,52 @@
                                         </v-radio-group>
                                     </div>
                                 </div>
-                                <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50"
-                                         :disabled="!has_attribute['graph']">
+                                <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-100"
+                                     :disabled="!has_attribute['graph']">
 
-                                        <!-- icon -->
-                                        <b> Pictograph </b>
-                                        <v-select v-model="visStore.current_fact.vis.icon"
-                                                  :items="icons">
-                                            <template v-slot:selection="{ item }">
-                                                <v-icon :icon="item.value" class="mr-2"/>
-                                                {{ item.value }}
-                                            </template>
-                                            <template v-slot:item="{ item }">
-                                                <div>
-                                                    <v-btn variant="text" class="w-100 justify-start"
-                                                        @click="visStore.current_fact.vis.icon = item.value">
-                                                        <v-icon :icon="item.value" class="mr-2"/>
-                                                        {{ item.value }}
-                                                    </v-btn>
-                                                </div>
-                                            </template>
-                                        </v-select>
+                                    <!-- icon -->
+                                    <h4> Pictograph </h4> <br>
+                                    <div class="d-flex justify-space-around w-100">
+                                        <div>
+                                            <div><b>Icons</b></div>
+                                            <div class="d-flex">
+                                                <v-text-field v-model="visStore.current_fact.vis.icon"
+                                                              placeholder="custom"
+                                                              style="min-width:250px"
+                                                              :prepend-icon="visStore.current_fact.vis.icon"
+                                                              append-inner-icon="mdi-pencil">
+                                                    <template v-slot:details>
+                                                        <div>
+                                                            see <a
+                                                                href="https://materialdesignicons.com/cdn/1.6.50-dev/"
+                                                                target="_blank">here</a> for more icons
+                                                        </div>
+                                                    </template>
+                                                </v-text-field>
+                                            </div>
+                                            <div class=" mt-2">presets:</div>
+                                            <v-btn-toggle v-model="visStore.current_fact.vis.icon" inline class="mb-5">
+                                                <v-btn v-for="icon in icons" v-bind:key="icon"
+                                                       :value="icon">
+                                                    <v-icon :icon="icon"/>
+                                                </v-btn>
+                                            </v-btn-toggle>
 
+                                        </div>
+
+                                        <v-divider vertical></v-divider>
                                         <!-- grid -->
-                                        <v-text-field
-                                                type="number" label="#rows"
-                                                v-model="visStore.current_fact.vis.grid[0]"/>
-                                        <v-text-field
-                                                type="number" label="#columns"
-                                                v-model="visStore.current_fact.vis.grid[1]"/>
+                                        <div>
+                                            <div><b>Grid</b></div>
+                                            <v-text-field
+                                                    type="number" label="#rows" style="min-width:200px"
+                                                    v-model="visStore.current_fact.vis.grid[0]"/>
+                                            <v-text-field
+                                                    type="number" label="#columns" style="min-width:200px"
+                                                    v-model="visStore.current_fact.vis.grid[1]"/>
+                                        </div>
                                     </div>
+                                </div>
 
                                 <v-btn @click="set_default_graph_settings" variant="tonal"
                                        :disabled="!has_attribute['graph']">
@@ -266,7 +282,7 @@ export default {
             }],
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
-            icons: ['mdi-circle', 'mdi-human', 'mdi-human-male', 'mdi-human-child', 'mdi-account']
+            icons: ['mdi-circle', 'mdi-human-male', 'mdi-account', 'mdi-bed', 'mdi-home']
         }
     },
     watch: {
