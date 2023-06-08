@@ -25,20 +25,11 @@
                                                    :disabled="!has_attribute['graph']">
                                         <v-radio label="default" :value="null"></v-radio>
                                         <v-radio label="bar" value="bar"></v-radio>
-                                        <v-radio label="pictograph" value="pictograph" @click="add_grid"></v-radio>
+                                        <v-radio label="pictograph" value="pictograph"></v-radio>
                                         <v-radio label="pie" value="pie"></v-radio>
                                         <v-radio label="multiple pies" value="multiPie"></v-radio>
                                         <v-radio label="text" value="text"></v-radio>
                                     </v-radio-group>
-                                    <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50"
-                                         :disabled="!has_attribute['graph']">
-                                        <v-text-field
-                                                type="number" label="#rows"
-                                                v-model="visStore.current_fact.vis.grid[0]"/>
-                                        <v-text-field
-                                                type="number" label="#columns"
-                                                v-model="visStore.current_fact.vis.grid[1]"/>
-                                    </div>
                                     <div class="w-50">
                                         <b class="ml-2" v-if="has_attribute['graph']"> Detail Level</b>
                                         <div class="ml-2 text-grey" v-else>Detail Level</div>
@@ -50,6 +41,37 @@
                                         </v-radio-group>
                                     </div>
                                 </div>
+                                <div v-if="visStore.current_fact.vis.graph === 'pictograph'" class="w-50"
+                                         :disabled="!has_attribute['graph']">
+
+                                        <!-- icon -->
+                                        <b> Pictograph </b>
+                                        <v-select v-model="visStore.current_fact.vis.icon"
+                                                  :items="icons">
+                                            <template v-slot:selection="{ item }">
+                                                <v-icon :icon="item.value" class="mr-2"/>
+                                                {{ item.value }}
+                                            </template>
+                                            <template v-slot:item="{ item }">
+                                                <div>
+                                                    <v-btn variant="text" class="w-100 justify-start"
+                                                        @click="visStore.current_fact.vis.icon = item.value">
+                                                        <v-icon :icon="item.value" class="mr-2"/>
+                                                        {{ item.value }}
+                                                    </v-btn>
+                                                </div>
+                                            </template>
+                                        </v-select>
+
+                                        <!-- grid -->
+                                        <v-text-field
+                                                type="number" label="#rows"
+                                                v-model="visStore.current_fact.vis.grid[0]"/>
+                                        <v-text-field
+                                                type="number" label="#columns"
+                                                v-model="visStore.current_fact.vis.grid[1]"/>
+                                    </div>
+
                                 <v-btn @click="set_default_graph_settings" variant="tonal"
                                        :disabled="!has_attribute['graph']">
                                     set as default for {{ visStore.current_fact.vis.type }}
@@ -244,6 +266,7 @@ export default {
             }],
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
+            icons: ['mdi-circle', 'mdi-human', 'mdi-human-male', 'mdi-human-child', 'mdi-account']
         }
     },
     watch: {
@@ -259,6 +282,10 @@ export default {
                         if (this.visStore.current_fact.vis[attr] === undefined) {
                             // when the attribute is not defined, set it to the default value
                             this.visStore.current_fact.vis[attr] = this.visStore.default_settings[type][attr]
+                            if (attr === "graph" && this.visStore.default_settings[type][attr] === "pictograph") {
+                                this.visStore.current_fact.vis["grid"] = JSON.parse(JSON.stringify(this.visStore.default_settings[type]["grid"]))
+                                this.visStore.current_fact.vis["icon"] = this.visStore.default_settings[type]["icon"]
+                            }
                         }
                     } else {
                         this.visStore.current_fact.vis[attr] = undefined
@@ -295,11 +322,13 @@ export default {
             return this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute]
         },
         set_default_graph_settings() {
-            this.makeDefault('graph')
-            this.makeDefault('detailLevel')
             if (this.visStore.current_fact.vis.graph === 'pictograph') {
                 this.makeDefault('grid')
+                this.makeDefault('icon')
+                console.log(this.visStore.default_settings[this.visStore.current_fact.vis.type]['icon'])
             }
+            this.makeDefault('graph')
+            this.makeDefault('detailLevel')
         },
         /**
          * removes the current visualization from the current fact group
@@ -317,11 +346,6 @@ export default {
             let vis = this.visStore.current_fact.vis
             this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
             this.visStore.current_fact_group.visList.push(vis)
-        },
-        add_grid() {
-            if (!this.visStore.current_fact.vis.grid) {
-                this.visStore.current_fact.vis.grid = this.visStore.default_settings[this.visStore.current_fact.vis.type].grid
-            }
         },
         get_color() {
             if (this.visStore.current_fact.vis.color) {

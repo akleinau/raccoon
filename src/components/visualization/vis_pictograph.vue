@@ -1,4 +1,5 @@
 <template>
+    <i v-show="false" class="mdi" :class="this.vis.icon" />
     <div ref="container"/>
 </template>
 
@@ -76,7 +77,7 @@ export default {
                 startBarX = 100
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
-            const padding = 0.3
+            const padding = 0.1
 
             const dot_range_X = d3.range(0, this.vis.grid[0], 1)
             const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
@@ -122,7 +123,7 @@ export default {
             let brightness_background = d3.hsl(bgcolor).l
             let contrasting_color = brightness_background > 0.9 ? "#bebebe" : "#fafafa"
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator" ? bgcolor: contrasting_color
+            let emptyCircleColor = this.vis.detailLevel === "nominator" ? bgcolor : contrasting_color
 
             //one element per option
             svg.selectAll("option")
@@ -131,13 +132,15 @@ export default {
                 .attr("x", margin.left)
                 .attr("y", d => y_options(d.name))
                 .each((par, index, node) => {
-                    d3.select(node[index]).selectAll("circle")
+                    d3.select(node[index]).selectAll("text")
                         .data(dot_range)
-                        .join("circle")
-                        .attr("cx", d => x(Math.floor(d / this.vis.grid[1])))
-                        .attr("cy", d => y_options(par.name) + y(d % this.vis.grid[1]) + radius)
-                        .attr("r", radius)
+                        .join("text")
+                        .attr("x", d => x(Math.floor(d / this.vis.grid[1])) - radius)
+                        .attr("y", d => y_options(par.name) + y(d % this.vis.grid[1]) + radius)
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
+                        .style("font-family", "Material Design Icons")
+                        .html(this.getIcon)
+                        .style("font-size", radius * 2 + "px")
                 })
 
 
@@ -145,7 +148,7 @@ export default {
                 .data(data)
                 .join("text")
                 .attr("x", margin.left - x.bandwidth() / 2 - 5)
-                .attr("y", d => y_options(d.name) +y_range / 2)
+                .attr("y", d => y_options(d.name) + y_range / 2)
                 .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
                 .style("text-anchor", "end")
 
@@ -199,7 +202,7 @@ export default {
             let gap = 15
             if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
                 let targets_y = this.vis.annotation.target.map(d => y_options(d))
-                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
+                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height / 2
                 //text
                 this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
@@ -225,6 +228,16 @@ export default {
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
+        },
+        getIcon() {
+            // this copies the content from the pseudo element :before as it's needed to show the icon from material design
+            const ele = document.querySelector('.' + this.vis.icon);
+            if (ele) {
+                const styles = window.getComputedStyle(ele, ':before');
+                return styles.content.replaceAll('"', "");
+            }
+
+            return '';
         }
     }
     ,
