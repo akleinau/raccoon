@@ -53,12 +53,12 @@
                                                 <v-text-field v-model="visStore.current_fact.vis.icon"
                                                               placeholder="custom"
                                                               style="min-width:250px"
-                                                              :prepend-icon="visStore.current_fact.vis.icon"
+                                                              :prepend-icon="'mdi-' + visStore.current_fact.vis.icon"
                                                               append-inner-icon="mdi-pencil">
                                                     <template v-slot:details>
                                                         <div>
                                                             see <a
-                                                                href="https://materialdesignicons.com/cdn/1.6.50-dev/"
+                                                                href="https://pictogrammers.com/library/mdi/"
                                                                 target="_blank">here</a> for more icons
                                                         </div>
                                                     </template>
@@ -71,7 +71,7 @@
                                             <v-btn-toggle v-model="visStore.current_fact.vis.icon" inline class="mb-5">
                                                 <v-btn v-for="icon in icons" v-bind:key="icon"
                                                        :value="icon">
-                                                    <v-icon :icon="icon"/>
+                                                    <v-icon :icon="'mdi-'+icon"/>
                                                 </v-btn>
                                             </v-btn-toggle>
 
@@ -285,7 +285,7 @@ export default {
             }],
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
-            icons: ['mdi-circle', 'mdi-human-male', 'mdi-account', 'mdi-bed', 'mdi-home']
+            icons: ['circle', 'human-male', 'account', 'bed', 'home']
         }
     },
     watch: {
@@ -301,6 +301,9 @@ export default {
                         if (this.visStore.current_fact.vis[attr] === undefined) {
                             // when the attribute is not defined, set it to the default value
                             this.visStore.current_fact.vis[attr] = this.visStore.default_settings[type][attr]
+                            if (attr === "graph") {
+                                this.visStore.current_fact.vis["detailLevel"] = this.visStore.default_settings[type]["detailLevel"]
+                            }
                             if (attr === "graph" && this.visStore.default_settings[type][attr] === "pictograph") {
                                 this.visStore.current_fact.vis["grid"] = JSON.parse(JSON.stringify(this.visStore.default_settings[type]["grid"]))
                                 this.visStore.current_fact.vis["icon"] = this.visStore.default_settings[type]["icon"]

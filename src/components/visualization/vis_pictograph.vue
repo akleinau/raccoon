@@ -1,5 +1,5 @@
 <template>
-    <i v-show="false" class="mdi" :class="this.vis.icon" />
+    <i v-show="false" class="mdi" :class="'mdi-' + this.vis.icon" />
     <div ref="container"/>
 </template>
 
@@ -243,7 +243,7 @@ export default {
         },
         getIcon() {
             // this copies the content from the pseudo element :before as it's needed to show the icon from material design
-            const ele = document.querySelector('.' + this.vis.icon);
+            const ele = document.querySelector('.mdi-' + this.vis.icon);
             if (ele) {
                 const styles = window.getComputedStyle(ele, ':before');
                 return styles.content.replaceAll('"', "");
