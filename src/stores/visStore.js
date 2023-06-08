@@ -15,7 +15,7 @@ export const useVisStore = defineStore('visStore', {
             impact: {
                 graph: "bar",
                 grid: [25, 4],
-                icon: "mdi-circle",
+                icon: "circle",
                 ratio: 1,
                 range: [0, 100],
                 axis: [{text: "amount of people", color: "black"}],
@@ -27,7 +27,7 @@ export const useVisStore = defineStore('visStore', {
             significance: {
                 graph: "pictograph",
                 grid: [25, 4],
-                icon: "mdi-circle",
+                icon: "circle",
                 ratio: 1,
                 range: "percent",
                 axis: [{text: "occurrence per 100 people", color: "black"}],
@@ -40,7 +40,7 @@ export const useVisStore = defineStore('visStore', {
             context: {
                 graph: "bar",
                 grid: [25, 4],
-                icon: "mdi-circle",
+                icon: "circle",
                 ratio: 1,
                 range: [0, 5],
                 axis: [{text: "Context", color: "black"}],
