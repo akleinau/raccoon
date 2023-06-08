@@ -77,7 +77,9 @@ export default {
                 startBarX = 100
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
-            const padding = 0.1
+            const icon_padding = 0.1
+            const row_padding = 10
+            const grid_padding = 10
 
             const dot_range_X = d3.range(0, this.vis.grid[0], 1)
             const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
@@ -86,36 +88,42 @@ export default {
 
             let x = d3.scaleBand()
                 .domain(dot_range_X)
-                .range([margin.left, width + margin.left])
-                .padding(padding)
+                .range([margin.left + grid_padding, width + margin.left])
+                .padding(icon_padding)
 
-            const radius = x.bandwidth() / 2
+            const icon_width = x.bandwidth()
+            const icon_height = icon_width * this.vis.ratio
+            const icon_padding_px = x.step() - x.bandwidth() //padding in pixel to compute height
 
-            const y_range = x.step() * this.vis.grid[1]
+            const row_height = (icon_height + icon_padding_px ) * this.vis.grid[1]
+            //y position inside each row
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
-                .range([0, y_range])
-            let height = data.length * (y_range + y.bandwidth())
+                .range([0, row_height])
+                .padding(icon_padding)
 
-            let y_options = d3.scaleBand()
+            let height = data.length * (row_height+row_padding) // icon_height for margins
+
+            //y position of each row
+            let y_row = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin.top + radius * 3, height + margin.top]) //radius times three as outer padding
+                .range([margin.top + grid_padding, margin.top + grid_padding + height])
 
 
             let svg = d3.create("svg")
                 .attr("width", width + margin.left + margin.right + annotation_width)
-                .attr("height", height + margin.bottom + margin.top)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
+                .attr("height", height + margin.bottom + margin.top + grid_padding*2)
+                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top + grid_padding*2])
                 .attr("font-family", this.vis.font_family)
 
             let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
 
             //background
             svg.append("rect")
-                .attr("x", margin.left - radius)
+                .attr("x", margin.left)
                 .attr("y", margin.top)
                 .attr("width", width + margin.right)
-                .attr("height", height)
+                .attr("height", height + grid_padding*2)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
                 .attr("stroke-width", 2)
@@ -130,36 +138,37 @@ export default {
                 .data(data)
                 .join("g")
                 .attr("x", margin.left)
-                .attr("y", d => y_options(d.name))
+                .attr("y", d => y_row(d.name))
                 .each((par, index, node) => {
                     d3.select(node[index]).selectAll("text")
                         .data(dot_range)
                         .join("text")
-                        .attr("x", d => x(Math.floor(d / this.vis.grid[1])) - radius)
-                        .attr("y", d => y_options(par.name) + y(d % this.vis.grid[1]) + radius)
+                        .attr("x", d => x(Math.floor(d / this.vis.grid[1])))
+                        .attr("y", d => y_row(par.name) + y(d % this.vis.grid[1]) + icon_height)
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(this.getIcon)
-                        .style("font-size", radius * 2 + "px")
+                        .style("font-size", d3.max([icon_height, icon_width]) + "px")
                 })
 
 
             svg.selectAll("textName")
                 .data(data)
                 .join("text")
-                .attr("x", margin.left - x.bandwidth() / 2 - 5)
-                .attr("y", d => y_options(d.name) + y_range / 2)
+                .attr("x", margin.left - 5)
+                .attr("y", d => y_row(d.name) + row_height / 2)
                 .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
                 .style("text-anchor", "end")
+                .attr("dy", 7)
 
             if (!this.preview) {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
-                    .attr("x", width + margin.left - x.bandwidth() / 2)
-                    .attr("y", d => y_options(d.name) + y_range / 2)
+                    .attr("x", width + margin.left + margin_right - 5)
+                    .attr("y", d => y_row(d.name) + row_height / 2)
                     .text("")
-                    .style("text-anchor", "start")
+                    .style("text-anchor", "end")
                     .style("fill", "black")
                     .each((par, index, node) => {
                         d3.select(node[index]).selectAll("textParts")
@@ -168,10 +177,12 @@ export default {
                             .text(d => d.text)
                             .style("fill", d => d.color)
                     })
+                    .attr("dy", 7)
+
 
                 //column name
                 svg.append("text")
-                    .attr("x", -(margin.top + height / 2))
+                    .attr("x", -(margin.top + (height + grid_padding*2 ) / 2))
                     .attr("y", 20)
                     .text(this.column.label)
                     .style("text-anchor", "middle")
@@ -181,7 +192,7 @@ export default {
                 //axis
                 let axis_title = svg.append("text")
                     .attr("x", margin.left + width / 2)
-                    .attr("y", height + margin.top + margin.bottom / 2)
+                    .attr("y", height  + grid_padding*2 + margin.top + margin.bottom / 2)
                     .style("text-anchor", "middle")
                     .text("")
                 this.visHelperStore.append_tspans(axis_title, this.vis.axis, this.column)
@@ -201,15 +212,16 @@ export default {
             //use this.getComputedTextLength to split up into multiple parts?
             let gap = 15
             if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
-                let targets_y = this.vis.annotation.target.map(d => y_options(d))
+                let targets_y = this.vis.annotation.target.map(d => y_row(d))
                 let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height / 2
                 //text
                 this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
                         .attr("x", width + margin.left + margin.right + gap)
-                        .attr("y", mean_y + i * 15 + y_range / 2)
+                        .attr("y", mean_y + i * 15 + row_height / 2)
                         .attr("width", 200)
                         .style("font-style", "italic")
+                        .attr("dy", 7)
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
 
@@ -220,7 +232,7 @@ export default {
                     .attr("x1", width + margin.left + margin.right + gap - 10)
                     .attr("y1", d => d)
                     .attr("x2", width + margin.left + margin.right + gap - 10)
-                    .attr("y2", d => d + y_range)
+                    .attr("y2", d => d + row_height)
                     .attr("stroke", "#505050")
                     .attr("stroke-width", 3)
             }
