@@ -20,7 +20,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
             annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
 
             //significance
-            if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0) {
+            if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0 && summary.options > 1) {
                 annotations.push({
                     "text": [[{"text": "Not statistically significant!", "color": "black"}]],
                     "target": [],
