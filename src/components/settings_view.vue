@@ -260,7 +260,7 @@ export default {
             background_auto: {color: "auto", stroke: "None"},
             fontColor: ["black", "midnightBlue", "darkblue"],
             fontColor_custom: "#000000",
-            font_families: ["inherit", "Aerial", "Georgia", "monospace", "Comic Sans MS"],
+            font_families: ["inherit", "Arial", "monospace", "Times New Roman", "Verdana"],
             font_family_custom: "custom",
         }
     },
