@@ -19,7 +19,7 @@ export const useVisStore = defineStore('visStore', {
                 ratio: 1,
                 range: [0, 100],
                 axis: [{text: "amount of people", color: "black"}],
-                title: [{text: "How common is each option in the dataset?", color: "black"}],
+                title: [{text: "How common is each group in the dataset?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 0,
@@ -209,7 +209,8 @@ export const useVisStore = defineStore('visStore', {
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
                             graph: "pictograph",
-                            title: [{text: "What is the risk per risk factor?", color: "black"}],
+                            title:  [{text: "How frequent is ", color: "black"},
+                    {text: " $target_column: $target_option", color: "$color"}, {text: " per risk factor?", color: "black"}],
                             axis: [{text: "absolute risk through factor", color: "black"}]
                         }],
                         "column": {name: "AbsoluteValues", label: "Risk Factors", options: options}
