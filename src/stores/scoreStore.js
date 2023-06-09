@@ -50,7 +50,7 @@ export const useScoreStore = defineStore('scoreStore', {
             }
 
             return {
-                "significant_tuples": tuples.filter(d => d.significant).map(d => d.option.label),
+                "significant_tuples": tuples.filter(d => d.significant).map(d => d.option.name),
                 "tuples": tuples,
                 "score": {
                     "max_difference": Math.max(...tuples.map(d => d.diff)),

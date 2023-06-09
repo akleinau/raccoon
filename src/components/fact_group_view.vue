@@ -59,7 +59,7 @@
                                                     :width="400"/>
                                     </div>
                                     <div class="d-flex justify-space-evenly" v-if="visStore.current_fact && visStore.current_fact.vis === vis">
-                                        <v-btn variant="solo" @click="remove_vis(vis)" class="w-100">remove</v-btn>
+                                        <v-btn variant="text" @click="remove_vis(vis)" class="w-100">remove</v-btn>
                                     </div>
                                 </v-card>
                             </v-hover>

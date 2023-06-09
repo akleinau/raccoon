@@ -27,6 +27,15 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     "score": 10,
                 })
             }
+            else {
+                let greatest_significance = summary.significance.significant_tuples.sort((a, b) => b[1] - a[1])[0]
+                annotations.push({
+                    "text": [[{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of participants with ", "color": "black"}],
+                        [{"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_column: $target_option", "color": "black"}]],
+                    "target": [greatest_significance],
+                    "score": 3,
+                })
+            }
 
             //occurrence
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]

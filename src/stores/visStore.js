@@ -31,7 +31,7 @@ export const useVisStore = defineStore('visStore', {
                 ratio: 1,
                 range: "percent",
                 axis: [{text: "occurrence per 100 people", color: "black"}],
-                title: [{text: "How frequent is ", color: "black"},
+                title: [{text: "What is the likelihood of ", color: "black"},
                     {text: " $target_column: $target_option", color: "$color"}, {text: " per group?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
