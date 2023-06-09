@@ -1,5 +1,5 @@
 <template>
-    <v-dialog scrollable v-model="display" height="100%" width="80%">
+    <v-dialog scrollable v-model="display" height="100%" width="85%">
         <v-card class="mx-auto w-100 h-100">
 
             <v-card-title>
@@ -43,27 +43,36 @@
                 <div>
                     <!-- visualizations -->
                     <div class="d-flex flex-column pb-5">
+                        <div class="d-flex justify-space-between mx-2 align-center">
+                            <div class="text-grey-darken-2">Click to select </div>
+                            <v-btn class="text-blue-darken-3" variant="text" @click="visStore.current_fact = null">clear selection</v-btn>
+                        </div>
                         <div class="d-flex flex-column pa-1 ma-auto" v-for="vis in visStore.current_fact_group.visList"
                              v-bind:key="vis">
                             <v-hover v-slot="{ isHovering, props }">
-                                <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="show_fact_view(vis)"
-                                        :class="{ 'on-hover': isHovering }" class="pa-2">
-                                    <vis_parser :vis="vis" :column="visStore.current_fact_group.column" :width="400"/>
+                                <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="toggle_fact_view(vis)"
+                                        :class="[{ 'on-hover': isHovering },
+                                        {'bg-blue-darken-3': visStore.current_fact && visStore.current_fact.vis === vis}]"
+                                        class="pa-2">
+                                    <div class="bg-white pt-3">
+                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
+                                                    :width="400"/>
+                                    </div>
+                                    <div class="d-flex justify-space-evenly" v-if="visStore.current_fact && visStore.current_fact.vis === vis">
+                                        <v-btn variant="solo" @click="remove_vis(vis)" class="w-100">remove</v-btn>
+                                    </div>
                                 </v-card>
                             </v-hover>
-                            <div class="d-flex w-100 flex-wrap">
-                                <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="remove_vis(vis)">Remove</v-btn>
-                            </div>
                         </div>
                     </div>
 
                 </div>
 
                 <div class="w-50  pr-5">
-                    <!-- option tabs -->
+                    <!-- general tabs -->
+                    <h3 class="ml-3 mt-5"> General </h3>
                     <v-expansion-panels class="ma-3" v-model="panels">
-                        <v-expansion-panel class="ma-1"
-                                           v-if="column.significance !== undefined">
+                        <v-expansion-panel v-if="column.significance !== undefined">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
                                 options with statistically significant differences:
@@ -84,7 +93,7 @@
                                 </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
-                        <v-expansion-panel class="ma-1">
+                        <v-expansion-panel>
                             <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <div class="d-flex overflow-y-hidden  pb-5">
@@ -93,7 +102,7 @@
                                          v-bind:key="vis">
                                         <v-hover v-slot="{ isHovering, props }">
                                             <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
-                                                    @click="show_fact_view(vis)"
+                                                    @click="add_vis(vis)"
                                                     :class="{ 'on-hover': isHovering }" class="pa-2">
                                                 <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
                                                             :width="300"
@@ -108,7 +117,7 @@
                                 </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
-                        <v-expansion-panel class="ma-1" @click="calculate_similar_facts()">
+                        <v-expansion-panel @click="calculate_similar_facts()">
                             <v-expansion-panel-title><h4> Similar Variables </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <div class="d-flex overflow-y-hidden  pb-5">
@@ -124,7 +133,7 @@
                                 </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
-                        <v-expansion-panel class="ma-1">
+                        <v-expansion-panel>
                             <v-expansion-panel-title><h4> Adapt </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <div class="ml-2">Change risk factor label:</div>
@@ -140,7 +149,7 @@
                                                        v-if="item.range !== undefined"
                                                        variant="text" icon="mdi-arrow-split-horizontal"
                                                        density="compact"></v-btn>
-                                                <v-text-field variant="underlined"  class="mx-2" density="compact"
+                                                <v-text-field variant="underlined" class="mx-2" density="compact"
                                                               :label="item.type === 'categorical' ? item.name : ''"
                                                               v-model="visStore.current_fact_group.column.options[i].label"/>
                                                 <div class="d-flex align-start" density="compact">
@@ -150,7 +159,8 @@
 
                                             </div>
                                             <div class="d-flex justify-start" v-if="option_steps[i] !== undefined">
-                                                <div class="bg-grey-darken-2 rounded-e-pill mt-4 mr-2" style="width:10px; height:20px"></div>
+                                                <div class="bg-grey-darken-2 rounded-e-pill mt-4 mr-2"
+                                                     style="width:10px; height:20px"></div>
                                                 <v-text-field type="number" style="max-width: 100px" class="mr-2"
                                                               density="compact" variant="outlined"
                                                               v-model="option_steps[i]" @change="update_step(i)"/>
@@ -165,6 +175,9 @@
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                     </v-expansion-panels>
+                    <!-- individual vis tabs -->
+                    <h3 class="ml-3 text-blue-darken-3" v-if="visStore.current_fact"> Selected </h3>
+                    <fact_view v-if="this.visStore.current_fact !== null"/>
                 </div>
 
             </div>
@@ -198,17 +211,19 @@
 </template>
 
 <script>
-import {useVisStore} from "@/stores/visStore";
+import fact_view from "@/components/fact_view.vue";
 import vis_parser from "@/components/visualization/vis_parser.vue";
+import fact_group_preview from "@/components/fact_group_preview.vue";
+
+import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore"
-import fact_group_preview from "@/components/fact_group_preview.vue";
 import {useSimilarityStore} from "@/stores/similarityStore";
 import * as d3 from "d3";
 
 export default {
     name: "fact_group_view",
-    components: {vis_parser, fact_group_preview},
+    components: {vis_parser, fact_group_preview, fact_view},
     setup() {
         const visStore = useVisStore()
         const csvStore = useCSVStore()
@@ -245,8 +260,7 @@ export default {
         column() {
             if (this.visStore.current_fact_group) {
                 return this.visStore.current_fact_group.column
-            }
-            else return null
+            } else return null
         },
         risk_groups() {
             if (this.column) {
@@ -261,8 +275,12 @@ export default {
          *
          * @param vis
          */
-        show_fact_view(vis) {
-            this.visStore.current_fact = {'vis': vis, 'column': this.visStore.current_fact_group.column}
+        toggle_fact_view(vis) {
+            if (this.visStore.current_fact && this.visStore.current_fact.vis === vis) {
+                this.visStore.current_fact = null
+            } else {
+                this.visStore.current_fact = {'vis': vis, 'column': this.visStore.current_fact_group.column}
+            }
         },
         /**
          * closes the fact group view

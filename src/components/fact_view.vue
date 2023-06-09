@@ -1,23 +1,9 @@
 <template>
-    <v-dialog v-model="display" height="85%" width="75%">
-        <v-card class="mx-auto w-100 h-100">
-
-            <v-card-title>
-                Fact View: {{ visStore.current_fact.column['label'] }}
-            </v-card-title>
-
-            <div class="d-flex justify-end w-100">
-                <div class="flex-shrink-1">
-                    <!-- visualization -->
-                    <vis_parser :vis="visStore.current_fact.vis" :column="visStore.current_fact.column" :width="400"/>
-                </div>
-                <div class="pr-5 flex-grow-1">
-                    <!-- tabs -->
-                    <v-expansion-panels class="ma-3">
+                    <v-expansion-panels class="ma-3 text-blue">
 
                         <!-- Graph -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Visualization Type </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title class="text-blue-darken-3"><h4>Visualization Type </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['graph']" label="Custom"/>
                                 <div class="d-flex">
@@ -101,7 +87,7 @@
 
                         <!-- Color -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Color </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title class="text-blue-darken-3"><h4>Color </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['color']" label="Custom"/>
                                 <v-radio-group v-model="visStore.current_fact.vis.color"
@@ -137,7 +123,7 @@
 
                         <!-- Background -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Background </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title class="text-blue-darken-3"><h4>Background </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['background']" label="Custom"/>
                                 <v-radio-group v-model="visStore.current_fact.vis.background"
@@ -174,7 +160,7 @@
 
                         <!-- Title -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Title </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title class="text-blue-darken-3"><h4>Title </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['title']" label="Custom"/>
                                 <text_input :text="visStore.current_fact.vis.title" :default="get_default('title')"
@@ -189,7 +175,7 @@
 
                         <!-- Axis -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Axis </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title class="text-blue-darken-3"><h4>Axis </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['axis']" label="Custom"/>
                                 <text_input :text="visStore.current_fact.vis.axis" :default="get_default('axis')"
@@ -204,7 +190,7 @@
 
                         <!-- Annotation -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Change Annotation </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title class="text-blue-darken-3"><h4>Annotation </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-switch v-model="has_attribute['annotation']" label="Custom"/>
                                 <div v-if="visStore.current_fact.vis.annotation !== undefined &&
@@ -235,27 +221,6 @@
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                     </v-expansion-panels>
-                </div>
-            </div>
-
-            <!-- actions -->
-            <div class="d-flex flex-column-reverse h-100">
-                <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
-                    <div class="d-flex">
-                        <v-btn variant="elevated" class="px-9" @click="close">Close</v-btn>
-                        <v-btn variant="elevated" prepend-icon="mdi-plus"
-                               v-if="!visStore.current_fact_group.visList.includes(visStore.current_fact.vis)"
-                               @click="add_vis">
-                            Add fact
-                        </v-btn>
-                        <v-btn variant="elevated" v-else @click="remove_vis" prepend-icon="mdi-minus">
-                            Remove fact
-                        </v-btn>
-                    </div>
-                </v-card-actions>
-            </div>
-        </v-card>
-    </v-dialog>
 </template>
 
 <script>

@@ -2,7 +2,6 @@
     <v-app>
         <start_overlay/>
         <fact_group_view v-if="this.visStore.current_fact_group !== null"/>
-        <fact_view v-if="this.visStore.current_fact !== null"/>
 
         <v-app-bar>
             <v-app-bar-title>Raccoon</v-app-bar-title>
