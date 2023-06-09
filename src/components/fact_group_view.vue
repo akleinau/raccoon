@@ -6,7 +6,7 @@
                 Fact Group View: {{ visStore.current_fact_group.column['label'] }}
 
                 <div v-if="column.riskIncrease">
-                    Risk Options:
+                    Risk group:
                     {{ column.riskIncrease.name }}
                 </div>
             </v-card-title>
@@ -140,7 +140,7 @@
                                                        v-if="item.range !== undefined"
                                                        variant="text" icon="mdi-arrow-split-horizontal"
                                                        density="compact"></v-btn>
-                                                <v-text-field variant="outlined"  class="mr-2" density="compact"
+                                                <v-text-field variant="underlined"  class="mx-2" density="compact"
                                                               :label="item.type === 'categorical' ? item.name : ''"
                                                               v-model="visStore.current_fact_group.column.options[i].label"/>
                                                 <div class="d-flex align-start" density="compact">
@@ -152,7 +152,7 @@
                                             <div class="d-flex justify-start" v-if="option_steps[i] !== undefined">
                                                 <div class="bg-grey-darken-2 rounded-e-pill mt-4 mr-2" style="width:10px; height:20px"></div>
                                                 <v-text-field type="number" style="max-width: 100px" class="mr-2"
-                                                              density="compact" variant="underlined"
+                                                              density="compact" variant="outlined"
                                                               v-model="option_steps[i]" @change="update_step(i)"/>
                                                 <v-btn @click="remove_step(i)" variant="text" density="compact"
                                                        class="mt-3"

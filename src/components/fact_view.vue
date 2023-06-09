@@ -206,6 +206,7 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Change Annotation </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
+                                <v-switch v-model="has_attribute['annotation']" label="Custom"/>
                                 <div v-if="visStore.current_fact.vis.annotation !== undefined &&
                                     visStore.current_fact.vis.annotation !== null">
                                     <text_input v-for="(el,i) in visStore.current_fact.vis.annotation.text" :key="i"
@@ -213,11 +214,10 @@
                                                 @change="visStore.current_fact.vis.annotation.text[i] = $event"
                                                 :color="get_color()"/>
                                 </div>
-                                <v-radio-group v-model="visStore.current_fact.vis.annotation">
-                                    <v-radio label="default" :value="null"></v-radio>
+                                <v-radio-group v-model="visStore.current_fact.vis.annotation" :disabled="!has_attribute['annotation']">
                                     <v-radio label="no annotation" value="None"></v-radio>
                                     <v-radio
-                                            v-for="el in annotationStore.compute_annotations(visStore.current_fact.column, visStore.current_fact.vis.type)"
+                                            v-for="el in annotation_list"
                                             v-bind:key="el"
                                             :value="el">
                                         <template v-slot:label>
@@ -285,7 +285,8 @@ export default {
             }],
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
-            icons: ['circle', 'human-male', 'account', 'bed', 'home']
+            icons: ['circle', 'human-male', 'account', 'bed', 'home'],
+            annotation_list: []
         }
     },
     watch: {
@@ -294,20 +295,18 @@ export default {
         },
         has_attribute: {
             handler: function (val) {
-                let type = this.visStore.current_fact.vis.type
-
                 Object.keys(val).forEach(attr => {
                     if (val[attr]) {
                         if (this.visStore.current_fact.vis[attr] === undefined) {
                             // when the attribute is not defined, set it to the default value
-                            this.visStore.current_fact.vis[attr] = this.visStore.default_settings[type][attr]
+                            this.visStore.current_fact.vis[attr] = this.get_default(attr)
                             if (attr === "graph") {
-                                this.visStore.current_fact.vis["detailLevel"] = this.visStore.default_settings[type]["detailLevel"]
+                                this.visStore.current_fact.vis["detailLevel"] = this.get_default("detailLevel")
                             }
-                            if (attr === "graph" && this.visStore.default_settings[type][attr] === "pictograph") {
-                                this.visStore.current_fact.vis["grid"] = JSON.parse(JSON.stringify(this.visStore.default_settings[type]["grid"]))
-                                this.visStore.current_fact.vis["icon"] = this.visStore.default_settings[type]["icon"]
-                                this.visStore.current_fact.vis["ratio"] = this.visStore.default_settings[type]["ratio"]
+                            if (attr === "graph" && this.get_default(attr) === "pictograph") {
+                                this.visStore.current_fact.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
+                                this.visStore.current_fact.vis["icon"] = this.get_default("icon")
+                                this.visStore.current_fact.vis["ratio"] = this.get_default("ratio")
                             }
                         }
                     } else {
@@ -319,10 +318,11 @@ export default {
         },
     },
     created() {
-        let attributes = ["graph", "color", "background", "title", "axis"]
+        let attributes = ["graph", "color", "background", "title", "axis", "annotation"]
         attributes.forEach(key => {
             this.has_attribute[key] = this.visStore.current_fact.vis[key] !== undefined
         })
+        this.annotation_list = this.annotationStore.compute_annotations(this.visStore.current_fact.column, this.visStore.current_fact.vis.type)
     },
     methods: {
         /**
@@ -342,6 +342,10 @@ export default {
             this.has_attribute[attribute] = false
         },
         get_default(attribute) {
+            if (attribute === "annotation") {
+                return this.annotation_list[0]
+            }
+
             return this.visStore.default_settings[this.visStore.current_fact.vis.type][attribute]
         },
         set_default_graph_settings() {

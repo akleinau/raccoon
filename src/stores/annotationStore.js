@@ -31,7 +31,8 @@ export const useAnnotationStore = defineStore('annotationStore', {
             //occurrence
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
             annotations.push({
-                "text": [[{"text": "Most common option", "color": "black"}]],
+                "text":  [[{"text": "Most participants have a ", "color": "black"}],
+                    [{"text": summary.label + " of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}]],
                 "target": [greatest_occurrence[0]],
                 "score": 6
             })
@@ -114,7 +115,8 @@ export const useAnnotationStore = defineStore('annotationStore', {
             //occurrence
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
             annotations.push({
-                "text": [[{"text": "Most common option", "color": "black"}]],
+                "text": [[{"text": "Most participants have a ", "color": "black"}],
+                    [{"text": summary.label + " of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}]],
                 "target": [greatest_occurrence[0]],
                 "score": 5
             })
@@ -134,7 +136,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     annotations.push({
                         "text": [
                             [{
-                                "text": "These options have fewer ",
+                                "text": "These groups each have fewer ",
                                 "color": "black"
                             }],
                             [{
@@ -156,7 +158,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }],
                         [{
-                            "text": "higher risk of $target_column than others",
+                            "text": "higher risk of $target_column: $target_option than others",
                             "color": "black"
                         }]],
                     "target": summary.riskIncrease.risk_factor_groups,

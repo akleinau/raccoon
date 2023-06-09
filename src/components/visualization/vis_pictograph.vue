@@ -99,7 +99,7 @@ export default {
             //y position inside each row
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
-                .range([0, row_height])
+                .range([row_height, 0])
                 .padding(icon_padding)
 
             let height = data.length * (row_height+row_padding) // icon_height for margins
