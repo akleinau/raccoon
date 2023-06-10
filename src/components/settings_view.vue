@@ -216,6 +216,19 @@
 
             </v-expansion-panel-text>
         </v-expansion-panel>
+        <v-expansion-panel>
+            <v-expansion-panel-title> <h4>Rename</h4> </v-expansion-panel-title>
+            <v-expansion-panel-text>
+                <div class="d-flex">
+                    <b>Target: </b>
+                    <v-text-field :label="csvStore.target.name" v-model="csvStore.target.label"
+                        append-inner-icon="mdi-pencil" class="mx-3"  ></v-text-field>
+                    <v-text-field :label="csvStore.target.options.find(d => d.name ===csvStore.target_option).name"
+                                  v-model="csvStore.target.options.find(d => d.name ===csvStore.target_option).label"
+                                append-inner-icon="mdi-pencil" class="mx-3"></v-text-field>
+                </div>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
     </v-expansion-panels>
 </template>
 
