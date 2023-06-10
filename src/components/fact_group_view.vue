@@ -15,7 +15,7 @@
             <div v-if="visStore.current_fact_group.column.significance !== undefined &&
                 visStore.current_fact_group.column['significance'].significant_tuples.length === 0">
                 <v-icon icon="mdi-alert"/>
-                no statistically significant differences
+                not statistically significant
             </div>
             <div v-if=" visStore.is_recommendation_column(visStore.current_fact_group.column) &&
                 visStore.current_fact_group.column.significance !== undefined &&
@@ -44,8 +44,10 @@
                     <!-- visualizations -->
                     <div class="d-flex flex-column pb-5">
                         <div class="d-flex justify-space-between mx-2 align-center">
-                            <div class="text-grey-darken-2">Click to select </div>
-                            <v-btn class="text-blue-darken-3" variant="text" @click="visStore.current_fact = null">clear selection</v-btn>
+                            <div class="text-grey-darken-2">Click to select</div>
+                            <v-btn class="text-blue-darken-3" variant="text" @click="visStore.current_fact = null">clear
+                                selection
+                            </v-btn>
                         </div>
                         <div class="d-flex flex-column pa-1 ma-auto" v-for="vis in visStore.current_fact_group.visList"
                              v-bind:key="vis">
@@ -58,7 +60,8 @@
                                         <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
                                                     :width="400"/>
                                     </div>
-                                    <div class="d-flex justify-space-evenly" v-if="visStore.current_fact && visStore.current_fact.vis === vis">
+                                    <div class="d-flex justify-space-evenly"
+                                         v-if="visStore.current_fact && visStore.current_fact.vis === vis">
                                         <v-btn variant="text" @click="remove_vis(vis)" class="w-100">remove</v-btn>
                                     </div>
                                 </v-card>
@@ -71,55 +74,28 @@
                 <div class="w-50  pr-5">
                     <!-- general tabs -->
                     <h3 class="ml-3 mt-5"> General </h3>
-                    <v-expansion-panels class="ma-3" v-model="panels">
-                        <v-expansion-panel v-if="column.significance !== undefined">
+                    <v-text-field label="Label" class="ml-3 mt-2" v-model="visStore.current_fact_group.column.label"
+                                  append-inner-icon="mdi-pencil"/>
+                    <v-expansion-panels class="mx-3 mb-3" v-model="panels">
+
+                        <!-- statistical information -->
+                        <v-expansion-panel v-if="column.significance !== undefined" @click="calculate_similar_facts()">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
-                                options with statistically significant differences:
-                                <span v-for="tuple in Object.values(visStore.current_fact_group.column['significance'].significant_tuples)"
-                                      v-bind:key="tuple">
-                                        {{ tuple !== "" ? tuple : "null" }},
-                                    </span>
-                                <div v-if="column.significance"> Score:
+                                statistically significant: {{
+                                visStore.current_fact_group.column['significance'].significant_tuples.length > 0 ? "yes" : "no"
+                                }}
+                                <div v-if="column.significance"> Score ({{ scoreStore.score }}):
                                     {{
                                     visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
                                     }}
                                 </div>
-                                <div v-if="column.riskIncrease"> Risk Increase:
-                                    {{ visStore.current_fact_group.column['riskIncrease'] }}
-                                </div>
                                 <div v-if="column.correlation_with_target"> Correlation with Target:
-                                    {{ visStore.current_fact_group.column['correlation_with_target'] }}
+                                    {{ visStore.current_fact_group.column['correlation_with_target'].toFixed(2) }}
                                 </div>
-                            </v-expansion-panel-text>
-                        </v-expansion-panel>
-                        <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Similar Facts </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text>
-                                <div class="d-flex overflow-y-hidden  pb-5">
-                                    <div class="d-flex flex-column pa-1"
-                                         v-for="vis in visStore.current_fact_group.additional_vis_list"
-                                         v-bind:key="vis">
-                                        <v-hover v-slot="{ isHovering, props }">
-                                            <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
-                                                    @click="add_vis(vis)"
-                                                    :class="{ 'on-hover': isHovering }" class="pa-2">
-                                                <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
-                                                            :width="300"
-                                                            :preview="true"/>
-                                            </v-card>
-                                        </v-hover>
-                                        <div class="d-flex w-100 flex-wrap">
-                                            <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="add_vis(vis)">Add
-                                            </v-btn>
-                                        </div>
-                                    </div>
+                                <div class="mt-5">
+                                    <b>Correlates strongly with:</b>
                                 </div>
-                            </v-expansion-panel-text>
-                        </v-expansion-panel>
-                        <v-expansion-panel @click="calculate_similar_facts()">
-                            <v-expansion-panel-title><h4> Similar Variables </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text>
                                 <div class="d-flex overflow-y-hidden  pb-5">
                                     <div class="d-flex flex-column pa-1"
                                          v-for="item in visStore.current_fact_group.similar_columns"
@@ -133,12 +109,11 @@
                                 </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
+
+                        <!-- groups -->
                         <v-expansion-panel>
-                            <v-expansion-panel-title><h4> Adapt </h4></v-expansion-panel-title>
+                            <v-expansion-panel-title><h4> Groups/ Bins </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
-                                <div class="ml-2">Change risk factor label:</div>
-                                <v-text-field label="Label" v-model="visStore.current_fact_group.column.label"/>
-                                <div class="ml-2 mb-3">Change options:</div>
                                 <div class="d-flex w-100">
                                     <div class="bg-grey-darken-2 mb-5 rounded-pill" style="width:10px"></div>
                                     <div class="flex-grow-1">
@@ -172,6 +147,32 @@
                                     </div>
                                 </div>
                                 <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+
+                        <!-- additional visualizations -->
+                        <v-expansion-panel>
+                            <v-expansion-panel-title><h4> Additional Visualizations </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                <div class="d-flex overflow-y-hidden  pb-5">
+                                    <div class="d-flex flex-column pa-1"
+                                         v-for="vis in visStore.current_fact_group.additional_vis_list"
+                                         v-bind:key="vis">
+                                        <v-hover v-slot="{ isHovering, props }">
+                                            <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
+                                                    @click="add_vis(vis)"
+                                                    :class="{ 'on-hover': isHovering }" class="pa-2">
+                                                <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
+                                                            :width="300"
+                                                            :preview="true"/>
+                                            </v-card>
+                                        </v-hover>
+                                        <div class="d-flex w-100 flex-wrap">
+                                            <v-btn variant="tonal" class="flex-grow-1 mx-1" @click="add_vis(vis)">Add
+                                            </v-btn>
+                                        </div>
+                                    </div>
+                                </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                     </v-expansion-panels>

@@ -89,6 +89,8 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title class="text-blue-darken-3"><h4>Color </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
+                                <div class="d-flex">
+                                    <div>
                                 <v-switch v-model="has_attribute['color']" label="Custom"/>
                                 <v-radio-group v-model="visStore.current_fact.vis.color"
                                                :disabled="!has_attribute['color']">
@@ -118,6 +120,8 @@
                                        :disabled="!has_attribute['color']"> set as default for
                                     {{ visStore.current_fact.vis.type }} Graphs
                                 </v-btn>
+                                        </div>
+                                    </div>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
 
