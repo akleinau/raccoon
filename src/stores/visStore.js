@@ -52,6 +52,7 @@ export const useVisStore = defineStore('visStore', {
             text: {
                 graph: "text",
                 font_size: 2,
+                text: [{text: "", color: "black"}],
             }
         },
         default_colors: {
@@ -117,8 +118,16 @@ export const useVisStore = defineStore('visStore', {
          * @returns {*[]}
          */
         generate_additional_fact_visList() {
+            let visList = []
+            visList.push(
+                {
+                    type: "text",
+                    graph: "text",
+                    text: [{"text":"add custom text here", "color":"black"}],
+                }
+            )
 
-            return []
+            return visList
         },
         /**
          * sets default settings for visualizations to adapt them to current dataset

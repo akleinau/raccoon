@@ -28,7 +28,7 @@
                        @click="add_text_el(i)"></v-btn>
             </div>
             <v-textarea label="text" class="mx-1 text-no-wrap" v-model="el.text" :rows="1" auto-grow :disabled="disabled"
-                :style="'width:' + +(el.text.length*9 + 30) + 'px; min-width:130px'"/>
+                :style="'width:' + +(el.text.length*9 + 30) + 'px; min-width:130px; max-width:700px'"/>
         </div>
     </div>
 </template>
