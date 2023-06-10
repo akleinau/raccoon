@@ -60,9 +60,11 @@
                                         <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
                                                     :width="400"/>
                                     </div>
-                                    <div class="d-flex justify-space-evenly"
+                                    <div class="d-flex justify-center align-center"
                                          v-if="visStore.current_fact && visStore.current_fact.vis === vis">
-                                        <v-btn variant="text" @click="remove_vis(vis)" class="w-100">remove</v-btn>
+                                        <v-btn variant="text" icon="mdi-arrow-up" @click="move_vis_up(vis)"></v-btn>
+                                        <v-btn variant="text" icon="mdi-arrow-down" @click="move_vis_down(vis)"></v-btn>
+                                        <v-btn variant="text" @click="remove_vis(vis)">remove</v-btn>
                                     </div>
                                 </v-card>
                             </v-hover>
@@ -316,6 +318,20 @@ export default {
          */
         recalculate_options() {
             this.visStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact_group.column)
+        },
+        move_vis_up(vis) {
+            let index = this.visStore.current_fact_group.visList.indexOf(vis)
+            if (index > 0) {
+                this.visStore.current_fact_group.visList.splice(index - 1, 0, this.visStore.current_fact_group.visList.splice(index, 1)[0])
+                this.visStore.current_fact = {'vis': this.visStore.current_fact_group.visList[index], 'column': this.visStore.current_fact_group.column}
+            }
+        },
+        move_vis_down(vis) {
+            let index = this.visStore.current_fact_group.visList.indexOf(vis)
+            if (index < this.visStore.current_fact_group.visList.length - 1) {
+                this.visStore.current_fact_group.visList.splice(index + 1, 0, this.visStore.current_fact_group.visList.splice(index, 1)[0])
+                this.visStore.current_fact = {'vis': this.visStore.current_fact_group.visList[index], 'column': this.visStore.current_fact_group.column}
+            }
         },
         /**
          * removes a visualization from the fact group visList
