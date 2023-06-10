@@ -287,6 +287,7 @@ export default {
          * closes the fact group view
          */
         close() {
+            this.visStore.current_fact = null
             this.visStore.current_fact_group = null
         },
         /**
