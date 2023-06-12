@@ -11,40 +11,40 @@ export const useDataStore = defineStore('dataStore', {
         exclude_missing: true,
         csv: null,
         min_bin_size: 0,
-        columns: [],
+        column_names: [],
         target_column: null,
         target_all_options: [],
         target_option: null,
         target: null,
-        variable_summaries: []
+        column_list: []
     }),
     actions: {
         /**
-         * calculates summary per variable
+         * calculates column per variable
          */
-        calc_variable_summaries() {
-            this.variable_summaries = []
+        calc_column_list() {
+            this.column_list = []
             let scoreStore = useScoreStore()
 
-            this.columns.forEach(column => {
-                let options = [...new Set(this.csv.map(d => d[column]))]
+            this.column_names.forEach(name => {
+                let options = [...new Set(this.csv.map(d => d[name]))]
                 options = options.map(o => ({"name": o, "label": o}))
                 //only continue if there are less than 10 options to make sure it is categorical or ordinal
-                let summary = {}
+                let column = {}
                 if (options.length <= 10) {
-                    summary = {
-                        name: column,
-                        label: column,
+                    column = {
+                        name: name,
+                        label: name,
                         type: "categorical",
                         options: options,
-                        data: this.csv.map(d => d[column]),
+                        data: this.csv.map(d => d[name]),
                         //how often each option occurs
                         occurrence: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
                         //how often each option occurs together with the target option
                         occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
                     }
-                    this.csv.forEach(d => summary.occurrence[d[column]]++)
-                    this.filter_for_target_option(this.csv).forEach(d => summary.occurrence_target_option[d[column]]++)
+                    this.csv.forEach(d => column.occurrence[d[name]]++)
+                    this.filter_for_target_option(this.csv).forEach(d => column.occurrence_target_option[d[name]]++)
                 } else {
                     let options_num = options.filter(d => !isNaN(d.name) && d.name !== "")
                     let options_other = options.filter(d => isNaN(d.name) || d.name === "")
@@ -57,53 +57,53 @@ export const useDataStore = defineStore('dataStore', {
                         let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
 
-                        summary = {
-                            name: column,
-                            label: column,
+                        column = {
+                            name: name,
+                            label: name,
                             type: "continuous",
                             options: options_bin,
-                            data: this.csv.map(d => d[column]),
-                            data_binned: this.csv.map(d => this.find_bin(d[column], options_bin)),
-                            data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[column]).filter(d => !isNaN(d) && d !== ""),
-                            data_with_target_option_binned: this.filter_for_target_option(this.csv).map(d => this.find_bin(d[column], options_bin)),
+                            data: this.csv.map(d => d[name]),
+                            data_binned: this.csv.map(d => this.find_bin(d[name], options_bin)),
+                            data_with_target_option: this.filter_for_target_option(this.csv).map(d => d[name]).filter(d => !isNaN(d) && d !== ""),
+                            data_with_target_option_binned: this.filter_for_target_option(this.csv).map(d => this.find_bin(d[name], options_bin)),
                             //how often each option occurs
                             occurrence: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                             //how often each option occurs together with the target option
                             occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                         }
-                        summary.data_binned.forEach(d => summary.occurrence[d]++)
-                        summary.data_with_target_option_binned.forEach(d => summary.occurrence_target_option[d]++)
-                        summary = this.bin_ends(summary, this.min_bin_size)
+                        column.data_binned.forEach(d => column.occurrence[d]++)
+                        column.data_with_target_option_binned.forEach(d => column.occurrence_target_option[d]++)
+                        column = this.bin_ends(column, this.min_bin_size)
                     }
                 }
 
-                if (Object.keys(summary).length > 0) {
-                    summary = this.summary_exclude_missing(summary)
+                if (Object.keys(column).length > 0) {
+                    column = this.column_exclude_missing(column)
 
                     //percentage how often each option occurs together with the target option
-                    summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
+                    column.percent_target_option = this.divide_maps(column.occurrence_target_option, column.occurrence)
 
                     //total values
-                    summary.total = {
-                        occurrence: d3.sum(Object.values(summary.occurrence)),
-                        occurrence_target_option: d3.sum(Object.values(summary.occurrence_target_option))
+                    column.total = {
+                        occurrence: d3.sum(Object.values(column.occurrence)),
+                        occurrence_target_option: d3.sum(Object.values(column.occurrence_target_option))
                     }
-                    summary.total.percent_target_option = summary.total.occurrence_target_option / summary.total.occurrence
+                    column.total.percent_target_option = column.total.occurrence_target_option / column.total.occurrence
 
-                    this.compute_initial_risk_groups(summary)
-                    this.compute_risk_increase(summary)
+                    this.compute_initial_risk_groups(column)
+                    this.compute_risk_increase(column)
 
-                    this.variable_summaries.push(summary)
+                    this.column_list.push(column)
                 }
             })
 
             //go through summaries again to compute correlation with target
-            let target_summary = this.variable_summaries.find(d => d.name === this.target_column)
-            this.target = target_summary
-            console.log(target_summary)
-            this.variable_summaries.forEach(summary => {
-                summary.correlation_with_target = useSimilarityStore().compute_similarity(target_summary, summary)
-                summary.significance = scoreStore.compute_significance_score(summary)
+            let target_column = this.column_list.find(d => d.name === this.target_column)
+            this.target = target_column
+            console.log(target_column)
+            this.column_list.forEach(column => {
+                column.correlation_with_target = useSimilarityStore().compute_similarity(target_column, column)
+                column.significance = scoreStore.compute_significance_score(column)
 
             })
 
@@ -171,12 +171,12 @@ export const useDataStore = defineStore('dataStore', {
         /**
          * bins continuous columns at start and end
          *
-         * @param summary
+         * @param column
          * @param min_bin_size
          * @returns {*}
          */
-        bin_ends(summary, min_bin_size) {
-            let options_num = summary.options
+        bin_ends(column, min_bin_size) {
+            let options_num = column.options
             let last_index_num = options_num.filter(a => a.range !== undefined).length - 1
 
             //iterate through options_num from behind
@@ -186,17 +186,17 @@ export const useDataStore = defineStore('dataStore', {
             let name_end = options_num[i].range[1]
             let name_start = ""
             while (occurrence_sum < min_bin_size && i > 0) {
-                occurrence_sum += summary['occurrence'][options_num[i].name]
-                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i].name]
+                occurrence_sum += column['occurrence'][options_num[i].name]
+                occurrence_target_option_sum += column['occurrence_target_option'][options_num[i].name]
                 name_start = options_num[i].range[0]
-                delete summary.occurrence[options_num[i].name]
-                delete summary.occurrence_target_option[options_num[i].name]
+                delete column.occurrence[options_num[i].name]
+                delete column.occurrence_target_option[options_num[i].name]
                 options_num.splice(i, 1)
                 i--
             }
             if (i < last_index_num) {
-                summary.occurrence[name_start + "-" + name_end] = occurrence_sum
-                summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
+                column.occurrence[name_start + "-" + name_end] = occurrence_sum
+                column.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
                 options_num.push({
                     "name": name_start + "-" + name_end,
                     "label": "≥" + name_start,
@@ -212,18 +212,18 @@ export const useDataStore = defineStore('dataStore', {
             name_start = options_num[i].range[0]
             name_end = ""
             while (occurrence_sum < min_bin_size && i < last_index_num) {
-                occurrence_sum += summary['occurrence'][options_num[i].name]
-                occurrence_target_option_sum += summary['occurrence_target_option'][options_num[i].name]
+                occurrence_sum += column['occurrence'][options_num[i].name]
+                occurrence_target_option_sum += column['occurrence_target_option'][options_num[i].name]
                 name_end = options_num[i].range[1]
-                delete summary.occurrence[options_num[i].name]
-                delete summary.occurrence_target_option[options_num[i].name]
+                delete column.occurrence[options_num[i].name]
+                delete column.occurrence_target_option[options_num[i].name]
                 i++
             }
             options_num.splice(0, i)
 
             if (i > 0) {
-                summary.occurrence[name_start + "-" + name_end] = occurrence_sum
-                summary.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
+                column.occurrence[name_start + "-" + name_end] = occurrence_sum
+                column.occurrence_target_option[name_start + "-" + name_end] = occurrence_target_option_sum
                 options_num.push({
                     "name": name_start + "-" + name_end,
                     "label": "<" + name_end,
@@ -231,38 +231,38 @@ export const useDataStore = defineStore('dataStore', {
                 })
             }
 
-            summary.options = options_num.sort(useHelperStore().sort)
-            return summary
+            column.options = options_num.sort(useHelperStore().sort)
+            return column
         },
         /**
-         * if missing values should be excluded, remove them from the summary
+         * if missing values should be excluded, remove them from the column
          *
-         * @param summary
+         * @param column
          * @returns {*}
          */
-        summary_exclude_missing(summary) {
+        column_exclude_missing(column) {
             //exclude missing values
             if (this.exclude_missing) {
-                summary.options = summary.options.filter(d => d.name !== "" && d.name !== "NA")
-                delete summary.occurrence[""]
-                delete summary.occurrence_target_option[""]
-                delete summary.occurrence["NA"]
-                delete summary.occurrence_target_option["NA"]
+                column.options = column.options.filter(d => d.name !== "" && d.name !== "NA")
+                delete column.occurrence[""]
+                delete column.occurrence_target_option[""]
+                delete column.occurrence["NA"]
+                delete column.occurrence_target_option["NA"]
             }
-            return summary
+            return column
         },
         /**
-         * compute initial risk groups for a summary
+         * compute initial risk groups for a column
          *
-         * @param summary
+         * @param column
          */
-        compute_initial_risk_groups(summary) {
+        compute_initial_risk_groups(column) {
             //calculate risk boundary differencing between risk factor and not risk factor
-            const percent_range = d3.extent(Object.values(summary.percent_target_option))
+            const percent_range = d3.extent(Object.values(column.percent_target_option))
             const split_percent = percent_range[0] + (percent_range[1] - percent_range[0]) / 2
-            const groups_true = Object.entries(summary.percent_target_option).filter(d => d[1] >= split_percent).map(d => d[0])
+            const groups_true = Object.entries(column.percent_target_option).filter(d => d[1] >= split_percent).map(d => d[0])
 
-            summary.options.forEach(d => {
+            column.options.forEach(d => {
                 d.risk_group = groups_true.includes(d.name)
             })
 
@@ -270,31 +270,31 @@ export const useDataStore = defineStore('dataStore', {
         /**
          * binary percent risk increase when in specific groups
          *
-         * @param summary
+         * @param column
          * @returns {{risk_difference: string, risk_factor_groups: string}}
          */
-        compute_risk_increase(summary) {
+        compute_risk_increase(column) {
 
             //compute groups below risk boundary
-            const groups_false = summary.options.filter(d => d.risk_group === false).map(d => d.name)
-            const groups_below_occurrence_sum = groups_false.reduce((a, b) => a + summary.occurrence[b], 0)
-            const groups_below_target_option_occurrence_sum = groups_false.reduce((a, b) => a + summary.occurrence_target_option[b], 0)
+            const groups_false = column.options.filter(d => d.risk_group === false).map(d => d.name)
+            const groups_below_occurrence_sum = groups_false.reduce((a, b) => a + column.occurrence[b], 0)
+            const groups_below_target_option_occurrence_sum = groups_false.reduce((a, b) => a + column.occurrence_target_option[b], 0)
             const below_percentage = groups_below_target_option_occurrence_sum / groups_below_occurrence_sum
 
             //compute groups above risk boundary
-            const groups_true = summary.options.filter(d => d.risk_group === true).map(d => d.name)
-            const groups_above_occurrence_sum = groups_true.reduce((a, b) => a + summary.occurrence[b], 0)
-            const groups_above_target_option_occurrence_sum = groups_true.reduce((a, b) => a + summary.occurrence_target_option[b], 0)
+            const groups_true = column.options.filter(d => d.risk_group === true).map(d => d.name)
+            const groups_above_occurrence_sum = groups_true.reduce((a, b) => a + column.occurrence[b], 0)
+            const groups_above_target_option_occurrence_sum = groups_true.reduce((a, b) => a + column.occurrence_target_option[b], 0)
             const above_percentage = groups_above_target_option_occurrence_sum / groups_above_occurrence_sum
 
             //create name of risk factor
-            const name_above = this.compute_group_name(summary.options, summary.type)
+            const name_above = this.compute_group_name(column.options, column.type)
 
             //calculate metrics to compare risk factors
             const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(1)
             const risk_difference = (above_percentage - below_percentage).toFixed(1)
 
-            summary.riskIncrease = {
+            column.riskIncrease = {
                 risk_factor_groups: groups_true,
                 name: name_above,
                 risk_difference: risk_difference,
@@ -342,25 +342,25 @@ export const useDataStore = defineStore('dataStore', {
          * recalculates a variable summaries when the option bins are changed. For now, people that do not fit in any of
          * the current bins are just ignored. This will be changed in the future.
          *
-         * @param summary
+         * @param column
          * @returns {*}
          */
-        recalculate_summary_after_option_change(summary) {
+        recalculate_column_after_option_change(column) {
             //only continue if there are less than 10 options to make sure it is categorical or ordinal
-            if (summary.type === "categorical") {
+            if (column.type === "categorical") {
                 //not implemented yet
-                return summary
+                return column
 
             }
-            if (summary.type === "continuous") {
+            if (column.type === "continuous") {
 
                 //update names
-                if (summary.type === "continuous") {
-                    summary.options.filter(d => d.range !== undefined).forEach(d => d.name = d.range[0] + "-" + d.range[1])
-                    summary.options.filter(d => d.range !== undefined).forEach((d, i) => {
+                if (column.type === "continuous") {
+                    column.options.filter(d => d.range !== undefined).forEach(d => d.name = d.range[0] + "-" + d.range[1])
+                    column.options.filter(d => d.range !== undefined).forEach((d, i) => {
                         if (i === 0) {
                             d.label = "<" + d.range[1]
-                        } else if (i === summary.options.length - 1) {
+                        } else if (i === column.options.length - 1) {
                             d.label = "≥" + d.range[0]
                         } else {
                             d.label = d.name
@@ -368,27 +368,27 @@ export const useDataStore = defineStore('dataStore', {
                     })
                 }
 
-                summary.occurrence = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
-                summary.occurrence_target_option = Object.fromEntries(new Map(summary.options.map(d => [d.name, 0])))
-                summary.data_binned = summary.data.map(d => this.find_bin(d, summary.options))
-                summary.data_binned.forEach(d => summary.occurrence[d]++)
-                summary.data_with_target_option_binned = summary.data_with_target_option.map(d => this.find_bin(d, summary.options))
-                summary.data_with_target_option_binned.forEach(d => summary.occurrence_target_option[d]++)
+                column.occurrence = Object.fromEntries(new Map(column.options.map(d => [d.name, 0])))
+                column.occurrence_target_option = Object.fromEntries(new Map(column.options.map(d => [d.name, 0])))
+                column.data_binned = column.data.map(d => this.find_bin(d, column.options))
+                column.data_binned.forEach(d => column.occurrence[d]++)
+                column.data_with_target_option_binned = column.data_with_target_option.map(d => this.find_bin(d, column.options))
+                column.data_with_target_option_binned.forEach(d => column.occurrence_target_option[d]++)
 
                 //for now: just exclude null values
-                delete summary.occurrence[null]
-                delete summary.occurrence_target_option[null]
+                delete column.occurrence[null]
+                delete column.occurrence_target_option[null]
 
-                summary.percent_target_option = this.divide_maps(summary.occurrence_target_option, summary.occurrence)
+                column.percent_target_option = this.divide_maps(column.occurrence_target_option, column.occurrence)
 
 
-                summary = this.summary_exclude_missing(summary)
-                summary.significance = useScoreStore().compute_significance_score(summary)
-                this.compute_risk_increase(summary)
+                column = this.column_exclude_missing(column)
+                column.significance = useScoreStore().compute_significance_score(column)
+                this.compute_risk_increase(column)
 
-                console.log(summary)
+                console.log(column)
 
-                return summary
+                return column
             }
 
         },
@@ -413,7 +413,7 @@ export const useDataStore = defineStore('dataStore', {
             this.target_column = null
             this.target_all_options = []
             this.target_option = null
-            this.variable_summaries = []
+            this.column_list = []
         }
     }
 })

@@ -11,7 +11,7 @@
 
         <v-card title="Risk Factors">
             <!-- not sure why this is so buggy!
-            <v-virtual-scroll height="500" :items="dataStore.variable_summaries">
+            <v-virtual-scroll height="500" :items="dataStore.column_list">
                 <template  v-slot:default="item">
                     <fact_group_preview class="pa-2"
                                         v-if="! dashboardStore.dashboard_items.map(ditem => ditem.name).includes(item.item.name)"
@@ -21,7 +21,7 @@
             </v-virtual-scroll>
             -->
             <div class="d-flex flex-wrap overflow-auto align-stretch" style="height:800px">
-                <div v-for="column in dataStore.variable_summaries" v-bind:key="column" class="relative">
+                <div v-for="column in dataStore.column_list" v-bind:key="column" class="relative">
                     <fact_group_preview v-if="dashboardStore.is_recommendation_column(column)"
                                         class="pa-2 h-100" :vertical="true"
                                         :visList="visGeneratorStore.generate_main_fact_visList()"

@@ -11,7 +11,7 @@
 
         <v-card title="Dashboard">
             <!-- not sure why this is so buggy!
-            <v-virtual-scroll height="500" :items="dataStore.variable_summaries">
+            <v-virtual-scroll height="500" :items="dataStore.column_list">
                 <template  v-slot:default="item">
                     <fact_group_preview class="pa-2"
                                         v-if="! dashboardStore.dashboard_items.map(ditem => ditem.name).includes(item.item.name)"

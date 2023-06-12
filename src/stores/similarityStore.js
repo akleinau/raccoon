@@ -30,7 +30,7 @@ export const useSimilarityStore = defineStore('similarityStore', {
         compute_similar_columns(summary) {
             const visList = useVisGeneratorStore().generate_main_fact_visList()
 
-            return useDataStore().variable_summaries
+            return useDataStore().column_list
                 .filter(item => item.name !== summary.name)
                 .map(item => {
                     return {

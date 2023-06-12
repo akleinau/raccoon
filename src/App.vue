@@ -141,7 +141,7 @@ export default {
     },
     computed: {
         risk_list: function () {
-            return this.dataStore.variable_summaries
+            return this.dataStore.column_list
                 .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
                 return {
                     column: column,

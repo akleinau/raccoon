@@ -162,7 +162,7 @@
                         </v-expansion-panels>
                     </div>
                     <div class="ml-5">
-                        <v-btn variant="outlined" @click="dataStore.calc_variable_summaries()">Recalculate</v-btn>
+                        <v-btn variant="outlined" @click="dataStore.calc_column_list()">Recalculate</v-btn>
                     </div>
 
                 </div>

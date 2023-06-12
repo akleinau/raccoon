@@ -119,14 +119,14 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
             let factGroups = []
 
             //occurrence of target
-            let target_column = useDataStore().variable_summaries.find(d => d.name === useDataStore().target_column)
+            let target_column = useDataStore().column_list.find(d => d.name === useDataStore().target_column)
             if (target_column) {
                 factGroups.push({
                     "visList": [{
                         type: 'impact',
                         data_map: 'occurrence'
                     }],
-                    "column": useDataStore().variable_summaries.find(d => d.name === useDataStore().target_column)
+                    "column": useDataStore().column_list.find(d => d.name === useDataStore().target_column)
                 })
             }
 

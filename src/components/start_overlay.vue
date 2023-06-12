@@ -6,9 +6,9 @@
                               @update:modelValue="uploaded"></v-file-input>
             </div>
 
-            <div v-if="dataStore.columns.length !== 0">
+            <div v-if="dataStore.column_names.length !== 0">
                 <v-autocomplete v-model="dataStore.target_column" class="px-5" label="Select target"
-                                :items="dataStore.columns"
+                                :items="dataStore.column_names"
                                 @update:modelValue="target_selected"/>
             </div>
 
@@ -93,7 +93,7 @@ export default {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = d3.csvParse(event.target.result)
-                this.dataStore.columns = data.columns
+                this.dataStore.column_names = data.columns
                 this.dataStore.csv = data
                 this.dataStore.min_bin_size = Math.floor(data.length / 100)
 
@@ -120,19 +120,18 @@ export default {
         visualize() {
             this.dataStore.start = false
             this.dashboardStore.set_initial_default_settings(this.dataStore.csv.length, this.dataStore.target_column, this.dataStore.target_option)
-            this.dataStore.calc_variable_summaries()
-            this.dashboardStore.add_dashboard_item(this.dataStore.variable_summaries.find(d => d.name === useDataStore().target_column),
+            this.dataStore.calc_column_list()
+            this.dashboardStore.add_dashboard_item(this.dataStore.column_list.find(d => d.name === useDataStore().target_column),
                 [{type: 'impact', data_map: 'occurrence'}], false)
             let i = 0
             while (i < (this.starting_items - 1)) {
                 let j = 0
-                while (!this.dashboardStore.is_recommendation_column(this.dataStore.variable_summaries[j])) {
+                while (!this.dashboardStore.is_recommendation_column(this.dataStore.column_list[j])) {
                     j++
                 }
-                let best_summary = this.dataStore.variable_summaries[j]
-                if (best_summary.significance.score["regression"] >= 0.01) {
-                    console.log("best_summary", best_summary)
-                    this.dashboardStore.add_dashboard_item(best_summary, this.visGeneratorStore.generate_main_fact_visList(), true)
+                let best_column = this.dataStore.column_list[j]
+                if (best_column.significance.score["regression"] >= 0.01) {
+                    this.dashboardStore.add_dashboard_item(best_column, this.visGeneratorStore.generate_main_fact_visList(), true)
                     i++
                 } else {
                     break

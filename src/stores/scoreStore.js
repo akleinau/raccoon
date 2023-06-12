@@ -8,10 +8,10 @@ export const useScoreStore = defineStore('scoreStore', {
     }),
     actions: {
         /**
-         * sort variable_summaries by currently selected significance score
+         * sort column_list by currently selected significance score
          */
         sort_summaries() {
-            useDataStore().variable_summaries.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
+            useDataStore().column_list.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
         },
         /**
          * computes tuples with statistically significant differences and significance score

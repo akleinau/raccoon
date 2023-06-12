@@ -317,7 +317,7 @@ export default {
          * recalculates the options for the risk factor
          */
         recalculate_options() {
-            this.dashboardStore.current_fact_group.column = this.dataStore.recalculate_summary_after_option_change(this.dashboardStore.current_fact_group.column)
+            this.dashboardStore.current_fact_group.column = this.dataStore.recalculate_column_after_option_change(this.dashboardStore.current_fact_group.column)
         },
         move_vis_up(vis) {
             let index = this.dashboardStore.current_fact_group.visList.indexOf(vis)

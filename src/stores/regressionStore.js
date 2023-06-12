@@ -91,7 +91,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         /**
          * train
          */
-        train(columns, map, Data, y_pred, y_actual, summary_place, epochs) {
+        train(columns, map, Data, y_pred, y_actual, column_place, epochs) {
 
             const onlyBias = Data.length === 0
 
@@ -154,20 +154,20 @@ export const useRegressionStore = defineStore('regressionStore', {
             const dataStore = useDataStore()
             const dashboardStore = useDashboardStore()
 
-            if (summary_place === "variable_summaries") {
-                columns.forEach(column => {
+            if (column_place === "column_list") {
+                columns.forEach(name => {
                     //let influence = d3.max(weights_map.filter(d => d.name === column).map(d => Math.abs(d.weight)))
-                    let summary = dataStore.variable_summaries.find(d => d.name === column)
+                    let column = dataStore.column_list.find(d => d.name === name)
                     //console.log(influence)
-                    if (summary) {
-                        summary.significance.score["regression"] = accuracy - this.dashboard_accuracy
-                        //console.log(summary.significance.score["regression"])
+                    if (column) {
+                        column.significance.score["regression"] = accuracy - this.dashboard_accuracy
+                        //console.log(column.significance.score["regression"])
                         if (accuracy - this.dashboard_accuracy > this.accuracy_diff) this.accuracy_diff = accuracy - this.dashboard_accuracy
                     }
                 })
             }
 
-            if (summary_place === "dashboard") {
+            if (column_place === "dashboard") {
                 dashboardStore.dashboard_items.forEach(item => {
                     if (item.column.significance) {
                         let influence = d3.max(weights_map.filter(d => d.name === item.name).map(d => Math.abs(d.weight)))
@@ -204,37 +204,37 @@ export const useRegressionStore = defineStore('regressionStore', {
             let dataStore = useDataStore()
 
             //gets csv data - categorical, numerical, ordinal data, and target
-            dataStore.variable_summaries.forEach(summary => {
+            dataStore.column_list.forEach(column => {
 
-                if (summary && Math.abs(summary.correlation_with_target) >= this.correlation_boundary) {
+                if (column && Math.abs(column.correlation_with_target) >= this.correlation_boundary) {
 
                     let data_items = []
                     let map_items = []
-                    if (summary.type === "categorical") {
+                    if (column.type === "categorical") {
                         // convert categorical data to one hot encoding
-                        summary.options.forEach(option => {
-                            data_items.push(summary.data.map(d => d === option.name ? 1 : 0))
+                        column.options.forEach(option => {
+                            data_items.push(column.data.map(d => d === option.name ? 1 : 0))
                             map_items.push({
                                 "type": "categorical",
-                                "name": summary.name,
+                                "name": column.name,
                                 "option": option.name
                             })
                         })
 
-                    } else if (summary.type === "continuous") {
+                    } else if (column.type === "continuous") {
                         //normalize continuous data
-                        let mean = d3.mean(summary.data)
-                        let stddev = d3.deviation(summary.data)
-                        data_items.push(summary.data.map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
+                        let mean = d3.mean(column.data)
+                        let stddev = d3.deviation(column.data)
+                        data_items.push(column.data.map(d => isNaN(d) || d === "" ? 0 : (d - mean) / stddev))
                         map_items.push({
                             "type": "continuous",
-                            "name": summary.name,
+                            "name": column.name,
                         })
                     }
 
 
                     if (data_items.length > 0) {
-                        this.prepared_data[summary.name] = [data_items, map_items]
+                        this.prepared_data[column.name] = [data_items, map_items]
                     }
                 }
 
@@ -287,22 +287,22 @@ export const useRegressionStore = defineStore('regressionStore', {
             console.log("dashboard accuracy: " + accuracy)
             //console.log(y_pred)
             console.log("training on remaining data:")
-            useDataStore().columns.forEach(column => {
-                if (!useDashboardStore().dashboard_items.map(d => d.name).includes(column) &&
-                    column !== useDataStore().target_column) {
-                    if (!dashboardStore.excluded_columns.includes(column)) {
-                        let [map, Data] = this.get_prepared_data_subset([column])
-                        if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries", this.fast_epochs)
+            useDataStore().column_names.forEach(name => {
+                if (!useDashboardStore().dashboard_items.map(d => d.name).includes(name) &&
+                    name !== useDataStore().target_column) {
+                    if (!dashboardStore.excluded_columns.includes(name)) {
+                        let [map, Data] = this.get_prepared_data_subset([name])
+                        if (Data.length > 0) this.train([name], map, Data, y_pred, y, "column_list", this.fast_epochs)
                         else {
-                            let summary = dataStore.variable_summaries.find(d => d.name === column)
-                            if (summary) {
-                                summary.significance.score["regression"] = 0
+                            let column = dataStore.column_list.find(d => d.name === name)
+                            if (column) {
+                                column.significance.score["regression"] = 0
                             }
                         }
                     } else {
-                        let summary = dataStore.variable_summaries.find(d => d.name === column)
-                        if (summary) {
-                            summary.significance.score["regression"] = 0
+                        let column = dataStore.column_list.find(d => d.name === name)
+                        if (column) {
+                            column.significance.score["regression"] = 0
                         }
                     }
                 }
