@@ -5,7 +5,7 @@ import {useScoreStore} from "./scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
 
-export const useCSVStore = defineStore('csvStore', {
+export const useDataStore = defineStore('dataStore', {
     state: () => ({
         start: true,
         exclude_missing: true,

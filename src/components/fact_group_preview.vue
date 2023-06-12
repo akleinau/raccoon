@@ -31,7 +31,7 @@
 <script>
 import vis_parser from "@/components/visualization/vis_parser.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 
 export default {
     name: "fact_group",
@@ -45,8 +45,8 @@ export default {
     ],
     setup() {
         const dashboardStore = useDashboardStore()
-        const csvStore = useCSVStore()
-        return {csvStore, dashboardStore}
+        const dataStore = useDataStore()
+        return {dataStore, dashboardStore}
     },
     methods: {
         /**

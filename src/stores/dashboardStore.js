@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
@@ -132,7 +132,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
          * update context facts in the dashboard
          */
         update_dashboard_context() {
-            let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
+            let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useDataStore().target_column &&
                 d.column.riskIncrease !== undefined)
 
             const options = risk_factor_items.map(item => ({
@@ -178,7 +178,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
          */
         is_recommendation_column(column) {
             return (!this.dashboard_items.map(item => item.name).includes(column.name) &&
-                column.name !== useCSVStore().target_column &&
+                column.name !== useDataStore().target_column &&
                 !this.excluded_columns.includes(column.name))
         },
         /**

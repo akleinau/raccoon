@@ -6,16 +6,16 @@
 </template>
 
 <script>
-import {useCSVStore} from '@/Stores/csvStore'
+import {useDataStore} from '@/stores/dataStore'
 import {useDashboardStore} from "@/stores/dashboardStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
 
 export default {
     setup() {
-        const csvStore = useCSVStore()
+        const dataStore = useDataStore()
         const dashboardStore = useDashboardStore()
         const similarityStore = useSimilarityStore()
-        return {csvStore, dashboardStore, similarityStore}
+        return {dataStore, dashboardStore, similarityStore}
     },
     data() {
         return {}

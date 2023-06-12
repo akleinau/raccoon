@@ -246,7 +246,7 @@
 <script>
 import {useDashboardStore} from "@/stores/dashboardStore";
 import text_input from "@/components/helpers/text-input.vue";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import ColorDialog from "@/components/helpers/color-dialog.vue";
 import {useAnnotationStore} from "@/stores/annotationStore";
 
@@ -255,9 +255,9 @@ export default {
     components: {ColorDialog, text_input},
     setup() {
         const dashboardStore = useDashboardStore()
-        const csvStore = useCSVStore()
+        const dataStore = useDataStore()
         const annotationStore = useAnnotationStore()
-        return {dashboardStore, csvStore, annotationStore}
+        return {dashboardStore, dataStore, annotationStore}
     },
     data() {
         return {

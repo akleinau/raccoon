@@ -15,7 +15,7 @@ import vis_line from "@/components/visualization/vis_line.vue";
 import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
 
@@ -26,9 +26,9 @@ export default {
     ],
     setup() {
         const dashboardStore = useDashboardStore()
-        const csvStore = useCSVStore()
+        const dataStore = useDataStore()
         const annotationStore = useAnnotationStore()
-        return {dashboardStore, csvStore, annotationStore}
+        return {dashboardStore, dataStore, annotationStore}
     },
     components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie, vis_multiple_pie},
     data() {
@@ -41,7 +41,7 @@ export default {
             return this.vis.graph ? this.vis.graph : this.dashboardStore.default_settings[this.vis.type].graph
         },
         target() {
-            return this.csvStore.target
+            return this.dataStore.target
         },
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))

@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 
 export const useHelperStore = defineStore('helperStore', {
     state: () => ({}),
@@ -41,10 +41,10 @@ export const useHelperStore = defineStore('helperStore', {
          */
         parse_text(text_array, column) {
             let new_text_array = JSON.parse(JSON.stringify(text_array))
-            if (useCSVStore().target) {
+            if (useDataStore().target) {
                 new_text_array.forEach(d => {
-                    d.text = d.text.replace("$target_column", useCSVStore().target.label)
-                    d.text = d.text.replace("$target_option", useCSVStore().target.options.find(x => x.name === useCSVStore().target_option).label)
+                    d.text = d.text.replace("$target_column", useDataStore().target.label)
+                    d.text = d.text.replace("$target_option", useDataStore().target.options.find(x => x.name === useDataStore().target_option).label)
                     d.text = d.text.replace("$column", column.label)
                     return d
                 })

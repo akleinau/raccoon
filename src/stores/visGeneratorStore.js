@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useDashboardStore} from "@/stores/dashboardStore";
 
 export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
@@ -50,7 +50,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
          */
         generate_context_fact_groups() {
             let fact_groups = []
-            let risk_factor_items = useDashboardStore().dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
+            let risk_factor_items = useDashboardStore().dashboard_items.filter(d => d.column.name !== useDataStore().target_column &&
                 d.column.riskIncrease !== undefined)
             if (risk_factor_items.length > 0) {
                 const options = risk_factor_items.map(item => ({
@@ -119,19 +119,19 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
             let factGroups = []
 
             //occurrence of target
-            let target_column = useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
+            let target_column = useDataStore().variable_summaries.find(d => d.name === useDataStore().target_column)
             if (target_column) {
                 factGroups.push({
                     "visList": [{
                         type: 'impact',
                         data_map: 'occurrence'
                     }],
-                    "column": useCSVStore().variable_summaries.find(d => d.name === useCSVStore().target_column)
+                    "column": useDataStore().variable_summaries.find(d => d.name === useDataStore().target_column)
                 })
             }
 
             //nr of participants
-            let csv = useCSVStore().csv
+            let csv = useDataStore().csv
             if (csv) {
                 factGroups.push({
                     "visList": [{

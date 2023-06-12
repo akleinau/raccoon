@@ -6,7 +6,7 @@
         <v-app-bar>
             <v-app-bar-title>Raccoon</v-app-bar-title>
             <template v-slot:append>
-                <v-btn @click="this.csvStore.reset()">Reset</v-btn>
+                <v-btn @click="this.dataStore.reset()">Reset</v-btn>
             </template>
         </v-app-bar>
 
@@ -114,7 +114,7 @@ import excluded_column_overlay from "@/components/excluded_column_overlay.vue";
 import dashboard_overlay from "@/components/dashboard_overlay.vue";
 import tipsView from "@/components/tipsView.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
@@ -132,16 +132,16 @@ export default {
         tipsView
     },
     setup() {
-        const csvStore = useCSVStore()
+        const dataStore = useDataStore()
         const dashboardStore = useDashboardStore()
         const scoreStore = useScoreStore()
         const regressionStore = useRegressionStore()
         const visGeneratorStore = useVisGeneratorStore()
-        return {csvStore, dashboardStore, regressionStore, scoreStore, visGeneratorStore}
+        return {dataStore, dashboardStore, regressionStore, scoreStore, visGeneratorStore}
     },
     computed: {
         risk_list: function () {
-            return this.csvStore.variable_summaries
+            return this.dataStore.variable_summaries
                 .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
                 return {
                     column: column,

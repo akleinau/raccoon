@@ -219,7 +219,7 @@ import vis_parser from "@/components/visualization/vis_parser.vue";
 import fact_group_preview from "@/components/fact_group_preview.vue";
 
 import {useDashboardStore} from "@/stores/dashboardStore";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import {useSimilarityStore} from "@/stores/similarityStore";
 import * as d3 from "d3";
@@ -229,9 +229,9 @@ export default {
     components: {vis_parser, fact_group_preview, fact_view},
     setup() {
         const dashboardStore = useDashboardStore()
-        const csvStore = useCSVStore()
+        const dataStore = useDataStore()
         const scoreStore = useScoreStore()
-        return {dashboardStore, csvStore, scoreStore}
+        return {dashboardStore, dataStore, scoreStore}
     },
     data() {
         return {
@@ -252,7 +252,7 @@ export default {
         },
         risk_groups: function () {
             if (this.column) {
-                this.csvStore.compute_risk_increase(this.column)
+                this.dataStore.compute_risk_increase(this.column)
             }
         }
     },
@@ -317,7 +317,7 @@ export default {
          * recalculates the options for the risk factor
          */
         recalculate_options() {
-            this.dashboardStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.dashboardStore.current_fact_group.column)
+            this.dashboardStore.current_fact_group.column = this.dataStore.recalculate_summary_after_option_change(this.dashboardStore.current_fact_group.column)
         },
         move_vis_up(vis) {
             let index = this.dashboardStore.current_fact_group.visList.indexOf(vis)

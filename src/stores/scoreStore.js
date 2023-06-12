@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 
 export const useScoreStore = defineStore('scoreStore', {
     state: () => ({
@@ -11,7 +11,7 @@ export const useScoreStore = defineStore('scoreStore', {
          * sort variable_summaries by currently selected significance score
          */
         sort_summaries() {
-            useCSVStore().variable_summaries.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
+            useDataStore().variable_summaries.sort((a, b) => b.significance.score[this.score] - a.significance.score[this.score])
         },
         /**
          * computes tuples with statistically significant differences and significance score
@@ -109,7 +109,7 @@ export const useScoreStore = defineStore('scoreStore', {
         weighted_max_score(summary) {
             let max_percent_option = Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0]
             let max_percent_occurrence = summary.occurrence[max_percent_option[0]]
-            return max_percent_option[1] * max_percent_occurrence / useCSVStore().csv.length
+            return max_percent_option[1] * max_percent_occurrence / useDataStore().csv.length
         },
 
     }

@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useDashboardStore} from "@/stores/dashboardStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
 import {useVisHelperStore} from "@/stores/visHelperStore";
@@ -30,7 +30,7 @@ export const useSimilarityStore = defineStore('similarityStore', {
         compute_similar_columns(summary) {
             const visList = useVisGeneratorStore().generate_main_fact_visList()
 
-            return useCSVStore().variable_summaries
+            return useDataStore().variable_summaries
                 .filter(item => item.name !== summary.name)
                 .map(item => {
                     return {
@@ -75,8 +75,8 @@ export const useSimilarityStore = defineStore('similarityStore', {
          * calculate pearson coefficient
          */
         pearson(x, y) {
-            let x_data = useCSVStore().csv.map(d => d[x.name])
-            let y_data = useCSVStore().csv.map(d => d[y.name])
+            let x_data = useDataStore().csv.map(d => d[x.name])
+            let y_data = useDataStore().csv.map(d => d[y.name])
             //handle missing data by deleting rows
             let filtered = x_data.map((d, i) => [d, y_data[i]])
                 .filter(d => !isNaN(d[0]) && !isNaN(d[1]))

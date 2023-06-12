@@ -129,13 +129,13 @@
             <v-expansion-panel-text>
                 <div class="d-flex">
                     <div>
-                        <v-checkbox label="exclude missing values" v-model="csvStore.exclude_missing"></v-checkbox>
+                        <v-checkbox label="exclude missing values" v-model="dataStore.exclude_missing"></v-checkbox>
 
 
                     </div>
                     <div style="width:200px" class="ml-2">
                         <v-text-field type="number" label="minimal bin size" class="align-self-stretch"
-                                      v-model="csvStore.min_bin_size"/>
+                                      v-model="dataStore.min_bin_size"/>
                     </div>
                     <div class="flex-grow-1 ml-5">
                         <v-expansion-panels>
@@ -162,7 +162,7 @@
                         </v-expansion-panels>
                     </div>
                     <div class="ml-5">
-                        <v-btn variant="outlined" @click="csvStore.calc_variable_summaries()">Recalculate</v-btn>
+                        <v-btn variant="outlined" @click="dataStore.calc_variable_summaries()">Recalculate</v-btn>
                     </div>
 
                 </div>
@@ -221,10 +221,10 @@
             <v-expansion-panel-text>
                 <div class="d-flex">
                     <b>Target: </b>
-                    <v-text-field :label="csvStore.target.name" v-model="csvStore.target.label"
+                    <v-text-field :label="dataStore.target.name" v-model="dataStore.target.label"
                         append-inner-icon="mdi-pencil" class="mx-3"  ></v-text-field>
-                    <v-text-field :label="csvStore.target.options.find(d => d.name ===csvStore.target_option).name"
-                                  v-model="csvStore.target.options.find(d => d.name ===csvStore.target_option).label"
+                    <v-text-field :label="dataStore.target.options.find(d => d.name ===dataStore.target_option).name"
+                                  v-model="dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
                                 append-inner-icon="mdi-pencil" class="mx-3"></v-text-field>
                 </div>
             </v-expansion-panel-text>
@@ -234,7 +234,7 @@
 
 <script>
 import {useDashboardStore} from "@/stores/dashboardStore";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import * as d3 from "d3";
@@ -244,11 +244,11 @@ export default {
     name: "settings_view",
     components: {ColorDialog},
     setup() {
-        const csvStore = useCSVStore()
+        const dataStore = useDataStore()
         const dashboardStore = useDashboardStore()
         const scoreStore = useScoreStore()
         const regressionStore = useRegressionStore()
-        return {csvStore, dashboardStore, scoreStore, regressionStore}
+        return {dataStore, dashboardStore, scoreStore, regressionStore}
     },
     data() {
         return {

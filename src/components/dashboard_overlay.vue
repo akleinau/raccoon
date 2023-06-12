@@ -11,11 +11,11 @@
 
         <v-card title="Dashboard">
             <!-- not sure why this is so buggy!
-            <v-virtual-scroll height="500" :items="csvStore.variable_summaries">
+            <v-virtual-scroll height="500" :items="dataStore.variable_summaries">
                 <template  v-slot:default="item">
                     <fact_group_preview class="pa-2"
                                         v-if="! dashboardStore.dashboard_items.map(ditem => ditem.name).includes(item.item.name)"
-                                        :visList="dashboardStore.generate_vis_from_settings(item.item, csvStore.csv.length, csvStore.target_column, csvStore.target_option)"
+                                        :visList="dashboardStore.generate_vis_from_settings(item.item, dataStore.csv.length, dataStore.target_column, dataStore.target_option)"
                                         :column="item.item"/>
                 </template>
             </v-virtual-scroll>
@@ -42,7 +42,7 @@
 <script>
 import fact_group_preview from "@/components/fact_group_preview.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 
 export default {
     name: "dashboard_overlay",
@@ -54,8 +54,8 @@ export default {
     ],
     setup() {
         const dashboardStore = useDashboardStore()
-        const csvStore = useCSVStore()
-        return {csvStore, dashboardStore}
+        const dataStore = useDataStore()
+        return {dataStore, dashboardStore}
     },
     data() {
         return {

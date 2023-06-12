@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {useCSVStore} from "@/stores/csvStore";
+import {useDataStore} from "@/stores/dataStore";
 import * as d3 from "d3";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useDashboardStore} from "@/stores/dashboardStore";
@@ -151,13 +151,13 @@ export const useRegressionStore = defineStore('regressionStore', {
                 })
             ) //.sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
 
-            const csvStore = useCSVStore()
+            const dataStore = useDataStore()
             const dashboardStore = useDashboardStore()
 
             if (summary_place === "variable_summaries") {
                 columns.forEach(column => {
                     //let influence = d3.max(weights_map.filter(d => d.name === column).map(d => Math.abs(d.weight)))
-                    let summary = csvStore.variable_summaries.find(d => d.name === column)
+                    let summary = dataStore.variable_summaries.find(d => d.name === column)
                     //console.log(influence)
                     if (summary) {
                         summary.significance.score["regression"] = accuracy - this.dashboard_accuracy
@@ -186,10 +186,10 @@ export const useRegressionStore = defineStore('regressionStore', {
          * @returns {*[]}
          */
         prepare_target() {
-            let csvStore = useCSVStore()
+            let dataStore = useDataStore()
             let y = []
-            csvStore.csv.forEach(d => {
-                if (d[csvStore.target_column] === csvStore.target_option) {
+            dataStore.csv.forEach(d => {
+                if (d[dataStore.target_column] === dataStore.target_option) {
                     y.push(1)
                 } else {
                     y.push(0)
@@ -201,10 +201,10 @@ export const useRegressionStore = defineStore('regressionStore', {
          * create prepared data based on variable summaries
          */
         prepare_data() {
-            let csvStore = useCSVStore()
+            let dataStore = useDataStore()
 
             //gets csv data - categorical, numerical, ordinal data, and target
-            csvStore.variable_summaries.forEach(summary => {
+            dataStore.variable_summaries.forEach(summary => {
 
                 if (summary && Math.abs(summary.correlation_with_target) >= this.correlation_boundary) {
 
@@ -275,11 +275,11 @@ export const useRegressionStore = defineStore('regressionStore', {
         compute_score() {
             this.accuracy_diff = 0
             let dashboardStore = useDashboardStore()
-            let csvStore = useCSVStore()
+            let dataStore = useDataStore()
             let y = this.prepare_target()
             let dashboard_columns = useDashboardStore().dashboard_items
                 .map(d => d.name)
-                .filter(d => d !== csvStore.target_column && !dashboardStore.excluded_columns.includes(d))
+                .filter(d => d !== dataStore.target_column && !dashboardStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.get_prepared_data_subset(dashboard_columns)
             console.log("training on dashboard:")
             let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard", this.epochs)
@@ -287,20 +287,20 @@ export const useRegressionStore = defineStore('regressionStore', {
             console.log("dashboard accuracy: " + accuracy)
             //console.log(y_pred)
             console.log("training on remaining data:")
-            useCSVStore().columns.forEach(column => {
+            useDataStore().columns.forEach(column => {
                 if (!useDashboardStore().dashboard_items.map(d => d.name).includes(column) &&
-                    column !== useCSVStore().target_column) {
+                    column !== useDataStore().target_column) {
                     if (!dashboardStore.excluded_columns.includes(column)) {
                         let [map, Data] = this.get_prepared_data_subset([column])
                         if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries", this.fast_epochs)
                         else {
-                            let summary = csvStore.variable_summaries.find(d => d.name === column)
+                            let summary = dataStore.variable_summaries.find(d => d.name === column)
                             if (summary) {
                                 summary.significance.score["regression"] = 0
                             }
                         }
                     } else {
-                        let summary = csvStore.variable_summaries.find(d => d.name === column)
+                        let summary = dataStore.variable_summaries.find(d => d.name === column)
                         if (summary) {
                             summary.significance.score["regression"] = 0
                         }
