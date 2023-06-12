@@ -67,7 +67,6 @@ export default {
     },
     created() {
         this.update_texts()
-        this.custom_colors = this.default.map(_ => "green")
     },
     methods: {
         get_color(color) {
@@ -83,6 +82,7 @@ export default {
             } else {
                 this.new_text = JSON.parse(JSON.stringify(this.default))
             }
+            this.custom_colors = this.new_text.map(_ => "green")
         },
         add_text_el(i) {
             this.new_text.splice(i + 1, 0, {text: "", color: "black"})

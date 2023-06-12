@@ -200,7 +200,7 @@
                 <div v-if="dashboardStore.current_fact.vis.annotation !== undefined &&
                                     dashboardStore.current_fact.vis.annotation !== null">
                     <text_input v-for="(el,i) in dashboardStore.current_fact.vis.annotation.text" :key="i"
-                                :text="el" default=""
+                                :text="el"
                                 @change="dashboardStore.current_fact.vis.annotation.text[i] = $event"
                                 :color="get_color()"/>
                 </div>
