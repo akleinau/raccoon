@@ -1,5 +1,5 @@
 <template>
-    <i v-show="false" class="mdi" :class="'mdi-' + this.vis.icon" />
+    <i v-show="false" class="mdi" :class="'mdi-' + this.vis.icon"/>
     <div ref="container"/>
 </template>
 
@@ -19,6 +19,11 @@ export default {
         const dataStore = useDataStore()
         const visHelperStore = useVisHelperStore()
         return {helperStore, dataStore, visHelperStore}
+    },
+    data: function () {
+        return {
+            use_column_group_names: false,
+        }
     },
     methods: {
         /**
@@ -54,6 +59,7 @@ export default {
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
+                this.use_column_group_names = true
                 data = this.visHelperStore.datamap_to_array(this.column[this.vis.data_map], this.column.options)
             }
 
@@ -70,7 +76,8 @@ export default {
             let margin_right = this.preview ? 5 : 60
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
             let width = (this.width ? this.width : 300) - margin_right
-            let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 30
+            let startBarX = this.helperStore.get_max_length(
+                this.use_column_group_names? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
             if (this.preview && startBarX > 100) {
                 startBarX = 100
             }
@@ -93,14 +100,14 @@ export default {
             const icon_height = icon_width * this.vis.ratio
             const icon_padding_px = x.step() - x.bandwidth() //padding in pixel to compute height
 
-            const row_height = (icon_height + icon_padding_px ) * this.vis.grid[1]
+            const row_height = (icon_height + icon_padding_px) * this.vis.grid[1]
             //y position inside each row
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
                 .range([row_height, 0])
                 .padding(icon_padding)
 
-            let height = data.length * (row_height+row_padding) // icon_height for margins
+            let height = data.length * (row_height + row_padding) // icon_height for margins
 
             //y position of each row
             let y_row = d3.scaleBand()
@@ -110,8 +117,8 @@ export default {
 
             let svg = d3.create("svg")
                 .attr("width", width + margin.left + margin.right + annotation_width)
-                .attr("height", height + margin.bottom + margin.top + grid_padding*2)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top + grid_padding*2])
+                .attr("height", height + margin.bottom + margin.top + grid_padding * 2)
+                .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top + grid_padding * 2])
                 .attr("font-family", this.vis.font_family)
 
             let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
@@ -121,7 +128,7 @@ export default {
                 .attr("x", margin.left)
                 .attr("y", margin.top)
                 .attr("width", width + margin.right)
-                .attr("height", height + grid_padding*2)
+                .attr("height", height + grid_padding * 2)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
                 .attr("stroke-width", 2)
@@ -155,7 +162,7 @@ export default {
                 .join("text")
                 .attr("x", margin.left - 5)
                 .attr("y", d => y_row(d.name) + row_height / 2)
-                .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
+                .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "end")
                 .attr("dy", 7)
 
@@ -180,7 +187,7 @@ export default {
 
                 //column name
                 svg.append("text")
-                    .attr("x", -(margin.top + (height + grid_padding*2 ) / 2))
+                    .attr("x", -(margin.top + (height + grid_padding * 2) / 2))
                     .attr("y", 20)
                     .text(this.column.label)
                     .style("text-anchor", "middle")
@@ -190,7 +197,7 @@ export default {
                 //axis
                 let axis_title = svg.append("text")
                     .attr("x", margin.left + width / 2)
-                    .attr("y", height  + grid_padding*2 + margin.top + margin.bottom / 2)
+                    .attr("y", height + grid_padding * 2 + margin.top + margin.bottom / 2)
                     .style("text-anchor", "middle")
                     .text("")
                 this.visHelperStore.append_tspans(axis_title, this.vis.axis, this.column)

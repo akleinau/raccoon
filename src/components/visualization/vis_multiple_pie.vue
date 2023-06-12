@@ -19,6 +19,11 @@ export default {
         const visHelperStore = useVisHelperStore()
         return {helperStore, dataStore, visHelperStore}
     },
+    data: function () {
+        return {
+            use_column_group_names: false,
+        }
+    },
     methods: {
         /**
          * returns value in number of dots
@@ -39,14 +44,12 @@ export default {
          * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
-             if (this.vis.detailLevel === "nominator") {
+            if (this.vis.detailLevel === "nominator") {
                 return [{"text": this.get_value(value), "color": this.vis.color}]
-            }
-            else if (this.vis.detailLevel === "denominator") {
+            } else if (this.vis.detailLevel === "denominator") {
                 return [{"text": this.get_value(value), "color": this.vis.color},
                     {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
-            }
-            else if (this.vis.detailLevel === "percent") {
+            } else if (this.vis.detailLevel === "percent") {
                 return [{"text": this.get_value(value), "color": this.vis.color},
                     {"text": "%", "color": "black"}]
             }
@@ -61,6 +64,7 @@ export default {
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
+                this.use_column_group_names = true
                 data = this.visHelperStore.datamap_to_array(this.column[this.vis.data_map], this.column.options)
             }
 
@@ -76,7 +80,8 @@ export default {
             let margin_top = 30
             let margin_right = this.preview ? 5 : 60
             let width = (this.width ? this.width : 300) - margin_right
-            let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 30
+            let startBarX = this.helperStore.get_max_length(
+                this.use_column_group_names? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
             if (this.preview && startBarX > 100) {
                 startBarX = 100
             }
@@ -92,7 +97,7 @@ export default {
 
             let height = data.length * (radius * 2 + 20)
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator"? this.vis.background: d3.color("white").darker(0.1)
+            let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background : d3.color("white").darker(0.1)
 
             let color = d3.scaleOrdinal()
                 .domain(["value", "rest"])
@@ -116,7 +121,7 @@ export default {
             svg.append("rect")
                 .attr("x", margin.left)
                 .attr("y", margin.top)
-                .attr("width", radius*7)
+                .attr("width", radius * 7)
                 .attr("height", height)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
@@ -126,28 +131,31 @@ export default {
             svg.selectAll("option")
                 .data(data)
                 .join("g")
-                .attr("transform",d => "translate(" + +(margin.left + radius*2) + "," + +(y_options(d.name) + radius) + ")")
+                .attr("transform", d => "translate(" + +(margin.left + radius * 2) + "," + +(y_options(d.name) + radius) + ")")
                 .attr("x", margin.left)
                 .attr("y", d => y_options(d.name))
                 .each((par, index, node) => {
-                        d3.select(node[index]).selectAll('pieParts')
-                            .data(pie([{"name": "value", "value": this.get_value_float(par.value)}, {"name": "rest", "value": 1 - this.get_value_float(par.value)}]))
-                            .enter()
-                            .append('path')
-                            .attr('d', d3.arc()
-                                .innerRadius(0)
-                                .outerRadius(radius)
-                            )
-                            .attr('fill', d => color(d.data.name))
-                    })
+                    d3.select(node[index]).selectAll('pieParts')
+                        .data(pie([{"name": "value", "value": this.get_value_float(par.value)}, {
+                            "name": "rest",
+                            "value": 1 - this.get_value_float(par.value)
+                        }]))
+                        .enter()
+                        .append('path')
+                        .attr('d', d3.arc()
+                            .innerRadius(0)
+                            .outerRadius(radius)
+                        )
+                        .attr('fill', d => color(d.data.name))
+                })
 
 
             svg.selectAll("textName")
                 .data(data)
                 .join("text")
-                .attr("x", margin.left-5)
+                .attr("x", margin.left - 5)
                 .attr("y", d => y_options(d.name) + y_options.bandwidth() / 2)
-                .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
+                .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "end")
 
             if (!this.preview) {
@@ -200,11 +208,11 @@ export default {
             let gap = 15
             if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
                 let targets_y = this.vis.annotation.target.map(d => y_options(d))
-                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height/2
+                let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height / 2
                 //text
                 this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
-                        .attr("x", radius*7 + margin.left + gap)
+                        .attr("x", radius * 7 + margin.left + gap)
                         .attr("y", mean_y + i * 15 + y_options.bandwidth() / 2)
                         .attr("width", 200)
                         .style("font-style", "italic")
@@ -215,9 +223,9 @@ export default {
                 svg.selectAll("line")
                     .data(targets_y)
                     .join("line")
-                    .attr("x1", radius*7 + margin.left + gap - 10)
+                    .attr("x1", radius * 7 + margin.left + gap - 10)
                     .attr("y1", d => d)
-                    .attr("x2", radius*7 + margin.left + gap - 10)
+                    .attr("x2", radius * 7 + margin.left + gap - 10)
                     .attr("y2", d => d + y_options.bandwidth())
                     .attr("stroke", "#505050")
                     .attr("stroke-width", 3)

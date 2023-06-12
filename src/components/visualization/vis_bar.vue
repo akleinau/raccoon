@@ -17,6 +17,11 @@ export default {
         const visHelperStore = useVisHelperStore()
         return {helperStore, visHelperStore}
     },
+    data: function() {
+        return {
+            use_column_group_names: false,
+        }
+    },
     methods: {
         /**
          * returns value as pretty text
@@ -36,6 +41,7 @@ export default {
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {
+                this.use_column_group_names = true
                 data = this.visHelperStore.datamap_to_array(this.column[this.vis.data_map], this.column.options)
             }
 
@@ -47,7 +53,8 @@ export default {
          * @param data
          */
         visualize(data) {
-            let startBarX = this.helperStore.get_max_length(this.column.options.map(a => a.label)) * 10 + 30
+            let startBarX = this.helperStore.get_max_length(
+                this.use_column_group_names? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
             if (this.preview && startBarX > 100) {
                 startBarX = 100
             }
@@ -100,7 +107,7 @@ export default {
                 .join("text")
                 .attr("x", margin.left - 5)
                 .attr("y", d => y(d.name))
-                .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview))
+                .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "end")
                 .attr("dy", y.bandwidth() - 5)
 

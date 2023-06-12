@@ -47,12 +47,25 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 title: [{text: "Context", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
-                color: 2,
+                color: 3,
             },
             text: {
                 graph: "text",
                 font_size: 2,
                 text: [{text: "", color: "black"}],
+            },
+            similarity: {
+                graph: "bar",
+                grid: [25, 4],
+                icon: "circle",
+                ratio: 1,
+                range: [0, 1],
+                axis: [{text: "correlation", color: "black"}],
+                title: [{text: "Are there similar variables?", color: "black"}],
+                detailLevel: "denominator",
+                font_size: 2,
+                color: 2,
+
             }
         },
         default_colors: {
@@ -199,11 +212,14 @@ export const useDashboardStore = defineStore('dashboardStore', {
          * set new fact group
          */
         set_fact_group(column, visList) {
+            let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(column)
+            let additional_vis_list = useVisGeneratorStore().generate_additional_fact_visList(column, similar_dashboard_columns)
+
             this.current_fact_group = {
                 'column': column,
                 'visList': visList,
-                'additional_vis_list': useVisGeneratorStore().generate_additional_fact_visList(column),
-                'similar_dashboard_columns': useSimilarityStore().compute_similar_dashboard_columns(column)
+                'additional_vis_list': additional_vis_list,
+                'similar_dashboard_columns': similar_dashboard_columns
             }
         },
         /**

@@ -31,13 +31,22 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
          *
          * @returns {*[]}
          */
-        generate_additional_fact_visList() {
+        generate_additional_fact_visList(column, similar_dashboard_columns) {
             let visList = []
             visList.push(
                 {
                     type: "text",
                     graph: "text",
-                    text: [{"text": "add custom text here", "color": "black"}],
+                    text: [{"text": "add custom text about" + column.label + " here", "color": "black"}],
+                }
+            )
+            visList.push(
+                {
+                    type: "similarity",
+                    data: similar_dashboard_columns.map(item => ({
+                        name: item.column.label,
+                        value: item.similarity.toFixed(2)
+                    }))
                 }
             )
 
