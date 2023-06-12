@@ -44,6 +44,13 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
 
             return array
         },
+        /**
+         * add text as tspans to an element to enable differently colored text segments
+         *
+         * @param el
+         * @param text
+         * @param column
+         */
         append_tspans(el, text, column) {
             let text_array = useHelperStore().parse_text(text, column)
 
@@ -53,6 +60,13 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 .text(d => d.text)
                 .style("fill", d => d.color)
         },
+        /**
+         * returns background color. If background is set to auto, an appropriate color is selected. Else the background color is returned.
+         *
+         * @param background
+         * @param foreground
+         * @returns {*}
+         */
         get_bgcolor(background, foreground) {
             let bgcolor = background
             if (background === "auto") {

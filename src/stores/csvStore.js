@@ -251,6 +251,11 @@ export const useCSVStore = defineStore('csvStore', {
             }
             return summary
         },
+        /**
+         * compute initial risk groups for a summary
+         *
+         * @param summary
+         */
         compute_initial_risk_groups(summary) {
             //calculate risk boundary differencing between risk factor and not risk factor
             const percent_range = d3.extent(Object.values(summary.percent_target_option))

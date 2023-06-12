@@ -32,7 +32,13 @@ export const useHelperStore = defineStore('helperStore', {
         get_max_length(options) {
             return options.reduce((max, option) => Math.max(max, option.length), 0)
         },
-
+        /**
+         * replace variables in text with actual values
+         *
+         * @param text_array
+         * @param column
+         * @returns {any}
+         */
         parse_text(text_array, column) {
             let new_text_array = JSON.parse(JSON.stringify(text_array))
             if (useCSVStore().target) {

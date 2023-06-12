@@ -5,7 +5,7 @@ import {useDashboardStore} from "@/stores/dashboardStore";
 export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
     state: () => ({}),
     actions: {
-/**
+        /**
          * generates standard visualizations for risk factors from settings
          *
          * @returns {*[]}
@@ -37,7 +37,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                 {
                     type: "text",
                     graph: "text",
-                    text: [{"text":"add custom text here", "color":"black"}],
+                    text: [{"text": "add custom text here", "color": "black"}],
                 }
             )
 
@@ -99,8 +99,11 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
                             graph: "pictograph",
-                            title:  [{text: "How frequent is ", color: "black"},
-                    {text: " $target_column: $target_option", color: "$color"}, {text: " per risk factor?", color: "black"}],
+                            title: [{text: "How frequent is ", color: "black"},
+                                {text: " $target_column: $target_option", color: "$color"}, {
+                                    text: " per risk factor?",
+                                    color: "black"
+                                }],
                             axis: [{text: "absolute risk through factor", color: "black"}]
                         }],
                         "column": {name: "AbsoluteValues", label: "Risk Factors", options: options}

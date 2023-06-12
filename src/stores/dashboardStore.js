@@ -103,6 +103,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
             this.update_settings_by_intention()
 
         },
+        /**
+         * updates default settings for visualizations to adapt them to current intention
+         */
         update_settings_by_intention() {
             //consider intention
             if (this.intention === "explore") {
@@ -125,6 +128,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 this.default_settings.text.detailLevel = "denominator"
             }
         },
+        /**
+         * update context facts in the dashboard
+         */
         update_dashboard_context() {
             let risk_factor_items = this.dashboard_items.filter(d => d.column.name !== useCSVStore().target_column &&
                 d.column.riskIncrease !== undefined)

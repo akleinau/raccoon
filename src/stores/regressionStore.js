@@ -180,6 +180,11 @@ export const useRegressionStore = defineStore('regressionStore', {
             return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy]
 
         },
+        /**
+         * prepare target for regression
+         *
+         * @returns {*[]}
+         */
         prepare_target() {
             let csvStore = useCSVStore()
             let y = []
@@ -192,6 +197,9 @@ export const useRegressionStore = defineStore('regressionStore', {
             })
             return y
         },
+        /**
+         * create prepared data based on variable summaries
+         */
         prepare_data() {
             let csvStore = useCSVStore()
 
@@ -235,7 +243,12 @@ export const useRegressionStore = defineStore('regressionStore', {
 
 
         },
-
+        /**
+         * subset prepared data based on columns
+         *
+         * @param columns
+         * @returns {*[][]}
+         */
         get_prepared_data_subset(columns) {
             let map = [] //create feature matrix and map to trace back each feature to its original column/ option
             let Data = []

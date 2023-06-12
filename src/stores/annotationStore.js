@@ -6,6 +6,13 @@ import {useSimilarityStore} from "@/stores/similarityStore";
 export const useAnnotationStore = defineStore('annotationStore', {
     state: () => ({}),
     actions: {
+        /**
+         * compute annotations for a summary based on its type
+         *
+         * @param summary
+         * @param type
+         * @returns {*[]}
+         */
         compute_annotations(summary, type) {
             if (type === "significance") {
                 return this.compute_significance_annotations(summary)
@@ -15,6 +22,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
             }
             return []
         },
+        /**
+         * compute annotations based on a summary for significance visualizations
+         *
+         * @param summary
+         * @returns {*[]}
+         */
         compute_significance_annotations(summary) {
             let annotations = []
             annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
@@ -117,6 +130,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
             return annotations.sort((a, b) => b.score - a.score)
         },
 
+        /**
+         * compute annotations based on a summary for impact visualizations
+         *
+         * @param summary
+         * @returns {*[]}
+         */
         compute_impact_annotations(summary) {
             let annotations = []
             annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
