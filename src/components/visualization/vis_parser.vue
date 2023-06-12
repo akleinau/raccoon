@@ -14,7 +14,7 @@ import vis_bar from "@/components/visualization/vis_bar.vue";
 import vis_line from "@/components/visualization/vis_line.vue";
 import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
@@ -25,10 +25,10 @@ export default {
         "vis", "column", "width", "preview"
     ],
     setup() {
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const csvStore = useCSVStore()
         const annotationStore = useAnnotationStore()
-        return {visStore, csvStore, annotationStore}
+        return {dashboardStore, csvStore, annotationStore}
     },
     components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie, vis_multiple_pie},
     data() {
@@ -38,7 +38,7 @@ export default {
     },
     computed: {
         graph() {
-            return this.vis.graph ? this.vis.graph : this.visStore.default_settings[this.vis.type].graph
+            return this.vis.graph ? this.vis.graph : this.dashboardStore.default_settings[this.vis.type].graph
         },
         target() {
             return this.csvStore.target
@@ -48,31 +48,31 @@ export default {
             let type_attr = ["title", "range", "grid", "axis", "detailLevel", "icon", "ratio"]
             type_attr.forEach(a => {
                 if (!vis[a]) {
-                    vis[a] = this.visStore.default_settings[vis.type][a]
+                    vis[a] = this.dashboardStore.default_settings[vis.type][a]
                 }
             })
 
             //colors
             if (!vis["background"]) {
-                if (this.visStore.default_settings[vis.type]["background"] !== undefined) {
-                    vis["background"] = this.visStore.default_settings[vis.type]["background"]
+                if (this.dashboardStore.default_settings[vis.type]["background"] !== undefined) {
+                    vis["background"] = this.dashboardStore.default_settings[vis.type]["background"]
                 }
                 else {
-                    vis["background"] = this.visStore.default_colors.background
+                    vis["background"] = this.dashboardStore.default_colors.background
                 }
             }
             if (vis["color"] === null || vis["color"] === undefined) {
                 if (vis.type === "text") {
-                    vis["color"] = this.visStore.default_colors.text
+                    vis["color"] = this.dashboardStore.default_colors.text
                 } else {
-                    vis["color"] = this.visStore.default_settings[vis.type]["color"]
+                    vis["color"] = this.dashboardStore.default_settings[vis.type]["color"]
                 }
             }
-            vis["color"] = this.visStore.get_color(vis["color"])
+            vis["color"] = this.dashboardStore.get_color(vis["color"])
 
             //font
             if (!vis["font_family"]) {
-                vis["font_family"] = this.visStore.default_colors["font_family"]
+                vis["font_family"] = this.dashboardStore.default_colors["font_family"]
             }
 
             //annotations

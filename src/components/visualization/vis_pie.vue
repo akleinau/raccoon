@@ -5,7 +5,6 @@
 <script>
 import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
-import {useVisStore} from "@/stores/visStore";
 import {useVisHelperStore} from "@/stores/visHelperStore";
 
 export default {
@@ -15,9 +14,8 @@ export default {
     ],
     setup() {
         const helperStore = useHelperStore()
-        const visStore = useVisStore()
         const visHelperStore = useVisHelperStore()
-        return {helperStore, visStore, visHelperStore}
+        return {helperStore, visHelperStore}
     },
     methods: {
         /**

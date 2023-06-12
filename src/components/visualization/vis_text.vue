@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useHelperStore} from "@/stores/helperStore";
 export default {
     name: "vis_text",
@@ -13,16 +13,16 @@ export default {
         "vis", "column", "width"
     ],
     setup() {
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const helperStore = useHelperStore()
-        return {visStore, helperStore}
+        return {dashboardStore, helperStore}
     },
     computed: {
         font_size() {
-            return this.vis.font_size ? this.vis.font_size : this.visStore.default_settings[this.vis.type].font_size
+            return this.vis.font_size ? this.vis.font_size : this.dashboardStore.default_settings[this.vis.type].font_size
         },
         color() {
-            return this.vis.color ? this.vis.color : this.visStore.default_settings[this.vis.type].color
+            return this.vis.color ? this.vis.color : this.dashboardStore.default_settings[this.vis.type].color
         },
         generate_text() {
             if (this.vis.text) return this.vis.text

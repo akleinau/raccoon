@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <start_overlay/>
-        <fact_group_view v-if="this.visStore.current_fact_group !== null"/>
+        <fact_group_view v-if="this.dashboardStore.current_fact_group !== null"/>
 
         <v-app-bar>
             <v-app-bar-title>Raccoon</v-app-bar-title>
@@ -21,11 +21,11 @@
                 </v-card-title>
 
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="item in visStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
+                    <div v-for="item in dashboardStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
                                             style="height:500px" vertical="true"/>
                         <v-btn class="mt-0" variant="tonal"
-                               @click="visStore.remove_dashboard_item(item.name)"> Remove
+                               @click="dashboardStore.remove_dashboard_item(item.name)"> Remove
                         </v-btn>
 
                     </div>
@@ -93,9 +93,9 @@
             <!-- Context -->
             <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="item in visStore.generate_context_fact_groups()" v-bind:key="item">
+                    <div v-for="item in visGeneratorStore.generate_context_fact_groups()" v-bind:key="item">
                         <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
-                                            v-if="! visStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
+                                            v-if="! dashboardStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
                     </div>
                 </div>
             </v-card>
@@ -108,16 +108,16 @@
 import start_overlay from './components/start_overlay.vue'
 import fact_group_preview from './components/fact_group_preview.vue'
 import fact_group_view from './components/fact_group_view.vue'
-import fact_view from './components/fact_view.vue'
 import settings_view from "@/components/settings_view.vue";
 import all_risk_factor_overlay from "@/components/all_risk_factor_overlay.vue";
 import excluded_column_overlay from "@/components/excluded_column_overlay.vue";
 import dashboard_overlay from "@/components/dashboard_overlay.vue";
 import tipsView from "@/components/tipsView.vue";
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useScoreStore} from "@/stores/scoreStore";
+import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
 
 
 export default {
@@ -126,7 +126,6 @@ export default {
         fact_group_preview,
         start_overlay,
         fact_group_view,
-        fact_view,
         settings_view,
         all_risk_factor_overlay,
         dashboard_overlay,
@@ -134,25 +133,26 @@ export default {
     },
     setup() {
         const csvStore = useCSVStore()
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const scoreStore = useScoreStore()
         const regressionStore = useRegressionStore()
-        return {csvStore, visStore, regressionStore, scoreStore}
+        const visGeneratorStore = useVisGeneratorStore()
+        return {csvStore, dashboardStore, regressionStore, scoreStore, visGeneratorStore}
     },
     computed: {
         risk_list: function () {
             return this.csvStore.variable_summaries
-                .filter(d => this.visStore.is_recommendation_column(d)).slice(0, 20).map(column => {
+                .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
                 return {
                     column: column,
-                    visList: this.visStore.generate_main_fact_visList(column)
+                    visList: this.visGeneratorStore.generate_main_fact_visList(column)
                 }
             })
 
         },
         general_list: function () {
-            return this.visStore.generate_general_factGroups()
-                .filter(d => !this.visStore.dashboard_items.map(i => i.name).includes(d.column.name))
+            return this.visGeneratorStore.generate_general_factGroups()
+                .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
         }
     }
 }

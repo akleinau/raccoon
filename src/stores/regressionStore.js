@@ -2,7 +2,7 @@ import {defineStore} from 'pinia'
 import {useCSVStore} from "@/stores/csvStore";
 import * as d3 from "d3";
 import {useScoreStore} from "@/stores/scoreStore";
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 
 export const useRegressionStore = defineStore('regressionStore', {
     state: () => ({
@@ -152,7 +152,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             ) //.sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
 
             const csvStore = useCSVStore()
-            const visStore = useVisStore()
+            const dashboardStore = useDashboardStore()
 
             if (summary_place === "variable_summaries") {
                 columns.forEach(column => {
@@ -168,7 +168,7 @@ export const useRegressionStore = defineStore('regressionStore', {
             }
 
             if (summary_place === "dashboard") {
-                visStore.dashboard_items.forEach(item => {
+                dashboardStore.dashboard_items.forEach(item => {
                     if (item.column.significance) {
                         let influence = d3.max(weights_map.filter(d => d.name === item.name).map(d => Math.abs(d.weight)))
                         if (!influence) influence = 0
@@ -261,12 +261,12 @@ export const useRegressionStore = defineStore('regressionStore', {
          */
         compute_score() {
             this.accuracy_diff = 0
-            let visStore = useVisStore()
+            let dashboardStore = useDashboardStore()
             let csvStore = useCSVStore()
             let y = this.prepare_target()
-            let dashboard_columns = useVisStore().dashboard_items
+            let dashboard_columns = useDashboardStore().dashboard_items
                 .map(d => d.name)
-                .filter(d => d !== csvStore.target_column && !visStore.excluded_columns.includes(d))
+                .filter(d => d !== csvStore.target_column && !dashboardStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.get_prepared_data_subset(dashboard_columns)
             console.log("training on dashboard:")
             let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard", this.epochs)
@@ -275,9 +275,9 @@ export const useRegressionStore = defineStore('regressionStore', {
             //console.log(y_pred)
             console.log("training on remaining data:")
             useCSVStore().columns.forEach(column => {
-                if (!useVisStore().dashboard_items.map(d => d.name).includes(column) &&
+                if (!useDashboardStore().dashboard_items.map(d => d.name).includes(column) &&
                     column !== useCSVStore().target_column) {
-                    if (!visStore.excluded_columns.includes(column)) {
+                    if (!dashboardStore.excluded_columns.includes(column)) {
                         let [map, Data] = this.get_prepared_data_subset([column])
                         if (Data.length > 0) this.train([column], map, Data, y_pred, y, "variable_summaries", this.fast_epochs)
                         else {

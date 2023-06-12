@@ -5,7 +5,6 @@
 <script>
 import * as d3 from "d3";
 import {useHelperStore} from "@/stores/helperStore";
-import {useVisStore} from "@/stores/visStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useVisHelperStore} from "@/stores/visHelperStore";
 
@@ -16,10 +15,9 @@ export default {
     ],
     setup() {
         const helperStore = useHelperStore()
-        const visStore = useVisStore()
         const csvStore = useCSVStore()
         const visHelperStore = useVisHelperStore()
-        return {helperStore, visStore, csvStore, visHelperStore}
+        return {helperStore, csvStore, visHelperStore}
     },
     methods: {
         /**

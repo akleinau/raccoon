@@ -9,11 +9,11 @@
                     <div>
                         <v-radio-group v-model="color_mode" label="Colors" class="mr-5" inline>
                             <v-radio value="oneColor" label="color based"
-                                     @click="visStore.default_colors.colors=neighbor_color_list"/>
+                                     @click="dashboardStore.default_colors.colors=neighbor_color_list"/>
                             <v-radio value="scheme" label="scheme"
-                                     @click="visStore.default_colors.colors=scheme"/>
+                                     @click="dashboardStore.default_colors.colors=scheme"/>
                             <v-radio value="custom" label="custom"
-                                     @click="custom_color_list=visStore.default_colors.colors"/>
+                                     @click="custom_color_list=dashboardStore.default_colors.colors"/>
                         </v-radio-group>
 
                         <div v-if="color_mode === 'oneColor'" class="mr-5">
@@ -22,14 +22,14 @@
                                 <v-icon class="ml-2" :style="'color:' + neighborColor">mdi-circle</v-icon>
                                 <v-icon class="ml-1">mdi-pencil</v-icon>
                                 <color-dialog :color="neighborColor"
-                                              @update="neighborColor = $event; visStore.default_colors.colors=neighbor_color_list "></color-dialog>
+                                              @update="neighborColor = $event; dashboardStore.default_colors.colors=neighbor_color_list "></color-dialog>
                             </div>
                             <v-slider v-model="color_spread" label="spread" start="20" end="100" step="5"
-                                      @click="visStore.default_colors.colors=neighbor_color_list"
+                                      @click="dashboardStore.default_colors.colors=neighbor_color_list"
                                       style="max-width:200px"/>
                             <v-divider class="mt-2"></v-divider>
                             <div class="d-flex w-100 justify-center mt-2">
-                            <span v-for="(color,i) in visStore.default_colors.colors" :key="i">
+                            <span v-for="(color,i) in dashboardStore.default_colors.colors" :key="i">
                                 <v-icon :style="'color:' + color">mdi-circle</v-icon>
                             </span>
                             </div>
@@ -43,7 +43,7 @@
                                 </template>
                                 <template v-slot:item="{item}">
                                     <div>
-                                        <v-btn @click="scheme = item.value; visStore.default_colors.colors=scheme"
+                                        <v-btn @click="scheme = item.value; dashboardStore.default_colors.colors=scheme"
                                                variant="plain">
                                             <v-icon v-for="color in item.value" :key="color"
                                                     :style="'color:' + color">
@@ -61,13 +61,13 @@
                                         <v-icon :style="'color:' + color">mdi-circle</v-icon>
                                         <v-icon class="mr-2">mdi-pencil</v-icon>
                                         <color-dialog :color="color"
-                                                      @update="custom_color_list[i] = $event; visStore.default_colors.colors=custom_color_list; color=$event"></color-dialog>
+                                                      @update="custom_color_list[i] = $event; dashboardStore.default_colors.colors=custom_color_list; color=$event"></color-dialog>
                                     </span>
                         </div>
                     </div>
 
                     <!-- Background -->
-                    <v-radio-group v-model="visStore.default_colors.background" label="Background" class="ml-5">
+                    <v-radio-group v-model="dashboardStore.default_colors.background" label="Background" class="ml-5">
                         <v-radio label="auto" :value="background_auto">
                             <template v-slot:label>
                                 Auto
@@ -86,13 +86,13 @@
                                 <v-icon class="ml-2">mdi-pencil</v-icon>
                             </template>
                             <color-dialog :color="background_custom.color"
-                                          @update="background_custom.color = $event; visStore.default_colors.background.color = $event"></color-dialog>
+                                          @update="background_custom.color = $event; dashboardStore.default_colors.background.color = $event"></color-dialog>
                         </v-radio>
 
                     </v-radio-group>
 
                     <!-- Text -->
-                    <v-radio-group v-model="visStore.default_colors.text" label="Font Color">
+                    <v-radio-group v-model="dashboardStore.default_colors.text" label="Font Color">
                         <v-radio v-for="color in this.fontColor" :key="color" :value="color">
                             <template v-slot:label>
                                 <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
@@ -104,16 +104,16 @@
                                 <v-icon>mdi-pencil</v-icon>
                             </template>
                             <color-dialog :color="fontColor_custom"
-                                          @update="fontColor_custom = $event; visStore.default_colors.text = $event"></color-dialog>
+                                          @update="fontColor_custom = $event; dashboardStore.default_colors.text = $event"></color-dialog>
                         </v-radio>
                     </v-radio-group>
 
-                    <v-radio-group v-model="visStore.default_colors.font_family" label="Font Family" class="ml-5 mr-2"  style="min-width:120px">
+                    <v-radio-group v-model="dashboardStore.default_colors.font_family" label="Font Family" class="ml-5 mr-2"  style="min-width:120px">
                         <v-radio v-for="font in this.font_families" :key="font" :label="font" :value="font" :style="'font-family: ' + font" />
                         <v-radio label="custom" :value="font_family_custom">
                             <template v-slot:label>
                                 <v-text-field v-model="font_family_custom" variant="underlined" style="min-width:100px"
-                                              @update:modelValue="visStore.default_colors.font_family = font_family_custom"/>
+                                              @update:modelValue="dashboardStore.default_colors.font_family = font_family_custom"/>
                                 <v-icon>mdi-pencil</v-icon>
                             </template>
                         </v-radio>
@@ -173,7 +173,7 @@
             <v-expansion-panel-title><h4>Intention </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 I want to...
-                <v-btn-toggle v-model="visStore.intention" @update:modelValue="visStore.update_settings_by_intention()"
+                <v-btn-toggle v-model="dashboardStore.intention" @update:modelValue="dashboardStore.update_settings_by_intention()"
                               class="mb-1">
                     <v-btn value="explore">
                         <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
@@ -191,21 +191,21 @@
                     </v-btn>
                 </v-btn-toggle>
 
-                <div v-if="visStore.intention === 'explore'">
+                <div v-if="dashboardStore.intention === 'explore'">
                     For scientists to explore the data. Showing detailed information about the dataset.
                     <ul class="ml-5">
                         <li>Pictographs with percentages</li>
                         <li>Bar charts showing absolute numbers of participants</li>
                     </ul>
                 </div>
-                <div v-if="visStore.intention === 'convince'">
+                <div v-if="dashboardStore.intention === 'convince'">
                     Visualizations to convince the public about a certain topic.
                     <ul class="ml-5">
                         <li>showing only nominators increases perceived risk</li>
                         <li>Pictographs and bar charts are easy to understand</li>
                     </ul>
                 </div>
-                <div v-if="visStore.intention === 'educate'">
+                <div v-if="dashboardStore.intention === 'educate'">
                     For scientists to educate the public about their findings. Showing only the most important
                     information about the dataset.
                     <ul class="ml-5">
@@ -233,7 +233,7 @@
 </template>
 
 <script>
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
@@ -245,10 +245,10 @@ export default {
     components: {ColorDialog},
     setup() {
         const csvStore = useCSVStore()
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const scoreStore = useScoreStore()
         const regressionStore = useRegressionStore()
-        return {csvStore, visStore, scoreStore, regressionStore}
+        return {csvStore, dashboardStore, scoreStore, regressionStore}
     },
     data() {
         return {

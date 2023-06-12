@@ -1,7 +1,9 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
 import {useCSVStore} from "@/stores/csvStore";
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
+import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
+import {useVisHelperStore} from "@/stores/visHelperStore";
 
 export const useSimilarityStore = defineStore('similarityStore', {
     state: () => ({
@@ -26,7 +28,7 @@ export const useSimilarityStore = defineStore('similarityStore', {
          * compute similar columns based on column types
          */
         compute_similar_columns(summary) {
-            const visList = useVisStore().generate_main_fact_visList()
+            const visList = useVisGeneratorStore().generate_main_fact_visList()
 
             return useCSVStore().variable_summaries
                 .filter(item => item.name !== summary.name)
@@ -49,9 +51,9 @@ export const useSimilarityStore = defineStore('similarityStore', {
          * compute similar dashboard columns based on column types
          */
         compute_similar_dashboard_columns(summary) {
-            const visList = useVisStore().generate_main_fact_visList()
+            const visList = useVisGeneratorStore().generate_main_fact_visList()
 
-            return useVisStore().dashboard_items
+            return useDashboardStore().dashboard_items
                 .map(item => item.column)
                 .filter(item => item.name !== summary.name)
                 .map(item => {

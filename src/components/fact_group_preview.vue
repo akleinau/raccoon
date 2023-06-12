@@ -12,7 +12,7 @@
                 </span>
 
                 <!-- hint when column is excluded -->
-                <div v-if="visStore.excluded_columns.includes(column.name)"
+                <div v-if="dashboardStore.excluded_columns.includes(column.name)"
                      class="ml-4 mt-4 d-flex justify-center w-100 text-yellow-darken-4">
                     <v-icon icon="mdi-alert" class="mr-2"/> [Excluded from risk factor calculations]
                 </div>
@@ -30,7 +30,7 @@
 
 <script>
 import vis_parser from "@/components/visualization/vis_parser.vue";
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useCSVStore} from "@/stores/csvStore";
 
 export default {
@@ -44,16 +44,16 @@ export default {
         "width"
     ],
     setup() {
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const csvStore = useCSVStore()
-        return {csvStore, visStore}
+        return {csvStore, dashboardStore}
     },
     methods: {
         /**
          * shows the fact group view for the selected fact group
          */
         show_fact_group_view() {
-            this.visStore.set_fact_group(this.column, this.visList)
+            this.dashboardStore.set_fact_group(this.column, this.visList)
         }
     }
 }

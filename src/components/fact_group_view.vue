@@ -3,7 +3,7 @@
         <v-card class="mx-auto w-100 h-100">
 
             <v-card-title>
-                Fact Group View: {{ visStore.current_fact_group.column['label'] }}
+                Fact Group View: {{ dashboardStore.current_fact_group.column['label'] }}
 
                 <div v-if="column.riskIncrease">
                     Risk group:
@@ -12,28 +12,28 @@
             </v-card-title>
 
             <!-- hints -->
-            <div v-if="visStore.current_fact_group.column.significance !== undefined &&
-                visStore.current_fact_group.column['significance'].significant_tuples.length === 0">
+            <div v-if="dashboardStore.current_fact_group.column.significance !== undefined &&
+                dashboardStore.current_fact_group.column['significance'].significant_tuples.length === 0">
                 <v-icon icon="mdi-alert"/>
                 not statistically significant
             </div>
-            <div v-if=" visStore.is_recommendation_column(visStore.current_fact_group.column) &&
-                visStore.current_fact_group.column.significance !== undefined &&
-                visStore.current_fact_group.column['significance'].score['regression'] < 0.001">
+            <div v-if=" dashboardStore.is_recommendation_column(dashboardStore.current_fact_group.column) &&
+                dashboardStore.current_fact_group.column.significance !== undefined &&
+                dashboardStore.current_fact_group.column['significance'].score['regression'] < 0.001">
                 <v-icon icon="mdi-alert"/>
                 Adding this factor will not improve risk prediction further.
             </div>
-            <div v-if="visStore.current_fact_group.column.occurrence !== undefined &&
-            Object.values(visStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
+            <div v-if="dashboardStore.current_fact_group.column.occurrence !== undefined &&
+            Object.values(dashboardStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
                 <v-icon icon="mdi-alert"/>
                 Calculated frequencies are less accurate for options with less than 100 people.
             </div>
-            <div v-if="visStore.current_fact_group.similar_dashboard_columns !== undefined &&
-                visStore.current_fact_group.similar_dashboard_columns.length > 0">
+            <div v-if="dashboardStore.current_fact_group.similar_dashboard_columns !== undefined &&
+                dashboardStore.current_fact_group.similar_dashboard_columns.length > 0">
                 <v-icon icon="mdi-alert"/>
                 Correlates strongly with dashboard items:
                 {{
-                visStore.current_fact_group.similar_dashboard_columns
+                dashboardStore.current_fact_group.similar_dashboard_columns
                     .map(d => d.column.label + " (" + d.similarity.toFixed(1) + ")")
                     .join(", ")
                 }}
@@ -45,23 +45,23 @@
                     <div class="d-flex flex-column pb-5">
                         <div class="d-flex justify-space-between mx-2 align-center">
                             <div class="text-grey-darken-2">Click to select</div>
-                            <v-btn class="text-blue-darken-3" variant="text" @click="visStore.current_fact = null">clear
+                            <v-btn class="text-blue-darken-3" variant="text" @click="dashboardStore.current_fact = null">clear
                                 selection
                             </v-btn>
                         </div>
-                        <div class="d-flex flex-column pa-1 ma-auto" v-for="vis in visStore.current_fact_group.visList"
+                        <div class="d-flex flex-column pa-1 ma-auto" v-for="vis in dashboardStore.current_fact_group.visList"
                              v-bind:key="vis">
                             <v-hover v-slot="{ isHovering, props }">
                                 <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="toggle_fact_view(vis)"
                                         :class="[{ 'on-hover': isHovering },
-                                        {'bg-blue-darken-3': visStore.current_fact && visStore.current_fact.vis === vis}]"
+                                        {'bg-blue-darken-3': dashboardStore.current_fact && dashboardStore.current_fact.vis === vis}]"
                                         class="pa-2">
                                     <div class="bg-white pt-3">
-                                        <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
+                                        <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
                                                     :width="400"/>
                                     </div>
                                     <div class="d-flex justify-center align-center"
-                                         v-if="visStore.current_fact && visStore.current_fact.vis === vis">
+                                         v-if="dashboardStore.current_fact && dashboardStore.current_fact.vis === vis">
                                         <v-btn variant="text" icon="mdi-arrow-up" @click="move_vis_up(vis)"></v-btn>
                                         <v-btn variant="text" icon="mdi-arrow-down" @click="move_vis_down(vis)"></v-btn>
                                         <v-btn variant="text" @click="remove_vis(vis)">remove</v-btn>
@@ -76,7 +76,7 @@
                 <div class="w-50  pr-5">
                     <!-- general tabs -->
                     <h3 class="ml-3 mt-5"> General </h3>
-                    <v-text-field label="Label" class="ml-3 mt-2" v-model="visStore.current_fact_group.column.label"
+                    <v-text-field label="Label" class="ml-3 mt-2" v-model="dashboardStore.current_fact_group.column.label"
                                   append-inner-icon="mdi-pencil"/>
                     <v-expansion-panels class="mx-3 mb-3" v-model="panels">
 
@@ -85,22 +85,22 @@
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
                                 statistically significant: {{
-                                visStore.current_fact_group.column['significance'].significant_tuples.length > 0 ? "yes" : "no"
+                                dashboardStore.current_fact_group.column['significance'].significant_tuples.length > 0 ? "yes" : "no"
                                 }}
                                 <div v-if="column.significance"> Score ({{ scoreStore.score }}):
                                     {{
-                                    visStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
+                                    dashboardStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
                                     }}
                                 </div>
                                 <div v-if="column.correlation_with_target"> Correlation with Target:
-                                    {{ visStore.current_fact_group.column['correlation_with_target'].toFixed(2) }}
+                                    {{ dashboardStore.current_fact_group.column['correlation_with_target'].toFixed(2) }}
                                 </div>
                                 <div class="mt-5">
                                     <b>Correlates strongly with:</b>
                                 </div>
                                 <div class="d-flex overflow-y-hidden  pb-5">
                                     <div class="d-flex flex-column pa-1"
-                                         v-for="item in visStore.current_fact_group.similar_columns"
+                                         v-for="item in dashboardStore.current_fact_group.similar_columns"
                                          v-bind:key="item">
                                         <fact_group_preview style="height:400px" class="pa-2" :visList="item.visList"
                                                             :column="item.column" :vertical="true"/>
@@ -119,7 +119,7 @@
                                 <div class="d-flex w-100">
                                     <div class="bg-grey-darken-2 mb-5 rounded-pill" style="width:10px"></div>
                                     <div class="flex-grow-1">
-                                        <div v-for="(item,i) in visStore.current_fact_group.column.options"
+                                        <div v-for="(item,i) in dashboardStore.current_fact_group.column.options"
                                              v-bind:key="i">
                                             <div class="d-flex">
                                                 <v-btn @click="add_step(i)" class="mt-2 mr-2"
@@ -128,7 +128,7 @@
                                                        density="compact"></v-btn>
                                                 <v-text-field variant="underlined" class="mx-2" density="compact"
                                                               :label="item.type === 'categorical' ? item.name : ''"
-                                                              v-model="visStore.current_fact_group.column.options[i].label"/>
+                                                              v-model="dashboardStore.current_fact_group.column.options[i].label"/>
                                                 <div class="d-flex align-start" density="compact">
                                                     <span class="mt-2 ml-5 mr-1"> Risk group </span>
                                                     <v-checkbox v-model="item.risk_group" density="compact"/>
@@ -158,13 +158,13 @@
                             <v-expansion-panel-text>
                                 <div class="d-flex overflow-y-hidden  pb-5">
                                     <div class="d-flex flex-column pa-1"
-                                         v-for="vis in visStore.current_fact_group.additional_vis_list"
+                                         v-for="vis in dashboardStore.current_fact_group.additional_vis_list"
                                          v-bind:key="vis">
                                         <v-hover v-slot="{ isHovering, props }">
                                             <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
                                                     @click="add_vis(vis)"
                                                     :class="{ 'on-hover': isHovering }" class="pa-2">
-                                                <vis_parser :vis="vis" :column="visStore.current_fact_group.column"
+                                                <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
                                                             :width="300"
                                                             :preview="true"/>
                                             </v-card>
@@ -179,8 +179,8 @@
                         </v-expansion-panel>
                     </v-expansion-panels>
                     <!-- individual vis tabs -->
-                    <h3 class="ml-3 text-blue-darken-3" v-if="visStore.current_fact"> Selected </h3>
-                    <fact_view v-if="this.visStore.current_fact !== null"/>
+                    <h3 class="ml-3 text-blue-darken-3" v-if="dashboardStore.current_fact"> Selected </h3>
+                    <fact_view v-if="this.dashboardStore.current_fact !== null"/>
                 </div>
 
             </div>
@@ -190,7 +190,7 @@
                     <div class="d-flex w-100">
                         <v-btn variant="elevated" @click="close" class="px-9">Close</v-btn>
                         <v-btn variant="elevated" @click="add" prepend-icon="mdi-plus"
-                               v-if="!visStore.dashboard_items.find(d => d.name === visStore.current_fact_group.column.name)">
+                               v-if="!dashboardStore.dashboard_items.find(d => d.name === dashboardStore.current_fact_group.column.name)">
                             Add to dashboard
                         </v-btn>
                         <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus" v-else> Remove from
@@ -199,7 +199,7 @@
                         <!-- end buttons -->
                         <div class="flex-grow-1 d-flex justify-end">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
-                                   v-if="!visStore.excluded_columns.includes(visStore.current_fact_group.column.name)">
+                                   v-if="!dashboardStore.excluded_columns.includes(dashboardStore.current_fact_group.column.name)">
                                 Exclude
                             </v-btn>
                             <v-btn variant="elevated" @click="include" prepend-icon="mdi-restore" v-else>restore</v-btn>
@@ -218,7 +218,7 @@ import fact_view from "@/components/fact_view.vue";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 import fact_group_preview from "@/components/fact_group_preview.vue";
 
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useCSVStore} from "@/stores/csvStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import {useSimilarityStore} from "@/stores/similarityStore";
@@ -228,10 +228,10 @@ export default {
     name: "fact_group_view",
     components: {vis_parser, fact_group_preview, fact_view},
     setup() {
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const csvStore = useCSVStore()
         const scoreStore = useScoreStore()
-        return {visStore, csvStore, scoreStore}
+        return {dashboardStore, csvStore, scoreStore}
     },
     data() {
         return {
@@ -258,16 +258,16 @@ export default {
     },
     computed: {
         current_fact_group() {
-            return this.visStore.current_fact_group
+            return this.dashboardStore.current_fact_group
         },
         column() {
-            if (this.visStore.current_fact_group) {
-                return this.visStore.current_fact_group.column
+            if (this.dashboardStore.current_fact_group) {
+                return this.dashboardStore.current_fact_group.column
             } else return null
         },
         risk_groups() {
             if (this.column) {
-                return this.visStore.current_fact_group.column.options.map(o => o.risk_group)
+                return this.dashboardStore.current_fact_group.column.options.map(o => o.risk_group)
             } else return []
 
         }
@@ -279,35 +279,35 @@ export default {
          * @param vis
          */
         toggle_fact_view(vis) {
-            if (this.visStore.current_fact && this.visStore.current_fact.vis === vis) {
-                this.visStore.current_fact = null
+            if (this.dashboardStore.current_fact && this.dashboardStore.current_fact.vis === vis) {
+                this.dashboardStore.current_fact = null
             } else {
-                this.visStore.current_fact = {'vis': vis, 'column': this.visStore.current_fact_group.column}
+                this.dashboardStore.current_fact = {'vis': vis, 'column': this.dashboardStore.current_fact_group.column}
             }
         },
         /**
          * closes the fact group view
          */
         close() {
-            this.visStore.current_fact = null
-            this.visStore.current_fact_group = null
+            this.dashboardStore.current_fact = null
+            this.dashboardStore.current_fact_group = null
         },
         /**
          * adds the fact group to the dashboard
          */
         add() {
-            this.visStore.add_dashboard_item(this.visStore.current_fact_group.column, this.visStore.current_fact_group.visList)
+            this.dashboardStore.add_dashboard_item(this.dashboardStore.current_fact_group.column, this.dashboardStore.current_fact_group.visList)
             this.close()
         },
         /**
          * excludes the fact group from the dashboard
          */
         remove() {
-            this.visStore.remove_dashboard_item(this.visStore.current_fact_group.column.name)
+            this.dashboardStore.remove_dashboard_item(this.dashboardStore.current_fact_group.column.name)
             this.close()
         },
         add_option() {
-            this.visStore.current_fact_group.column.options.push({
+            this.dashboardStore.current_fact_group.column.options.push({
                 'name': '0-1',
                 'label': '0-1',
                 'range': [0, 1]
@@ -317,20 +317,20 @@ export default {
          * recalculates the options for the risk factor
          */
         recalculate_options() {
-            this.visStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.visStore.current_fact_group.column)
+            this.dashboardStore.current_fact_group.column = this.csvStore.recalculate_summary_after_option_change(this.dashboardStore.current_fact_group.column)
         },
         move_vis_up(vis) {
-            let index = this.visStore.current_fact_group.visList.indexOf(vis)
+            let index = this.dashboardStore.current_fact_group.visList.indexOf(vis)
             if (index > 0) {
-                this.visStore.current_fact_group.visList.splice(index - 1, 0, this.visStore.current_fact_group.visList.splice(index, 1)[0])
-                this.visStore.current_fact = {'vis': this.visStore.current_fact_group.visList[index], 'column': this.visStore.current_fact_group.column}
+                this.dashboardStore.current_fact_group.visList.splice(index - 1, 0, this.dashboardStore.current_fact_group.visList.splice(index, 1)[0])
+                this.dashboardStore.current_fact = {'vis': this.dashboardStore.current_fact_group.visList[index], 'column': this.dashboardStore.current_fact_group.column}
             }
         },
         move_vis_down(vis) {
-            let index = this.visStore.current_fact_group.visList.indexOf(vis)
-            if (index < this.visStore.current_fact_group.visList.length - 1) {
-                this.visStore.current_fact_group.visList.splice(index + 1, 0, this.visStore.current_fact_group.visList.splice(index, 1)[0])
-                this.visStore.current_fact = {'vis': this.visStore.current_fact_group.visList[index], 'column': this.visStore.current_fact_group.column}
+            let index = this.dashboardStore.current_fact_group.visList.indexOf(vis)
+            if (index < this.dashboardStore.current_fact_group.visList.length - 1) {
+                this.dashboardStore.current_fact_group.visList.splice(index + 1, 0, this.dashboardStore.current_fact_group.visList.splice(index, 1)[0])
+                this.dashboardStore.current_fact = {'vis': this.dashboardStore.current_fact_group.visList[index], 'column': this.dashboardStore.current_fact_group.column}
             }
         },
         /**
@@ -339,8 +339,8 @@ export default {
          * @param vis
          */
         remove_vis(vis) {
-            this.visStore.current_fact_group.visList = this.visStore.current_fact_group.visList.filter(item => item.type !== vis.type)
-            this.visStore.current_fact_group.additional_vis_list.push(vis)
+            this.dashboardStore.current_fact_group.visList = this.dashboardStore.current_fact_group.visList.filter(item => item.type !== vis.type)
+            this.dashboardStore.current_fact_group.additional_vis_list.push(vis)
         },
         /**
          * adds a visualization to the fact group visList
@@ -348,53 +348,53 @@ export default {
          * @param vis
          */
         add_vis(vis) {
-            this.visStore.current_fact_group.additional_vis_list = this.visStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
-            this.visStore.current_fact_group.visList.push(vis)
+            this.dashboardStore.current_fact_group.additional_vis_list = this.dashboardStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
+            this.dashboardStore.current_fact_group.visList.push(vis)
         },
         /**
          * deletes the fact group
          */
         exclude() {
-            this.visStore.exclude_column(this.visStore.current_fact_group.column)
+            this.dashboardStore.exclude_column(this.dashboardStore.current_fact_group.column)
             this.close()
         },
         /**
          * includes the fact group
          */
         include() {
-            this.visStore.restore_column(this.visStore.current_fact_group.column.name)
+            this.dashboardStore.restore_column(this.dashboardStore.current_fact_group.column.name)
             this.close()
         },
         calculate_similar_facts() {
-            if (!this.visStore.current_fact_group['similar_columns']) {
-                this.visStore.current_fact_group['similar_columns'] = useSimilarityStore().compute_similar_columns(this.visStore.current_fact_group['column'])
+            if (!this.dashboardStore.current_fact_group['similar_columns']) {
+                this.dashboardStore.current_fact_group['similar_columns'] = useSimilarityStore().compute_similar_columns(this.dashboardStore.current_fact_group['column'])
             }
         },
         options_to_steps() {
-            if (this.visStore.current_fact_group.column.type === 'continuous') {
-                let steps = this.visStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])
+            if (this.dashboardStore.current_fact_group.column.type === 'continuous') {
+                let steps = this.dashboardStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])
                 steps.pop()
                 this.option_steps = steps
             } else this.option_steps = []
         },
         update_step(i) {
-            this.visStore.current_fact_group.column.options[i].range[1] = this.option_steps[i]
-            this.visStore.current_fact_group.column.options[i + 1].range[0] = this.option_steps[i]
+            this.dashboardStore.current_fact_group.column.options[i].range[1] = this.option_steps[i]
+            this.dashboardStore.current_fact_group.column.options[i + 1].range[0] = this.option_steps[i]
             this.recalculate_options()
         },
         remove_step(i) {
-            this.visStore.current_fact_group.column.options[i + 1].range[0] = this.visStore.current_fact_group.column.options[i].range[0]
-            this.visStore.current_fact_group.column.options.splice(i, 1)
+            this.dashboardStore.current_fact_group.column.options[i + 1].range[0] = this.dashboardStore.current_fact_group.column.options[i].range[0]
+            this.dashboardStore.current_fact_group.column.options.splice(i, 1)
             this.option_steps.splice(i, 1)
             this.recalculate_options()
         },
         add_step(i) {
-            let min = (i - 1) < 0 ? this.visStore.current_fact_group.column.options[0].range[0] : this.option_steps[i - 1]
-            let max = (i >= this.option_steps.length) ? d3.max(this.visStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])) : this.option_steps[i]
+            let min = (i - 1) < 0 ? this.dashboardStore.current_fact_group.column.options[0].range[0] : this.option_steps[i - 1]
+            let max = (i >= this.option_steps.length) ? d3.max(this.dashboardStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])) : this.option_steps[i]
             let new_step = +min + (+max - +min) / 2
             this.option_steps.splice(i, 0, new_step)
-            this.visStore.current_fact_group.column.options[i].range[0] = new_step
-            this.visStore.current_fact_group.column.options.splice(i, 0, {
+            this.dashboardStore.current_fact_group.column.options[i].range[0] = new_step
+            this.dashboardStore.current_fact_group.column.options.splice(i, 0, {
                 'name': min + '-' + new_step,
                 'label': min + '-' + new_step,
                 'range': [min, new_step]

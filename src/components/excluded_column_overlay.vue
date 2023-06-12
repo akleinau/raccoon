@@ -3,7 +3,7 @@
     <v-dialog v-model="show">
         <template v-slot:activator="{ props }">
 
-            <v-btn v-bind="props" class="h-auto pa-4 ma-2" variant="plain" v-if="visStore.excluded_columns.length > 0">
+            <v-btn v-bind="props" class="h-auto pa-4 ma-2" variant="plain" v-if="dashboardStore.excluded_columns.length > 0">
                 excluded columns
             </v-btn>
 
@@ -11,10 +11,10 @@
 
         <v-card title="Excluded columns">
             <v-list>
-                <v-list-item v-for="column in visStore.excluded_columns" v-bind:key="column">
+                <v-list-item v-for="column in dashboardStore.excluded_columns" v-bind:key="column">
                     <template v-slot:prepend>
                         {{column}}
-                        <v-btn @click="visStore.restore_column(column)" variant="plain" class="ml-2">restore</v-btn>
+                        <v-btn @click="dashboardStore.restore_column(column)" variant="plain" class="ml-2">restore</v-btn>
                     </template>
 
                 </v-list-item>
@@ -28,14 +28,14 @@
 </template>
 
 <script>
-import {useVisStore} from "@/stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 
 export default {
     name: "excluded_column_overlay",
     components: {},
     setup() {
-        const visStore = useVisStore()
-        return {visStore}
+        const dashboardStore = useDashboardStore()
+        return {dashboardStore}
     },
     data() {
         return {

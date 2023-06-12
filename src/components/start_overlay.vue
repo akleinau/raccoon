@@ -19,7 +19,7 @@
 
             <div class="px-5 pb-5" v-if="csvStore.target_option">
                 I want to...
-                <v-btn-toggle  v-model="visStore.intention">
+                <v-btn-toggle  v-model="dashboardStore.intention">
                     <v-btn value="explore">
                         <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
                         Explore
@@ -63,15 +63,17 @@
 <script>
 import * as d3 from "d3";
 import {useCSVStore} from '@/Stores/csvStore'
-import {useVisStore} from "@/Stores/visStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 import {useRegressionStore} from "@/stores/regressionStore";
+import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
 
 export default {
     setup() {
         const csvStore = useCSVStore()
-        const visStore = useVisStore()
+        const dashboardStore = useDashboardStore()
         const regressionStore = useRegressionStore()
-        return {csvStore, visStore, regressionStore}
+        const visGeneratorStore = useVisGeneratorStore()
+        return {csvStore, dashboardStore, regressionStore, visGeneratorStore}
     },
     data() {
         return {
@@ -117,20 +119,20 @@ export default {
          */
         visualize() {
             this.csvStore.start = false
-            this.visStore.set_initial_default_settings(this.csvStore.csv.length, this.csvStore.target_column, this.csvStore.target_option)
+            this.dashboardStore.set_initial_default_settings(this.csvStore.csv.length, this.csvStore.target_column, this.csvStore.target_option)
             this.csvStore.calc_variable_summaries()
-            this.visStore.add_dashboard_item(this.csvStore.variable_summaries.find(d => d.name === useCSVStore().target_column),
+            this.dashboardStore.add_dashboard_item(this.csvStore.variable_summaries.find(d => d.name === useCSVStore().target_column),
                 [{type: 'impact', data_map: 'occurrence'}], false)
             let i = 0
             while (i < (this.starting_items - 1)) {
                 let j = 0
-                while (!this.visStore.is_recommendation_column(this.csvStore.variable_summaries[j])) {
+                while (!this.dashboardStore.is_recommendation_column(this.csvStore.variable_summaries[j])) {
                     j++
                 }
                 let best_summary = this.csvStore.variable_summaries[j]
                 if (best_summary.significance.score["regression"] >= 0.01) {
                     console.log("best_summary", best_summary)
-                    this.visStore.add_dashboard_item(best_summary, this.visStore.generate_main_fact_visList(), true)
+                    this.dashboardStore.add_dashboard_item(best_summary, this.visGeneratorStore.generate_main_fact_visList(), true)
                     i++
                 } else {
                     break
