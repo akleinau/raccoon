@@ -17,12 +17,12 @@
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
                     <div class="w-50">
-                        <b class="ml-2" v-if="has_attribute['graph']"> Detail Level</b>
-                        <div class="ml-2 text-grey" v-else>Detail Level</div>
+                        <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
+                        <div class="ml-2 text-grey" v-else>Unit</div>
                         <v-radio-group v-model="dashboardStore.current_fact.vis.detailLevel"
                                        :disabled="!has_attribute['graph']">
-                            <v-radio label="nominator" value="nominator"></v-radio>
-                            <v-radio label="denominator" value="denominator"></v-radio>
+                            <v-radio label="natural frequencies without context" value="nominator"></v-radio>
+                            <v-radio label="natural frequencies with context" value="denominator"></v-radio>
                             <v-radio label="percent" value="percent"></v-radio>
                         </v-radio-group>
                     </div>
