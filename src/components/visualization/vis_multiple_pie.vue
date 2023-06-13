@@ -81,7 +81,7 @@ export default {
             let margin_right = this.preview ? 5 : 60
             let width = (this.width ? this.width : 300) - margin_right
             let startBarX = this.helperStore.get_max_length(
-                this.use_column_group_names? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
+                this.use_column_group_names ? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
             if (this.preview && startBarX > 100) {
                 startBarX = 100
             }
@@ -201,6 +201,7 @@ export default {
                 .style("text-anchor", "middle")
                 .text("")
                 .style("font-weight", this.preview ? "" : "bold")
+                .style("font-size", this.preview ? "1em" : "1.1em")
             this.visHelperStore.append_tspans(title, this.vis.title, this.column)
 
             //annotations

@@ -213,7 +213,7 @@
                         <template v-slot:label>
                             <div class="w-100">
                                                 <span v-for="text in el.text" v-bind:key="text">
-                                                    <span v-for="span in text" v-bind:key="span"
+                                                    <span v-for="span in helperStore.parse_text(text, dashboardStore.current_fact.column)" v-bind:key="span"
                                                           :style="'color:' + span.color">
                                                         {{ span.text }}
                                                     </span>
@@ -249,6 +249,7 @@ import text_input from "@/components/helpers/text-input.vue";
 import {useDataStore} from "@/stores/dataStore";
 import ColorDialog from "@/components/helpers/color-dialog.vue";
 import {useAnnotationStore} from "@/stores/annotationStore";
+import {useHelperStore} from "@/stores/helperStore";
 
 export default {
     name: "fact_view",
@@ -257,7 +258,8 @@ export default {
         const dashboardStore = useDashboardStore()
         const dataStore = useDataStore()
         const annotationStore = useAnnotationStore()
-        return {dashboardStore, dataStore, annotationStore}
+        const helperStore = useHelperStore()
+        return {dashboardStore, dataStore, annotationStore, helperStore}
     },
     data() {
         return {

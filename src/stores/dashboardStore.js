@@ -18,8 +18,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 icon: "circle",
                 ratio: 1,
                 range: [0, 100],
-                axis: [{text: "amount of people", color: "black"}],
-                title: [{text: "How common is each group in the dataset?", color: "black"}],
+                axis: [{text: "amount of people in each group", color: "black"}],
+                title: [{text: "How common is each group of $column in the data?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 0,
@@ -30,9 +30,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 icon: "circle",
                 ratio: 1,
                 range: "percent",
-                axis: [{text: "occurrence per 100 people", color: "black"}],
-                title: [{text: "What is the likelihood of ", color: "black"},
-                    {text: " $target_column: $target_option", color: "$color"}, {text: " per group?", color: "black"}],
+                axis: [{text: "likelihood of $target_column: $target_option per group", color: "black"}],
+                title: [{text: "How likely is ", color: "black"},
+                    {text: " $target_column: $target_option", color: "$color"}, {text: " per group of $column?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 1,
@@ -49,7 +49,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 font_size: 2,
                 color: 3,
             },
-            text: {
+            custom: {
                 graph: "text",
                 font_size: 2,
                 text: [{text: "", color: "black"}],
@@ -61,7 +61,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 ratio: 1,
                 range: [0, 1],
                 axis: [{text: "correlation", color: "black"}],
-                title: [{text: "Are there similar variables?", color: "black"}],
+                title: [{text: "Which variables are similar to $column?", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 2,
@@ -126,19 +126,19 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 this.default_settings.impact.graph = "bar"
                 this.default_settings.significance.detailLevel = "percent"
                 this.default_settings.context.detailLevel = "denominator"
-                this.default_settings.text.detailLevel = "denominator"
+                this.default_settings.custom.detailLevel = "denominator"
             } else if (this.intention === "convince") {
                 this.default_settings.impact.detailLevel = "nominator"
                 this.default_settings.impact.graph = "bar"
                 this.default_settings.significance.detailLevel = "nominator"
                 this.default_settings.context.detailLevel = "nominator"
-                this.default_settings.text.detailLevel = "nominator"
+                this.default_settings.custom.detailLevel = "nominator"
             } else if (this.intention === "educate") {
                 this.default_settings.impact.detailLevel = "percent"
                 this.default_settings.impact.graph = "pie"
                 this.default_settings.significance.detailLevel = "denominator"
                 this.default_settings.context.detailLevel = "denominator"
-                this.default_settings.text.detailLevel = "denominator"
+                this.default_settings.custom.detailLevel = "denominator"
             }
         },
         /**

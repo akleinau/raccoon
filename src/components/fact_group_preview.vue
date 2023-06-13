@@ -4,7 +4,11 @@
         <v-hover v-slot="{ isHovering, props }">
             <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
                     :class="{ 'on-hover': isHovering}"
-                    @click="show_fact_group_view">
+                    @click="show_fact_group_view" >
+                <!--box shadow -->
+                <div class="position-absolute top-0 left-0 w-100 h-100 overflow-hidden"
+                     style="box-shadow: inset 0 -2em 4em rgba(255, 255, 255, 1); min-height:400px"></div>
+
                 <h4 class="ml-4 mt-4 d-flex flex-column align-center w-100">{{ column.label }}</h4>
                 <!-- risk factors -->
                 <span v-if="column.riskIncrease" class="ml-4 mb-1 d-flex flex-column align-center w-100">

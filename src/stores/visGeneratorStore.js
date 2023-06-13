@@ -35,20 +35,22 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
             let visList = []
             visList.push(
                 {
-                    type: "text",
+                    type: "custom",
                     graph: "text",
-                    text: [{"text": "add custom text about" + column.label + " here", "color": "black"}],
+                    text: [{"text": "add custom text about $column here", "color": "black"}],
                 }
             )
-            visList.push(
-                {
-                    type: "similarity",
-                    data: similar_dashboard_columns.map(item => ({
-                        name: item.column.label,
-                        value: item.similarity.toFixed(2)
-                    }))
-                }
-            )
+            if (similar_dashboard_columns.length > 0) {
+                visList.push(
+                    {
+                        type: "similarity",
+                        data: similar_dashboard_columns.map(item => ({
+                            name: item.column.label,
+                            value: item.similarity.toFixed(2)
+                        }))
+                    }
+                )
+            }
 
             return visList
         },
@@ -74,21 +76,21 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.riskIncrease.name,
+                                name: item.column.label + ": " + item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.risk_multiplier
                             })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
                             title: [{text: "By how many times is the risk increased?", color: "black"}],
                             axis: [{text: "risk increase through factor", color: "black"}]
                         }],
-                        "column": {name: "RelativeIncrease", label: "Risk Factors", options: options}
+                        "column": {name: "RelativeIncrease", label: "Relative Risk Increase", options: options}
                     },
                     //absolute risk increase
                     {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.riskIncrease.name,
+                                name: item.column.label + ": " + item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.risk_difference
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
@@ -96,14 +98,14 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             title: [{text: "How much is the risk increased?", color: "black"}],
                             axis: [{text: "difference in risk with/ without factor", color: "black"}]
                         }],
-                        "column": {name: "AbsoluteIncrease", label: "Risk Factors", options: options}
+                        "column": {name: "AbsoluteIncrease", label: "Absolute Risk Increase", options: options}
                     },
                     //absolute risk
                     {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.riskIncrease.name,
+                                name: item.column.label + ": " + item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.absolute_risk
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
@@ -115,7 +117,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                 }],
                             axis: [{text: "absolute risk through factor", color: "black"}]
                         }],
-                        "column": {name: "AbsoluteValues", label: "Risk Factors", options: options}
+                        "column": {name: "AbsoluteValues", label: "Absolute Risks", options: options}
                     })
             }
 
@@ -144,7 +146,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
             if (csv) {
                 factGroups.push({
                     "visList": [{
-                        type: 'text',
+                        type: 'custom',
                         text: [{text: "The dataset consists of " + csv.length + " participants.", color: "$color"}]
                     }],
                     "column": {name: "Nr of participants"}

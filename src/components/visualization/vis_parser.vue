@@ -62,7 +62,7 @@ export default {
                 }
             }
             if (vis["color"] === null || vis["color"] === undefined) {
-                if (vis.type === "text") {
+                if (vis.graph === "text") {
                     vis["color"] = this.dashboardStore.default_colors.text
                 } else {
                     vis["color"] = this.dashboardStore.default_settings[vis.type]["color"]
