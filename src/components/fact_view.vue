@@ -7,7 +7,7 @@
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['graph']" label="Custom"/>
                 <div class="d-flex">
-                    <v-radio-group v-model="dashboardStore.current_fact.vis.graph"
+                    <v-radio-group v-model="vis.graph"
                                    :disabled="!has_attribute['graph']">
                         <v-radio label="default" :value="null"></v-radio>
                         <v-radio label="bar" value="bar"></v-radio>
@@ -19,7 +19,7 @@
                     <div class="w-50">
                         <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
                         <div class="ml-2 text-grey" v-else>Unit</div>
-                        <v-radio-group v-model="dashboardStore.current_fact.vis.detailLevel"
+                        <v-radio-group v-model="vis.detailLevel"
                                        :disabled="!has_attribute['graph']">
                             <v-radio label="natural frequencies without context" value="nominator"></v-radio>
                             <v-radio label="natural frequencies with context" value="denominator"></v-radio>
@@ -27,7 +27,7 @@
                         </v-radio-group>
                     </div>
                 </div>
-                <div v-if="dashboardStore.current_fact.vis.graph === 'pictograph'" class="w-100"
+                <div v-if="vis.graph === 'pictograph'" class="w-100"
                      :disabled="!has_attribute['graph']">
 
                     <!-- icon -->
@@ -36,10 +36,10 @@
                         <div>
                             <div><b>Icons</b></div>
                             <div class="d-flex">
-                                <v-text-field v-model="dashboardStore.current_fact.vis.icon"
+                                <v-text-field v-model="vis.icon"
                                               placeholder="custom"
                                               style="min-width:250px"
-                                              :prepend-icon="'mdi-' + dashboardStore.current_fact.vis.icon"
+                                              :prepend-icon="'mdi-' + vis.icon"
                                               append-inner-icon="mdi-pencil">
                                     <template v-slot:details>
                                         <div>
@@ -50,11 +50,11 @@
                                     </template>
                                 </v-text-field>
                             </div>
-                            <v-slider v-model="dashboardStore.current_fact.vis.ratio" min="0" max="2"
+                            <v-slider v-model="vis.ratio" min="0" max="2"
                                       step="0.01"
                                       label="ratio" thumb-label></v-slider>
                             <div class=" mt-2">presets:</div>
-                            <v-btn-toggle v-model="dashboardStore.current_fact.vis.icon" inline class="mb-5">
+                            <v-btn-toggle v-model="vis.icon" inline class="mb-5">
                                 <v-btn v-for="icon in icons" v-bind:key="icon"
                                        :value="icon">
                                     <v-icon :icon="'mdi-'+icon"/>
@@ -69,17 +69,17 @@
                             <div><b>Grid</b></div>
                             <v-text-field
                                     type="number" label="#rows" style="min-width:200px"
-                                    v-model="dashboardStore.current_fact.vis.grid[0]"/>
+                                    v-model="vis.grid[0]"/>
                             <v-text-field
                                     type="number" label="#columns" style="min-width:200px"
-                                    v-model="dashboardStore.current_fact.vis.grid[1]"/>
+                                    v-model="vis.grid[1]"/>
                         </div>
                     </div>
                 </div>
 
                 <v-btn @click="set_default_graph_settings" variant="tonal"
                        :disabled="!has_attribute['graph']">
-                    set as default for {{ dashboardStore.current_fact.vis.type }}
+                    set as default for {{ vis.type }}
                     Graphs
                 </v-btn>
             </v-expansion-panel-text>
@@ -92,7 +92,7 @@
                 <div class="d-flex">
                     <div>
                         <v-switch v-model="has_attribute['color']" label="Custom"/>
-                        <v-radio-group v-model="dashboardStore.current_fact.vis.color"
+                        <v-radio-group v-model="vis.color"
                                        :disabled="!has_attribute['color']">
                             <v-radio v-for="(el,i) in dashboardStore.default_colors.colors" v-bind:key="el"
                                      :value="i">
@@ -110,15 +110,15 @@
                                     </v-icon>
                                     custom
                                     <v-icon class="ml-2">mdi-pencil</v-icon>
-                                    <color-dialog v-if="dashboardStore.current_fact.vis.color !== '$color'"
+                                    <color-dialog v-if="vis.color !== '$color'"
                                                   :color="get_color()"
-                                                  @update="dashboardStore.current_fact.vis.color = $event; custom_color= $event"></color-dialog>
+                                                  @update="vis.color = $event; custom_color= $event"></color-dialog>
                                 </template>
                             </v-radio>
                         </v-radio-group>
                         <v-btn @click="makeDefault('color')" variant="tonal"
                                :disabled="!has_attribute['color']"> set as default for
-                            {{ dashboardStore.current_fact.vis.type }} Graphs
+                            {{ vis.type }} Graphs
                         </v-btn>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Background </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['background']" label="Custom"/>
-                <v-radio-group v-model="dashboardStore.current_fact.vis.background"
+                <v-radio-group v-model="vis.background"
                                class="ml-5" :disabled="!has_attribute['background']">
                     <v-radio label="auto" :value="background_auto">
                         <template v-slot:label>
@@ -150,13 +150,13 @@
                             <v-icon class="ml-2">mdi-pencil</v-icon>
                         </template>
                         <color-dialog :color="background_custom.color"
-                                      @update="background_custom.color = $event; dashboardStore.current_fact.vis.background = $event"></color-dialog>
+                                      @update="background_custom.color = $event; vis.background = $event"></color-dialog>
                     </v-radio>
 
                 </v-radio-group>
                 <v-btn @click="makeDefault('background')" :disabled="!has_attribute['background']"
                        variant="tonal"> set as default for
-                    {{ dashboardStore.current_fact.vis.type }} Graphs
+                    {{ vis.type }} Graphs
                 </v-btn>
 
             </v-expansion-panel-text>
@@ -167,12 +167,12 @@
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Title </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['title']" label="Custom"/>
-                <text_input :text="dashboardStore.current_fact.vis.title" :default="get_default('title')"
-                            @change="dashboardStore.current_fact.vis.title = $event" :color="get_color()"
+                <text_input :text="vis.title" :default="get_default('title')"
+                            @change="vis.title = $event" :color="get_color()"
                             :disabled="!has_attribute['title']"/>
                 <v-btn @click="makeDefault('title')" :disabled="!has_attribute['title']"
                        variant="tonal">
-                    set as default for {{ dashboardStore.current_fact.vis.type }} Graphs
+                    set as default for {{ vis.type }} Graphs
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -182,12 +182,12 @@
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Axis </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['axis']" label="Custom"/>
-                <text_input :text="dashboardStore.current_fact.vis.axis" :default="get_default('axis')"
-                            @change="dashboardStore.current_fact.vis.axis = $event" :color="get_color()"
+                <text_input :text="vis.axis" :default="get_default('axis')"
+                            @change="vis.axis = $event" :color="get_color()"
                             :disabled="!has_attribute['axis']"/>
                 <v-btn @click="makeDefault('axis')" :disabled="!has_attribute['axis']"
                        variant="tonal">
-                    set as default for {{ dashboardStore.current_fact.vis.type }} Graphs
+                    set as default for {{ vis.type }} Graphs
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -197,14 +197,14 @@
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Annotation </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['annotation']" label="Custom"/>
-                <div v-if="dashboardStore.current_fact.vis.annotation !== undefined &&
-                                    dashboardStore.current_fact.vis.annotation !== null">
-                    <text_input v-for="(el,i) in dashboardStore.current_fact.vis.annotation.text" :key="i"
+                <div v-if="vis.annotation !== undefined &&
+                                    vis.annotation !== null">
+                    <text_input v-for="(el,i) in vis.annotation.text" :key="i"
                                 :text="el"
-                                @change="dashboardStore.current_fact.vis.annotation.text[i] = $event"
+                                @change="vis.annotation.text[i] = $event"
                                 :color="get_color()"/>
                 </div>
-                <v-radio-group v-model="dashboardStore.current_fact.vis.annotation" :disabled="!has_attribute['annotation']">
+                <v-radio-group v-model="vis.annotation" :disabled="!has_attribute['annotation']">
                     <v-radio label="no annotation" value="None"></v-radio>
                     <v-radio
                             v-for="el in annotation_list"
@@ -213,7 +213,7 @@
                         <template v-slot:label>
                             <div class="w-100">
                                                 <span v-for="text in el.text" v-bind:key="text">
-                                                    <span v-for="span in helperStore.parse_text(text, dashboardStore.current_fact.column)" v-bind:key="span"
+                                                    <span v-for="span in helperStore.parse_text(text, dashboardStore.current_fact_group.column)" v-bind:key="span"
                                                           :style="'color:' + span.color">
                                                         {{ span.text }}
                                                     </span>
@@ -230,12 +230,12 @@
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Text </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['text']" label="Custom"/>
-                <text_input :text="dashboardStore.current_fact.vis.text" :default="[]"
-                            @change="dashboardStore.current_fact.vis.text = $event" :color="get_color()"
+                <text_input :text="vis.text" :default="[]"
+                            @change="vis.text = $event" :color="get_color()"
                             :disabled="!has_attribute['text']"/>
                 <v-btn @click="makeDefault('text')" :disabled="!has_attribute['text']"
                        variant="tonal">
-                    set as default for {{ dashboardStore.current_fact.vis.type }} Graphs
+                    set as default for {{ vis.type }} Graphs
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -283,61 +283,69 @@ export default {
             handler: function (val) {
                 Object.keys(val).forEach(attr => {
                     if (val[attr]) {
-                        if (this.dashboardStore.current_fact.vis[attr] === undefined) {
+                        if (this.vis[attr] === undefined) {
                             // when the attribute is not defined, set it to the default value
-                            this.dashboardStore.current_fact.vis[attr] = this.get_default(attr)
+                            this.vis[attr] = this.get_default(attr)
                             if (attr === "graph") {
-                                this.dashboardStore.current_fact.vis["detailLevel"] = this.get_default("detailLevel")
+                                this.vis["detailLevel"] = this.get_default("detailLevel")
                             }
                             if (attr === "graph" && this.get_default(attr) === "pictograph") {
-                                this.dashboardStore.current_fact.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
-                                this.dashboardStore.current_fact.vis["icon"] = this.get_default("icon")
-                                this.dashboardStore.current_fact.vis["ratio"] = this.get_default("ratio")
+                                this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
+                                this.vis["icon"] = this.get_default("icon")
+                                this.vis["ratio"] = this.get_default("ratio")
                             }
                         }
                     } else {
-                        this.dashboardStore.current_fact.vis[attr] = undefined
+                        this.vis[attr] = undefined
                     }
                 })
             },
             deep: true
         },
-        current_fact: function () {
-            if (this.dashboardStore.current_fact !== null) {
+        vis: function () {
+            if (this.vis !== null) {
                 this.updateView()
             }
         }
     },
     computed: {
-        current_fact() {
-            return this.dashboardStore.current_fact
+        vis() {
+            if (this.dashboardStore.current_fact_index === null) {
+                return null
+            }
+            else {
+                return this.dashboardStore.current_fact_group.visList[this.dashboardStore.current_fact_index]
+            }
+
         },
     },
     created() {
-        this.updateView()
+        if (this.dashboardStore.current_fact_index === null) {
+            this.updateView()
+        }
     },
     methods: {
         updateView() {
             let attributes = ["graph", "color", "background", "title", "axis", "annotation", "text"]
             attributes.forEach(key => {
-                this.has_attribute[key] = this.dashboardStore.current_fact.vis[key] !== undefined
+                this.has_attribute[key] = this.vis[key] !== undefined
             })
-            this.annotation_list = this.annotationStore.compute_annotations(this.dashboardStore.current_fact.column, this.dashboardStore.current_fact.vis.type)
+            this.annotation_list = this.annotationStore.compute_annotations(this.dashboardStore.current_fact_group.column, this.vis.type)
         },
         /**
          * closes the fact view
          */
         close() {
-            this.dashboardStore.current_fact = null
+            this.dashboardStore.current_fact_index = null
         },
         /**
          * sets the current attribute as default title for the current visualization type
          */
         makeDefault(attribute) {
-            if (this.dashboardStore.current_fact.vis[attribute] !== undefined) {
-                this.dashboardStore.default_settings[this.dashboardStore.current_fact.vis.type][attribute] = this.dashboardStore.current_fact.vis[attribute]
+            if (this.vis[attribute] !== undefined) {
+                this.dashboardStore.default_settings[this.vis.type][attribute] = this.vis[attribute]
             }
-            this.dashboardStore.current_fact.vis[attribute] = undefined
+            this.vis[attribute] = undefined
             this.has_attribute[attribute] = false
         },
         get_default(attribute) {
@@ -345,10 +353,10 @@ export default {
                 return this.annotation_list[0]
             }
 
-            return this.dashboardStore.default_settings[this.dashboardStore.current_fact.vis.type][attribute]
+            return this.dashboardStore.default_settings[this.vis.type][attribute]
         },
         set_default_graph_settings() {
-            if (this.dashboardStore.current_fact.vis.graph === 'pictograph') {
+            if (this.vis.graph === 'pictograph') {
                 this.makeDefault('grid')
                 this.makeDefault('icon')
                 this.makeDefault('ratio')
@@ -357,27 +365,14 @@ export default {
             this.makeDefault('detailLevel')
         },
         /**
-         * removes the current visualization from the current fact group
+         * returns the color of the current visualization
+         * @returns {string}
          */
-        remove_vis() {
-            let vis = this.dashboardStore.current_fact.vis
-            this.dashboardStore.current_fact_group.visList = this.dashboardStore.current_fact_group.visList.filter(item => item.type !== vis.type)
-            this.dashboardStore.current_fact_group.additional_vis_list.push(vis)
-            this.close()
-        },
-        /**
-         * adds the current visualization to the current fact group
-         */
-        add_vis() {
-            let vis = this.dashboardStore.current_fact.vis
-            this.dashboardStore.current_fact_group.additional_vis_list = this.dashboardStore.current_fact_group.additional_vis_list.filter(item => item.type !== vis.type)
-            this.dashboardStore.current_fact_group.visList.push(vis)
-        },
         get_color() {
-            if (this.dashboardStore.current_fact.vis.color) {
-                return this.dashboardStore.get_color(this.dashboardStore.current_fact.vis.color)
+            if (this.vis.color) {
+                return this.dashboardStore.get_color(this.vis.color)
             } else {
-                return this.dashboardStore.get_color(this.dashboardStore.default_settings[this.dashboardStore.current_fact.vis.type].color)
+                return this.dashboardStore.get_color(this.dashboardStore.default_settings[this.vis.type].color)
             }
         }
     }

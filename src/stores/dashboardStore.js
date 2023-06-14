@@ -8,7 +8,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
     state: () => ({
         dashboard_items: [],
         current_fact_group: null,
-        current_fact: null,
+        current_fact_index: null,
         excluded_columns: [],
         intention: "explore",
         default_settings: {
