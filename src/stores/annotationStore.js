@@ -20,6 +20,9 @@ export const useAnnotationStore = defineStore('annotationStore', {
             if (type === "impact") {
                 return this.compute_impact_annotations(summary)
             }
+            if (type === "similarity") {
+                return this.compute_similarity_annotations(summary)
+            }
             return []
         },
         /**
@@ -43,21 +46,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
             else {
                 let greatest_significance = summary.significance.significant_tuples.sort((a, b) => b[1] - a[1])[0]
                 annotations.push({
-                    "text": [[{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of participants with ", "color": "black"}],
+                    "text": [[{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of participants with a $column of ", "color": "black"}],
                         [{"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_column: $target_option", "color": "black"}]],
                     "target": [greatest_significance],
                     "score": 3,
                 })
             }
-
-            //occurrence
-            let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
-            annotations.push({
-                "text":  [[{"text": "Most participants have a ", "color": "black"}],
-                    [{"text": summary.label + " of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}]],
-                "target": [greatest_occurrence[0]],
-                "score": 6
-            })
 
             let under_hundred = Object.entries(summary.occurrence).filter(([_, value]) => value < 100)
             if (under_hundred.length > 0) {
@@ -105,28 +99,6 @@ export const useAnnotationStore = defineStore('annotationStore', {
 
             }
 
-            //similar dashboard columns
-            let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(summary)
-                .sort((a, b) => b.similarity - a.similarity)
-            if (similar_dashboard_columns.length > 0) {
-                let name_string = similar_dashboard_columns
-                    .map(d => d.column.label)
-                    .join(", ")
-                annotations.push({
-                    "text": [
-                        [{
-                            "text": "Correlates strongly with ",
-                            "color": "black"
-                        }],
-                        [{
-                            "text": name_string,
-                            "color": "black"
-                        }]],
-                    "target": [],
-                    "score": 4
-                })
-            }
-
             return annotations.sort((a, b) => b.score - a.score)
         },
 
@@ -144,7 +116,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
             annotations.push({
                 "text": [[{"text": "Most participants have a ", "color": "black"}],
-                    [{"text": summary.label + " of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}]],
+                    [{"text":"$column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}]],
                 "target": [greatest_occurrence[0]],
                 "score": 5
             })
@@ -177,24 +149,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 }
             }
 
-            //risk factor
-            if (summary.riskIncrease !== undefined && summary.riskIncrease.risk_multiplier !== null) {
-                annotations.push({
-                    "text": [
-                        [{
-                            "text": "People with " + summary.riskIncrease.name + " have a " + summary.riskIncrease.risk_multiplier + " times ",
-                            "color": "black"
-                        }],
-                        [{
-                            "text": "higher risk of $target_column: $target_option than others",
-                            "color": "black"
-                        }]],
-                    "target": summary.riskIncrease.risk_factor_groups,
-                    "score": 8
-                })
+            return annotations.sort((a, b) => b.score - a.score)
+        },
 
-            }
-
+        compute_similarity_annotations(summary) {
+            let annotations = []
+            annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
             //similar dashboard columns
             let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(summary)
                 .sort((a, b) => b.similarity - a.similarity)
@@ -205,7 +165,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 annotations.push({
                     "text": [
                         [{
-                            "text": "Correlates strongly with ",
+                            "text": "$column correlates strongly with ",
                             "color": "black"
                         }],
                         [{
