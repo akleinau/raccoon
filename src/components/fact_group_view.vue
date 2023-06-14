@@ -267,7 +267,7 @@ export default {
             } else return null
         },
         risk_groups() {
-            if (this.column) {
+            if (this.column && this.dashboardStore.current_fact_group.column.options) {
                 return this.dashboardStore.current_fact_group.column.options.map(o => o.risk_group)
             } else return []
 
