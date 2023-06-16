@@ -197,13 +197,6 @@
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Annotation </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['annotation']" label="Custom"/>
-                <div v-if="vis.annotation !== undefined &&
-                                    vis.annotation !== null">
-                    <text_input v-for="(el,i) in vis.annotation.text" :key="i"
-                                :text="el"
-                                @change="vis.annotation.text[i] = $event"
-                                :color="get_color()"/>
-                </div>
                 <v-radio-group v-model="vis.annotation" :disabled="!has_attribute['annotation']">
                     <v-radio label="no annotation" value="None"></v-radio>
                     <v-radio
@@ -213,7 +206,8 @@
                         <template v-slot:label>
                             <div class="w-100">
                                                 <span v-for="text in el.text" v-bind:key="text">
-                                                    <span v-for="span in helperStore.parse_text(text, dashboardStore.current_fact_group.column)" v-bind:key="span"
+                                                    <span v-for="span in helperStore.parse_text(text, dashboardStore.current_fact_group.column)"
+                                                          v-bind:key="span"
                                                           :style="'color:' + span.color">
                                                         {{ span.text }}
                                                     </span>
@@ -222,6 +216,13 @@
                         </template>
                     </v-radio>
                 </v-radio-group>
+                <div v-if="vis.annotation !== undefined &&
+                                    vis.annotation !== null">
+                    <text_input v-for="(el,i) in vis.annotation.text" :key="i"
+                                :text="el"
+                                @change="vis.annotation.text[i] = $event"
+                                :color="get_color()"/>
+                </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
 
@@ -312,15 +313,14 @@ export default {
         vis() {
             if (this.dashboardStore.current_fact_index === null) {
                 return null
-            }
-            else {
+            } else {
                 return this.dashboardStore.current_fact_group.visList[this.dashboardStore.current_fact_index]
             }
 
         },
     },
     created() {
-        if (this.dashboardStore.current_fact_index === null) {
+        if (this.dashboardStore.current_fact_index !== null) {
             this.updateView()
         }
     },

@@ -86,11 +86,11 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 annotations.push({
                     "text": [
                         [{
-                            "text": "People with " + summary.riskIncrease.name + " have a ",
+                            "text": "People with $column:" + summary.riskIncrease.name + " have a ",
                             "color": "black"
                         }],
                         [{
-                            "text": summary.riskIncrease.risk_multiplier + " times higher risk than others",
+                            "text": summary.riskIncrease.risk_multiplier + " times higher risk of $target_column: $target_option than others",
                             "color": "black"
                         }]],
                     "target": summary.riskIncrease.risk_factor_groups,
