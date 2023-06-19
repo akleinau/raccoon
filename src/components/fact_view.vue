@@ -286,7 +286,7 @@ export default {
                     if (val[attr]) {
                         if (this.vis[attr] === undefined) {
                             // when the attribute is not defined, set it to the default value
-                            this.vis[attr] = this.get_default(attr)
+                            this.vis[attr] = JSON.parse(JSON.stringify(this.get_default(attr)))
                             if (attr === "graph") {
                                 this.vis["detailLevel"] = this.get_default("detailLevel")
                             }
