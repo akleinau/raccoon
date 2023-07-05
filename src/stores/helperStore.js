@@ -43,6 +43,7 @@ export const useHelperStore = defineStore('helperStore', {
             let new_text_array = JSON.parse(JSON.stringify(text_array))
             if (useDataStore().target) {
                 new_text_array.forEach(d => {
+                    d.text = d.text.replace("$target_label", useDataStore().target_label)
                     d.text = d.text.replace("$target_column", useDataStore().target.label)
                     d.text = d.text.replace("$target_option", useDataStore().target.options.find(x => x.name === useDataStore().target_option).label)
                     d.text = d.text.replace("$column", column.label)

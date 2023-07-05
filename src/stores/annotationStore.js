@@ -47,7 +47,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 let greatest_significance = summary.significance.significant_tuples.sort((a, b) => b[1] - a[1])[0]
                 annotations.push({
                     "text": [[{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of participants with a $column of ", "color": "black"}],
-                        [{"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_column: $target_option", "color": "black"}]],
+                        [{"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_label", "color": "black"}]],
                     "target": [greatest_significance],
                     "score": 3,
                 })
@@ -90,7 +90,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "black"
                         }],
                         [{
-                            "text": summary.riskIncrease.risk_multiplier + " times higher risk of $target_column: $target_option than others",
+                            "text": summary.riskIncrease.risk_multiplier + " times higher risk of $target_label than others",
                             "color": "black"
                         }]],
                     "target": summary.riskIncrease.risk_factor_groups,

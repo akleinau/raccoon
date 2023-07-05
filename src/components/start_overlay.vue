@@ -14,8 +14,15 @@
 
             <div v-if="dataStore.target_all_options.length !== 0">
                 <v-autocomplete v-model="dataStore.target_option" class="px-5" label="Select target option"
-                                :items="dataStore.target_all_options"/>
+                                :items="dataStore.target_all_options" @update:modelValue="target_option_selected"/>
             </div>
+            <div class="px-5 pb-5" v-if="dataStore.target_option">
+                <v-text-field v-model="dataStore.target_label" :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
+                label="target label"></v-text-field>
+                <i> Example: "The likelihood of <span class="text-primary">{{dataStore.target_label}} </span> is 20%." </i>
+            </div>
+
+            <v-divider class="pb-5" />
 
             <div class="px-5 pb-5" v-if="dataStore.target_option">
                 I want to...
@@ -101,6 +108,7 @@ export default {
                     this.dataStore.target_column = "stea_s0"
                     this.target_selected()
                     this.dataStore.target_option = "US pos."
+                    this.target_option_selected()
                 }
             }
             reader.readAsText(csvFile)
@@ -113,6 +121,13 @@ export default {
             this.dataStore.target_all_options = [...new Set(this.dataStore.csv.map(d => d[this.dataStore.target_column]))]
             this.dataStore.target_all_options = this.dataStore.target_all_options.filter(d => !(d === null || d === ""))
             console.log(this.dataStore.target_all_options)
+        },
+        /**
+         * gets called when a target option is selected
+         */
+        target_option_selected() {
+            console.log("target_option_selected")
+            this.dataStore.target_label = this.dataStore.target_column + ":" + this.dataStore.target_option
         },
         /**
          * start the calculation of the visualizations and closes the overlay

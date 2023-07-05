@@ -111,7 +111,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, 1],
                             graph: "pictograph",
                             title: [{text: "How frequent is ", color: "black"},
-                                {text: " $target_column: $target_option", color: "$color"}, {
+                                {text: " $target_label", color: "$color"}, {
                                     text: " per risk factor?",
                                     color: "black"
                                 }],

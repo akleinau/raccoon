@@ -30,9 +30,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 icon: "circle",
                 ratio: 1,
                 range: "percent",
-                axis: [{text: "likelihood of", color: "black"}, {text: " $target_column: $target_option", color: "$color"}],
+                axis: [{text: "likelihood of", color: "black"}, {text: " $target_label", color: "$color"}],
                 title: [{text: "Likelihood of", color: "black"},
-                    {text: " $target_column: $target_option", color: "$color"}, {text: " per $column group", color: "black"}],
+                    {text: " $target_label", color: "$color"}, {text: " per $column group", color: "black"}],
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 1,
@@ -73,7 +73,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
             "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
             "text": "midnightBlue",
             "font_family": "inherit",
-        }
+        },
+
     }),
     actions: {
         /**

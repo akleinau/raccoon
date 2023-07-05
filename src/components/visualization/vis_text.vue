@@ -35,7 +35,7 @@ export default {
                 //get percentage of max percent
                 if (this.vis.type === 'significance') return [{
                     text: "Participants with $column: " + max_percent_option[0] + " have a " +
-                        (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_column: $target_option",
+                        (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_label",
                     color: this.vis.color
                 }]
 
