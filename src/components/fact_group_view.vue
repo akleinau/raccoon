@@ -26,7 +26,7 @@
             <div v-if="dashboardStore.current_fact_group.column.occurrence !== undefined &&
             Object.values(dashboardStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
                 <v-icon icon="mdi-alert"/>
-                Calculated frequencies are less accurate for options with less than 100 people.
+                Calculated frequencies are less accurate for options with less than 100 rows.
             </div>
             <div v-if="dashboardStore.current_fact_group.similar_dashboard_columns !== undefined &&
                 dashboardStore.current_fact_group.similar_dashboard_columns.length > 0">

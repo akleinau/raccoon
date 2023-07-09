@@ -17,6 +17,7 @@ export const useDataStore = defineStore('dataStore', {
         target_option: null,
         target: null,
         target_label: "",
+        row_label: "people",
         column_list: []
     }),
     actions: {

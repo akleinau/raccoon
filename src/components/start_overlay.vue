@@ -51,6 +51,7 @@
                         <v-slider label="dashboard starting items" v-model="starting_items" :min="1" :max="5"
                                   :step="1"
                                   thumb-label="always"></v-slider>
+                        <v-text-field label="rows equal" v-model="dataStore.row_label"></v-text-field>
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>

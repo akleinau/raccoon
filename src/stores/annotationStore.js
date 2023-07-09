@@ -58,7 +58,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 if (under_hundred.length === 1) {
                     annotations.push({
                         "text": [
-                            [{"text": "Based on only " + under_hundred[0][1] + " people.", "color": "black"}]],
+                            [{"text": "Based on only " + under_hundred[0][1] + " $rows.", "color": "black"}]],
                         "target": [under_hundred[0][0]],
                         "score": 7
                     })
@@ -72,7 +72,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "black"
                             }],
                             [{
-                                "text": "than " + upper_boundary + " people.",
+                                "text": "than " + upper_boundary + " $rows.",
                                 "color": "black"
                             }]],
                         "target": under_hundred.map(([key, _]) => key),
@@ -86,7 +86,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 annotations.push({
                     "text": [
                         [{
-                            "text": "People with $column:" + summary.riskIncrease.name + " have a ",
+                            "text": "$rows with $column:" + summary.riskIncrease.name + " have a ",
                             "color": "black"
                         }],
                         [{
@@ -126,7 +126,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 if (under_hundred.length === 1) {
                     annotations.push({
                         "text": [
-                            [{"text": "Only " + under_hundred[0][1] + " people.", "color": "black"}]],
+                            [{"text": "Only " + under_hundred[0][1] + " $rows.", "color": "black"}]],
                         "target": [under_hundred[0][0]],
                         "score": 7
                     })
@@ -140,7 +140,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "black"
                             }],
                             [{
-                                "text": "than " + upper_boundary + " people.",
+                                "text": "than " + upper_boundary + " $rows.",
                                 "color": "black"
                             }]],
                         "target": under_hundred.map(([key, _]) => key),
