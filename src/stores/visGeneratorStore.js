@@ -147,7 +147,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                 factGroups.push({
                     "visList": [{
                         type: 'custom',
-                        text: [{text: "The dataset consists of " + csv.length + " participants.", color: "$color"}]
+                        text: [{text: "The dataset consists of " + csv.length + " $rows.", color: "$color"}]
                     }],
                     "column": {name: "Nr of participants"}
                 })

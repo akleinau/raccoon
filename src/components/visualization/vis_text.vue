@@ -34,26 +34,26 @@ export default {
             if (max_percent_option) {
                 //get percentage of max percent
                 if (this.vis.type === 'significance') return [{
-                    text: "Participants with $column: " + max_percent_option[0] + " have a " +
+                    text: "$rows with $column: " + max_percent_option[0] + " have a " +
                         (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_label",
                     color: this.vis.color
                 }]
 
                 if (this.vis.type === 'impact') {
                     if (!this.vis.detailLevel || this.vis.detailLevel === 'nominator') return [{
-                        text: this.column.occurrence[max_percent_option[0]] + " participants have $column: " + max_percent_option[0],
+                        text: this.column.occurrence[max_percent_option[0]] + " $rows have $column: " + max_percent_option[0],
                         color: this.vis.color
                     }]
 
                     if (this.vis.detailLevel === 'denominator') return [{
                         text: this.column.occurrence[max_percent_option[0]] + " of " + Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) +
-                            " participants have $column: " + max_percent_option[0],
+                            " $rows have $column: " + max_percent_option[0],
                         color: this.vis.color
                     }]
 
                     if (this.vis.detailLevel === 'percent') return [{
                         text: (this.column.occurrence[max_percent_option[0]] / Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) * 100).toFixed(0) +
-                            "% of participants have $column: " + max_percent_option[0],
+                            "% of $rows have $column: " + max_percent_option[0],
                         color: this.vis.color
                     }]
 
