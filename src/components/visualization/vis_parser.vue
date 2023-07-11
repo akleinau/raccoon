@@ -3,7 +3,7 @@
     <vis_pictograph v-if="graph === 'pictograph'" :vis="full_vis" :column="column" :width="width" :preview="preview"
                     :key="rerender"/>
     <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
-    <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
+    <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_multiple_pie v-if="graph === 'multiPie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
 </template>

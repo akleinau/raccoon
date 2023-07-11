@@ -14,6 +14,9 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
             let visList = []
             visList.push(
                 {
+                    type: "overall"
+                },
+                {
                     type: "significance",
                     data_map: 'percent_target_option',
                     options: 'options',

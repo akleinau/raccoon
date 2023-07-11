@@ -54,6 +54,10 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 font_size: 2,
                 text: [{text: "", color: "black"}],
             },
+            overall: {
+                graph: "text",
+                font_size: 1,
+            },
             similarity: {
                 graph: "bar",
                 grid: [25, 4],
@@ -150,9 +154,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 d.column.riskIncrease !== undefined)
 
             const options = risk_factor_items.map(item => ({
-                    "name": item.column.riskIncrease.name,
-                    "label": item.column.label + ": " + item.column.riskIncrease.name
-                }))
+                "name": item.column.riskIncrease.name,
+                "label": item.column.label + ": " + item.column.riskIncrease.name
+            }))
 
             const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
             this.dashboard_items.forEach(item => {

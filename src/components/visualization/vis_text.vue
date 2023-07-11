@@ -1,16 +1,19 @@
 <template>
-  <div :style="'width: ' + width + 'px; font-size: ' + font_size + 'rem; font-family: ' + vis.font_family">
-      <span v-for="item in helperStore.parse_text(generate_text, column)" v-bind:key=item :style="'color: ' + item.color">{{item.text}}</span>
-  </div>
+    <div :style="'width: ' + width + 'px; font-size: ' + font_size + 'rem; font-family: ' + vis.font_family"
+         class="pb-3" v-if="!(preview && vis.type==='overall')">
+        <span v-for="item in helperStore.parse_text(generate_text, column)" v-bind:key=item
+              :style="'color: ' + item.color">{{ item.text }}</span>
+    </div>
 </template>
 
 <script>
 import {useDashboardStore} from "@/stores/dashboardStore";
 import {useHelperStore} from "@/stores/helperStore";
+
 export default {
     name: "vis_text",
     props: [
-        "vis", "column", "width"
+        "vis", "column", "width", "preview"
     ],
     setup() {
         const dashboardStore = useDashboardStore()
@@ -59,6 +62,20 @@ export default {
 
 
                 }
+
+                let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
+                if (this.vis.type === 'overall') return [
+                    {
+                        text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a likelihood of $target_label of " +
+                            (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "%.",
+                        color: this.vis.color
+                    },
+                    {
+                        text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
+                            (max_percent_option[1] * 100).toFixed(0) + "%.",
+                    }
+                ]
+
             }
 
             return [{text: "", color: "$color"}]
