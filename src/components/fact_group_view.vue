@@ -58,7 +58,7 @@
                                         class="pa-2">
                                     <div class="bg-white pt-3">
                                         <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
-                                                    :width="450"/>
+                                                    :width="450" :index="i"/>
                                     </div>
                                     <div class="d-flex justify-center align-center"
                                          v-if="dashboardStore.current_fact_index === i">
@@ -196,6 +196,7 @@
                         <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus" v-else> Remove from
                             dashboard
                         </v-btn>
+                        <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-file-pdf-box"> Export PDF </v-btn>
                         <!-- end buttons -->
                         <div class="flex-grow-1 d-flex justify-end">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
@@ -223,6 +224,10 @@ import {useDataStore} from "@/stores/dataStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import {useSimilarityStore} from "@/stores/similarityStore";
 import * as d3 from "d3";
+
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default {
     name: "fact_group_view",
@@ -404,6 +409,24 @@ export default {
             })
             this.recalculate_options()
         },
+        pdfExport() {
+            console.log("pdf export")
+            let data = {
+                content: [{
+                    text: 'Dashboard',
+                    style: 'header'
+                }]
+            }
+
+            this.dashboardStore.current_fact_group_svgs.forEach(svg => {
+                data.content.push({
+                    svg: svg.outerHTML,
+                    width: 500
+                })
+            })
+
+            pdfMake.createPdf(data).open()
+        }
     }
 }
 </script>

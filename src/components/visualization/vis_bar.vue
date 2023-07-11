@@ -12,6 +12,7 @@ export default {
     props: [
         "vis", "column", "width", "preview"
     ],
+    emits: ["svg"],
     setup() {
         const helperStore = useHelperStore()
         const visHelperStore = useVisHelperStore()
@@ -196,6 +197,9 @@ export default {
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
+            if (!this.preview) {
+                this.$emit('svg', svg.node())
+            }
         }
     },
     mounted() {
