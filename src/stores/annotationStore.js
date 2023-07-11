@@ -33,12 +33,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
          */
         compute_significance_annotations(summary) {
             let annotations = []
-            annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
+            annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
 
             //significance
             if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0 && summary.options > 1) {
                 annotations.push({
-                    "text": [[{"text": "Not statistically significant!", "color": "black"}]],
+                    "text": [{"text": "Not statistically significant!", "color": "black"}],
                     "target": [],
                     "score": 10,
                 })
@@ -46,8 +46,8 @@ export const useAnnotationStore = defineStore('annotationStore', {
             else {
                 let greatest_significance = summary.significance.significant_tuples.sort((a, b) => b[1] - a[1])[0]
                 annotations.push({
-                    "text": [[{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of $rows with a $column of ", "color": "black"}],
-                        [{"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_label", "color": "black"}]],
+                    "text": [{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of $rows with a $column of ", "color": "black"},
+                        {"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_label", "color": "black"}],
                     "target": [greatest_significance],
                     "score": 3,
                 })
@@ -58,7 +58,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 if (under_hundred.length === 1) {
                     annotations.push({
                         "text": [
-                            [{"text": "Based on only " + under_hundred[0][1] + " $rows.", "color": "black"}]],
+                            {"text": "Based on only " + under_hundred[0][1] + " $rows.", "color": "black"}],
                         "target": [under_hundred[0][0]],
                         "score": 7
                     })
@@ -67,14 +67,14 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     upper_boundary = Math.ceil(upper_boundary / 10) * 10  //round up to next 10
                     annotations.push({
                         "text": [
-                            [{
+                            {
                                 "text": "Each based on fewer ",
                                 "color": "black"
-                            }],
-                            [{
+                            },
+                            {
                                 "text": "than " + upper_boundary + " $rows.",
                                 "color": "black"
-                            }]],
+                            }],
                         "target": under_hundred.map(([key, _]) => key),
                         "score": 7
                     })
@@ -85,14 +85,14 @@ export const useAnnotationStore = defineStore('annotationStore', {
             if (summary.riskIncrease !== undefined) {
                 annotations.push({
                     "text": [
-                        [{
+                        {
                             "text": "$rows with $column:" + summary.riskIncrease.name + " have a ",
                             "color": "black"
-                        }],
-                        [{
+                        },
+                        {
                             "text": summary.riskIncrease.risk_multiplier + " times higher risk of $target_label than others",
                             "color": "black"
-                        }]],
+                        }],
                     "target": summary.riskIncrease.risk_factor_groups,
                     "score": 5
                 })
@@ -110,13 +110,13 @@ export const useAnnotationStore = defineStore('annotationStore', {
          */
         compute_impact_annotations(summary) {
             let annotations = []
-            annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
+            annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
 
             //occurrence
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
             annotations.push({
-                "text": [[{"text": "Most $rows have a ", "color": "black"}],
-                    [{"text":"$column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}]],
+                "text": [{"text": "Most $rows have a ", "color": "black"},
+                    {"text":"$column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}],
                 "target": [greatest_occurrence[0]],
                 "score": 5
             })
@@ -126,7 +126,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 if (under_hundred.length === 1) {
                     annotations.push({
                         "text": [
-                            [{"text": "Only " + under_hundred[0][1] + " $rows.", "color": "black"}]],
+                            {"text": "Only " + under_hundred[0][1] + " $rows.", "color": "black"}],
                         "target": [under_hundred[0][0]],
                         "score": 7
                     })
@@ -135,14 +135,14 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     upper_boundary = Math.ceil(upper_boundary / 10) * 10  //round up to next 10
                     annotations.push({
                         "text": [
-                            [{
+                            {
                                 "text": "These groups each have fewer ",
                                 "color": "black"
-                            }],
-                            [{
+                            },
+                            {
                                 "text": "than " + upper_boundary + " $rows.",
                                 "color": "black"
-                            }]],
+                            }],
                         "target": under_hundred.map(([key, _]) => key),
                         "score": 7
                     })
@@ -164,14 +164,14 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     .join(", ")
                 annotations.push({
                     "text": [
-                        [{
+                        {
                             "text": "$column correlates strongly with ",
                             "color": "black"
-                        }],
-                        [{
+                        },
+                        {
                             "text": name_string,
                             "color": "black"
-                        }]],
+                        }],
                     "target": [],
                     "score": 10
                 })

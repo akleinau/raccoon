@@ -18,6 +18,7 @@ import {useDashboardStore} from "@/stores/dashboardStore";
 import {useDataStore} from "@/stores/dataStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
+import {useHelperStore} from "@/stores/helperStore";
 
 export default {
     name: "vis_parser",
@@ -28,7 +29,8 @@ export default {
         const dashboardStore = useDashboardStore()
         const dataStore = useDataStore()
         const annotationStore = useAnnotationStore()
-        return {dashboardStore, dataStore, annotationStore}
+        const helperStore = useHelperStore()
+        return {dashboardStore, dataStore, annotationStore, helperStore}
     },
     components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie, vis_multiple_pie},
     data() {
@@ -98,6 +100,10 @@ export default {
                 }
             })
 
+            if (vis["annotation"] && vis["annotation"] !== "None") {
+                vis["annotation"] = this.wrap_text(vis["annotation"])
+            }
+
             return vis
         }
     },
@@ -124,6 +130,51 @@ export default {
             deep: true
         }
     },
+    methods: {
+        /**
+         * add line breaks to annotation text
+         *
+         * @param annotation
+         * @returns {*}
+         */
+        wrap_text(annotation) {
+            const MAX_LENGTH = 30
+
+            //parse text to get full labels instead of variables
+            let all_elements = this.helperStore.parse_text(annotation.text, this.column)
+
+            //create new lines
+            let new_lines = []
+            let current_line = []
+            let current_line_length = 0
+            all_elements.forEach(e => {
+                //if tspan is too long, split up by word and try again
+                if (current_line_length + e.text.length > MAX_LENGTH) {
+                    //split up line
+                    e.text.split(" ").forEach(s => {
+                        if (current_line_length + s.length > MAX_LENGTH) {
+                            new_lines.push(current_line)
+                            current_line = [{text: s, color: e.color}]
+                            current_line_length = s.length
+                        }
+                        else {
+                            current_line.push({text: " " + s, color: e.color})
+                            current_line_length += s.length + 1
+                        }
+                    })
+                }
+                //if tspan is not too long, add to current line
+                else {
+                    current_line.push(e)
+                    current_line_length += e.text.length
+                }
+            })
+            new_lines.push(current_line)
+
+            annotation.text = new_lines
+            return annotation
+        }
+    }
 }
 </script>
 

@@ -205,22 +205,18 @@
                             :value="el">
                         <template v-slot:label>
                             <div class="w-100">
-                                                <span v-for="text in el.text" v-bind:key="text">
-                                                    <span v-for="span in helperStore.parse_text(text, dashboardStore.current_fact_group.column)"
-                                                          v-bind:key="span"
-                                                          :style="'color:' + span.color">
-                                                        {{ span.text }}
-                                                    </span>
-                                                </span>
+                                <span v-for="span in helperStore.parse_text(el.text, dashboardStore.current_fact_group.column)"
+                                      v-bind:key="span" :style="'color:' + span.color">
+                                    {{ span.text }}
+                                </span>
                             </div>
                         </template>
                     </v-radio>
                 </v-radio-group>
                 <div v-if="vis.annotation !== undefined &&
                                     vis.annotation !== null">
-                    <text_input v-for="(el,i) in vis.annotation.text" :key="i"
-                                :text="el"
-                                @change="vis.annotation.text[i] = $event"
+                    <text_input :text="vis.annotation.text"
+                                @change="vis.annotation.text = $event"
                                 :color="get_color()"/>
                 </div>
             </v-expansion-panel-text>
