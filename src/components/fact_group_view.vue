@@ -253,6 +253,11 @@ export default {
             display: true,
             panels: [],
             option_steps: [],
+            exportOptions: {
+                backgroundColor: "white",
+                encoderOptions: 1,
+                scale: 2,
+            }
         }
     },
     created() {
@@ -433,14 +438,13 @@ export default {
             for (let i = 0; i < this.dashboardStore.current_fact_group_exports.length; i++) {
                 let exp = this.dashboardStore.current_fact_group_exports[i]
                 if (exp.type === "svg") {
-                    await svg2png.svgAsPngUri(exp.item, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
+                    await svg2png.svgAsPngUri(exp.item, this.exportOptions).then(uri => {
                         data.content.push({
                             image: uri, width: 500
                         })
                         //data.content.push({svg: svg.outerHTML, width: 500})
                     })
-                }
-                else if (exp.type === "text") {
+                } else if (exp.type === "text") {
                     data.content.push({
                         text: exp.item,
                         style: 'text'
@@ -458,17 +462,16 @@ export default {
         copy_vis(index) {
             let exp = this.dashboardStore.current_fact_group_exports[index]
             if (exp.type === "svg") {
-                svg2png.svgAsPngUri(exp.item, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
-                fetch(uri).then(r => r.blob().then(b => {
-                    navigator.clipboard.write([
-                        new ClipboardItem({
-                            'image/png': b,
-                        })
-                    ])
-                }))
-            })
-            }
-            else if (exp.type === "text") {
+                svg2png.svgAsPngUri(exp.item, this.exportOptions).then(uri => {
+                    fetch(uri).then(r => r.blob().then(b => {
+                        navigator.clipboard.write([
+                            new ClipboardItem({
+                                'image/png': b,
+                            })
+                        ])
+                    }))
+                })
+            } else if (exp.type === "text") {
                 navigator.clipboard.writeText(exp.item)
             }
 
@@ -481,9 +484,8 @@ export default {
         export_vis_as_png(index) {
             let exp = this.dashboardStore.current_fact_group_exports[index]
             if (exp.type === "svg") {
-                svg2png.saveSvgAsPng(exp.item, "vis.png", {backgroundColor: "white", encoderOptions: 1})
-            }
-            else if (exp.type === "text") {
+                svg2png.saveSvgAsPng(exp.item, "vis.png", this.exportOptions)
+            } else if (exp.type === "text") {
                 let blob = new Blob([exp.item], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "vis.txt");
             }
