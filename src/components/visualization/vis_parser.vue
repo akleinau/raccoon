@@ -4,7 +4,8 @@
     <vis_pictograph v-if="graph === 'pictograph'" @svg="saveSVG"
                     :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
-    <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_text v-if="graph === 'text'" @text="saveText"
+              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_multiple_pie v-if="graph === 'multiPie'" @svg="saveSVG"
@@ -183,9 +184,17 @@ export default {
          */
         saveSVG(svg) {
             if (this.index !== undefined) {
-                this.dashboardStore.current_fact_group_svgs[this.index] = svg
+                this.dashboardStore.current_fact_group_exports[this.index] = {type: "svg", item: svg}
             }
-
+        },
+        /**
+         * save text for export
+         * @param txt
+         */
+        saveText(txt) {
+            if (this.index !== undefined) {
+                this.dashboardStore.current_fact_group_exports[this.index] = {type: "text", item: txt}
+            }
         }
     }
 }

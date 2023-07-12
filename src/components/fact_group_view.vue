@@ -68,7 +68,7 @@
                                         <v-btn variant="text" icon="mdi-arrow-down" @click="move_vis_down(i)"></v-btn>
                                         <v-btn variant="text" @click="remove_vis(i)">remove</v-btn>
                                         <v-btn variant="text" @click="copy_vis(i)">copy</v-btn>
-                                        <v-btn variant="text" @click="export_vis_as_png(i)">export png</v-btn>
+                                        <v-btn variant="text" @click="export_vis_as_png(i)">export</v-btn>
                                     </div>
                                 </v-card>
                             </v-hover>
@@ -307,7 +307,7 @@ export default {
         close() {
             this.dashboardStore.current_fact_index = null
             this.dashboardStore.current_fact_group = null
-            this.dashboardStore.current_fact_group_svgs = []
+            this.dashboardStore.current_fact_group_exports = []
         },
         /**
          * adds the fact group to the dashboard
@@ -430,14 +430,20 @@ export default {
                 }]
             }
 
-            for (let i = 0; i < this.dashboardStore.current_fact_group_svgs.length; i++) {
-                let svg = this.dashboardStore.current_fact_group_svgs[i]
-                if (svg) {
-                    await svg2png.svgAsPngUri(svg, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
+            for (let i = 0; i < this.dashboardStore.current_fact_group_exports.length; i++) {
+                let exp = this.dashboardStore.current_fact_group_exports[i]
+                if (exp.type === "svg") {
+                    await svg2png.svgAsPngUri(exp.item, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
                         data.content.push({
                             image: uri, width: 500
                         })
                         //data.content.push({svg: svg.outerHTML, width: 500})
+                    })
+                }
+                else if (exp.type === "text") {
+                    data.content.push({
+                        text: exp.item,
+                        style: 'text'
                     })
                 }
             }
@@ -450,11 +456,10 @@ export default {
          * @param index
          */
         copy_vis(index) {
-            let svg = this.dashboardStore.current_fact_group_svgs[index]
-            svg2png.svgAsPngUri(svg, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
-
+            let exp = this.dashboardStore.current_fact_group_exports[index]
+            if (exp.type === "svg") {
+                svg2png.svgAsPngUri(exp.item, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
                 fetch(uri).then(r => r.blob().then(b => {
-                    console.log(b)
                     navigator.clipboard.write([
                         new ClipboardItem({
                             'image/png': b,
@@ -462,6 +467,11 @@ export default {
                     ])
                 }))
             })
+            }
+            else if (exp.type === "text") {
+                navigator.clipboard.writeText(exp.item)
+            }
+
         },
         /**
          * exports the svg of the visualization as png
@@ -469,8 +479,14 @@ export default {
          * @param index
          */
         export_vis_as_png(index) {
-            let svg = this.dashboardStore.current_fact_group_svgs[index]
-            svg2png.saveSvgAsPng(svg, "vis.png", {backgroundColor: "white", encoderOptions: 1})
+            let exp = this.dashboardStore.current_fact_group_exports[index]
+            if (exp.type === "svg") {
+                svg2png.saveSvgAsPng(exp.item, "vis.png", {backgroundColor: "white", encoderOptions: 1})
+            }
+            else if (exp.type === "text") {
+                let blob = new Blob([exp.item], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "vis.txt");
+            }
         }
     }
 }

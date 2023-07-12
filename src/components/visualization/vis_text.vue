@@ -13,6 +13,7 @@ import {useHelperStore} from "@/stores/helperStore";
 
 export default {
     name: "vis_text",
+    emits: ['text'],
     props: [
         "vis", "column", "width", "preview"
     ],
@@ -81,6 +82,17 @@ export default {
 
             return [{text: "", color: "$color"}]
         }
+    },
+    watch: {
+        generate_text: {
+            handler() {
+                    this.$emit('text', this.helperStore.parse_text(this.generate_text, this.column).map(d => d.text).join(' '))
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.$emit('text', this.helperStore.parse_text(this.generate_text, this.column).map(d => d.text).join(' '))
     }
 }
 </script>
