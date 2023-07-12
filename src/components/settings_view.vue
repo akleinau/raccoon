@@ -221,11 +221,10 @@
             <v-expansion-panel-text>
                 <div class="d-flex">
                     <b>Target: </b>
-                    <v-text-field :label="dataStore.target.name" v-model="dataStore.target.label"
+                    <v-text-field :label="dataStore.target.name + ':' + dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
+                                  v-model="dataStore.target_label"
                         append-inner-icon="mdi-pencil" class="mx-3"  ></v-text-field>
-                    <v-text-field :label="dataStore.target.options.find(d => d.name ===dataStore.target_option).name"
-                                  v-model="dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
-                                append-inner-icon="mdi-pencil" class="mx-3"></v-text-field>
+                    <v-text-field label="rows equal" v-model="dataStore.row_label"></v-text-field>
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>

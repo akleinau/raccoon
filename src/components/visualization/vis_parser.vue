@@ -47,7 +47,10 @@ export default {
             return this.vis.graph ? this.vis.graph : this.dashboardStore.default_settings[this.vis.type].graph
         },
         target() {
-            return this.dataStore.target
+            return this.dataStore.target_label
+        },
+        row_label() {
+            return this.dataStore.row_label
         },
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
@@ -62,8 +65,7 @@ export default {
             if (!vis["background"]) {
                 if (this.dashboardStore.default_settings[vis.type]["background"] !== undefined) {
                     vis["background"] = this.dashboardStore.default_settings[vis.type]["background"]
-                }
-                else {
+                } else {
                     vis["background"] = this.dashboardStore.default_colors.background
                 }
             }
@@ -86,8 +88,7 @@ export default {
                 let annotations = this.annotationStore.compute_annotations(this.column, this.vis.type)
                 if (annotations.length > 1) { //greater than 1 because of the custom annotation
                     vis["annotation"] = annotations[0]
-                }
-                else {
+                } else {
                     vis["annotation"] = "None"
                 }
             }
@@ -132,6 +133,13 @@ export default {
             }
             ,
             deep: true
+        },
+        row_label: {
+            handler: function () {
+                this.rerender++
+            }
+            ,
+            deep: true
         }
     },
     methods: {
@@ -160,8 +168,7 @@ export default {
                             new_lines.push(current_line)
                             current_line = [{text: s, color: e.color}]
                             current_line_length = s.length
-                        }
-                        else {
+                        } else {
                             current_line.push({text: " " + s, color: e.color})
                             current_line_length += s.length + 1
                         }
