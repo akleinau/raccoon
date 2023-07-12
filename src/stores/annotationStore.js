@@ -36,14 +36,14 @@ export const useAnnotationStore = defineStore('annotationStore', {
             annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
 
             //significance
-            if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0 && summary.options > 1) {
+            if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0 && summary.options.length > 1) {
                 annotations.push({
                     "text": [{"text": "Not statistically significant!", "color": "black"}],
                     "target": [],
                     "score": 10,
                 })
             }
-            else {
+            else if (summary.significance !== undefined) {
                 let greatest_significance = summary.significance.significant_tuples.sort((a, b) => b[1] - a[1])[0]
                 annotations.push({
                     "text": [{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of $rows with a $column of ", "color": "black"},

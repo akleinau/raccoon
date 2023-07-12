@@ -322,11 +322,13 @@ export default {
     },
     methods: {
         updateView() {
-            let attributes = ["graph", "color", "background", "title", "axis", "annotation", "text"]
-            attributes.forEach(key => {
-                this.has_attribute[key] = this.vis[key] !== undefined
-            })
-            this.annotation_list = this.annotationStore.compute_annotations(this.dashboardStore.current_fact_group.column, this.vis.type)
+            if (this.vis !== null && this.vis !== undefined) {
+                let attributes = ["graph", "color", "background", "title", "axis", "annotation", "text"]
+                attributes.forEach(key => {
+                    this.has_attribute[key] = this.vis[key] !== undefined
+                })
+                this.annotation_list = this.annotationStore.compute_annotations(this.dashboardStore.current_fact_group.column, this.vis.type)
+            }
         },
         /**
          * closes the fact view
@@ -347,6 +349,10 @@ export default {
         get_default(attribute) {
             if (attribute === "annotation") {
                 return this.annotation_list[0]
+            }
+
+            if (this.vis === null || this.vis === undefined) {
+                return null
             }
 
             return this.dashboardStore.default_settings[this.vis.type][attribute]

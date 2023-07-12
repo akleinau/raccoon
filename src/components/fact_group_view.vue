@@ -291,9 +291,10 @@ export default {
         /**
          * shows fact view for the selected fact
          *
-         * @param vis
+         * @param i index of the fact
          */
         toggle_fact_view(i) {
+            console.log("toggle fact view")
             if (this.dashboardStore.current_fact_index === i) {
                 this.dashboardStore.current_fact_index = null
             } else {
@@ -353,11 +354,9 @@ export default {
          * @param index
          */
         remove_vis(index) {
-            this.dashboardStore.current_fact_index = null
+            //current_index must not be set to null as toggle_fact_view is called and does it
             let removed = this.dashboardStore.current_fact_group.visList.splice(index, 1)
             this.dashboardStore.current_fact_group.additional_vis_list.push(removed[0])
-            console.log(this.dashboardStore.current_fact_index)
-            console.log(this.dashboardStore.current_fact_group)
         },
         /**
          * adds a visualization to the fact group visList
