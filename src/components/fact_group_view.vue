@@ -45,11 +45,13 @@
                     <div class="d-flex flex-column pb-5">
                         <div class="d-flex justify-space-between mx-2 align-center">
                             <div class="text-grey-darken-2">Click to select</div>
-                            <v-btn class="text-blue-darken-3" variant="text" @click="dashboardStore.current_fact_index = null">clear
+                            <v-btn class="text-blue-darken-3" variant="text"
+                                   @click="dashboardStore.current_fact_index = null">clear
                                 selection
                             </v-btn>
                         </div>
-                        <div class="d-flex flex-column pa-1 ma-auto" v-for="(vis,i) in dashboardStore.current_fact_group.visList"
+                        <div class="d-flex flex-column pa-1 ma-auto"
+                             v-for="(vis,i) in dashboardStore.current_fact_group.visList"
                              v-bind:key="vis">
                             <v-hover v-slot="{ isHovering, props }">
                                 <v-card :elevation="isHovering ? 16 : 2" v-bind="props" @click="toggle_fact_view(i)"
@@ -58,13 +60,15 @@
                                         class="pa-2">
                                     <div class="bg-white pt-3">
                                         <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
-                                                    :width="450"/>
+                                                    :width="450" :index="i"/>
                                     </div>
                                     <div class="d-flex justify-center align-center"
                                          v-if="dashboardStore.current_fact_index === i">
                                         <v-btn variant="text" icon="mdi-arrow-up" @click="move_vis_up(i)"></v-btn>
                                         <v-btn variant="text" icon="mdi-arrow-down" @click="move_vis_down(i)"></v-btn>
                                         <v-btn variant="text" @click="remove_vis(i)">remove</v-btn>
+                                        <v-btn variant="text" @click="copy_vis(i)">copy</v-btn>
+                                        <v-btn variant="text" @click="export_vis_as_png(i)">export png</v-btn>
                                     </div>
                                 </v-card>
                             </v-hover>
@@ -76,7 +80,8 @@
                 <div class="w-50  pr-5">
                     <!-- general tabs -->
                     <h3 class="ml-3 mt-5"> General </h3>
-                    <v-text-field label="Label" class="ml-3 mt-2" v-model="dashboardStore.current_fact_group.column.label"
+                    <v-text-field label="Label" class="ml-3 mt-2"
+                                  v-model="dashboardStore.current_fact_group.column.label"
                                   append-inner-icon="mdi-pencil"/>
                     <v-expansion-panels class="mx-3 mb-3" v-model="panels">
 
@@ -164,7 +169,8 @@
                                             <v-card :elevation="isHovering ? 16 : 2" v-bind="props"
                                                     @click="add_vis(vis)"
                                                     :class="{ 'on-hover': isHovering }" class="pa-2">
-                                                <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
+                                                <vis_parser :vis="vis"
+                                                            :column="dashboardStore.current_fact_group.column"
                                                             :width="300"
                                                             :preview="true"/>
                                             </v-card>
@@ -179,7 +185,8 @@
                         </v-expansion-panel>
                     </v-expansion-panels>
                     <!-- individual vis tabs -->
-                    <h3 class="ml-3 text-blue-darken-3" v-if="dashboardStore.current_fact_index !== null"> Selected </h3>
+                    <h3 class="ml-3 text-blue-darken-3" v-if="dashboardStore.current_fact_index !== null">
+                        Selected </h3>
                     <fact_view v-if="this.dashboardStore.current_fact_index !== null"/>
                 </div>
 
@@ -196,6 +203,7 @@
                         <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus" v-else> Remove from
                             dashboard
                         </v-btn>
+                        <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-file-pdf-box"> Export PDF</v-btn>
                         <!-- end buttons -->
                         <div class="flex-grow-1 d-flex justify-end">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
@@ -223,6 +231,12 @@ import {useDataStore} from "@/stores/dataStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import {useSimilarityStore} from "@/stores/similarityStore";
 import * as d3 from "d3";
+
+import * as svg2png from "save-svg-as-png/lib/saveSvgAsPng.js";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default {
     name: "fact_group_view",
@@ -292,6 +306,7 @@ export default {
         close() {
             this.dashboardStore.current_fact_index = null
             this.dashboardStore.current_fact_group = null
+            this.dashboardStore.current_fact_group_svgs = []
         },
         /**
          * adds the fact group to the dashboard
@@ -404,6 +419,60 @@ export default {
             })
             this.recalculate_options()
         },
+        /**
+         * exports the current fact group as pdf
+         */
+        async pdfExport() {
+            console.log("pdf export")
+            let data = {
+                content: [{
+                    text: 'Dashboard',
+                    style: 'header'
+                }]
+            }
+
+            for (let i = 0; i < this.dashboardStore.current_fact_group_svgs.length; i++) {
+                let svg = this.dashboardStore.current_fact_group_svgs[i]
+                if (svg) {
+                    await svg2png.svgAsPngUri(svg, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
+                        data.content.push({
+                            image: uri, width: 500
+                        })
+                        //data.content.push({svg: svg.outerHTML, width: 500})
+                    })
+                }
+            }
+
+            pdfMake.createPdf(data).open()
+
+        },
+        /**
+         * copies the svg of the visualization as png to the clipboard
+         * @param index
+         */
+        copy_vis(index) {
+            let svg = this.dashboardStore.current_fact_group_svgs[index]
+            svg2png.svgAsPngUri(svg, {backgroundColor: "white", encoderOptions: 1}).then(uri => {
+
+                fetch(uri).then(r => r.blob().then(b => {
+                    console.log(b)
+                    navigator.clipboard.write([
+                        new ClipboardItem({
+                            'image/png': b,
+                        })
+                    ])
+                }))
+            })
+        },
+        /**
+         * exports the svg of the visualization as png
+         *
+         * @param index
+         */
+        export_vis_as_png(index) {
+            let svg = this.dashboardStore.current_fact_group_svgs[index]
+            svg2png.saveSvgAsPng(svg, "vis.png", {backgroundColor: "white", encoderOptions: 1})
+        }
     }
 }
 </script>

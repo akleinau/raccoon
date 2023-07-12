@@ -1,11 +1,14 @@
 <template>
-    <vis_bar v-if="graph === 'bar'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pictograph v-if="graph === 'pictograph'" :vis="full_vis" :column="column" :width="width" :preview="preview"
-                    :key="rerender"/>
+    <vis_bar v-if="graph === 'bar'" @svg="saveSVG"
+             :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_pictograph v-if="graph === 'pictograph'" @svg="saveSVG"
+                    :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_text v-if="graph === 'text'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pie v-if="graph === 'pie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_multiple_pie v-if="graph === 'multiPie'" :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_pie v-if="graph === 'pie'" @svg="saveSVG"
+             :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_multiple_pie v-if="graph === 'multiPie'" @svg="saveSVG"
+                      :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
 </template>
 
 <script>
@@ -23,7 +26,7 @@ import {useHelperStore} from "@/stores/helperStore";
 export default {
     name: "vis_parser",
     props: [
-        "vis", "column", "width", "preview"
+        "vis", "column", "width", "preview", "index"
     ],
     setup() {
         const dashboardStore = useDashboardStore()
@@ -173,6 +176,16 @@ export default {
 
             annotation.text = new_lines
             return annotation
+        },
+        /**
+         * save svgs for export
+         * @param svg
+         */
+        saveSVG(svg) {
+            if (this.index !== undefined) {
+                this.dashboardStore.current_fact_group_svgs[this.index] = svg
+            }
+
         }
     }
 }
