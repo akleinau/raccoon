@@ -10,12 +10,13 @@
   },
   "dependencies": {
     "d3": "^7.8.4",
+    "pdfmake": "^0.2.7",
     "pinia": "^2.0.32",
     "sass": "^1.62.1",
+    "save-svg-as-png": "^1.4.17",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
-    "vuetify": "^3.2.1",
-    "pdfmake": "^0.2.7"
+    "vuetify": "^3.2.1"
   },
   "devDependencies": {
     "@mdi/font": "^7.2.96",
