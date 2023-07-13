@@ -42,15 +42,34 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     "target": [],
                     "score": 10,
                 })
-            }
-            else if (summary.significance !== undefined) {
-                let greatest_significance = summary.significance.significant_tuples.sort((a, b) => b[1] - a[1])[0]
+            } else if (summary.significance !== undefined) {
+                //highest significant percentage
+                let greatest_significance = summary.significance.significant_tuples.sort((a, b) => summary.percent_target_option[b] - summary.percent_target_option[a])[0]
                 annotations.push({
-                    "text": [{"text": (summary.percent_target_option[greatest_significance]*100).toFixed(0) + "% of $rows with a $column of ", "color": "black"},
-                        {"text": summary.options.find(d => d.name === greatest_significance).label + " have $target_label", "color": "black"}],
+                    "text": [{
+                        "text": (summary.percent_target_option[greatest_significance] * 100).toFixed(0) + "% of $rows with a $column of " +
+                            summary.options.find(d => d.name === greatest_significance).label + " have $target_label",
+                        "color": "black"
+                    }],
                     "target": [greatest_significance],
                     "score": 3,
                 })
+
+                //risk factor
+                if (summary.riskIncrease !== undefined && summary.riskIncrease.risk_factor_groups.length > 1) {
+                    annotations.push({
+                        "text": [
+                            {
+                                "text": "$rows with a $column of " + summary.riskIncrease.name + " have a " +
+                                    (summary.riskIncrease.risk_min * 100).toFixed(0) + "% or higher risk of $target_label",
+                                "color": "black"
+                            },
+                        ],
+                        "target": summary.riskIncrease.risk_factor_groups,
+                        "score": 7
+                    })
+
+                }
             }
 
             let under_hundred = Object.entries(summary.occurrence).filter(([_, value]) => value < 100)
@@ -60,7 +79,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "text": [
                             {"text": "Based on only " + under_hundred[0][1] + " $rows.", "color": "black"}],
                         "target": [under_hundred[0][0]],
-                        "score": 7
+                        "score": 5
                     })
                 } else {
                     let upper_boundary = d3.max(under_hundred.map(([_, value]) => value))
@@ -76,27 +95,9 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "black"
                             }],
                         "target": under_hundred.map(([key, _]) => key),
-                        "score": 7
+                        "score": 5
                     })
                 }
-            }
-
-            //risk factor
-            if (summary.riskIncrease !== undefined) {
-                annotations.push({
-                    "text": [
-                        {
-                            "text": "$rows with $column:" + summary.riskIncrease.name + " have a ",
-                            "color": "black"
-                        },
-                        {
-                            "text": summary.riskIncrease.risk_multiplier + " times higher risk of $target_label than others",
-                            "color": "black"
-                        }],
-                    "target": summary.riskIncrease.risk_factor_groups,
-                    "score": 5
-                })
-
             }
 
             return annotations.sort((a, b) => b.score - a.score)
@@ -116,9 +117,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
             annotations.push({
                 "text": [{"text": "Most $rows have a ", "color": "black"},
-                    {"text":"$column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label, "color": "black"}],
+                    {
+                        "text": "$column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label,
+                        "color": "black"
+                    }],
                 "target": [greatest_occurrence[0]],
-                "score": 5
+                "score": 7
             })
 
             let under_hundred = Object.entries(summary.occurrence).filter(([_, value]) => value < 100)
@@ -128,7 +132,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "text": [
                             {"text": "Only " + under_hundred[0][1] + " $rows.", "color": "black"}],
                         "target": [under_hundred[0][0]],
-                        "score": 7
+                        "score": 5
                     })
                 } else {
                     let upper_boundary = d3.max(under_hundred.map(([_, value]) => value))
@@ -144,7 +148,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "black"
                             }],
                         "target": under_hundred.map(([key, _]) => key),
-                        "score": 7
+                        "score": 5
                     })
                 }
             }
