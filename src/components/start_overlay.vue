@@ -19,7 +19,7 @@
             <div class="px-5 pb-5" v-if="dataStore.target_option">
                 <v-text-field v-model="dataStore.target_label" :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
                 label="target label"></v-text-field>
-                <i> Example: "The likelihood of <span class="text-primary">{{dataStore.target_label}} </span> is 20%." </i>
+                <i> Example: "The likelihood of <span class="text-primary">{{dataStore.target_label}} </span> is X%." </i>
             </div>
 
             <v-divider class="pb-5" />
@@ -94,10 +94,8 @@ export default {
          * gets called when a file is uploaded
          */
         uploaded() {
-            console.log("uploaded:")
             const csvFile = this.files[0];
             const name = csvFile.name.replace('.csv', '')
-            console.log(name)
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = d3.csvParse(event.target.result)
@@ -118,16 +116,13 @@ export default {
          * gets called when a target is selected
          */
         target_selected() {
-            console.log("target_selected")
             this.dataStore.target_all_options = [...new Set(this.dataStore.csv.map(d => d[this.dataStore.target_column]))]
             this.dataStore.target_all_options = this.dataStore.target_all_options.filter(d => !(d === null || d === ""))
-            console.log(this.dataStore.target_all_options)
         },
         /**
          * gets called when a target option is selected
          */
         target_option_selected() {
-            console.log("target_option_selected")
             this.dataStore.target_label = this.dataStore.target_column + ":" + this.dataStore.target_option
         },
         /**

@@ -158,10 +158,8 @@ export const useRegressionStore = defineStore('regressionStore', {
                 columns.forEach(name => {
                     //let influence = d3.max(weights_map.filter(d => d.name === column).map(d => Math.abs(d.weight)))
                     let column = dataStore.column_list.find(d => d.name === name)
-                    //console.log(influence)
                     if (column) {
                         column.significance.score["regression"] = accuracy - this.dashboard_accuracy
-                        //console.log(column.significance.score["regression"])
                         if (accuracy - this.dashboard_accuracy > this.accuracy_diff) this.accuracy_diff = accuracy - this.dashboard_accuracy
                     }
                 })
@@ -285,7 +283,6 @@ export const useRegressionStore = defineStore('regressionStore', {
             let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard", this.epochs)
             this.dashboard_accuracy = accuracy
             console.log("dashboard accuracy: " + accuracy)
-            //console.log(y_pred)
             console.log("training on remaining data:")
             useDataStore().column_names.forEach(name => {
                 if (!useDashboardStore().dashboard_items.map(d => d.name).includes(name) &&

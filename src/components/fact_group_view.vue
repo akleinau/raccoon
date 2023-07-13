@@ -299,7 +299,6 @@ export default {
          * @param i index of the fact
          */
         toggle_fact_view(i) {
-            console.log("toggle fact view")
             if (this.dashboardStore.current_fact_index === i) {
                 this.dashboardStore.current_fact_index = null
             } else {
@@ -427,7 +426,6 @@ export default {
          * exports the current fact group as pdf
          */
         async pdfExport() {
-            console.log("pdf export")
             let data = {
                 content: [{
                     text: 'Dashboard',

@@ -102,7 +102,6 @@ export const useDataStore = defineStore('dataStore', {
             //go through summaries again to compute correlation with target
             let target_column = this.column_list.find(d => d.name === this.target_column)
             this.target = target_column
-            console.log(target_column)
             this.column_list.forEach(column => {
                 column.correlation_with_target = useSimilarityStore().compute_similarity(target_column, column)
                 column.significance = scoreStore.compute_significance_score(column)
@@ -389,8 +388,6 @@ export const useDataStore = defineStore('dataStore', {
                 column = this.column_exclude_missing(column)
                 column.significance = useScoreStore().compute_significance_score(column)
                 this.compute_risk_increase(column)
-
-                console.log(column)
 
                 return column
             }

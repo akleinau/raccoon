@@ -68,8 +68,8 @@ export default {
                 let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
                 if (this.vis.type === 'overall') return [
                     {
-                        text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a likelihood of $target_label of " +
-                            (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "%.",
+                        text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a " +
+                            (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% likelihood of $target_label.",
                         color: this.vis.color
                     },
                     {
