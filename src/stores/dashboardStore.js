@@ -96,6 +96,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "visList": visList
             })
             this.update_dashboard_context()
+            this.update_dashboard_similarity()
             if (recalculate) {
                 useRegressionStore().compute_score()
             }
@@ -109,6 +110,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
             this.dashboard_items = this.dashboard_items.filter(item => item.name !== name)
             useRegressionStore().compute_score()
             this.update_dashboard_context()
+            this.update_dashboard_similarity()
         },
 
         /**
@@ -190,6 +192,19 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     item.column.options = options
                 }
 
+            })
+        },
+        update_dashboard_similarity() {
+            this.dashboard_items.forEach(item => {
+                item.visList.forEach(vis => {
+                    if (vis.type === "similarity") {
+                        let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(item.column)
+                        vis.data = similar_dashboard_columns.map(item => ({
+                            name: item.column.label,
+                            value: item.similarity.toFixed(2)
+                        }))
+                    }
+                })
             })
         },
         /**
