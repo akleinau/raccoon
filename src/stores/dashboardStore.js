@@ -24,6 +24,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 0,
+                text: [{text: "", color: "black"}],
             },
             significance: {
                 graph: "pictograph",
@@ -37,6 +38,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 1,
+                text: [{text: "", color: "black"}],
             },
             context: {
                 graph: "bar",
@@ -49,6 +51,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 3,
+                text: [{text: "", color: "black"}],
             },
             custom: {
                 graph: "text",
@@ -58,6 +61,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
             overall: {
                 graph: "text",
                 font_size: 1,
+                text: [{text: "", color: "black"}],
             },
             similarity: {
                 graph: "bar",
@@ -70,6 +74,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 detailLevel: "denominator",
                 font_size: 2,
                 color: 2,
+                text: [{text: "", color: "black"}],
 
             }
         },

@@ -87,11 +87,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     annotations.push({
                         "text": [
                             {
-                                "text": "Each based on fewer ",
-                                "color": "black"
-                            },
-                            {
-                                "text": "than " + upper_boundary + " $rows.",
+                                "text": "Each based on fewer than " + upper_boundary + " $rows.",
                                 "color": "black"
                             }],
                         "target": under_hundred.map(([key, _]) => key),
@@ -116,9 +112,9 @@ export const useAnnotationStore = defineStore('annotationStore', {
             //occurrence
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
             annotations.push({
-                "text": [{"text": "Most $rows have a ", "color": "black"},
+                "text": [
                     {
-                        "text": "$column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label,
+                        "text": "Most $rows have a $column of " + summary.options.find(d => d.name === greatest_occurrence[0]).label,
                         "color": "black"
                     }],
                 "target": [greatest_occurrence[0]],
@@ -140,11 +136,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     annotations.push({
                         "text": [
                             {
-                                "text": "These groups each have fewer ",
-                                "color": "black"
-                            },
-                            {
-                                "text": "than " + upper_boundary + " $rows.",
+                                "text": "These groups each have fewer than " + upper_boundary + " $rows.",
                                 "color": "black"
                             }],
                         "target": under_hundred.map(([key, _]) => key),
@@ -169,11 +161,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 annotations.push({
                     "text": [
                         {
-                            "text": "$column correlates strongly with ",
-                            "color": "black"
-                        },
-                        {
-                            "text": name_string,
+                            "text": "$column correlates strongly with " + name_string,
                             "color": "black"
                         }],
                     "target": [],

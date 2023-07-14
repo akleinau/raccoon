@@ -213,7 +213,7 @@
                         </template>
                     </v-radio>
                 </v-radio-group>
-                <div v-if="vis.annotation !== undefined &&
+                <div v-if="vis.annotation !== undefined && vis.annotation !== 'None' &&
                                     vis.annotation !== null">
                     <text_input :text="vis.annotation.text"
                                 @change="vis.annotation.text = $event"
@@ -223,7 +223,7 @@
         </v-expansion-panel>
 
         <!-- Text -->
-        <v-expansion-panel>
+        <v-expansion-panel v-if="get_default('graph') === 'text' || vis.graph === 'text'">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Text </h4></v-expansion-panel-title>
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['text']" label="Custom"/>
