@@ -10,12 +10,24 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
          *
          * @returns {number[]|*}
          */
-        get_range(vis) {
-            if (vis.range === "percent") {
-                return [0, 1]
-            } else {
-                return vis.range
+        get_range(vis, data = []) {
+            if (vis.context === true || data.length === 0) {
+                if (vis.range === "percent") {
+                    return [0, 1]
+                } else {
+                    return vis.range
+                }
             }
+            else {
+                let max = d3.max(data, d => d.value)
+                if (vis.range === "percent") {
+                    return [0, max+0.01]
+                }
+                else {
+                    return [vis.range[0], max+2]
+                }
+            }
+
         },
         /**
          * returns the label of the column

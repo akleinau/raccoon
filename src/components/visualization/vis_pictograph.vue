@@ -85,9 +85,14 @@ export default {
             const row_padding = 10
             const grid_padding = 10
 
-            const dot_range_X = d3.range(0, this.vis.grid[0], 1)
+            let max_range = this.get_value(this.visHelperStore.get_range(this.vis, data)[1])
+            let max_range_x = Math.ceil(max_range / this.vis.grid[1]) //reduce number of columns when context icons are hidden
+
+            const dot_range_X = d3.range(0, max_range_x, 1)
             const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
-            const dot_range = d3.range(0, (this.vis.grid[0] * this.vis.grid[1]), 1)
+            const dot_range = d3.range(0, max_range, 1)
+
+
 
 
             let x = d3.scaleBand()

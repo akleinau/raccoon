@@ -74,7 +74,7 @@ export default {
                 .attr("font-family", this.vis.font_family)
 
             let x = d3.scaleLinear()
-                .domain(this.visHelperStore.get_range(this.vis))
+                .domain(this.visHelperStore.get_range(this.vis, data))
                 .range([margin.left, width + margin.left])
 
             let y = d3.scaleBand()
