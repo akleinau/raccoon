@@ -9,11 +9,10 @@
                 <div class="d-flex">
                     <v-radio-group v-model="vis.graph"
                                    :disabled="!has_attribute['graph']">
-                        <v-radio label="default" :value="null"></v-radio>
-                        <v-radio label="bar" value="bar"></v-radio>
-                        <v-radio label="pictograph" value="pictograph"></v-radio>
-                        <v-radio label="pie" value="pie"></v-radio>
-                        <v-radio label="multiple pies" value="multiPie"></v-radio>
+                        <v-radio label="bar" value="bar"  v-if="has_data()"></v-radio>
+                        <v-radio label="pictograph" value="pictograph" v-if="has_data()"></v-radio>
+                        <v-radio label="pie" value="pie"  v-if="has_data()"></v-radio>
+                        <v-radio label="multiple pies" value="multiPie"  v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
                     <div class="w-50">
@@ -27,6 +26,12 @@
                         </v-radio-group>
                     </div>
                 </div>
+                <div v-if="vis.graph === 'text'" class="w-100" :disabled="!has_attribute['graph']">
+                    <div>Font Size</div>
+                    <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
+                              min="0.5" max="3" step="0.1" show-ticks="always" :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
+                </div>
+
                 <div v-if="vis.graph === 'pictograph'" class="w-100"
                      :disabled="!has_attribute['graph']">
 
@@ -291,9 +296,22 @@ export default {
                                 this.vis["icon"] = this.get_default("icon")
                                 this.vis["ratio"] = this.get_default("ratio")
                             }
+
+                            if (attr === "text") {
+                                let exp = this.dashboardStore.current_fact_group_exports[this.dashboardStore.current_fact_index]
+                                if (exp.type === "text") {
+                                    this.vis["text"] = exp.item
+                                }
+                            }
+
                         }
                     } else {
                         this.vis[attr] = undefined
+                        if (attr === "graph") {
+                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'detailLevel'].forEach(key => {
+                                this.vis[key] = undefined
+                            })
+                        }
                     }
                 })
             },
@@ -358,6 +376,10 @@ export default {
             return this.dashboardStore.default_settings[this.vis.type][attribute]
         },
         set_default_graph_settings() {
+            if (this.vis.graph === 'font size') {
+                this.makeDefault('font_size')
+            }
+
             if (this.vis.graph === 'pictograph') {
                 this.makeDefault('grid')
                 this.makeDefault('icon')
@@ -376,6 +398,9 @@ export default {
             } else {
                 return this.dashboardStore.get_color(this.dashboardStore.default_settings[this.vis.type].color)
             }
+        },
+        has_data() {
+            return this.vis.data || this.vis.data_map || this.get_default("data") || this.get_default("data_map")
         }
     }
 }

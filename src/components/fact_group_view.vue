@@ -230,6 +230,7 @@ import {useDashboardStore} from "@/stores/dashboardStore";
 import {useDataStore} from "@/stores/dataStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import {useSimilarityStore} from "@/stores/similarityStore";
+import {useHelperStore} from "@/stores/helperStore";
 import * as d3 from "d3";
 
 import * as svg2png from "save-svg-as-png/lib/saveSvgAsPng.js";
@@ -246,7 +247,8 @@ export default {
         const dataStore = useDataStore()
         const scoreStore = useScoreStore()
         const similarityStore = useSimilarityStore()
-        return {dashboardStore, dataStore, scoreStore, similarityStore}
+        const helperStore = useHelperStore()
+        return {dashboardStore, dataStore, scoreStore, similarityStore, helperStore}
     },
     data() {
         return {
@@ -444,7 +446,7 @@ export default {
                     })
                 } else if (exp.type === "text") {
                     data.content.push({
-                        text: exp.item,
+                        text: this.helperStore.parse_text(exp.item, this.column).map(d => d.text).join(' '),
                         style: 'text'
                     })
                 }
@@ -470,7 +472,7 @@ export default {
                     }))
                 })
             } else if (exp.type === "text") {
-                navigator.clipboard.writeText(exp.item)
+                navigator.clipboard.writeText(this.helperStore.parse_text(exp.item, this.column).map(d => d.text).join(' '))
             }
 
         },
@@ -484,7 +486,7 @@ export default {
             if (exp.type === "svg") {
                 svg2png.saveSvgAsPng(exp.item, "vis.png", this.exportOptions)
             } else if (exp.type === "text") {
-                let blob = new Blob([exp.item], {type: "text/plain;charset=utf-8"});
+                let blob = new Blob([this.helperStore.parse_text(exp.item, this.column).map(d => d.text).join(' ')], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "vis.txt");
             }
         }

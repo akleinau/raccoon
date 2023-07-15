@@ -75,6 +75,7 @@ export default {
                     {
                         text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
                             (max_percent_option[1] * 100).toFixed(0) + "%.",
+                        color: this.vis.color
                     }
                 ]
 
@@ -86,13 +87,13 @@ export default {
     watch: {
         generate_text: {
             handler() {
-                    this.$emit('text', this.helperStore.parse_text(this.generate_text, this.column).map(d => d.text).join(' '))
+                    this.$emit('text', this.generate_text)
             },
             deep: true
         }
     },
     mounted() {
-        this.$emit('text', this.helperStore.parse_text(this.generate_text, this.column).map(d => d.text).join(' '))
+        this.$emit('text', this.generate_text)
     }
 }
 </script>
