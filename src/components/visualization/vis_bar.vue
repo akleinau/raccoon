@@ -63,7 +63,7 @@ export default {
             let margin = {top: 30, bottom: margin_bottom, left: startBarX, right: 5}
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
 
-            let width = (this.width ? this.width : 300) - margin.right
+            let width = (this.width ? this.width : 300)*this.vis.size - margin.right
             let height = data.length * (width / 10)
 
 

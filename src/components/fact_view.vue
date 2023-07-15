@@ -28,6 +28,15 @@
                         </v-checkbox>
                     </div>
                 </div>
+
+                <h4>Size</h4>
+                <v-slider v-model="vis.size" :disabled="!has_attribute['graph']"
+                              min="0.7" max="1" append-icon="mdi-plus" prepend-icon="mdi-minus" thumb-label>
+                    <template v-slot:thumb-label="{ modelValue }">
+                        {{ (modelValue).toFixed(2) }}
+                    </template>
+                </v-slider>
+
                 <div v-if="vis.graph === 'text'" class="w-100" :disabled="!has_attribute['graph']">
                     <div>Font Size</div>
                     <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
@@ -296,6 +305,7 @@ export default {
                                 this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
                                 this.vis["icon"] = this.get_default("icon")
                                 this.vis["ratio"] = this.get_default("ratio")
+                                this.vis["size"] = this.get_default("size")
                             }
 
                             if (attr === "text") {
@@ -309,7 +319,7 @@ export default {
                     } else {
                         this.vis[attr] = undefined
                         if (attr === "graph") {
-                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'unit', 'context'].forEach(key => {
+                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'unit', 'context', 'size'].forEach(key => {
                                 this.vis[key] = undefined
                             })
                         }
@@ -389,6 +399,7 @@ export default {
             this.makeDefault('graph')
             this.makeDefault('unit')
             this.makeDefault('context')
+            this.makeDefault('size')
         },
         /**
          * returns the color of the current visualization
