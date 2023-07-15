@@ -34,7 +34,7 @@ export default {
             if (this.vis.range === "percent") {
                 return (value * 100).toFixed(0) + "%"
             }
-            if (this.vis.detailLevel === "percent") {
+            if (this.vis.unit === "percent") {
                 return (value / this.visHelperStore.get_range(this.vis)[1] * 100).toFixed(0) + "%"
             }
             return value
@@ -123,7 +123,7 @@ export default {
                     .style("fill", "white")
                     .attr("dy", y.bandwidth() - 5)
 
-                if (this.vis.detailLevel !== "nominator") {
+                if (this.vis.context === true) {
                     //x axis texts
                     svg.append("text")
                         .attr("x", margin.left)

@@ -21,7 +21,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 range: [0, 100],
                 axis: [{text: "amount of $rows", color: "black"}],
                 title: [{text: "Amount of $rows per $column", color: "black"}],
-                detailLevel: "denominator",
+                unit: "percent",
+                context: true,
                 font_size: 2,
                 color: 0,
                 text: [{text: "", color: "black"}],
@@ -35,7 +36,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 axis: [{text: "likelihood of", color: "black"}, {text: " $target_label", color: "$color"}],
                 title: [{text: "Likelihood of", color: "black"},
                     {text: " $target_label", color: "$color"}, {text: " per $column", color: "black"}],
-                detailLevel: "denominator",
+                unit: "percent",
+                context: true,
                 font_size: 2,
                 color: 1,
                 text: [{text: "", color: "black"}],
@@ -48,7 +50,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 range: [0, 5],
                 axis: [{text: "Context", color: "black"}],
                 title: [{text: "Context", color: "black"}],
-                detailLevel: "denominator",
+                unit: "percent",
+                context: true,
                 font_size: 2,
                 color: 3,
                 text: [{text: "", color: "black"}],
@@ -71,7 +74,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 range: [0, 1],
                 axis: [{text: "correlation strength", color: "black"}],
                 title: [{text: "Correlations with $column", color: "black"}],
-                detailLevel: "denominator",
+                unit: "percent",
+                context: true,
                 font_size: 2,
                 color: 2,
                 text: [{text: "", color: "black"}],
@@ -135,23 +139,24 @@ export const useDashboardStore = defineStore('dashboardStore', {
         update_settings_by_intention() {
             //consider intention
             if (this.intention === "explore") {
-                this.default_settings.impact.detailLevel = "denominator"
-                this.default_settings.impact.graph = "bar"
-                this.default_settings.significance.detailLevel = "percent"
-                this.default_settings.context.detailLevel = "denominator"
-                this.default_settings.custom.detailLevel = "denominator"
+                ["impact", "significance", "context", "custom"].forEach((key) => {
+                    this.default_settings[key].context = true
+                    this.default_settings[key].unit = "percent"
+                })
+                this.default_settings["impact"].graph = "bar"
+
             } else if (this.intention === "convince") {
-                this.default_settings.impact.detailLevel = "nominator"
-                this.default_settings.impact.graph = "bar"
-                this.default_settings.significance.detailLevel = "nominator"
-                this.default_settings.context.detailLevel = "nominator"
-                this.default_settings.custom.detailLevel = "nominator"
+                ["impact", "significance", "context", "custom"].forEach((key) => {
+                    this.default_settings[key].context = false
+                    this.default_settings[key].unit = "natural_frequencies"
+                })
+                this.default_settings["impact"].graph = "bar"
             } else if (this.intention === "educate") {
-                this.default_settings.impact.detailLevel = "percent"
-                this.default_settings.impact.graph = "pie"
-                this.default_settings.significance.detailLevel = "denominator"
-                this.default_settings.context.detailLevel = "denominator"
-                this.default_settings.custom.detailLevel = "denominator"
+                ["impact", "significance", "context", "custom"].forEach((key) => {
+                    this.default_settings[key].context = true
+                    this.default_settings[key].unit = "natural_frequencies"
+                })
+                this.default_settings["impact"].graph = "pie"
             }
         },
         /**

@@ -54,9 +54,9 @@ export default {
         },
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
-            let type_attr = ["title", "range", "grid", "axis", "detailLevel", "icon", "ratio", "graph"]
+            let type_attr = ["title", "range", "grid", "axis", "unit", "context", "icon", "ratio", "graph"]
             type_attr.forEach(a => {
-                if (!vis[a]) {
+                if (vis[a] === null || vis[a] === undefined) {
                     vis[a] = this.dashboardStore.default_settings[vis.type][a]
                 }
             })

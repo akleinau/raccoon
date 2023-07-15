@@ -34,6 +34,9 @@ export default {
             if (this.vis.range === "percent") {
                 return (value * 100).toFixed(0) + "%"
             }
+            if (this.vis.unit === "percent") {
+                return (value / this.visHelperStore.get_range(this.vis)[1] * 100).toFixed(0) + "%"
+            }
             return value
         },
         data_to_vis() {

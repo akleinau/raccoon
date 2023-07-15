@@ -45,18 +45,14 @@ export default {
                 }]
 
                 if (this.vis.type === 'impact') {
-                    if (!this.vis.detailLevel || this.vis.detailLevel === 'nominator') return [{
-                        text: this.column.occurrence[max_percent_option[0]] + " $rows have $column: " + max_percent_option[0],
-                        color: this.vis.color
-                    }]
 
-                    if (this.vis.detailLevel === 'denominator') return [{
+                    if (this.vis.unit === 'natural_frequencies') return [{
                         text: this.column.occurrence[max_percent_option[0]] + " of " + Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) +
                             " $rows have $column: " + max_percent_option[0],
                         color: this.vis.color
                     }]
 
-                    if (this.vis.detailLevel === 'percent') return [{
+                    if (this.vis.unit === 'percent') return [{
                         text: (this.column.occurrence[max_percent_option[0]] / Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) * 100).toFixed(0) +
                             "% of $rows have $column: " + max_percent_option[0],
                         color: this.vis.color

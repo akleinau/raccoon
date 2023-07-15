@@ -45,13 +45,11 @@ export default {
          * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
-            if (this.vis.detailLevel === "nominator") {
-                return [{"text": this.get_value(value), "color": this.vis.color}]
-            } else if (this.vis.detailLevel === "denominator") {
+            if (this.vis.unit === "natural_frequencies") {
                 return [{"text": this.get_value(value), "color": this.vis.color},
                     {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
-            } else if (this.vis.detailLevel === "percent") {
-                return [{"text": this.get_value(value), "color": this.vis.color},
+            } else if (this.vis.unit === "percent") {
+                return [{"text": (value * 100).toFixed(0), "color": this.vis.color},
                     {"text": "%", "color": "black"}]
             }
         },
@@ -98,7 +96,10 @@ export default {
 
             let height = data.length * (radius * 2 + 20)
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator" ? this.vis.background : d3.color("white").darker(0.1)
+            //background
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+
+            let emptyCircleColor = this.vis.context === true ? d3.color("white").darker(0.1) : bgcolor
 
             let color = d3.scaleOrdinal()
                 .domain(["value", "rest"])
@@ -115,9 +116,6 @@ export default {
                 .attr("height", height + margin.bottom + margin.top)
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top])
                 .attr("font-family", this.vis.font_family)
-
-            //background
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
 
             svg.append("rect")
                 .attr("x", margin.left)

@@ -18,12 +18,14 @@
                     <div class="w-50">
                         <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
                         <div class="ml-2 text-grey" v-else>Unit</div>
-                        <v-radio-group v-model="vis.detailLevel"
+                        <v-radio-group v-model="vis.unit"
                                        :disabled="!has_attribute['graph']">
-                            <v-radio label="natural frequencies without context" value="nominator"></v-radio>
-                            <v-radio label="natural frequencies with context" value="denominator"></v-radio>
+                            <v-radio label="natural frequencies" value="natural_frequencies"></v-radio>
                             <v-radio label="percent" value="percent"></v-radio>
                         </v-radio-group>
+                        <v-checkbox v-model="vis.context" label="Context"
+                                       :disabled="!has_attribute['graph']">
+                        </v-checkbox>
                     </div>
                 </div>
                 <div v-if="vis.graph === 'text'" class="w-100" :disabled="!has_attribute['graph']">
@@ -289,7 +291,8 @@ export default {
                             // when the attribute is not defined, set it to the default value
                             this.vis[attr] = JSON.parse(JSON.stringify(this.get_default(attr)))
                             if (attr === "graph") {
-                                this.vis["detailLevel"] = this.get_default("detailLevel")
+                                this.vis["unit"] = this.get_default("unit")
+                                this.vis["context"] = this.get_default("context")
                             }
                             if (attr === "graph" && this.get_default(attr) === "pictograph") {
                                 this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
@@ -308,7 +311,7 @@ export default {
                     } else {
                         this.vis[attr] = undefined
                         if (attr === "graph") {
-                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'detailLevel'].forEach(key => {
+                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'unit', 'context'].forEach(key => {
                                 this.vis[key] = undefined
                             })
                         }
@@ -386,7 +389,8 @@ export default {
                 this.makeDefault('ratio')
             }
             this.makeDefault('graph')
-            this.makeDefault('detailLevel')
+            this.makeDefault('unit')
+            this.makeDefault('context')
         },
         /**
          * returns the color of the current visualization

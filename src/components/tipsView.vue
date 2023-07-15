@@ -47,16 +47,18 @@ export default {
             }
 
             //nominators
-            if ((this.dashboardStore.dashboard_items.filter(d => d.visList.filter(v => v.detailLevel === "nominator").length > 0).length > 0)
-            || Object.values(this.dashboardStore.default_settings).filter(d => d.detailLevel === "nominator").length > 0) {
+            if ((this.dashboardStore.dashboard_items.filter(d => d.visList.filter(v => v.unit === false).length > 0).length > 0)
+            || Object.values(this.dashboardStore.default_settings).filter(d => d.unit === false).length > 0) {
                 tipList.push("Not showing the denominator is better for changing behavior, but worse for accurate understanding")
             }
 
             //inconsistency
             this.isInconsistent("significance", "graph")? tipList.push("Significance facts have inconsistent graph types") : null
             this.isInconsistent("impact", "graph")? tipList.push("Impact facts have inconsistent graph types") : null
-            this.isInconsistent("significance", "detailLevel")? tipList.push("Significance facts have inconsistent detail levels") : null
-            this.isInconsistent("impact", "detailLevel")? tipList.push("Impact facts have inconsistent detail levels") : null
+            this.isInconsistent("significance", "unit")? tipList.push("Significance facts have inconsistent units") : null
+            this.isInconsistent("impact", "unit")? tipList.push("Impact facts have inconsistent units") : null
+            this.isInconsistent("significance", "context")? tipList.push("Significance facts have inconsistent contexts") : null
+            this.isInconsistent("impact", "context")? tipList.push("Impact facts have inconsistent contexts") : null
             this.isInconsistent("significance", "axis")? tipList.push("Significance facts have inconsistent axes") : null
             this.isInconsistent("impact", "axis")? tipList.push("Impact facts have inconsistent axes") : null
             this.isInconsistent("significance", "title")? tipList.push("Significance facts have inconsistent titles") : null

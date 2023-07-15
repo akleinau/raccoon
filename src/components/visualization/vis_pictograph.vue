@@ -47,12 +47,10 @@ export default {
          * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
-            if (this.vis.detailLevel === "nominator") {
-                return [{"text": this.get_value(value), "color": this.vis.color}]
-            } else if (this.vis.detailLevel === "denominator") {
+            if (this.vis.unit === "natural_frequencies") {
                 return [{"text": this.get_value(value), "color": this.vis.color},
                     {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
-            } else if (this.vis.detailLevel === "percent") {
+            } else if (this.vis.unit === "percent") {
                 return [{"text": (value * 100).toFixed(0), "color": this.vis.color},
                     {"text": "%", "color": "black"}]
             }
@@ -137,7 +135,7 @@ export default {
             let brightness_background = d3.hsl(bgcolor).l
             let contrasting_color = brightness_background > 0.9 ? "#bebebe" : "#fafafa"
 
-            let emptyCircleColor = this.vis.detailLevel === "nominator" ? bgcolor : contrasting_color
+            let emptyCircleColor = this.vis.context === true ? contrasting_color : bgcolor
 
             //one element per option
             svg.selectAll("option")

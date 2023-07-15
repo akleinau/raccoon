@@ -97,7 +97,6 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                 value: item.column.riskIncrease.risk_difference
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
-                            detailLevel: "percent",
                             title: [{text: "How much is the risk increased?", color: "black"}],
                             axis: [{text: "difference in risk with/ without factor", color: "black"}]
                         }],
