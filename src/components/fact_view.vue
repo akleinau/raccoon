@@ -17,7 +17,7 @@
                     </v-radio-group>
                     <div class="w-50">
                         <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
-                        <div class="ml-2 text-grey" v-else>Unit</div>
+                        <div class="ml-2 text-grey" v-else>Unit & Context</div>
                         <v-radio-group v-model="vis.unit"
                                        :disabled="!has_attribute['graph']">
                             <v-radio label="natural frequencies" value="natural_frequencies"></v-radio>
@@ -38,7 +38,7 @@
                 </v-slider>
 
                 <div v-if="vis.graph === 'text'" class="w-100" :disabled="!has_attribute['graph']">
-                    <div>Font Size</div>
+                    <h4>Font Size</h4>
                     <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
                               min="0.5" max="3" step="0.1" show-ticks="always" :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
                 </div>
