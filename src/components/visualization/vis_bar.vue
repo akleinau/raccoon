@@ -64,7 +64,7 @@ export default {
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
 
             let width = (this.width ? this.width : 300)*this.vis.size - margin.right
-            let height = data.length * (width / 10)
+            let height = data.length * 35*this.vis.size
 
 
             let svg = d3.create("svg")

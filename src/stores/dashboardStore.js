@@ -15,7 +15,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
         default_settings: {
             impact: {
                 graph: "bar",
-                grid: [25, 4],
+                grid: [25, 2],
                 icon: "circle",
                 ratio: 1,
                 size: 1,
@@ -30,7 +30,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
             },
             significance: {
                 graph: "pictograph",
-                grid: [25, 4],
+                grid: [25, 2],
                 icon: "circle",
                 ratio: 1,
                 size: 1,
@@ -46,7 +46,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
             },
             context: {
                 graph: "bar",
-                grid: [25, 4],
+                grid: [25, 2],
                 icon: "circle",
                 ratio: 1,
                 size: 1,
@@ -62,16 +62,18 @@ export const useDashboardStore = defineStore('dashboardStore', {
             custom: {
                 graph: "text",
                 font_size: 2,
+                size: 1,
                 text: [{text: "", color: "black"}],
             },
             overall: {
                 graph: "text",
                 font_size: 1,
+                size: 1,
                 text: [{text: "", color: "black"}],
             },
             similarity: {
                 graph: "bar",
-                grid: [25, 4],
+                grid: [25, 2],
                 icon: "circle",
                 ratio: 1,
                 size: 1,
