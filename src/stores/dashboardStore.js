@@ -143,10 +143,12 @@ export const useDashboardStore = defineStore('dashboardStore', {
         update_settings_by_intention() {
             //consider intention
             if (this.intention === "explore") {
-                ["impact", "significance", "context", "custom"].forEach((key) => {
+                ["significance", "context", "custom"].forEach((key) => {
                     this.default_settings[key].context = true
                     this.default_settings[key].unit = "percent"
                 })
+                this.default_settings["impact"].context = true
+                this.default_settings["impact"].unit = "natural_frequencies"
                 this.default_settings["impact"].graph = "bar"
 
             } else if (this.intention === "convince") {

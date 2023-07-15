@@ -9,10 +9,10 @@
                 <div class="d-flex">
                     <v-radio-group v-model="vis.graph"
                                    :disabled="!has_attribute['graph']">
-                        <v-radio label="bar" value="bar"  v-if="has_data()"></v-radio>
+                        <v-radio label="bar" value="bar" v-if="has_data()"></v-radio>
                         <v-radio label="pictograph" value="pictograph" v-if="has_data()"></v-radio>
-                        <v-radio label="pie" value="pie"  v-if="has_data()"></v-radio>
-                        <v-radio label="multiple pies" value="multiPie"  v-if="has_data()"></v-radio>
+                        <v-radio label="pie" value="pie" v-if="has_data()"></v-radio>
+                        <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
                     <div class="w-50">
@@ -24,14 +24,14 @@
                             <v-radio label="percent" value="percent"></v-radio>
                         </v-radio-group>
                         <v-checkbox v-model="vis.context" label="Context"
-                                       :disabled="!has_attribute['graph']">
+                                    :disabled="!has_attribute['graph']">
                         </v-checkbox>
                     </div>
                 </div>
 
                 <h4>Size</h4>
                 <v-slider v-model="vis.size" :disabled="!has_attribute['graph']"
-                              min="0.7" max="1" append-icon="mdi-plus" prepend-icon="mdi-minus" thumb-label>
+                          min="0.7" max="1" append-icon="mdi-plus" prepend-icon="mdi-minus" thumb-label>
                     <template v-slot:thumb-label="{ modelValue }">
                         {{ (modelValue).toFixed(2) }}
                     </template>
@@ -302,9 +302,12 @@ export default {
                             if (attr === "graph") {
                                 this.vis["unit"] = this.get_default("unit")
                                 this.vis["context"] = this.get_default("context")
-                                this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
-                                this.vis["icon"] = this.get_default("icon")
-                                this.vis["ratio"] = this.get_default("ratio")
+                                if (this.has_data()) {
+                                    this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
+                                    this.vis["icon"] = this.get_default("icon")
+                                    this.vis["ratio"] = this.get_default("ratio")
+                                }
+
                                 this.vis["size"] = this.get_default("size")
                             }
 
