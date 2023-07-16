@@ -146,9 +146,6 @@
                                                   v-model="regressionStore.correlation_boundary"/>
                                     <v-text-field type="number" class="mx-5" label="epochs"
                                                   v-model="regressionStore.epochs"/>
-                                    <v-text-field type="number" class="mx-5"
-                                                  label="fast epochs (for quickly finding risk factors)"
-                                                  v-model="regressionStore.fast_epochs"/>
                                     <v-text-field type="number" class="mx-5" label="test ratio"
                                                   v-model="regressionStore.test_ratio"/>
                                     <v-text-field type="number" class="mx-5" label="batch size"

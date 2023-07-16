@@ -6,14 +6,13 @@ import {useDashboardStore} from "@/stores/dashboardStore";
 
 export const useRegressionStore = defineStore('regressionStore', {
     state: () => ({
-        accuracy_diff: 0,
-        dashboard_accuracy: 0,
+        performance_diff: 0,
+        dashboard_performance: 0,
         test_ratio: 0.1,
         batch_size: 10,
         learning_rate: 0.01,
-        epochs: 15,
-        fast_epochs: 3,
-        correlation_boundary: 0.25,
+        epochs: 5,
+        correlation_boundary: 0.1,
         prepared_data: {}
     }),
     actions: {
@@ -65,6 +64,41 @@ export const useRegressionStore = defineStore('regressionStore', {
             return (correct / (y_actual.length - TEST_SET_I))
         },
         /**
+         * calculate f-score
+         *
+         * @param TEST_SET_I
+         * @param Data
+         * @param weights
+         * @param b
+         * @param y_pred
+         * @param y_actual
+         */
+       f_score(TEST_SET_I, Data, weights, b, y_pred, y_actual) {
+            //check accuracy
+            let FP = 0
+            let TP = 0
+            let FN = 0
+            for (let i = TEST_SET_I; i < y_actual.length; i++) {
+                let row = Data[i]
+                let curr_pred = weights ? this.sigmoid(this.dot_product(weights, row) + b + y_pred[i]) : this.sigmoid(b + y_pred[i])
+                let curr_actual = y_actual[i]
+                if (curr_pred > 0.5 && curr_actual === 1) {
+                    TP++
+                }
+                if (curr_pred > 0.5 && curr_actual === 0) {
+                    FP++
+                }
+                if (curr_pred < 0.5 && curr_actual === 1) {
+                    FN++
+                }
+            }
+
+            let precision = (TP+FN) > 0 ? TP/(TP+FN) : 1
+            let recall = (TP+FP) > 0 ? TP/(TP+FP) : 1
+
+            return (precision+recall) > 0 ? (2*precision*recall)/(precision+recall) : 0
+        },
+        /**
          * compute predictions without sigma
          *
          * @param weights
@@ -91,7 +125,7 @@ export const useRegressionStore = defineStore('regressionStore', {
         /**
          * train
          */
-        train(columns, map, Data, y_pred, y_actual, column_place, epochs) {
+        train(columns, map, Data, y_pred, y_actual, column_place) {
 
             const onlyBias = Data.length === 0
 
@@ -103,7 +137,7 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             //optimize weights using gradient descent
             //for each epoch
-            for (let epoch = 0; epoch < epochs; epoch++) {
+            for (let epoch = 0; epoch < this.epochs; epoch++) {
                 //let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
 
                 //for each batch of rows in data
@@ -139,6 +173,8 @@ export const useRegressionStore = defineStore('regressionStore', {
             }
 
             let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
+            let f_score = this.f_score(TEST_SET_I, Data, weights, b, y_pred, y_actual);
+            //console.log("Final F-Score: " + f_score)
             //console.log("Final Accuracy: " + accuracy)
 
             //combine map with weights and then sort
@@ -159,8 +195,8 @@ export const useRegressionStore = defineStore('regressionStore', {
                     //let influence = d3.max(weights_map.filter(d => d.name === column).map(d => Math.abs(d.weight)))
                     let column = dataStore.column_list.find(d => d.name === name)
                     if (column) {
-                        column.significance.score["regression"] = accuracy - this.dashboard_accuracy
-                        if (accuracy - this.dashboard_accuracy > this.accuracy_diff) this.accuracy_diff = accuracy - this.dashboard_accuracy
+                        column.significance.score["regression"] = f_score - this.dashboard_performance
+                        if (f_score - this.dashboard_performance > this.performance_diff) this.performance_diff = f_score - this.dashboard_performance
                     }
                 })
             }
@@ -175,7 +211,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                 })
             }
 
-            return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy]
+            return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy, f_score]
 
         },
         /**
@@ -196,9 +232,37 @@ export const useRegressionStore = defineStore('regressionStore', {
             return y
         },
         /**
+         * prepare parameters for regression
+         */
+        prepare_parameters() {
+            const dataset_length = useDataStore().csv.length
+
+            //learning rate decreasing with length
+            this.learning_rate = Math.max(0.001, Math.min(0.1, 1 / Math.sqrt(dataset_length))).toFixed(3)
+
+            //epochs decreasing with length
+            this.epochs = Math.max(1, Math.min(50, Math.floor(10000/ dataset_length )))
+
+            //adjust correlation boundary to current dataset
+            let dataStore = useDataStore()
+
+            const column_count = dataStore.column_list.length
+            const cutoff_index = Math.min(20, column_count-1)
+
+            const cutoff_correlation = dataStore.column_list
+                .map(column => Math.abs(column.correlation_with_target))
+                .sort((a, b) => b - a)[cutoff_index]
+
+            this.correlation_boundary = Math.max(0.05, Math.min(0.9, cutoff_correlation)).toFixed(2)
+
+            console.log("dataset_size: " + dataset_length + " learning_rate: " + this.learning_rate + " epochs: " + this.epochs, "correlation_boundary: " + this.correlation_boundary)
+        },
+        /**
          * create prepared data based on variable summaries
          */
         prepare_data() {
+            this.prepare_parameters()
+
             let dataStore = useDataStore()
 
             //gets csv data - categorical, numerical, ordinal data, and target
@@ -271,7 +335,7 @@ export const useRegressionStore = defineStore('regressionStore', {
          * score computation
          */
         compute_score() {
-            this.accuracy_diff = 0
+            this.performance_diff = 0
             let dashboardStore = useDashboardStore()
             let dataStore = useDataStore()
             let y = this.prepare_target()
@@ -280,16 +344,16 @@ export const useRegressionStore = defineStore('regressionStore', {
                 .filter(d => d !== dataStore.target_column && !dashboardStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.get_prepared_data_subset(dashboard_columns)
             console.log("training on dashboard:")
-            let [y_pred, accuracy] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard", this.epochs)
-            this.dashboard_accuracy = accuracy
-            console.log("dashboard accuracy: " + accuracy)
+            let [y_pred, accuracy, f_score] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
+            this.dashboard_performance = f_score
+            console.log("dashboard accuracy: " + accuracy + " f_score: " + f_score)
             console.log("training on remaining data:")
             useDataStore().column_names.forEach(name => {
                 if (!useDashboardStore().dashboard_items.map(d => d.name).includes(name) &&
                     name !== useDataStore().target_column) {
                     if (!dashboardStore.excluded_columns.includes(name)) {
                         let [map, Data] = this.get_prepared_data_subset([name])
-                        if (Data.length > 0) this.train([name], map, Data, y_pred, y, "column_list", this.fast_epochs)
+                        if (Data.length > 0) this.train([name], map, Data, y_pred, y, "column_list")
                         else {
                             let column = dataStore.column_list.find(d => d.name === name)
                             if (column) {
@@ -304,7 +368,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     }
                 }
             })
-            console.log("accuracy diff: " + this.accuracy_diff)
+            console.log("performance diff: " + this.performance_diff.toFixed(3))
             let scoreStore = useScoreStore()
             scoreStore.score = "regression"
             scoreStore.sort_summaries()
