@@ -54,7 +54,7 @@ export const useDataStore = defineStore('dataStore', {
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
-                        const steps = 4
+                        const steps = 2
                         let options_binned_num = this.calculate_pretty_bins(options_num, steps)
                         let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
@@ -147,11 +147,15 @@ export const useDataStore = defineStore('dataStore', {
          * @returns {(number|number)[]}
          */
         calculate_pretty_bins(options, steps) {
+            //calculate exact number of bins given the step size
             let extent = d3.extent(options.map(d => +d.name))
             let stepsize = (extent[1] - extent[0]) / steps
+
+            //make step size more pretty
             let pretty_stepsize_10 = Math.pow(10, Math.floor(Math.log10(stepsize)))
             let pretty_stepsize = Math.floor(stepsize / pretty_stepsize_10) * pretty_stepsize_10
-            //let pretty_stepsize = (stepsize).toFixed(-Math.min(0,Math.floor(Math.log10(stepsize))))
+
+            //calculate new bins
             let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
             let pretty_max = Math.ceil(extent[1] / pretty_stepsize) * pretty_stepsize
 

@@ -101,7 +101,7 @@ export default {
                 const data = d3.csvParse(event.target.result)
                 this.dataStore.column_names = data.columns
                 this.dataStore.csv = data
-                this.dataStore.min_bin_size = Math.floor(data.length / 100)
+                this.dataStore.min_bin_size = Math.max(Math.floor(data.length / 20), 10) //at least 5% of people per bin
 
                 if (name.includes("ship")) {
                     this.dataStore.target_column = "stea_s0"
