@@ -11,7 +11,7 @@
                                    :disabled="!has_attribute['graph']">
                         <v-radio label="bar" value="bar" v-if="has_data()"></v-radio>
                         <v-radio label="pictograph" value="pictograph" v-if="has_data()"></v-radio>
-                        <v-radio label="pie" value="pie" v-if="has_data()"></v-radio>
+                        <v-radio label="pie" value="pie" v-if="has_data() && vis.type === 'impact'"></v-radio>
                         <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
@@ -41,6 +41,15 @@
                     <h4>Font Size</h4>
                     <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
                               min="0.5" max="3" step="0.1" show-ticks="always" :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
+                </div>
+
+                <div v-if="vis.graph === 'pie'" class="w-100" :disabled="!has_attribute['graph']">
+                    <h4>Pie Labels</h4>
+                    <v-radio-group v-model="vis.pie_labels" :disabled="!has_attribute['graph']">
+                        <v-radio label="inside" value="inside"></v-radio>
+                        <v-radio label="outside" value="outside"></v-radio>
+                        <v-radio label="both" value="both"></v-radio>
+                    </v-radio-group>
                 </div>
 
                 <div v-if="vis.graph === 'pictograph'" class="w-100"
@@ -306,6 +315,7 @@ export default {
                                     this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
                                     this.vis["icon"] = this.get_default("icon")
                                     this.vis["ratio"] = this.get_default("ratio")
+                                    this.vis["pie_labels"] = this.get_default("pie_labels")
                                 }
 
                                 this.vis["size"] = this.get_default("size")
@@ -322,7 +332,7 @@ export default {
                     } else {
                         this.vis[attr] = undefined
                         if (attr === "graph") {
-                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'unit', 'context', 'size'].forEach(key => {
+                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'unit', 'context', 'size', 'pie_labels'].forEach(key => {
                                 this.vis[key] = undefined
                             })
                         }
@@ -398,6 +408,9 @@ export default {
                 this.makeDefault('grid')
                 this.makeDefault('icon')
                 this.makeDefault('ratio')
+            }
+            if (this.vis.graph === 'pie') {
+                this.makeDefault('pie_labels')
             }
             this.makeDefault('graph')
             this.makeDefault('unit')

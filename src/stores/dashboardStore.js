@@ -27,6 +27,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 font_size: 2,
                 color: 0,
                 text: [{text: "", color: "black"}],
+                pie_labels: "inside",
             },
             significance: {
                 graph: "pictograph",
@@ -43,6 +44,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 font_size: 2,
                 color: 1,
                 text: [{text: "", color: "black"}],
+                pie_labels: "inside",
             },
             context: {
                 graph: "bar",
@@ -58,6 +60,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 font_size: 2,
                 color: 3,
                 text: [{text: "", color: "black"}],
+                pie_labels: "inside",
             },
             custom: {
                 graph: "text",
@@ -85,6 +88,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 font_size: 2,
                 color: 2,
                 text: [{text: "", color: "black"}],
+                pie_labels: "inside",
 
             }
         },

@@ -56,7 +56,7 @@ export default {
         visualize(data) {
             let startBarX = this.helperStore.get_max_length(
                 this.use_column_group_names ? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
-            if (this.preview) {
+            if (this.preview || this.vis.pie_labels === "inside") {
                 startBarX = 0
             }
             let margin_colors = 30
@@ -120,70 +120,77 @@ export default {
                 .attr("stroke", "black")
                 .style("stroke-width", "1.5px")
 
-            //inner pie labels
-            const arcLabel = d3.arc()
-                .innerRadius(0)
-                .outerRadius(radius * 2.5);
 
-            const line_color = "#303030"
+            if (this.vis.pie_labels === "inside" || this.vis.pie_labels === "both") {
+                //inner pie labels
+                const arcLabel = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius * 2.5);
 
-            pie_container.selectAll('pieLabels')
-                .data(pie(data))
-                .enter()
-                .append('text')
-                .attr('x', d => arcLabel.centroid(d)[0] < 0 ? -radius * 1.2 : radius * 1.2)
-                .attr('y', d => arcLabel.centroid(d)[1])
-                .style("text-anchor", d => arcLabel.centroid(d)[0] < 0 ? "end" : "start")
-                .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d.data, this.column, this.preview) : d.data.name)
-                .attr("dy", "0.35em")
-                .attr("dx", d => arcLabel.centroid(d)[0] < 0 ? "-0.25em" : "0.25em")
+                const line_color = "#303030"
 
-            pie_container.selectAll('pieLines0')
-                .data(pie(data))
-                .enter()
-                .append('path')
-                .attr('d', d => {
-                    let path = d3.path();
-                    path.moveTo(arc.centroid(d)[0] * 1.5, arc.centroid(d)[1] * 1.5);
-                    path.lineTo(arcLabel.centroid(d)[0], arcLabel.centroid(d)[1]);
-                    path.closePath()
-                    return path
-                })
-                .attr("stroke", line_color)
+                pie_container.selectAll('pieLabels')
+                    .data(pie(data))
+                    .enter()
+                    .append('text')
+                    .attr('x', d => arcLabel.centroid(d)[0] < 0 ? -radius * 1.2 : radius * 1.2)
+                    .attr('y', d => arcLabel.centroid(d)[1])
+                    .style("text-anchor", d => arcLabel.centroid(d)[0] < 0 ? "end" : "start")
+                    .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d.data, this.column, this.preview) : d.data.name)
+                    .attr("dy", "0.35em")
+                    .attr("dx", d => arcLabel.centroid(d)[0] < 0 ? "-0.25em" : "0.25em")
 
-            pie_container.selectAll('pieLines1')
-                .data(pie(data))
-                .enter()
-                .append('path')
-                .attr('d', d => {
-                    let path = d3.path();
-                    path.moveTo(arcLabel.centroid(d)[0] < 0 ? -radius * 1.2 : radius * 1.2, arcLabel.centroid(d)[1]);
-                    path.lineTo(arcLabel.centroid(d)[0], arcLabel.centroid(d)[1]);
-                    path.closePath()
-                    return path
-                })
-                .attr("stroke", line_color)
+                pie_container.selectAll('pieLines0')
+                    .data(pie(data))
+                    .enter()
+                    .append('path')
+                    .attr('d', d => {
+                        let path = d3.path();
+                        path.moveTo(arc.centroid(d)[0] * 1.5, arc.centroid(d)[1] * 1.5);
+                        path.lineTo(arcLabel.centroid(d)[0], arcLabel.centroid(d)[1]);
+                        path.closePath()
+                        return path
+                    })
+                    .attr("stroke", line_color)
+
+                pie_container.selectAll('pieLines1')
+                    .data(pie(data))
+                    .enter()
+                    .append('path')
+                    .attr('d', d => {
+                        let path = d3.path();
+                        path.moveTo(arcLabel.centroid(d)[0] < 0 ? -radius * 1.2 : radius * 1.2, arcLabel.centroid(d)[1]);
+                        path.lineTo(arcLabel.centroid(d)[0], arcLabel.centroid(d)[1]);
+                        path.closePath()
+                        return path
+                    })
+                    .attr("stroke", line_color)
+            }
+
 
             if (!this.preview) {
 
-                //outer pie legend
-                svg.selectAll("textName")
-                    .data(data)
-                    .join("text")
-                    .attr("x", margin.left - margin_colors)
-                    .attr("y", d => y(d.name))
-                    .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
-                    .style("text-anchor", "end")
-                    .attr("dy", y.bandwidth() / 2 + 5)
+                if (this.vis.pie_labels === "outside" || this.vis.pie_labels === "both") {
+                    //outer pie legend
+                    svg.selectAll("textName")
+                        .data(data)
+                        .join("text")
+                        .attr("x", margin.left - margin_colors)
+                        .attr("y", d => y(d.name))
+                        .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
+                        .style("text-anchor", "end")
+                        .attr("dy", y.bandwidth() / 2 + 5)
 
-                svg.selectAll("textColor")
-                    .data(data)
-                    .join("rect")
-                    .attr("x", margin.left - margin_colors + 5)
-                    .attr("y", d => y(d.name) + y.bandwidth() / 2 - 10)
-                    .attr("width", 20)
-                    .attr("height", 20)
-                    .attr("fill", d => color(d.name))
+                    svg.selectAll("textColor")
+                        .data(data)
+                        .join("rect")
+                        .attr("x", margin.left - margin_colors + 5)
+                        .attr("y", d => y(d.name) + y.bandwidth() / 2 - 10)
+                        .attr("width", 20)
+                        .attr("height", 20)
+                        .attr("fill", d => color(d.name))
+
+                }
 
                 //column name
                 svg.append("text")
@@ -220,6 +227,9 @@ export default {
             if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
                 let targets_y = this.vis.annotation.target.map(d => y(d))
                 let mean_y = targets_y.length > 0 ? d3.mean(targets_y) : height / 2
+                if (this.vis.pie_labels === "inside") {
+                    mean_y = height / 2
+                }
                 //text
                 this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
@@ -230,16 +240,18 @@ export default {
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
 
-                //lines
-                svg.selectAll("line")
-                    .data(targets_y)
-                    .join("line")
-                    .attr("x1", width + margin.left + margin.right + gap - 10)
-                    .attr("y1", d => d)
-                    .attr("x2", width + margin.left + margin.right + gap - 10)
-                    .attr("y2", d => d + y.bandwidth())
-                    .attr("stroke", "#505050")
-                    .attr("stroke-width", 3)
+                if (this.vis.pie_labels === "outside" || this.vis.pie_labels === "both") {
+                    //lines
+                    svg.selectAll("line")
+                        .data(targets_y)
+                        .join("line")
+                        .attr("x1", width + margin.left + margin.right + gap - 10)
+                        .attr("y1", d => d)
+                        .attr("x2", width + margin.left + margin.right + gap - 10)
+                        .attr("y2", d => d + y.bandwidth())
+                        .attr("stroke", "#505050")
+                        .attr("stroke-width", 3)
+                }
             }
 
 
