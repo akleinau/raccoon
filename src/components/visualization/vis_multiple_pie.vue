@@ -49,7 +49,8 @@ export default {
                 return [{"text": this.get_value(value), "color": this.vis.color},
                     {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
             } else if (this.vis.unit === "percent") {
-                return [{"text": (value*100).toFixed(0), "color": this.vis.color},
+                let percent = (this.vis.range === "percent") ? value : (value / this.visHelperStore.get_range(this.vis)[1])
+                return [{"text": (percent*100).toFixed(0), "color": this.vis.color},
                     {"text": "%", "color": "black"}]
             }
         },
