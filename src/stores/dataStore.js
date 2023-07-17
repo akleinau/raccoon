@@ -18,7 +18,8 @@ export const useDataStore = defineStore('dataStore', {
         target: null,
         target_label: "",
         row_label: "people",
-        column_list: []
+        column_list: [],
+        steps: 4,
     }),
     actions: {
         /**
@@ -54,8 +55,7 @@ export const useDataStore = defineStore('dataStore', {
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
-                        const steps = 2
-                        let options_binned_num = this.calculate_pretty_bins(options_num, steps)
+                        let options_binned_num = this.calculate_pretty_bins(options_num, this.steps)
                         let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
 

@@ -108,6 +108,7 @@ export default {
                     this.target_selected()
                     this.dataStore.target_option = "US pos."
                     this.target_option_selected()
+                    this.dataStore.target_label = "fatty liver disease"
                 }
             }
             reader.readAsText(csvFile)
