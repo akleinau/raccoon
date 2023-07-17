@@ -13,6 +13,9 @@ export const useHelperStore = defineStore('helperStore', {
          * @returns {number}
          */
         sort(a, b) {
+            if (a.index !== undefined && b.index !== undefined) {
+                return a.index - b.index
+            }
             if (a.range !== undefined && b.range !== undefined) {
                 return a.range[0] - b.range[0]
             }

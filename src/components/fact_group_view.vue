@@ -132,8 +132,14 @@
                                                        variant="text" icon="mdi-arrow-split-horizontal"
                                                        density="compact"></v-btn>
                                                 <v-text-field variant="underlined" class="mx-2" density="compact"
-                                                              :label="item.type === 'categorical' ? item.name : ''"
+                                                              :label="column.type === 'categorical' ? item.name : ''"
                                                               v-model="dashboardStore.current_fact_group.column.options[i].label"/>
+                                                <div v-if="column.type === 'categorical'">
+                                                    <v-btn @click="move_group_up(i)" icon="mdi-arrow-up" variant="flat"
+                                                           density="compact"/>
+                                                    <v-btn @click="move_group_down(i)" icon="mdi-arrow-down"
+                                                           variant="flat" density="compact"/>
+                                                </div>
                                                 <div class="d-flex align-start" density="compact">
                                                     <span class="mt-2 ml-5 mr-1"> Risk group </span>
                                                     <v-checkbox v-model="item.risk_group" density="compact"/>
@@ -423,6 +429,22 @@ export default {
                 'range': [min, new_step]
             })
             this.recalculate_options()
+        },
+        move_group_up(i) {
+            let options = this.dashboardStore.current_fact_group.column.options
+            if (i > 0) {
+                options[i].index = i - 1
+                options[i - 1].index = i
+                options = options.sort(this.helperStore.sort)
+            }
+        },
+        move_group_down(i) {
+            let options = this.dashboardStore.current_fact_group.column.options
+            if (i < options.length - 1) {
+                options[i].index = i + 1
+                options[i + 1].index = i
+                options = options.sort(this.helperStore.sort)
+            }
         },
         /**
          * exports the current fact group as pdf

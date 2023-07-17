@@ -35,6 +35,8 @@ export const useDataStore = defineStore('dataStore', {
                 //only continue if there are less than 10 options to make sure it is categorical or ordinal
                 let column = {}
                 if (options.length <= 10) {
+                    options = options.sort(useHelperStore().sort)
+                    options.forEach((d,i) => d.index = i)
                     column = {
                         name: name,
                         label: name,
@@ -58,6 +60,7 @@ export const useDataStore = defineStore('dataStore', {
                         let options_binned_num = this.calculate_pretty_bins(options_num, this.steps)
                         let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
+                        options_bin.forEach((d,i) => {if (d.range === undefined) { d.index = i}})
 
                         column = {
                             name: name,
