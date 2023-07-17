@@ -18,8 +18,7 @@ export const useDataStore = defineStore('dataStore', {
         target: null,
         target_label: "",
         row_label: "people",
-        column_list: [],
-        steps: 4,
+        column_list: []
     }),
     actions: {
         /**
@@ -57,7 +56,7 @@ export const useDataStore = defineStore('dataStore', {
                     //continuous variables
                     if (options_num.length > 5) {
                         //calculate bins
-                        let options_binned_num = this.calculate_pretty_bins(options_num, this.steps)
+                        let options_binned_num = this.calculate_pretty_bins(options_num)
                         let options_bin = [...options_binned_num, ...options_other]
                         options_bin = options_bin.sort(useHelperStore().sort)
                         options_bin.forEach((d,i) => {if (d.range === undefined) { d.index = i}})
@@ -149,14 +148,18 @@ export const useDataStore = defineStore('dataStore', {
          * @param steps
          * @returns {(number|number)[]}
          */
-        calculate_pretty_bins(options, steps) {
+        calculate_pretty_bins(options) {
+            const steps = 4
             //calculate exact number of bins given the step size
             let extent = d3.extent(options.map(d => +d.name))
             let stepsize = (extent[1] - extent[0]) / steps
 
             //make step size more pretty
             let pretty_stepsize_10 = Math.pow(10, Math.floor(Math.log10(stepsize)))
-            let pretty_stepsize = Math.floor(stepsize / pretty_stepsize_10) * pretty_stepsize_10
+            let float5 = 5 * pretty_stepsize_10
+            let pretty_stepsize = Math.round(stepsize / float5) * float5
+            if (pretty_stepsize === 0) pretty_stepsize = float5/5
+            if (((extent[1]-extent[0]) / pretty_stepsize) > (steps+2) ) pretty_stepsize = pretty_stepsize*2 //make sure class number does not get too high
 
             //calculate new bins
             let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
