@@ -341,10 +341,14 @@ export default {
             },
             deep: true
         },
-        vis: function () {
-            if (this.vis !== null) {
-                this.updateView()
-            }
+        vis: {
+            handler: function(val) {
+                if (val !== null) {
+                    this.updateView()
+                }
+            },
+            deep: true
+
         }
     },
     computed: {
@@ -369,7 +373,9 @@ export default {
                 attributes.forEach(key => {
                     this.has_attribute[key] = this.vis[key] !== undefined
                 })
-                this.annotation_list = this.annotationStore.compute_annotations(this.dashboardStore.current_fact_group.column, this.vis.type)
+                let unit = (this.vis.unit === undefined) ? this.get_default("unit") : this.vis.unit
+                let grid = (this.vis.grid === undefined) ? this.get_default("grid") : this.vis.grid
+                this.annotation_list = this.annotationStore.compute_annotations(this.dashboardStore.current_fact_group.column, this.vis.type, unit, grid)
             }
         },
         /**

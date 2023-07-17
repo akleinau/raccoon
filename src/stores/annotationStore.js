@@ -11,11 +11,13 @@ export const useAnnotationStore = defineStore('annotationStore', {
          *
          * @param summary
          * @param type
+         * @param unit
+         * @param grid
          * @returns {*[]}
          */
-        compute_annotations(summary, type) {
+        compute_annotations(summary, type, unit = null, grid = null) {
             if (type === "significance") {
-                return this.compute_significance_annotations(summary)
+                return this.compute_significance_annotations(summary, unit, grid)
             }
             if (type === "impact") {
                 return this.compute_impact_annotations(summary)
@@ -31,7 +33,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
          * @param summary
          * @returns {*[]}
          */
-        compute_significance_annotations(summary) {
+        compute_significance_annotations(summary, unit, grid) {
             let annotations = []
             annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
 
@@ -45,9 +47,17 @@ export const useAnnotationStore = defineStore('annotationStore', {
             } else if (summary.significance !== undefined) {
                 //highest significant percentage
                 let greatest_significance = summary.significance.significant_tuples.sort((a, b) => summary.percent_target_option[b] - summary.percent_target_option[a])[0]
+                let value = summary.percent_target_option[greatest_significance]
+                if (unit === "percent") {
+                    value = (value * 100).toFixed(0) + "%"
+                }
+                if (unit === "natural_frequencies") {
+                    value = (value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
+
+                }
                 annotations.push({
                     "text": [{
-                        "text": (summary.percent_target_option[greatest_significance] * 100).toFixed(0) + "% of $rows with a $column of " +
+                        "text": value + " of $rows with a $column of " +
                             summary.options.find(d => d.name === greatest_significance).label + " have $target_label",
                         "color": "black"
                     }],
@@ -57,11 +67,21 @@ export const useAnnotationStore = defineStore('annotationStore', {
 
                 //risk factor
                 if (summary.riskIncrease !== undefined && summary.riskIncrease.risk_factor_groups.length > 1) {
+                    let value = summary.riskIncrease.risk_min
+                    let text = ""
+                    if (unit === "percent") {
+                        value = (value * 100).toFixed(0) + "%"
+                        text = "$rows with a $column of " + summary.riskIncrease.name + " have a " +
+                                    value + " or higher risk of $target_label"
+                    }
+                    if (unit === "natural_frequencies") {
+                        value = (value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
+                        text = value + " or more $rows with a $column of " + summary.riskIncrease.name + " have $target_label"
+                    }
                     annotations.push({
                         "text": [
                             {
-                                "text": "$rows with a $column of " + summary.riskIncrease.name + " have a " +
-                                    (summary.riskIncrease.risk_min * 100).toFixed(0) + "% or higher risk of $target_label",
+                                "text": text,
                                 "color": "black"
                             },
                         ],
