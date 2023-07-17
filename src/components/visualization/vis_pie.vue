@@ -64,7 +64,7 @@ export default {
             let margin_bottom = this.preview ? 20 : 50
             let margin = {top: 30, bottom: margin_bottom, left: startBarX, right: 5}
 
-            let width = (this.width ? this.width : 300)*this.vis.size - margin.right
+            let width = (this.width ? this.width : 300) * this.vis.size - margin.right
             let height = 200
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
 
@@ -124,20 +124,63 @@ export default {
             let pie_container = svg.append("g")
                 .attr("transform", "translate(" + +(margin.left + width / 2) + "," + +(margin.top + height / 2) + ")")
 
+            const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
             //pie
             pie_container.selectAll('pieParts')
                 .data(pie(data))
                 .enter()
                 .append('path')
-                .attr('d', d3.arc()
-                    .innerRadius(0)
-                    .outerRadius(radius)
-                )
+                .attr('d', arc)
                 .attr('fill', d => color(d.data.name))
                 .attr("stroke", "black")
                 .style("stroke-width", "1.5px")
 
             if (!this.preview) {
+
+                //inner pie labels
+                const arcLabel = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius*2.5);
+
+                pie_container.selectAll('pieLabels')
+                    .data(pie(data))
+                    .enter()
+                    .append('text')
+                    .attr('x', d => arcLabel.centroid(d)[0] < 0 ? -radius*1.2 : radius*1.2)
+                    .attr('y', d => arcLabel.centroid(d)[1])
+                    .style("text-anchor", d => arcLabel.centroid(d)[0] < 0 ? "end" : "start")
+                    .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d.data, this.column, this.preview) : d.data.name)
+                    .attr("dy", "0.35em")
+                    .attr("dx", d => arcLabel.centroid(d)[0] < 0 ? "-0.25em" : "0.25em")
+
+                pie_container.selectAll('pieLines0')
+                    .data(pie(data))
+                    .enter()
+                    .append('path')
+                    .attr('d', d => {
+                        let path = d3.path();
+                        path.moveTo(arc.centroid(d)[0]*1.5, arc.centroid(d)[1]*1.5);
+                        path.lineTo(arcLabel.centroid(d)[0], arcLabel.centroid(d)[1]);
+                        path.closePath()
+                        return path
+                    })
+                    .attr("stroke", "black")
+
+                pie_container.selectAll('pieLines1')
+                    .data(pie(data))
+                    .enter()
+                    .append('path')
+                    .attr('d', d => {
+                        let path = d3.path();
+                        path.moveTo(arcLabel.centroid(d)[0] < 0 ? -radius*1.2 : radius*1.2, arcLabel.centroid(d)[1]);
+                        path.lineTo(arcLabel.centroid(d)[0], arcLabel.centroid(d)[1]);
+                        path.closePath()
+                        return path
+                    })
+                    .attr("stroke", "black")
 
                 //column name
                 svg.append("text")
