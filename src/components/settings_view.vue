@@ -1,7 +1,7 @@
 <template>
   <!-- Choose Visualizations -->
     <div class="w-50">
-        <div class="d-flex w-100">
+        <div class="d-flex w-100" v-if="dataStore.target !== undefined && dataStore.target !== null">
             <v-text-field
                     :hint="dataStore.target.name + ':' + dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
                     v-model="dataStore.target_label" variant="underlined" label="target label"
