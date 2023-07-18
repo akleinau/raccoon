@@ -1,10 +1,18 @@
 <template>
     <v-dialog v-model="dataStore.start">
         <v-card title="Raccoon" class="flex mx-auto w-75">
-            <div class="mt-5">
-                <v-file-input label="File input" class="px-5" v-model="files"
-                              @update:modelValue="uploaded"></v-file-input>
+
+            <div class="d-flex w-100 mx-3 align-center">
+                <div class="mt-5 w-50">
+                    <v-file-input label="File input" class="px-5" v-model="files"
+                                  @update:modelValue="uploaded"></v-file-input>
+                </div>
+                or
+                <v-btn @click="load_example" variant="tonal" class="mx-5">load example</v-btn>
+
             </div>
+
+            <h2 class="ml-5 mb-2">{{ this.name }}</h2>
 
             <div v-if="dataStore.column_names.length !== 0">
                 <v-autocomplete v-model="dataStore.target_column" class="px-5" label="Select target"
@@ -17,16 +25,18 @@
                                 :items="dataStore.target_all_options" @update:modelValue="target_option_selected"/>
             </div>
             <div class="px-5 pb-5" v-if="dataStore.target_option">
-                <v-text-field v-model="dataStore.target_label" :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
-                label="target label"></v-text-field>
-                <i> Example: "The likelihood of <span class="text-primary">{{dataStore.target_label}} </span> is X%." </i>
+                <v-text-field v-model="dataStore.target_label"
+                              :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
+                              label="target label"></v-text-field>
+                <i> Example: "The likelihood of <span class="text-primary">{{ dataStore.target_label }} </span> is X%."
+                </i>
             </div>
 
-            <v-divider class="pb-5" />
+            <v-divider class="pb-5"/>
 
             <div class="px-5 pb-5" v-if="dataStore.target_option">
                 I want to...
-                <v-btn-toggle  v-model="dashboardStore.intention">
+                <v-btn-toggle v-model="dashboardStore.intention">
                     <v-btn value="explore">
                         <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
                         Explore
@@ -86,7 +96,20 @@ export default {
     data() {
         return {
             files: null,
-            starting_items: 1
+            starting_items: 1,
+            name: null
+        }
+    },
+    computed: {
+        start() {
+            return this.dataStore.start
+        }
+    },
+    watch: {
+        start() {
+            this.files = null
+            this.starting_items = 1
+            this.name = null
         }
     },
     methods: {
@@ -94,8 +117,9 @@ export default {
          * gets called when a file is uploaded
          */
         uploaded() {
+            this.dataStore.reset()
             const csvFile = this.files[0];
-            const name = csvFile.name.replace('.csv', '')
+            this.name = csvFile.name.replace('.csv', '')
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = d3.csvParse(event.target.result)
@@ -103,7 +127,7 @@ export default {
                 this.dataStore.csv = data
                 this.dataStore.min_bin_size = Math.max(Math.floor(data.length / 20), 10) //at least 5% of people per bin
 
-                if (name.includes("ship")) {
+                if (this.name.includes("ship")) {
                     this.dataStore.target_column = "stea_s0"
                     this.target_selected()
                     this.dataStore.target_option = "US pos."
@@ -151,6 +175,21 @@ export default {
             }
 
             this.files = null
+        },
+
+        async load_example() {
+            const csvFile = "examples/diabetes_sample.csv";
+            this.name = "diabetes example"
+            const data = await d3.csv(csvFile)
+            this.dataStore.column_names = data.columns
+            this.dataStore.csv = data
+            this.dataStore.min_bin_size = Math.max(Math.floor(data.length / 20), 10) //at least 5% of people per bin
+
+            this.dataStore.target_column = "Diabetes"
+            this.target_selected()
+            this.dataStore.target_option = "Yes"
+            this.target_option_selected()
+            this.dataStore.target_label = "Diabetes"
         }
     }
 }

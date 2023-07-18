@@ -419,11 +419,16 @@ export const useDataStore = defineStore('dataStore', {
          */
         reset() {
             this.start = true
+            this.exclude_missing = true
+            this.min_bin_size = 0,
             this.csv = null
-            this.columns = []
+            this.column_names = []
             this.target_column = null
             this.target_all_options = []
             this.target_option = null
+            this.target_label = ""
+            this.target = null
+            this.row_label = "people"
             this.column_list = []
         }
     }
