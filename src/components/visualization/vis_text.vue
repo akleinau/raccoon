@@ -38,11 +38,26 @@ export default {
             let max_percent_option = Object.entries(this.column.percent_target_option).sort((a, b) => b[1] - a[1])[0]
             if (max_percent_option) {
                 //get percentage of max percent
-                if (this.vis.type === 'significance') return [{
-                    text: "$rows with $column: " + max_percent_option[0] + " have a " +
-                        (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_label",
-                    color: this.vis.color
-                }]
+                if (this.vis.type === 'significance') {
+
+                    if (this.vis.unit === 'natural_frequencies') {
+                        const grid = this.vis.grid
+                        const grid_size = grid[0] * grid[1]
+
+                        return [{
+                            text: (max_percent_option[1] * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + max_percent_option[0] +
+                                " have $target_label",
+                            color: this.vis.color
+                        }]
+                    } else {
+                        return [{
+                            text: "$rows with $column: " + max_percent_option[0] + " have a " +
+                                (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_label",
+                            color: this.vis.color
+                        }]
+                    }
+
+                }
 
                 if (this.vis.type === 'impact') {
 
@@ -61,19 +76,41 @@ export default {
 
                 }
 
-                let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
-                if (this.vis.type === 'overall') return [
-                    {
-                        text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a " +
-                            (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% likelihood of $target_label.",
-                        color: this.vis.color
-                    },
-                    {
-                        text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
-                            (max_percent_option[1] * 100).toFixed(0) + "%.",
-                        color: this.vis.color
+
+                if (this.vis.type === 'overall') {
+                    let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
+                    const significance_unit = this.dashboardStore.default_settings.significance.unit
+                    const grid = this.dashboardStore.default_settings.significance.grid
+                    const grid_size = grid[0] * grid[1]
+
+                    if (significance_unit === "natural_frequencies") {
+                        return [
+                            {
+                                text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a likelihood of " +
+                                    (this.column.percent_target_option[greatest_occurrence[0]] * grid_size).toFixed(0) + "/" + grid_size + " $rows having $target_label.",
+                                color: this.vis.color
+                            },
+                            {
+                                text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
+                                    (max_percent_option[1] * grid_size).toFixed(0) + "/" + grid_size + " $rows.",
+                                color: this.vis.color
+                            }
+                        ]
+                    } else {
+                        return [
+                            {
+                                text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a " +
+                                    (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% likelihood of $target_label.",
+                                color: this.vis.color
+                            },
+                            {
+                                text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
+                                    (max_percent_option[1] * 100).toFixed(0) + "%.",
+                                color: this.vis.color
+                            }
+                        ]
                     }
-                ]
+                }
 
             }
 
@@ -83,7 +120,7 @@ export default {
     watch: {
         generate_text: {
             handler() {
-                    this.$emit('text', this.generate_text)
+                this.$emit('text', this.generate_text)
             },
             deep: true
         }
