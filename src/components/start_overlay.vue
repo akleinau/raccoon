@@ -189,7 +189,7 @@ export default {
             this.target_selected()
             this.dataStore.target_option = "Yes"
             this.target_option_selected()
-            this.dataStore.target_label = "Diabetes"
+            this.dataStore.target_label = "diabetes"
         }
     }
 }
