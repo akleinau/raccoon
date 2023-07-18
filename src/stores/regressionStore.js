@@ -63,6 +63,27 @@ export const useRegressionStore = defineStore('regressionStore', {
             }
             return (correct / (y_actual.length - TEST_SET_I))
         },
+        ME(TEST_SET_I, Data, weights, b, y_pred, y_actual) {
+            let error_pos = 0
+            let count_pos = 0
+            let error_neg = 0
+            let count_neg = 0
+            for (let i = TEST_SET_I; i < y_actual.length; i++) {
+                let row = Data[i]
+                let curr_pred = weights ? this.sigmoid(this.dot_product(weights, row) + b + y_pred[i]) : this.sigmoid(b + y_pred[i])
+                let curr_actual = y_actual[i]
+                let error = Math.abs(curr_pred - curr_actual)
+                if (curr_actual === 1) {
+                    error_pos += error
+                    count_pos++
+                }
+                if (curr_actual === 0) {
+                    error_neg += error
+                    count_neg++
+                }
+            }
+            return ((error_pos / count_pos) + (error_neg / count_neg)) * 100
+        },
         /**
          * calculate f-score
          *
@@ -174,8 +195,7 @@ export const useRegressionStore = defineStore('regressionStore', {
 
             let accuracy = this.accuracy(TEST_SET_I, Data, weights, b, y_pred, y_actual);
             let f_score = this.f_score(TEST_SET_I, Data, weights, b, y_pred, y_actual);
-            //console.log("Final F-Score: " + f_score)
-            //console.log("Final Accuracy: " + accuracy)
+            let ME = this.ME(TEST_SET_I, Data, weights, b, y_pred, y_actual);
 
             //combine map with weights and then sort
             let weights_map = map.map((d, i) =>
@@ -195,8 +215,9 @@ export const useRegressionStore = defineStore('regressionStore', {
                     //let influence = d3.max(weights_map.filter(d => d.name === column).map(d => Math.abs(d.weight)))
                     let column = dataStore.column_list.find(d => d.name === name)
                     if (column) {
-                        column.significance.score["regression"] = f_score - this.dashboard_performance
-                        if (f_score - this.dashboard_performance > this.performance_diff) this.performance_diff = f_score - this.dashboard_performance
+                        column.significance.score["regression"] = this.dashboard_performance - ME
+                        //console.log(name + ": " + (this.dashboard_performance - ME))
+                        if (this.dashboard_performance - ME > this.performance_diff) this.performance_diff = this.dashboard_performance - ME
                     }
                 })
             }
@@ -211,7 +232,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                 })
             }
 
-            return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy, f_score]
+            return [this.compute_new_prediction(weights, b, Data, y_pred), accuracy, f_score, ME]
 
         },
         /**
@@ -344,9 +365,9 @@ export const useRegressionStore = defineStore('regressionStore', {
                 .filter(d => d !== dataStore.target_column && !dashboardStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.get_prepared_data_subset(dashboard_columns)
             console.log("training on dashboard:")
-            let [y_pred, accuracy, f_score] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
-            this.dashboard_performance = f_score
-            console.log("dashboard accuracy: " + accuracy + " f_score: " + f_score)
+            let [y_pred, accuracy, f_score, ME] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")
+            this.dashboard_performance = ME
+            console.log("dashboard accuracy: " + accuracy + " f_score: " + f_score + " ME: " + ME)
             console.log("training on remaining data:")
             useDataStore().column_names.forEach(name => {
                 if (!useDashboardStore().dashboard_items.map(d => d.name).includes(name) &&
