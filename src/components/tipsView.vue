@@ -36,14 +36,14 @@ export default {
     computed: {
         tipList: function() {
             let tipList = []
-            if (this.dashboardStore.dashboard_items.length < 2) {
+            if (this.dashboardStore.dashboard_items.length < 3) {
                 tipList.push("Add fact groups from below!")
             }
 
             //pie graphs
             if ((this.dashboardStore.dashboard_items.filter(d => d.visList.filter(v => v.graph === "pie" || v.graph === "multiPie").length > 0).length > 0)
             || Object.values(this.dashboardStore.default_settings).filter(d => d.graph === "pie" || d.graph === "multiPie").length > 0) {
-                tipList.push("Pie graphs are good for overview, but not for detail knowledge")
+                tipList.push("Pie graphs are good for overview, but worse for detail knowledge")
             }
 
             //nominators
@@ -53,14 +53,19 @@ export default {
             }
 
             //inconsistency
+            //graph
             this.isInconsistent("significance", "graph")? tipList.push("Significance facts have inconsistent graph types") : null
             this.isInconsistent("impact", "graph")? tipList.push("Impact facts have inconsistent graph types") : null
+            //unit
             this.isInconsistent("significance", "unit")? tipList.push("Significance facts have inconsistent units") : null
             this.isInconsistent("impact", "unit")? tipList.push("Impact facts have inconsistent units") : null
+            //context
             this.isInconsistent("significance", "context")? tipList.push("Significance facts have inconsistent contexts") : null
             this.isInconsistent("impact", "context")? tipList.push("Impact facts have inconsistent contexts") : null
+            //axis
             this.isInconsistent("significance", "axis")? tipList.push("Significance facts have inconsistent axes") : null
             this.isInconsistent("impact", "axis")? tipList.push("Impact facts have inconsistent axes") : null
+            //title
             this.isInconsistent("significance", "title")? tipList.push("Significance facts have inconsistent titles") : null
             this.isInconsistent("impact", "title")? tipList.push("Impact facts have inconsistent titles") : null
 
