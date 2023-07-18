@@ -122,17 +122,24 @@
                             <v-expansion-panel-title><h4> Groups/ Bins </h4></v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <div class="d-flex w-100">
-                                    <div class="bg-grey-darken-2 mb-5 rounded-pill" style="width:10px"></div>
+                                    <div class="bg-grey-darken-2 mb-2 rounded-pill" style="width:10px"></div>
                                     <div class="flex-grow-1">
                                         <div v-for="(item,i) in dashboardStore.current_fact_group.column.options"
                                              v-bind:key="i">
                                             <div class="d-flex">
-                                                <v-btn @click="add_step(i)" class="mt-2 mr-2"
+                                                <div class="bg-grey-darken-2 rounded-e-pill mt-4 mr-2"
+                                                     style="width:10px; height:20px"></div>
+                                                <v-btn @click="add_step(i)" class="mt-3 mx-5"
                                                        v-if="item.range !== undefined"
-                                                       variant="text" icon="mdi-arrow-split-horizontal"
-                                                       density="compact"></v-btn>
+                                                       variant="text" icon="mdi-plus-box" hint="hi"
+                                                       density="compact">
+                                                    <v-icon>mdi-plus-box</v-icon>
+                                                    <v-tooltip activator="parent" location="start">Add Group in between</v-tooltip>
+                                                </v-btn>
                                                 <v-text-field variant="underlined" class="mx-2" density="compact"
                                                               :label="column.type === 'categorical' ? item.name : ''"
+                                                              :class="column.type === 'continuous' ? 'text-grey-darken-1' : ''"
+                                                              hint="group label"
                                                               v-model="dashboardStore.current_fact_group.column.options[i].label"/>
                                                 <div v-if="column.type === 'categorical'">
                                                     <v-btn @click="move_group_up(i)" icon="mdi-arrow-up" variant="flat"
@@ -141,20 +148,21 @@
                                                            variant="flat" density="compact"/>
                                                 </div>
                                                 <div class="d-flex align-start" density="compact">
-                                                    <span class="mt-2 ml-5 mr-1"> Risk group </span>
-                                                    <v-checkbox v-model="item.risk_group" density="compact"/>
+                                                    <span class="mt-3 ml-5 mr-1"> Risk group </span>
+                                                    <v-checkbox class="mt-1" v-model="item.risk_group" density="compact"/>
                                                 </div>
 
                                             </div>
                                             <div class="d-flex justify-start" v-if="option_steps[i] !== undefined">
-                                                <div class="bg-grey-darken-2 rounded-e-pill mt-4 mr-2"
-                                                     style="width:10px; height:20px"></div>
-                                                <v-text-field type="number" style="max-width: 100px" class="mr-2"
-                                                              density="compact" variant="outlined"
+                                                <v-text-field type="number" style="max-width: 100px" class="mx-2"
+                                                              density="compact" variant="outlined" hide-details
                                                               v-model="option_steps[i]" @change="update_step(i)"/>
                                                 <v-btn @click="remove_step(i)" variant="text" density="compact"
-                                                       class="mt-3"
-                                                       icon="mdi-delete"></v-btn>
+                                                       class="mt-1"
+                                                       icon="mdi-delete">
+                                                    <v-icon>mdi-delete</v-icon>
+                                                    <v-tooltip activator="parent" location="end">Merge Groups</v-tooltip>
+                                                </v-btn>
                                             </div>
                                         </div>
                                     </div>
