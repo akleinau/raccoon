@@ -7,7 +7,7 @@
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['graph']" label="Custom"/>
                 <div class="d-flex">
-                    <v-radio-group v-model="vis.graph"
+                    <v-radio-group v-model="vis.graph" v-if="vis.type !== 'overall'"
                                    :disabled="!has_attribute['graph']">
                         <v-radio label="bar" value="bar" v-if="has_data()"></v-radio>
                         <v-radio label="pictograph" value="pictograph" v-if="has_data()"></v-radio>
@@ -15,7 +15,7 @@
                         <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
-                    <div class="w-50">
+                    <div class="w-50"   v-if="get_default('unit') !== undefined">
                         <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
                         <div class="ml-2 text-grey" v-else>Unit & Context</div>
                         <v-radio-group v-model="vis.unit"
@@ -23,7 +23,7 @@
                             <v-radio label="natural frequencies" value="natural_frequencies"></v-radio>
                             <v-radio label="percent" value="percent"></v-radio>
                         </v-radio-group>
-                        <v-checkbox v-model="vis.context" label="Context"
+                        <v-checkbox v-model="vis.context" label="Context" v-if="vis.graph === 'bar' || vis.graph === 'pictograph' || vis.graph === 'multiPie'"
                                     :disabled="!has_attribute['graph']">
                         </v-checkbox>
                     </div>
