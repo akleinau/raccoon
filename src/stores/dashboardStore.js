@@ -4,6 +4,8 @@ import {useRegressionStore} from "@/stores/regressionStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
 
+import default_settings_json from "@/stores/default_settings.json"
+
 export const useDashboardStore = defineStore('dashboardStore', {
     state: () => ({
         dashboard_items: [],
@@ -12,86 +14,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
         current_fact_index: null,
         excluded_columns: [],
         intention: "explore",
-        default_settings: {
-            impact: {
-                graph: "bar",
-                grid: [25, 2],
-                icon: "circle",
-                ratio: 1,
-                size: 1,
-                range: [0, 100],
-                axis: [{text: "amount of $rows", color: "black"}],
-                title: [{text: "Amount of $rows per $column", color: "black"}],
-                unit: "percent",
-                context: true,
-                font_size: 2,
-                color: 0,
-                text: [{text: "", color: "black"}],
-                pie_labels: "inside",
-            },
-            significance: {
-                graph: "pictograph",
-                grid: [25, 2],
-                icon: "circle",
-                ratio: 1,
-                size: 1,
-                range: "percent",
-                axis: [{text: "likelihood of", color: "black"}, {text: " $target_label", color: "$color"}],
-                title: [{text: "Likelihood of", color: "black"},
-                    {text: " $target_label", color: "$color"}, {text: " per $column", color: "black"}],
-                unit: "percent",
-                context: true,
-                font_size: 2,
-                color: 1,
-                text: [{text: "", color: "black"}],
-                pie_labels: "inside",
-            },
-            context: {
-                graph: "bar",
-                grid: [25, 2],
-                icon: "circle",
-                ratio: 1,
-                size: 1,
-                range: [0, 5],
-                axis: [{text: "Context", color: "black"}],
-                title: [{text: "Context", color: "black"}],
-                unit: "percent",
-                context: true,
-                font_size: 2,
-                color: 3,
-                text: [{text: "", color: "black"}],
-                pie_labels: "inside",
-            },
-            custom: {
-                graph: "text",
-                font_size: 2,
-                size: 1,
-                text: [{text: "", color: "black"}],
-            },
-            overall: {
-                graph: "text",
-                font_size: 1,
-                size: 1,
-                text: [{text: "", color: "black"}],
-            },
-            similarity: {
-                graph: "bar",
-                grid: [25, 2],
-                icon: "circle",
-                ratio: 1,
-                size: 1,
-                range: [0, 1],
-                axis: [{text: "correlation strength", color: "black"}],
-                title: [{text: "Correlations with $column", color: "black"}],
-                unit: "percent",
-                context: true,
-                font_size: 2,
-                color: 2,
-                text: [{text: "", color: "black"}],
-                pie_labels: "inside",
-
-            }
-        },
+        default_settings: JSON.parse(JSON.stringify(default_settings_json)),
         default_colors: {
             "background": {color: "auto", stroke: "None"},
             "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
@@ -273,6 +196,24 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 return this.default_colors.colors[color_name]
             }
             return color_name
+        },
+        /**
+         * reset
+         */
+        reset() {
+            this.dashboard_items = []
+            this.current_fact_group= null
+            this.current_fact_group_exports= []
+            this.current_fact_index= null
+            this.excluded_columns= []
+            this.intention= "explore"
+            this.default_settings= JSON.parse(JSON.stringify(default_settings_json))
+            this.default_colors= {
+                "background": {color: "auto", stroke: "None"},
+                "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
+                "text": "midnightBlue",
+                "font_family": "inherit",
+            }
         }
     }
 })

@@ -393,6 +393,19 @@ export const useRegressionStore = defineStore('regressionStore', {
             let scoreStore = useScoreStore()
             scoreStore.score = "regression"
             scoreStore.sort_summaries()
+        },
+        /**
+         * reset
+         */
+        reset() {
+            this.performance_diff= 0
+            this.dashboard_performance= 0
+            this.test_ratio= 0.1
+            this.batch_size= 10
+            this.learning_rate= 0.01
+            this.epochs = 5
+            this.correlation_boundary = 0.1
+            this.prepared_data = {}
         }
     }
 })

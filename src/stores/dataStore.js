@@ -4,6 +4,7 @@ import {useHelperStore} from './helperStore'
 import {useScoreStore} from "./scoreStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useSimilarityStore} from "@/stores/similarityStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 
 export const useDataStore = defineStore('dataStore', {
     state: () => ({
@@ -432,6 +433,10 @@ export const useDataStore = defineStore('dataStore', {
             this.target = null
             this.row_label = "people"
             this.column_list = []
+
+            useRegressionStore().reset()
+            useDashboardStore().reset()
+
         }
     }
 })
