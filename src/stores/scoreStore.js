@@ -4,7 +4,7 @@ import {useDataStore} from "@/stores/dataStore";
 export const useScoreStore = defineStore('scoreStore', {
     state: () => ({
         score: "max_difference",
-        score_choices: ["max_difference", "entropy", "max", "weighted_max", "correlation", "regression"]
+        score_choices: ["differences", "correlation", "regression"]
     }),
     actions: {
         /**
@@ -53,10 +53,7 @@ export const useScoreStore = defineStore('scoreStore', {
                 "significant_tuples": tuples.filter(d => d.significant).map(d => d.option.name),
                 "tuples": tuples,
                 "score": {
-                    "max_difference": Math.max(...tuples.map(d => d.diff)),
-                    "max": Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0][1],
-                    "weighted_max": this.weighted_max_score(summary),
-                    "entropy": -this.entropy(Object.values(summary.percent_target_option)),
+                    "differences": Math.max(...tuples.map(d => d.diff)),
                     "correlation": Math.abs(summary.correlation_with_target),
                     "regression": 0
                 }
@@ -83,33 +80,6 @@ export const useScoreStore = defineStore('scoreStore', {
             //for a normal distribution with mea 0 and sttdev 1, the z score boundary for 95% confidence is 1.96
             const Z_SCORE_BOUNDARY = 1.64485
             return Math.abs(z) >= Z_SCORE_BOUNDARY
-        },
-        /**
-         * computes entropy of a value array
-         *
-         * @param array
-         * @returns {number}
-         */
-        entropy(array) {
-            let sum = 0
-            array.forEach(d => sum += d)
-            let result = 0
-            array.forEach(d => {
-                let p = d / sum
-                result -= p * Math.log(p)
-            })
-            return result
-        },
-        /**
-         * computes significance score based on maximal percentages weighted by their occurrence
-         *
-         * @param summary
-         * @returns {number}
-         */
-        weighted_max_score(summary) {
-            let max_percent_option = Object.entries(summary.percent_target_option).sort((a, b) => b[1] - a[1])[0]
-            let max_percent_occurrence = summary.occurrence[max_percent_option[0]]
-            return max_percent_option[1] * max_percent_occurrence / useDataStore().csv.length
         },
 
     }
