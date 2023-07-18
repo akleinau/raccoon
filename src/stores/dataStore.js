@@ -75,9 +75,11 @@ export const useDataStore = defineStore('dataStore', {
                             //how often each option occurs together with the target option
                             occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                         }
+
                         column.data_binned.forEach(d => column.occurrence[d]++)
                         column.data_with_target_option_binned.forEach(d => column.occurrence_target_option[d]++)
                         column = this.bin_ends(column, this.min_bin_size)
+                        column.data_binned = this.csv.map(d => this.find_bin(d[name], column.options))
                     }
                 }
 

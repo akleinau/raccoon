@@ -159,7 +159,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <v-btn @click="recalculate_options" class="mt-2">Recalculate options</v-btn>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
 
