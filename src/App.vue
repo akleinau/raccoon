@@ -63,13 +63,23 @@
                         Risk Factors
                         <all_risk_factor_overlay text-button="true"/>
                         <div class="flex-grow-1 d-flex justify-end">
+                            <excluded_column_overlay/>
                             <v-select class="flex-grow-0" label="Sort by..." variant="solo-filled"
                                       v-model="scoreStore.score" @update:modelValue="scoreStore.sort_summaries()"
                                       :items="scoreStore.score_choices"></v-select>
-                            <excluded_column_overlay/>
                         </div>
                     </div>
                 </v-card-title>
+
+                <div class="ml-3 mb-2">
+                    Confounding factors:
+                    <span v-for="name in dashboardStore.confounding_factors" v-bind:key="name" class="ml-2">
+                        <v-chip variant="elevated" class="bg-shades-white">
+                            {{dashboardStore.dashboard_items.find(d => d.column.name === name).column.label}}
+                        </v-chip>
+                    </span>
+                    <confounding_factor_overlay />
+                </div>
 
                 <div v-if="regressionStore.performance_diff < 0.01">
                     <v-icon icon="mdi-alert"/>
@@ -118,10 +128,12 @@ import {useDataStore} from "@/stores/dataStore";
 import {useRegressionStore} from "@/stores/regressionStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
+import confounding_factor_overlay from "@/components/confounding_factor_overlay.vue";
 
 
 export default {
     components: {
+        confounding_factor_overlay,
         excluded_column_overlay,
         fact_group_preview,
         start_overlay,

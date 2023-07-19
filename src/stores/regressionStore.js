@@ -360,9 +360,9 @@ export const useRegressionStore = defineStore('regressionStore', {
             let dashboardStore = useDashboardStore()
             let dataStore = useDataStore()
             let y = this.prepare_target()
-            let dashboard_columns = useDashboardStore().dashboard_items
+            let dashboard_columns = dashboardStore.dashboard_items
+                .filter(d => dashboardStore.is_confounding_factor(d.column))
                 .map(d => d.name)
-                .filter(d => d !== dataStore.target_column && !dashboardStore.excluded_columns.includes(d))
             let [dashboard_map, dashboard_data] = this.get_prepared_data_subset(dashboard_columns)
             console.log("training on dashboard:")
             let [y_pred, accuracy, f_score, ME] = this.train(dashboard_columns, dashboard_map, dashboard_data, Array(y.length).fill(0), y, "dashboard")

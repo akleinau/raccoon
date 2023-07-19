@@ -13,6 +13,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
         current_fact_group_exports: [],
         current_fact_index: null,
         excluded_columns: [],
+        confounding_factors: [],
         intention: "explore",
         default_settings: JSON.parse(JSON.stringify(default_settings_json)),
         default_colors: {
@@ -37,6 +38,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "column": summary,
                 "visList": visList
             })
+            if (summary.percent_target_option !== undefined && summary.name !== useDataStore().target_column) {
+                this.add_confounding_factor(summary)
+            }
             this.update_dashboard_context()
             this.update_dashboard_similarity()
             if (recalculate) {
@@ -50,6 +54,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
          */
         remove_dashboard_item(name) {
             this.dashboard_items = this.dashboard_items.filter(item => item.name !== name)
+            this.remove_confounding_factor(name)
             useRegressionStore().compute_score()
             this.update_dashboard_context()
             this.update_dashboard_similarity()
@@ -161,10 +166,35 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 !this.excluded_columns.includes(column.name))
         },
         /**
+         * check if column is a currently considered confounding factor
+         *
+         * @param column
+         */
+        is_confounding_factor(column) {
+            return (this.confounding_factors.includes(column.name))
+        },
+        /**
+         * add column as confounding factor
+         *
+         * @param column
+         */
+        add_confounding_factor(column) {
+            this.confounding_factors.push(column.name)
+        },
+        /**
+         * remove column as confounding factor
+         *
+         * @param column
+         */
+        remove_confounding_factor(column) {
+            this.confounding_factors = this.confounding_factors.filter(d => d !== column.name)
+        },
+        /**
          * exclude column
          */
         exclude_column(column) {
             this.excluded_columns.push(column.name)
+            this.remove_dashboard_item(column.name)
             useRegressionStore().compute_score()
         },
         /**
@@ -202,13 +232,13 @@ export const useDashboardStore = defineStore('dashboardStore', {
          */
         reset() {
             this.dashboard_items = []
-            this.current_fact_group= null
-            this.current_fact_group_exports= []
-            this.current_fact_index= null
-            this.excluded_columns= []
-            this.intention= "explore"
-            this.default_settings= JSON.parse(JSON.stringify(default_settings_json))
-            this.default_colors= {
+            this.current_fact_group = null
+            this.current_fact_group_exports = []
+            this.current_fact_index = null
+            this.excluded_columns = []
+            this.intention = "explore"
+            this.default_settings = JSON.parse(JSON.stringify(default_settings_json))
+            this.default_colors = {
                 "background": {color: "auto", stroke: "None"},
                 "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
                 "text": "midnightBlue",
