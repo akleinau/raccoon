@@ -34,84 +34,120 @@ export default {
 
             //create text from data_map and type
 
-            //get option with max percent
-            let max_percent_option = Object.entries(this.column.percent_target_option).sort((a, b) => b[1] - a[1])[0]
-            if (max_percent_option) {
-                //get percentage of max percent
-                if (this.vis.type === 'significance') {
+            //get percentage of max percent
+            if (this.vis.type === 'significance') {
+                //significance
+                if (this.column.significance !== undefined && this.column.significance.significant_tuples.length === 0 && this.column.options.length > 1) {
+                    return [{
+                        "text": [{"text": "Not statistically significant!", "color": "black"}],
+                        "target": [],
+                        "score": 10,
+                    }]
+                } else if (this.column.significance !== undefined) {
+                    //highest significant percentage
+                    let greatest_significance = JSON.parse(JSON.stringify(this.column.significance.significant_tuples)).sort((a, b) => this.column.percent_target_option[b] - this.column.percent_target_option[a])[0]
+                    let value = this.column.percent_target_option[greatest_significance]
+                    let label = this.column.options.find(d => d.name === greatest_significance).label
 
                     if (this.vis.unit === 'natural_frequencies') {
                         const grid = this.vis.grid
                         const grid_size = grid[0] * grid[1]
 
                         return [{
-                            text: (max_percent_option[1] * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + max_percent_option[0] +
+                            text: (value * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + label +
                                 " have $target_label",
                             color: this.vis.color
                         }]
                     } else {
                         return [{
-                            text: "$rows with $column: " + max_percent_option[0] + " have a " +
-                                (max_percent_option[1] * 100).toFixed(0) + "% chance of having $target_label",
+                            text: "$rows with $column: " + label + " have a " +
+                                (value * 100).toFixed(0) + "% chance of having $target_label",
                             color: this.vis.color
                         }]
                     }
 
                 }
+            }
 
-                if (this.vis.type === 'impact') {
+            if (this.vis.type === 'impact') {
 
-                    if (this.vis.unit === 'natural_frequencies') return [{
-                        text: this.column.occurrence[max_percent_option[0]] + " of " + Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) +
-                            " $rows have $column: " + max_percent_option[0],
-                        color: this.vis.color
-                    }]
+                let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
 
-                    if (this.vis.unit === 'percent') return [{
-                        text: (this.column.occurrence[max_percent_option[0]] / Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) * 100).toFixed(0) +
-                            "% of $rows have $column: " + max_percent_option[0],
-                        color: this.vis.color
-                    }]
+                if (this.vis.unit === 'natural_frequencies') return [{
+                    text: this.column.occurrence[greatest_occurrence[0]] + " of " + Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) +
+                        " $rows have $column: " + greatest_occurrence[0],
+                    color: this.vis.color
+                }]
+
+                if (this.vis.unit === 'percent') return [{
+                    text: (this.column.occurrence[greatest_occurrence[0]] / Object.values(this.column.occurrence).reduce((a, b) => a + b, 0) * 100).toFixed(0) +
+                        "% of $rows have $column: " + greatest_occurrence[0],
+                    color: this.vis.color
+                }]
 
 
+            }
+
+
+            if (this.vis.type === 'overall') {
+                let array = []
+
+                let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
+                const significance_unit = this.dashboardStore.default_settings.significance.unit
+                const grid = this.dashboardStore.default_settings.significance.grid
+                const grid_size = grid[0] * grid[1]
+
+                if (significance_unit === "natural_frequencies") {
+                    array.push(
+                        {
+                            text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a likelihood of " +
+                                (this.column.percent_target_option[greatest_occurrence[0]] * grid_size).toFixed(0) + "/" + grid_size + " $rows having $target_label.",
+                            color: this.vis.color
+                        }
+                    )
+                } else {
+                    array.push(
+                        {
+                            text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a " +
+                                (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% likelihood of $target_label.",
+                            color: this.vis.color
+                        }
+                    )
                 }
 
+                if (this.column.significance !== undefined && this.column.significance.significant_tuples.length === 0 && this.column.options.length > 1) {
+                    array.push({
+                        text: "There are no statistically significant differences in likelihood depending on $column",
+                        color: this.vis.color,
+                    })
+                } else if (this.column.significance !== undefined) {
+                    //highest significant percentage
+                    let greatest_significance = JSON.parse(JSON.stringify(this.column.significance.significant_tuples)).sort((a, b) => this.column.percent_target_option[b] - this.column.percent_target_option[a])[0]
+                    let value = this.column.percent_target_option[greatest_significance]
+                    let label = this.column.options.find(d => d.name === greatest_significance).label
 
-                if (this.vis.type === 'overall') {
-                    let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
-                    const significance_unit = this.dashboardStore.default_settings.significance.unit
-                    const grid = this.dashboardStore.default_settings.significance.grid
-                    const grid_size = grid[0] * grid[1]
-
-                    if (significance_unit === "natural_frequencies") {
-                        return [
-                            {
-                                text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a likelihood of " +
-                                    (this.column.percent_target_option[greatest_occurrence[0]] * grid_size).toFixed(0) + "/" + grid_size + " $rows having $target_label.",
-                                color: this.vis.color
-                            },
-                            {
-                                text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
-                                    (max_percent_option[1] * grid_size).toFixed(0) + "/" + grid_size + " $rows.",
-                                color: this.vis.color
-                            }
-                        ]
+                    if (label === greatest_occurrence[0]) {
+                        array.push({
+                            text: " These are also the $rows with the highest statistically significant risk."
+                        })
+                    }
+                    else if (significance_unit === "natural_frequencies") {
+                        array.push({
+                            text: " For people with a $column of " + label + " the likelihood increases to " +
+                                (value * grid_size).toFixed(0) + "/" + grid_size + " $rows.",
+                            color: this.vis.color
+                        })
                     } else {
-                        return [
+                        array.push(
                             {
-                                text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a " +
-                                    (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% likelihood of $target_label.",
+                                text: " For people with a $column of " + label + " the likelihood increases to " +
+                                    (value * 100).toFixed(0) + "%.",
                                 color: this.vis.color
-                            },
-                            {
-                                text: " For people with a $column of " + this.column.options.find(d => d.name === max_percent_option[0]).label + " the likelihood increases to " +
-                                    (max_percent_option[1] * 100).toFixed(0) + "%.",
-                                color: this.vis.color
-                            }
-                        ]
+                            })
                     }
                 }
 
+                return array
             }
 
             return [{text: "", color: "$color"}]
