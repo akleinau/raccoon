@@ -154,8 +154,11 @@ export const useDataStore = defineStore('dataStore', {
         calculate_pretty_bins(options) {
             const steps = 4
             //calculate exact number of bins given the step size
-            let extent = d3.extent(options.map(d => +d.name))
-            let stepsize = (extent[1] - extent[0]) / steps
+            options = options.map(d => +d.name).sort()
+            let extent = d3.extent(options)
+            let p_upper = d3.quantile(options, 0.95)
+            let p_lower = d3.quantile(options, 0.05)
+            let stepsize = (p_upper - p_lower) / steps
 
             //make step size more pretty
             let pretty_stepsize_10 = Math.pow(10, Math.floor(Math.log10(stepsize)))
