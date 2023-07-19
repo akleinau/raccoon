@@ -15,7 +15,7 @@
                         <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
-                    <div class="w-50"   v-if="get_default('unit') !== undefined">
+                    <div class="w-50" v-if="get_default('unit') !== undefined && vis.graph !== 'pie'">
                         <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
                         <div class="ml-2 text-grey" v-else>Unit & Context</div>
                         <v-radio-group v-model="vis.unit"
@@ -23,7 +23,8 @@
                             <v-radio label="natural frequencies" value="natural_frequencies"></v-radio>
                             <v-radio label="percent" value="percent"></v-radio>
                         </v-radio-group>
-                        <v-checkbox v-model="vis.context" label="Context" v-if="vis.graph === 'bar' || vis.graph === 'pictograph' || vis.graph === 'multiPie'"
+                        <v-checkbox v-model="vis.context" label="Context"
+                                    v-if="vis.graph === 'bar' || vis.graph === 'pictograph' || vis.graph === 'multiPie'"
                                     :disabled="!has_attribute['graph']">
                         </v-checkbox>
                     </div>
@@ -37,29 +38,39 @@
                     </template>
                 </v-slider>
 
-                <div v-if="vis.graph === 'text'" class="w-100" :disabled="!has_attribute['graph']">
-                    <h4>Font Size</h4>
-                    <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
-                              min="0.5" max="3" step="0.1" show-ticks="always" :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
-                </div>
+                <div class="w-100" :disabled="!has_attribute['graph']">
 
-                <div v-if="vis.graph === 'pie'" class="w-100" :disabled="!has_attribute['graph']">
-                    <h4>Pie Labels</h4>
-                    <v-radio-group v-model="vis.pie_labels" :disabled="!has_attribute['graph']">
-                        <v-radio label="inside" value="inside"></v-radio>
-                        <v-radio label="outside" value="outside"></v-radio>
-                        <v-radio label="both" value="both"></v-radio>
-                    </v-radio-group>
-                </div>
+                    <div class="d-flex justify-space-start w-100 px-5">
+                        <!-- grid -->
+                        <div v-if="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'">
+                            <div class="mb-2 flex-grow-0"><b>Grid</b></div>
+                            <v-text-field
+                                    type="number" label="#rows" style="min-width:200px"
+                                    v-model="vis.grid[0]"/>
+                            <v-text-field
+                                    type="number" label="#columns" style="min-width:200px"
+                                    v-model="vis.grid[1]"/>
+                        </div>
+                        <v-divider v-if="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
+                        <div v-if="vis.graph === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
+                            <h4>Font Size</h4>
+                            <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
+                                      min="0.5" max="3" step="0.1" show-ticks="always"
+                                      :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
+                        </div>
 
-                <div v-if="vis.graph === 'pictograph'" class="w-100"
-                     :disabled="!has_attribute['graph']">
+                        <div v-if="vis.graph === 'pie'" class="flex flex-grow-1" :disabled="!has_attribute['graph']">
+                            <h4>Pie Labels</h4>
+                            <v-radio-group v-model="vis.pie_labels" :disabled="!has_attribute['graph']">
+                                <v-radio label="inside" value="inside"></v-radio>
+                                <v-radio label="outside" value="outside"></v-radio>
+                                <v-radio label="both" value="both"></v-radio>
+                            </v-radio-group>
+                        </div>
 
-                    <!-- icon -->
-                    <h4> Pictograph </h4> <br>
-                    <div class="d-flex justify-space-around w-100">
-                        <div>
-                            <div><b>Icons</b></div>
+                        <div v-if="vis.graph === 'pictograph'">
+                            <!-- icon -->
+                            <h4> Pictograph </h4> <br>
                             <div class="d-flex">
                                 <v-text-field v-model="vis.icon"
                                               placeholder="custom"
@@ -86,18 +97,6 @@
                                 </v-btn>
                             </v-btn-toggle>
 
-                        </div>
-
-                        <v-divider vertical></v-divider>
-                        <!-- grid -->
-                        <div>
-                            <div><b>Grid</b></div>
-                            <v-text-field
-                                    type="number" label="#rows" style="min-width:200px"
-                                    v-model="vis.grid[0]"/>
-                            <v-text-field
-                                    type="number" label="#columns" style="min-width:200px"
-                                    v-model="vis.grid[1]"/>
                         </div>
                     </div>
                 </div>
@@ -342,7 +341,7 @@ export default {
             deep: true
         },
         vis: {
-            handler: function(val) {
+            handler: function (val) {
                 if (val !== null) {
                     this.updateView()
                 }

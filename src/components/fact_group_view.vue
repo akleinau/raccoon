@@ -1,5 +1,5 @@
 <template>
-    <v-dialog scrollable v-model="display" height="100%" width="85%">
+    <v-dialog scrollable v-model="display" height="100%" width="90%">
         <v-card class="mx-auto w-100 h-100">
 
             <v-card-title>
@@ -39,8 +39,8 @@
                 }}
             </div>
 
-            <div class="d-flex justify-space-evenly">
-                <div>
+            <div class="d-flex justify-end">
+                <div class="justify-center flex-grow-1">
                     <!-- visualizations -->
                     <div class="d-flex flex-column pb-5">
                         <div class="d-flex justify-space-between mx-2 align-center">

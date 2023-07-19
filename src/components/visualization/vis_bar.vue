@@ -32,6 +32,10 @@ export default {
          */
         get_value_text(value) {
             if (this.vis.range === "percent") {
+                if (this.vis.unit === "natural_frequencies") {
+                    let grid_size = this.vis.grid[0] * this.vis.grid[1]
+                    return (value * grid_size).toFixed(0) + "/" + grid_size
+                }
                 return (value * 100).toFixed(0) + "%"
             }
             if (this.vis.unit === "percent") {

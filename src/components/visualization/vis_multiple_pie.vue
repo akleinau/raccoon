@@ -90,6 +90,9 @@ export default {
 
 
             const radius = 30
+            if (width > radius * 7) {
+                width = radius * 7
+            }
 
             let pie = d3.pie()
                 .value(d => d.value)
@@ -121,7 +124,7 @@ export default {
             svg.append("rect")
                 .attr("x", margin.left)
                 .attr("y", margin.top)
-                .attr("width", radius * 7)
+                .attr("width", width)
                 .attr("height", height)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
@@ -213,7 +216,7 @@ export default {
                 //text
                 this.vis.annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
-                        .attr("x", radius * 7 + margin.left + gap)
+                        .attr("x", width + margin.left + gap)
                         .attr("y", mean_y + i * 15 + y_options.bandwidth() / 2)
                         .attr("width", 200)
                         .style("font-style", "italic")
@@ -224,9 +227,9 @@ export default {
                 svg.selectAll("line")
                     .data(targets_y)
                     .join("line")
-                    .attr("x1", radius * 7 + margin.left + gap - 10)
+                    .attr("x1", width + margin.left + gap - 10)
                     .attr("y1", d => d)
-                    .attr("x2", radius * 7 + margin.left + gap - 10)
+                    .attr("x2", width + margin.left + gap - 10)
                     .attr("y2", d => d + y_options.bandwidth())
                     .attr("stroke", "#505050")
                     .attr("stroke-width", 3)
