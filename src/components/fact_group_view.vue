@@ -81,7 +81,7 @@
                     <!-- general tabs -->
                     <h3 class="ml-3 mt-5"> General </h3>
                     <v-text-field label="Label" class="ml-3 mt-2"
-                                  v-model="dashboardStore.current_fact_group.column.label"
+                                  v-model="column.label"
                                   append-inner-icon="mdi-pencil"/>
                     <v-expansion-panels class="mx-3 mb-3" v-model="panels">
 
@@ -89,16 +89,16 @@
                         <v-expansion-panel v-if="column.significance !== undefined" @click="calculate_similar_facts()">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
-                                statistically significant: {{
-                                dashboardStore.current_fact_group.column['significance'].significant_tuples.length > 0 ? "yes" : "no"
+                                statistically significant risk factor: {{
+                                    column['significance'].significant_tuples.length > 0 ? "yes" : "no"
                                 }}
-                                <div v-if="column.significance"> Score ({{ scoreStore.score }}):
+                                <div v-if="column.significance"> Risk factor despite selected confounding factors:
                                     {{
-                                    dashboardStore.current_fact_group.column['significance'].score[scoreStore.score].toFixed(2)
+                                        column['significance'].score[scoreStore.score] > 0 ? "yes" : "no"
                                     }}
                                 </div>
-                                <div v-if="column.correlation_with_target"> Correlation with Target:
-                                    {{ dashboardStore.current_fact_group.column['correlation_with_target'].toFixed(2) }}
+                                <div v-if="column.correlation_with_target" class="mt-5"> Correlation with Target:
+                                    {{ column['correlation_with_target'].toFixed(2) }}
                                 </div>
                                 <div class="mt-5">
                                     <b>Correlates strongly with:</b>
