@@ -354,6 +354,7 @@ export default {
          */
         recalculate_options() {
             this.dashboardStore.current_fact_group.column = this.dataStore.recalculate_column_after_option_change(this.dashboardStore.current_fact_group.column)
+            this.calculate_similar_facts(true)
         },
         move_vis_up(index) {
             if (index > 0) {
@@ -401,9 +402,14 @@ export default {
             this.dashboardStore.restore_column(this.dashboardStore.current_fact_group.column.name)
             this.close()
         },
-        calculate_similar_facts() {
-            if (!this.dashboardStore.current_fact_group['similar_columns']) {
-                this.dashboardStore.current_fact_group['similar_columns'] = this.similarityStore.compute_similar_columns(this.dashboardStore.current_fact_group['column'])
+        /**
+         * calculates similar facts
+         * @param always
+         */
+        calculate_similar_facts(always=false) {
+            if (!this.dashboardStore.current_fact_group['similar_columns'] || always) {
+                this.dashboardStore.current_fact_group['similar_columns'] = this.similarityStore.compute_similar_columns(this.column)
+                this.dashboardStore.current_fact_group['similar_dashboard_columns'] = this.similarityStore.compute_similar_dashboard_columns(this.column)
             }
         },
         options_to_steps() {
