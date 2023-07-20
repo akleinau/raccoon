@@ -432,7 +432,7 @@ export default {
         },
         add_step(i) {
             let min = (i - 1) < 0 ? this.dashboardStore.current_fact_group.column.options[0].range[0] : this.option_steps[i - 1]
-            let max = (i >= this.option_steps.length) ? d3.max(this.dashboardStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])) : this.option_steps[i]
+            let max = (i >= this.option_steps.length) ? d3.max(this.dashboardStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => +d.range[1])) : this.option_steps[i]
             let new_step = +min + (+max - +min) / 2
             this.option_steps.splice(i, 0, new_step)
             this.dashboardStore.current_fact_group.column.options[i].range[0] = new_step

@@ -165,7 +165,6 @@ export const useDataStore = defineStore('dataStore', {
             let float5 = 5 * pretty_stepsize_10
             let pretty_stepsize = Math.round(stepsize / float5) * float5
             if (pretty_stepsize === 0) pretty_stepsize = float5/5
-            if (((extent[1]-extent[0]) / pretty_stepsize) > (steps+2) ) pretty_stepsize = pretty_stepsize*2 //make sure class number does not get too high
 
             //calculate new bins
             let pretty_min = Math.floor(extent[0] / pretty_stepsize) * pretty_stepsize
