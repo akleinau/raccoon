@@ -186,10 +186,11 @@ export default {
         /**
          * save svgs for export
          * @param svg
+         * @param width
          */
-        saveSVG(svg) {
+        saveSVG(svg, width) {
             if (this.index !== undefined) {
-                this.dashboardStore.current_fact_group_exports[this.index] = {type: "svg", item: svg}
+                this.dashboardStore.current_fact_group_exports[this.index] = {type: "svg", item: svg, width: width}
             }
         },
         /**

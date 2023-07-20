@@ -202,7 +202,7 @@ export default {
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
             if (!this.preview) {
-                this.$emit('svg', svg.node())
+                this.$emit('svg', svg.node(), width + margin.left + margin.right + annotation_width)
             }
         }
     },

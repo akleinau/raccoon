@@ -465,9 +465,23 @@ export default {
         async pdfExport() {
             let data = {
                 content: [{
-                    text: 'Dashboard',
+                    text: this.column.label,
                     style: 'header'
-                }]
+                }],
+                styles: {
+                    header: {
+                        fontSize: 20,
+                        bold: true,
+                        margin: [0, 0, 0, 10],
+                        alignment: 'center'
+                    },
+                    text: {
+                        fontSize: 14,
+                        margin: [0, 0, 0, 10],
+                        alignment: 'left'
+                    }
+                },
+                pageOrientation: 'landscape',
             }
 
             for (let i = 0; i < this.dashboardStore.current_fact_group_exports.length; i++) {
@@ -475,14 +489,14 @@ export default {
                 if (exp.type === "svg") {
                     await svg2png.svgAsPngUri(exp.item, this.exportOptions).then(uri => {
                         data.content.push({
-                            image: uri, width: 500
+                            image: uri, width: exp.width*0.7, margin: [0, 0, 0, 15]
                         })
-                        //data.content.push({svg: svg.outerHTML, width: 500})
                     })
                 } else if (exp.type === "text") {
                     data.content.push({
                         text: this.helperStore.parse_text(exp.item, this.column).map(d => d.text).join(' '),
-                        style: 'text'
+                        style: 'text',
+                        margin: [0, 0, 0, 15]
                     })
                 }
             }
