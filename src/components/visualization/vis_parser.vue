@@ -3,7 +3,6 @@
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pictograph v-if="graph === 'pictograph'" @svg="saveSVG"
                     :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_line v-if="graph === 'density'" :vis="full_vis" :column="column" :width="width" :key="rerender"/>
     <vis_text v-if="graph === 'text'" @text="saveText"
               :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" @svg="saveSVG"
@@ -15,7 +14,6 @@
 <script>
 import vis_pictograph from "@/components/visualization/vis_pictograph.vue";
 import vis_bar from "@/components/visualization/vis_bar.vue";
-import vis_line from "@/components/visualization/vis_line.vue";
 import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
@@ -36,7 +34,7 @@ export default {
         const helperStore = useHelperStore()
         return {dashboardStore, dataStore, annotationStore, helperStore}
     },
-    components: {vis_bar, vis_pictograph, vis_line, vis_text, vis_pie, vis_multiple_pie},
+    components: {vis_bar, vis_pictograph, vis_text, vis_pie, vis_multiple_pie},
     data() {
         return {
             rerender: 0
