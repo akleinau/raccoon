@@ -144,6 +144,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
 
             })
         },
+        /**
+         * update similarity facts in the dashboard
+         */
         update_dashboard_similarity() {
             this.dashboard_items.forEach(item => {
                 item.visList.forEach(vis => {

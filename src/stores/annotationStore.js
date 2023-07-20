@@ -168,6 +168,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
             return annotations.sort((a, b) => b.score - a.score)
         },
 
+        /**
+         * compute annotations based on a summary for similarity visualizations
+         *
+         * @param summary
+         * @returns {*[]}
+         */
         compute_similarity_annotations(summary) {
             let annotations = []
             annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation

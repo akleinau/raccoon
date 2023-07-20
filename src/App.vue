@@ -31,7 +31,7 @@
                 </div>
             </v-card>
 
-            <!-- Adaptation -->
+            <!-- Settings & Tips -->
             <v-card class="pa-4">
                 <div class="d-flex">
                     <settings_view/>
@@ -42,7 +42,7 @@
                 </div>
             </v-card>
 
-            <!-- General -->
+            <!-- General & Context -->
             <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in general_list" v-bind:key="item">
@@ -73,6 +73,7 @@
                     </div>
                 </v-card-title>
 
+                <!-- Confounding Factors -->
                 <div class="ml-3 mb-2">
                     Confounding factors:
                     <span v-for="name in dashboardStore.confounding_factors" v-bind:key="name" class="ml-2">
@@ -147,6 +148,11 @@ export default {
         return {dataStore, dashboardStore, regressionStore, scoreStore, visGeneratorStore}
     },
     computed: {
+        /**
+         * computes a list of risk factors and their visualizations
+         *
+         * @returns {{column: *, visList: *}[]}
+         */
         risk_list: function () {
             return this.dataStore.column_list
                 .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
@@ -157,6 +163,11 @@ export default {
             })
 
         },
+        /**
+         * computes a list of general fact groups and their visualizations
+         *
+         * @returns {{column: *, visList: *}[]}
+         */
         general_list: function () {
             return this.visGeneratorStore.generate_general_factGroups()
                 .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))

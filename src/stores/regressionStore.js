@@ -63,6 +63,19 @@ export const useRegressionStore = defineStore('regressionStore', {
             }
             return (correct / (y_actual.length - TEST_SET_I))
         },
+        /**
+         * calculates mean error, adjusting for the number of positive and negative examples. Multiplied by 100 to get
+         * better readable numbers
+         *
+         * @param TEST_SET_I
+         * @param Data
+         * @param weights
+         * @param b
+         * @param y_pred
+         * @param y_actual
+         * @returns {number}
+         * @constructor
+         */
         ME(TEST_SET_I, Data, weights, b, y_pred, y_actual) {
             let error_pos = 0
             let count_pos = 0
