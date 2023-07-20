@@ -14,16 +14,14 @@
                     <div v-for="item in dashboardStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
                                             style="height:500px" vertical="true"/>
-                        <v-btn class="mt-0" variant="tonal"
-                               @click="dashboardStore.remove_dashboard_item(item.name)"> Remove
-                        </v-btn>
-
                     </div>
             </div>
 
 
-            <v-card-actions>
-                <v-btn @click="close">Close</v-btn>
+            <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
+                <div class="d-flex w-100">
+                    <v-btn variant="elevated" @click="close">Close</v-btn>
+                </div>
             </v-card-actions>
         </v-card>
     </v-dialog>

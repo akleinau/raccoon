@@ -25,8 +25,10 @@
             <v-pagination :length="page_num" v-model="page"></v-pagination>
 
 
-            <v-card-actions class="justify-center">
-                <v-btn @click="close">Close</v-btn>
+            <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
+                <div class="d-flex w-100">
+                    <v-btn variant="elevated" @click="close">Close</v-btn>
+                </div>
             </v-card-actions>
         </v-card>
     </v-dialog>

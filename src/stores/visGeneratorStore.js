@@ -83,7 +83,8 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                 value: item.column.riskIncrease.risk_multiplier
                             })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
-                            title: [{text: "By how many times is the risk increased?", color: "black"}],
+                            unit: "natural_frequencies",
+                            title: [{text: "How many times the risk increases per risk factor", color: "black"}],
                             axis: [{text: "risk increase through factor", color: "black"}]
                         }],
                         "column": {name: "RelativeIncrease", label: "Relative Risk Increase", options: options}
@@ -97,7 +98,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                 value: item.column.riskIncrease.risk_difference
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
-                            title: [{text: "How much is the risk increased?", color: "black"}],
+                            title: [{text: "Risk increase per risk factor", color: "black"}],
                             axis: [{text: "difference in risk with/ without factor", color: "black"}]
                         }],
                         "column": {name: "AbsoluteIncrease", label: "Absolute Risk Increase", options: options}
@@ -112,12 +113,13 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).sort((a, b) => b.value - a.value),
                             range: [0, 1],
                             graph: "pictograph",
-                            title: [{text: "How frequent is ", color: "black"},
+                            title: [{text: "Likelihood of ", color: "black"},
                                 {text: " $target_label", color: "$color"}, {
-                                    text: " per risk factor?",
+                                    text: " per risk factor",
                                     color: "black"
                                 }],
-                            axis: [{text: "absolute risk through factor", color: "black"}]
+                            axis: [{text: "Likelihood of ", color: "black"},
+                                {text: " $target_label", color: "$color"}, ]
                         }],
                         "column": {name: "AbsoluteValues", label: "Absolute Risks", options: options}
                     })

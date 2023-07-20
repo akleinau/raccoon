@@ -308,7 +308,7 @@ export const useDataStore = defineStore('dataStore', {
 
             //calculate metrics to compare risk factors
             const risk_multiplier = below_percentage === 0 ? null : (above_percentage / below_percentage).toFixed(1)
-            const risk_difference = (above_percentage - below_percentage).toFixed(1)
+            const risk_difference = (above_percentage - below_percentage).toFixed(2)
             const risk_min = d3.min(groups_true.map(a => column.percent_target_option[a]))
 
             column.riskIncrease = {

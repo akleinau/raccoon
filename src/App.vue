@@ -25,9 +25,6 @@
                     <div v-for="item in dashboardStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
                                             style="height:500px" vertical="true"/>
-                        <v-btn class="mt-0" variant="tonal"
-                               @click="dashboardStore.remove_dashboard_item(item.name)"> Remove
-                        </v-btn>
 
                     </div>
                     <dashboard_overlay/>
@@ -51,6 +48,10 @@
                     <div v-for="item in general_list" v-bind:key="item">
                         <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList"
                                             :column="item.column"/>
+                    </div>
+                    <div v-for="item in visGeneratorStore.generate_context_fact_groups()" v-bind:key="item">
+                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
+                                            v-if="! dashboardStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
                     </div>
                 </div>
 
@@ -101,15 +102,6 @@
 
             </v-card>
 
-            <!-- Context -->
-            <v-card title="Context" class="pa-5 bg-blue-grey-lighten-5">
-                <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="item in visGeneratorStore.generate_context_fact_groups()" v-bind:key="item">
-                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
-                                            v-if="! dashboardStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
-                    </div>
-                </div>
-            </v-card>
         </v-main>
 
     </v-app>
@@ -130,6 +122,7 @@ import {useRegressionStore} from "@/stores/regressionStore";
 import {useScoreStore} from "@/stores/scoreStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
 import confounding_factor_overlay from "@/components/confounding_factor_overlay.vue";
+import export_overlay from "@/components/export_overlay.vue";
 
 
 export default {
