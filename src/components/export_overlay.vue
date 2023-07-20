@@ -68,6 +68,10 @@ export default {
         }
     },
     methods: {
+        /**
+         * exports all current dashboard visualizations as pdf
+         * @returns {Promise<void>}
+         */
         async pdfExport() {
             let data = {
                 content: [
@@ -131,7 +135,7 @@ export default {
             pdfMake.createPdf(data).open()
         },
         /**
-         * exports the svg of the visualization as png
+         * exports all current dashboard visualizations as png
          */
         pngExport() {
             for (let i = 0; i < this.items.length; i++) {
@@ -150,6 +154,11 @@ export default {
         }
     },
     computed: {
+        /**
+         * returns a list of all dashboard items with the start index for right svg export saving
+         *
+         * @returns {*[]}
+         */
         items() {
             let visCounter = 0
             let items = []

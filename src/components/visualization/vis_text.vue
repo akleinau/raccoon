@@ -32,9 +32,7 @@ export default {
         generate_text() {
             if (this.vis.text) return this.vis.text
 
-            //create text from data_map and type
-
-            //get percentage of max percent
+            //text for significance annotations
             if (this.vis.type === 'significance') {
                 //significance
                 if (this.column.significance !== undefined && this.column.significance.significant_tuples.length === 0 && this.column.options.length > 1) {
@@ -69,6 +67,7 @@ export default {
                 }
             }
 
+            //text for impact annotations
             if (this.vis.type === 'impact') {
 
                 let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
@@ -88,7 +87,7 @@ export default {
 
             }
 
-
+            //text for overall annotations
             if (this.vis.type === 'overall') {
                 let array = []
 

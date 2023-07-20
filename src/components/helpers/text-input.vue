@@ -1,7 +1,10 @@
 <template>
     <div class="d-flex flex-wrap">
         <div v-for="(el,i) in new_text" v-bind:key="el">
+            <!-- menu buttons -->
             <div class="d-flex justify-center align-center">
+
+                <!-- color selection -->
                 <div>
                     <v-select class="mx-2" variant="underlined" :items="['black', '$color', custom_colors[i]]"
                               v-model="el.color" style="width:50px" :disabled="disabled">
@@ -22,11 +25,15 @@
                         </template>
                     </v-select>
                 </div>
+
+                <!-- add, delete buttons -->
                 <v-btn icon="mdi-delete" variant="plain" density="compact" :disabled="disabled"
                        @click="delete_text_el(i)"></v-btn>
                 <v-btn icon="mdi-plus" variant="plain" density="compact" :disabled="disabled"
                        @click="add_text_el(i)"></v-btn>
             </div>
+
+            <!-- text area -->
             <v-textarea label="text" class="mx-1 text-no-wrap" v-model="el.text" :rows="1" auto-grow :disabled="disabled"
                 :style="'width:' + +(el.text.length*9 + 30) + 'px; min-width:130px; max-width:700px'"/>
         </div>
@@ -69,6 +76,12 @@ export default {
         this.update_texts()
     },
     methods: {
+        /**
+         * fills in the visualizations color if it is $color
+         *
+         * @param color
+         * @returns {*}
+         */
         get_color(color) {
             if (color === "$color") {
                 return this.color
@@ -76,6 +89,9 @@ export default {
                 return color
             }
         },
+        /**
+         * updates the text after changes
+         */
         update_texts() {
             if (this.text && this.text !== "") {
                 this.new_text = this.text
@@ -84,10 +100,18 @@ export default {
             }
             this.custom_colors = this.new_text.map(_ => "green")
         },
+        /**
+         * adds a new text element
+         * @param i
+         */
         add_text_el(i) {
             this.new_text.splice(i + 1, 0, {text: "", color: "black"})
             this.custom_colors.splice(i + 1, 0, "green")
         },
+        /**
+         * deletes a text element
+         * @param i
+         */
         delete_text_el(i) {
             this.new_text.splice(i, 1)
             this.custom_colors.splice(i, 1)

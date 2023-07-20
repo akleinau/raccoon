@@ -50,6 +50,11 @@ export default {
         row_label() {
             return this.dataStore.row_label
         },
+        /**
+         * fills in missing attributes with default values and computes annotations
+         *
+         * @returns {*}
+         */
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
             let type_attr = ["title", "range", "grid", "axis", "unit", "context", "icon", "ratio", "graph", "size", "pie_labels"]

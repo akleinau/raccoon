@@ -59,6 +59,9 @@ export default {
         }
     },
     methods: {
+        /**
+         * Update the list of confounding factors
+         */
         update_factors() {
             this.confounding_factors = this.dashboardStore.dashboard_items.filter(item => item.name !== this.dataStore.target.name).map(item => ({
                 name: item.column.label,
@@ -66,6 +69,11 @@ export default {
                 factor: this.dashboardStore.is_confounding_factor(item.column)
             }))
         },
+        /**
+         * when the user clicks on a checkbox, the corresponding column is added or removed from the list of confounding factors
+         *
+         * @param item
+         */
         factor_changed(item) {
             if (item.factor === true) {
                 this.dashboardStore.add_confounding_factor(item.column)

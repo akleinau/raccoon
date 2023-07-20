@@ -6,6 +6,7 @@
 
             <v-card-text>
                 <div style="height:550px" class="d-flex flex-column align-center w-100">
+                    <!-- Page 0: Dataset selection -->
                     <div v-if="page === 0" class="w-100 mt-16">
                         <h1 class="d-flex justify-center"> Choose dataset</h1>
                         <div class="d-flex w-100 mx-3 align-center justify-center">
@@ -19,6 +20,7 @@
 
                     </div>
 
+                    <!-- Page 1: Target selection -->
                     <div v-if="page === 1">
                         <h1 class="d-flex justify-center mb-3 mt-16"> Choose target</h1>
                         <div class="mb-5">Your target is the disease or hazard for which you want to compute risk
@@ -41,17 +43,15 @@
                             <v-text-field v-model="dataStore.target_label"
                                           :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
                             ></v-text-field>
-                            <i> Example: "The likelihood of <span class="text-primary">{{
-                                dataStore.target_label
-                                }} </span>
-                                is
-                                X%."
+                            <i> Example: "The likelihood of <span class="text-primary">
+                                {{dataStore.target_label }} </span> is X%."
                             </i>
                         </div>
                     </div>
 
+                    <!-- Page 2: Additional Choices -->
                     <div v-if="page === 2">
-
+                        <!-- Intention -->
                         <div class="px-5 pb-5" v-if="dataStore.target_option">
                             <h1 class="d-flex justify-center mb-5 mt-16"> I want to... </h1>
                             <v-btn-toggle v-model="dashboardStore.intention" class="d-flex justify-center">
@@ -84,6 +84,7 @@
                             </div>
                         </div>
 
+                        <!-- Additional options -->
                         <div class="px-5 pt-2 d-flex justify-center">
                             <v-expansion-panels  v-if="dataStore.target_option"
                                                 style="width:800px">
@@ -92,9 +93,7 @@
                                         <v-checkbox label="exclude missing values"
                                                     v-model="dataStore.exclude_missing"></v-checkbox>
                                         <v-slider label="dashboard starting items" v-model="starting_items" :min="1"
-                                                  :max="5"
-                                                  :step="1"
-                                                  thumb-label="always"></v-slider>
+                                                  :max="5" :step="1" thumb-label="always"></v-slider>
                                         <v-text-field label="rows equal" v-model="dataStore.row_label"></v-text-field>
                                     </v-expansion-panel-text>
                                 </v-expansion-panel>
@@ -211,6 +210,9 @@ export default {
             this.files = null
         },
 
+        /**
+         * loads the diabetes example
+         */
         async load_example() {
             const csvFile = "examples/diabetes_sample.csv";
             this.name = "diabetes example"

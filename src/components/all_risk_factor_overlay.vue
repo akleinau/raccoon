@@ -68,6 +68,11 @@ export default {
         }
     },
     computed: {
+        /**
+         * returns the column_list, optionally filtered by search term
+         *
+         * @returns {never[]}
+         */
         column_list() {
             let column_list = this.dataStore.column_list.filter(column => this.dashboardStore.is_recommendation_column(column))
             if (this.search !== "") {
@@ -77,9 +82,19 @@ export default {
             }
             return column_list
         },
+        /**
+         * computes how many pages are required
+         *
+         * @returns {number}
+         */
         page_num() {
             return Math.ceil(this.column_list.length / this.columns_per_page)
         },
+        /**
+         * returns the columns for the current page
+         *
+         * @returns {never[]}
+         */
         cur_page_columns() {
             const start = (this.page-1)*this.page_num
             return this.column_list.slice(start, start + this.columns_per_page)

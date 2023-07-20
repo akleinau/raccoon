@@ -21,6 +21,12 @@ export default {
         return {}
     },
     methods: {
+        /**
+         * Returns true if the attribute value is inconsistent between all visualizations of that type
+         * @param type
+         * @param attribute
+         * @returns {boolean}
+         */
         isInconsistent(type, attribute) {
             let customGraphs = this.dashboardStore.dashboard_items
                 .map(d => [d.visList.filter(v => v.type=== type).map(v => v[attribute])])
@@ -34,6 +40,11 @@ export default {
         }
     },
     computed: {
+        /**
+         * Returns a list of tips
+         *
+         * @returns {*[]}
+         */
         tipList: function() {
             let tipList = []
             if (this.dashboardStore.dashboard_items.length < 3) {

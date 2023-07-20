@@ -7,6 +7,7 @@
             <v-expansion-panel-text>
                 <v-switch v-model="has_attribute['graph']" label="Custom"/>
                 <div class="d-flex">
+                    <!-- Graph Type -->
                     <v-radio-group v-model="vis.graph" v-if="vis.type !== 'overall'"
                                    :disabled="!has_attribute['graph']">
                         <v-radio label="bar" value="bar" v-if="has_data()"></v-radio>
@@ -15,6 +16,8 @@
                         <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
+
+                    <!-- Unit & Context -->
                     <div class="w-50" v-if="get_default('unit') !== undefined && vis.graph !== 'pie'">
                         <b class="ml-2" v-if="has_attribute['graph']"> Unit & Context</b>
                         <div class="ml-2 text-grey" v-else>Unit & Context</div>
@@ -30,6 +33,7 @@
                     </div>
                 </div>
 
+                <!-- Size -->
                 <h4>Size</h4>
                 <v-slider v-model="vis.size" :disabled="!has_attribute['graph']"
                           min="0.7" max="1" append-icon="mdi-plus" prepend-icon="mdi-minus" thumb-label>
@@ -38,6 +42,7 @@
                     </template>
                 </v-slider>
 
+                <!-- Graph type specific options -->
                 <div class="w-100" :disabled="!has_attribute['graph']">
 
                     <div class="d-flex justify-space-start w-100 px-5">
@@ -52,6 +57,8 @@
                                     v-model="vis.grid[1]"/>
                         </div>
                         <v-divider v-if="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
+
+                        <!-- Font size -->
                         <div v-if="vis.graph === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
                             <h4>Font Size</h4>
                             <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
@@ -59,6 +66,7 @@
                                       :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
                         </div>
 
+                        <!-- pie labels -->
                         <div v-if="vis.graph === 'pie'" class="flex flex-grow-1" :disabled="!has_attribute['graph']">
                             <h4>Pie Labels</h4>
                             <v-radio-group v-model="vis.pie_labels" :disabled="!has_attribute['graph']">
@@ -68,8 +76,8 @@
                             </v-radio-group>
                         </div>
 
+                        <!-- pictograph icons -->
                         <div v-if="vis.graph === 'pictograph'">
-                            <!-- icon -->
                             <h4> Pictograph </h4> <br>
                             <div class="d-flex">
                                 <v-text-field v-model="vis.icon"
@@ -297,9 +305,15 @@ export default {
         }
     },
     watch: {
+        /**
+         * watches display to close the view
+         */
         display: function () {
             this.close()
         },
+        /**
+         * watches the has_attribute list to switch between default and custom values
+         */
         has_attribute: {
             handler: function (val) {
                 Object.keys(val).forEach(attr => {
@@ -340,6 +354,9 @@ export default {
             },
             deep: true
         },
+        /**
+         * watches the vis object to update the view
+         */
         vis: {
             handler: function (val) {
                 if (val !== null) {
@@ -351,6 +368,10 @@ export default {
         }
     },
     computed: {
+        /**
+         * current visualization
+         * @returns {*|null}
+         */
         vis() {
             if (this.dashboardStore.current_fact_index === null) {
                 return null
@@ -366,6 +387,9 @@ export default {
         }
     },
     methods: {
+        /**
+         * updates the view
+         */
         updateView() {
             if (this.vis !== null && this.vis !== undefined) {
                 let attributes = ["graph", "color", "background", "title", "axis", "annotation", "text"]
@@ -393,6 +417,12 @@ export default {
             this.vis[attribute] = undefined
             this.has_attribute[attribute] = false
         },
+        /**
+         * gets the default value for the given attribute
+         *
+         * @param attribute
+         * @returns {*|null}
+         */
         get_default(attribute) {
             if (attribute === "annotation") {
                 return this.annotation_list[0]
@@ -404,6 +434,9 @@ export default {
 
             return this.dashboardStore.default_settings[this.vis.type][attribute]
         },
+        /**
+         * sets the default graph settings for the current type
+         */
         set_default_graph_settings() {
             if (this.vis.graph === 'font size') {
                 this.makeDefault('font_size')
@@ -433,6 +466,11 @@ export default {
                 return this.dashboardStore.get_color(this.dashboardStore.default_settings[this.vis.type].color)
             }
         },
+        /**
+         * returns true when there is data associated with the current visualization
+         *
+         * @returns {string|*|null}
+         */
         has_data() {
             return this.vis.data || this.vis.data_map || this.get_default("data") || this.get_default("data_map")
         }

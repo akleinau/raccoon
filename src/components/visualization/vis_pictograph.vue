@@ -255,6 +255,11 @@ export default {
                 this.$emit('svg', svg.node(), width + margin.left + margin.right + annotation_width)
             }
         },
+        /**
+         * returns current icon used as items of the pictograph
+         *
+         * @returns {string}
+         */
         getIcon() {
             // this copies the content from the pseudo element :before as it's needed to show the icon from material design
             const ele = document.querySelector('.mdi-' + this.vis.icon);

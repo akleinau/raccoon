@@ -1,6 +1,6 @@
 <template>
-  <!-- Choose Visualizations -->
     <div class="w-50">
+        <!-- Wording -->
         <div class="d-flex w-100" v-if="dataStore.target !== undefined && dataStore.target !== null">
             <v-text-field
                     :hint="dataStore.target.name + ':' + dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
@@ -9,7 +9,9 @@
             <v-text-field label="rows equal" v-model="dataStore.row_label" hint="eg people, participants, households"
                           append-inner-icon="mdi-pencil" class="w-25" variant="underlined"></v-text-field>
         </div>
+
         <v-expansion-panels class="mx-3 mb-3 mt-1 w-100">
+            <!-- Design -->
             <v-expansion-panel>
                 <v-expansion-panel-title>
                     <h4 class="mr-4">Design:</h4>
@@ -106,7 +108,7 @@
 
                         </v-radio-group>
 
-                        <!-- Text -->
+                        <!-- Font Color -->
                         <v-radio-group v-model="dashboardStore.default_colors.text" label="Font Color">
                             <v-radio v-for="color in this.fontColor" :key="color" :value="color">
                                 <template v-slot:label>
@@ -123,6 +125,7 @@
                             </v-radio>
                         </v-radio-group>
 
+                        <!-- Font Family -->
                         <v-radio-group v-model="dashboardStore.default_colors.font_family" label="Font Family"
                                        class="ml-5 mr-2" style="min-width:120px">
                             <v-radio v-for="font in this.font_families" :key="font" :label="font" :value="font"
@@ -141,6 +144,7 @@
                 </v-expansion-panel-text>
             </v-expansion-panel>
 
+            <!-- Intention -->
             <v-expansion-panel>
                 <v-expansion-panel-title><h4>Intention: {{ dashboardStore.intention.toUpperCase() }} </h4>
                 </v-expansion-panel-title>
@@ -191,7 +195,7 @@
                 </v-expansion-panel-text>
             </v-expansion-panel>
 
-            <!-- Data Processing -->
+            <!-- Calculation -->
             <v-expansion-panel>
                 <v-expansion-panel-title><h4>Calculation </h4></v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -288,6 +292,11 @@ export default {
         }
     },
     computed: {
+        /**
+         * given the current color, computes neighboring colors
+         *
+         * @returns {*[]}
+         */
         neighbor_color_list() {
             let color = d3.hsl(this.neighborColor)
             let list = []

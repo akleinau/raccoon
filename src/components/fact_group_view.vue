@@ -40,8 +40,9 @@
             </div>
 
             <div class="d-flex justify-end">
+
+                <!-- visualizations -->
                 <div class="justify-center flex-grow-1">
-                    <!-- visualizations -->
                     <div class="d-flex flex-column pb-5">
                         <div class="d-flex justify-space-between mx-2 align-center">
                             <div class="text-grey-darken-2">Click to select</div>
@@ -74,9 +75,9 @@
                             </v-hover>
                         </div>
                     </div>
-
                 </div>
 
+                <!-- settings -->
                 <div class="w-50  pr-5">
                     <!-- general tabs -->
                     <h3 class="ml-3 mt-5"> General </h3>
@@ -205,6 +206,7 @@
 
             </div>
 
+            <!-- buttons -->
             <div class="d-flex flex-column-reverse h-100">
                 <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
                     <div class="d-flex w-100">
@@ -342,13 +344,6 @@ export default {
             this.dashboardStore.remove_dashboard_item(this.dashboardStore.current_fact_group.column.name)
             this.close()
         },
-        add_option() {
-            this.dashboardStore.current_fact_group.column.options.push({
-                'name': '0-1',
-                'label': '0-1',
-                'range': [0, 1]
-            })
-        },
         /**
          * recalculates the options for the risk factor
          */
@@ -356,12 +351,22 @@ export default {
             this.dashboardStore.current_fact_group.column = this.dataStore.recalculate_column_after_option_change(this.dashboardStore.current_fact_group.column)
             this.calculate_similar_facts(true)
         },
+        /**
+         * moves visualization up in the fact group visList
+         *
+         * @param index
+         */
         move_vis_up(index) {
             if (index > 0) {
                 this.dashboardStore.current_fact_group.visList.splice(index - 1, 0, this.dashboardStore.current_fact_group.visList.splice(index, 1)[0])
                 this.dashboardStore.current_fact_index = index
             }
         },
+        /**
+         * moves visualization down in the fact group visList
+         *
+         * @param index
+         */
         move_vis_down(index) {
             if (index < this.dashboardStore.current_fact_group.visList.length - 1) {
                 this.dashboardStore.current_fact_group.visList.splice(index + 1, 0, this.dashboardStore.current_fact_group.visList.splice(index, 1)[0])
@@ -412,6 +417,9 @@ export default {
                 this.dashboardStore.current_fact_group['similar_dashboard_columns'] = this.similarityStore.compute_similar_dashboard_columns(this.column)
             }
         },
+        /**
+         * creates steps from options (for easier editing of bins)
+         */
         options_to_steps() {
             if (this.dashboardStore.current_fact_group.column.type === 'continuous') {
                 let steps = this.dashboardStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => d.range[1])
@@ -419,17 +427,32 @@ export default {
                 this.option_steps = steps
             } else this.option_steps = []
         },
+        /**
+         * updates the option associated with a step
+         *
+         * @param i
+         */
         update_step(i) {
             this.dashboardStore.current_fact_group.column.options[i].range[1] = this.option_steps[i]
             this.dashboardStore.current_fact_group.column.options[i + 1].range[0] = this.option_steps[i]
             this.recalculate_options()
         },
+        /**
+         * removes a step
+         *
+         * @param i
+         */
         remove_step(i) {
             this.dashboardStore.current_fact_group.column.options[i + 1].range[0] = this.dashboardStore.current_fact_group.column.options[i].range[0]
             this.dashboardStore.current_fact_group.column.options.splice(i, 1)
             this.option_steps.splice(i, 1)
             this.recalculate_options()
         },
+        /**
+         * adds a step
+         *
+         * @param i
+         */
         add_step(i) {
             let min = (i - 1) < 0 ? this.dashboardStore.current_fact_group.column.options[0].range[0] : this.option_steps[i - 1]
             let max = (i >= this.option_steps.length) ? d3.max(this.dashboardStore.current_fact_group.column.options.filter(d => d.range !== undefined).map(d => +d.range[1])) : this.option_steps[i]
@@ -443,6 +466,10 @@ export default {
             })
             this.recalculate_options()
         },
+        /**
+         * moves a group of a categorical variable up in the ordering
+         * @param i
+         */
         move_group_up(i) {
             let options = this.dashboardStore.current_fact_group.column.options
             if (i > 0) {
@@ -451,6 +478,10 @@ export default {
                 options = options.sort(this.helperStore.sort)
             }
         },
+        /**
+         * moves a group of a categorical variable down in the ordering
+         * @param i
+         */
         move_group_down(i) {
             let options = this.dashboardStore.current_fact_group.column.options
             if (i < options.length - 1) {
