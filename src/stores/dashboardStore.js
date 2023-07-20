@@ -20,7 +20,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
             "background": {color: "auto", stroke: "None"},
             "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
             "text": "midnightBlue",
-            "font_family": "inherit",
+            "font_family": "verdana",
         },
 
     }),
