@@ -10,16 +10,6 @@
         </template>
 
         <v-card title="Dashboard">
-            <!-- not sure why this is so buggy!
-            <v-virtual-scroll height="500" :items="dataStore.column_list">
-                <template  v-slot:default="item">
-                    <fact_group_preview class="pa-2"
-                                        v-if="! dashboardStore.dashboard_items.map(ditem => ditem.name).includes(item.item.name)"
-                                        :visList="dashboardStore.generate_vis_from_settings(item.item, dataStore.csv.length, dataStore.target_column, dataStore.target_option)"
-                                        :column="item.item"/>
-                </template>
-            </v-virtual-scroll>
-            -->
             <div class="d-flex flex-wrap overflow-auto align-stretch" style="height:800px">
                     <div v-for="item in dashboardStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
