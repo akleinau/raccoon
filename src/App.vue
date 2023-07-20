@@ -18,6 +18,7 @@
                 <v-card-title>
                     Dashboard
                     <dashboard_overlay text-button="true"/>
+                    <export_overlay />
                 </v-card-title>
 
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
@@ -141,7 +142,8 @@ export default {
         settings_view,
         all_risk_factor_overlay,
         dashboard_overlay,
-        tipsView
+        tipsView,
+        export_overlay
     },
     setup() {
         const dataStore = useDataStore()
