@@ -167,14 +167,6 @@ export default {
                 this.dataStore.column_names = data.columns
                 this.dataStore.csv = data
                 this.dataStore.min_bin_size = Math.max(Math.floor(data.length / 20), 10) //at least 5% of people per bin
-
-                if (this.name.includes("ship")) {
-                    this.dataStore.target_column = "stea_s0"
-                    this.target_selected()
-                    this.dataStore.target_option = "US pos."
-                    this.target_option_selected()
-                    this.dataStore.target_label = "fatty liver disease"
-                }
             }
             reader.readAsText(csvFile)
             this.page++
