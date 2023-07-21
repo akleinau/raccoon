@@ -104,12 +104,12 @@
                 </div>
 
                 <v-card-actions class="w-100 pa-5">
-                    <div class="w-100 d-flex justify-space-between">
-                        <v-btn @click="page--" :disabled="page === 0"> Prev</v-btn>
+                    <div class="w-100 d-flex justify-space-between px-5">
+                        <v-btn @click="page--" :disabled="page === 0" variant="outlined"> Prev</v-btn>
                         <v-btn class="d-flex justify-center font-weight-bold" style="font-size:1.5rem" color="primary"
                                @click="visualize()" v-if="page === 2">Calculate
                         </v-btn>
-                        <v-btn @click="page++" :disabled="page === 2"> Next</v-btn>
+                        <v-btn @click="page++" :disabled="page === 2" variant="outlined"> Next</v-btn>
                     </div>
                 </v-card-actions>
             </v-card-text>

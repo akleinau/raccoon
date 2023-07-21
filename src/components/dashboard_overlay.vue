@@ -1,6 +1,6 @@
 <template>
   <!-- Choose Visualizations -->
-    <v-dialog v-model="show">
+    <v-dialog v-model="show" style="width:95%">
         <template v-slot:activator="{ props }">
 
             <v-btn v-bind="props" class="h-auto pa-4 ma-2" :variant="textButton? 'plain' : 'elevated'" >
@@ -20,7 +20,7 @@
 
             <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
                 <div class="d-flex w-100">
-                    <v-btn variant="elevated" @click="close">Close</v-btn>
+                    <v-btn variant="elevated" class="px-9" @click="close">Close</v-btn>
                 </div>
             </v-card-actions>
         </v-card>

@@ -209,16 +209,16 @@
             <!-- buttons -->
             <div class="d-flex flex-column-reverse h-100">
                 <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
-                    <div class="d-flex w-100">
+                    <div class="d-flex w-100 ">
                         <v-btn variant="elevated" @click="close" class="px-9">Close</v-btn>
-                        <v-btn variant="elevated" @click="add" prepend-icon="mdi-plus"
+                        <v-btn variant="elevated" @click="add" prepend-icon="mdi-plus-thick" class="font-weight-bold px-5"
                                v-if="!dashboardStore.dashboard_items.find(d => d.name === dashboardStore.current_fact_group.column.name)">
                             Add to dashboard
                         </v-btn>
-                        <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus" v-else> Remove from
+                        <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus-thick" class="font-weight-bold px-5" v-else> Remove from
                             dashboard
                         </v-btn>
-                        <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-file-pdf-box"> Export PDF</v-btn>
+                        <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-export-variant"> Export PDF</v-btn>
                         <!-- end buttons -->
                         <div class="flex-grow-1 d-flex justify-end">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"

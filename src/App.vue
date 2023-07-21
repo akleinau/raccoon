@@ -68,13 +68,32 @@
                             <excluded_column_overlay/>
                             <v-select class="flex-grow-0" label="Sort by..." variant="solo-filled"
                                       v-model="scoreStore.score" @update:modelValue="scoreStore.sort_summaries()"
-                                      :items="scoreStore.score_choices"></v-select>
+                                      :items="scoreStore.score_choices">
+                                <template v-slot:item="{ item }">
+                                        <v-btn class="d-block" variant="text" @click="scoreStore.score = item.value; scoreStore.sort_summaries()">
+                                            {{ item.title }}
+                                        <v-tooltip activator="parent" location="left" content-class="bg-grey-darken-2">
+                                            <span v-if="item.title === 'differences'" >
+                                                Sort risk factors by the difference in target likelihood between groups.
+                                            </span>
+                                            <span v-if="item.title === 'correlation'">
+                                                Sort risk factors by their correlation with the target.
+                                            </span>
+                                            <span v-if="item.title === 'regression'">
+                                                Sort risk factors by their ability to predict the target using linear regression,
+                                                considering confounding factors.
+                                            </span>
+                                        </v-tooltip>
+                                        </v-btn>
+                                </template>
+
+                            </v-select>
                         </div>
                     </div>
                 </v-card-title>
 
                 <!-- Confounding Factors -->
-                <div class="ml-3 mb-2">
+                <div class="ml-3 mb-2" :style="scoreStore.score !== 'regression'? 'visibility:hidden' : ''">
                     Confounding factors:
                     <span v-for="name in dashboardStore.confounding_factors" v-bind:key="name" class="ml-2">
                         <v-chip variant="elevated" class="bg-shades-white">

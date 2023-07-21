@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="show">
+    <v-dialog v-model="show" style="width:95%">
         <template v-slot:activator="{ props }">
 
             <v-btn v-bind="props" class="h-auto px-4 mx-2" variant="plain" prepend-icon="mdi-export-variant">
@@ -26,7 +26,7 @@
 
             <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
                 <div class="d-flex w-100">
-                    <v-btn @click="show = false" variant="elevated">Close</v-btn>
+                    <v-btn @click="show = false" class="px-9" variant="elevated">Close</v-btn>
                     <v-btn @click="pdfExport" variant="elevated" prepend-icon="mdi-file-pdf-box">pdf Export</v-btn>
                     <v-btn @click="pngExport" variant="elevated" prepend-icon="mdi-file-image">png Export</v-btn>
                 </div>
