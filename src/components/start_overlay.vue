@@ -44,7 +44,7 @@
                                           :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
                             ></v-text-field>
                             <i> Example: "The likelihood of <span class="text-primary">
-                                {{dataStore.target_label }} </span> is X%."
+                                {{ dataStore.target_label }} </span> is X%."
                             </i>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
 
                         <!-- Additional options -->
                         <div class="px-5 pt-2 d-flex justify-center">
-                            <v-expansion-panels  v-if="dataStore.target_option"
+                            <v-expansion-panels v-if="dataStore.target_option !== undefined"
                                                 style="width:800px">
                                 <v-expansion-panel title="Additional Options">
                                     <v-expansion-panel-text>
@@ -104,12 +104,25 @@
                 </div>
 
                 <v-card-actions class="w-100 pa-5">
-                    <div class="w-100 d-flex justify-space-between px-5">
-                        <v-btn @click="page--" :disabled="page === 0" variant="outlined"> Prev</v-btn>
-                        <v-btn class="d-flex justify-center font-weight-bold" style="font-size:1.5rem" color="primary"
-                               @click="visualize()" v-if="page === 2">Calculate
+                    <!-- page 0 -->
+                    <div class="w-100 d-flex justify-end px-5" v-if="page === 0">
+                        <v-btn @click="page++" v-if="dataStore.column_names.length !== 0"
+                               variant="outlined"> Next
                         </v-btn>
-                        <v-btn @click="page++" :disabled="page === 2" variant="outlined"> Next</v-btn>
+                    </div>
+                    <!-- page 1 -->
+                    <div class="w-100 d-flex justify-space-between px-5" v-if="page === 1">
+                        <v-btn @click="page--" variant="outlined"> Prev</v-btn>
+                        <v-btn @click="page++" v-if="dataStore.target_option !== null"
+                               variant="outlined"> Next
+                        </v-btn>
+                    </div>
+                    <!-- page 2 -->
+                    <div class="w-100 d-flex justify-space-between px-5" v-if="page === 2">
+                        <v-btn @click="page--" variant="outlined"> Prev</v-btn>
+                        <v-btn class="d-flex font-weight-bold" style="font-size:1.5rem" color="primary"
+                               @click="visualize()">Calculate
+                        </v-btn>
                     </div>
                 </v-card-actions>
             </v-card-text>
