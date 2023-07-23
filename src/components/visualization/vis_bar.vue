@@ -162,7 +162,7 @@ export default {
 
             //title
             let title = svg.append("text")
-                .attr("x", (margin.left + width) / 2)
+                .attr("x", margin.left + ( width + margin.right) / 2)
                 .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
