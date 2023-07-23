@@ -87,10 +87,11 @@ export default {
             const grid_padding = 10
 
             let max_range = this.get_value(this.visHelperStore.get_range(this.vis, data)[1])
-            let max_range_x = Math.ceil(max_range / this.vis.grid[1]) //reduce number of columns when context icons are hidden
+            let max_range_y = Math.ceil(max_range / this.vis.grid[0])
+            let max_range_x = Math.ceil(max_range / max_range_y) //reduce number of columns when context icons are hidden
 
             const dot_range_X = d3.range(0, max_range_x, 1)
-            const dot_range_Y = d3.range(0, this.vis.grid[1], 1)
+            const dot_range_Y = d3.range(0, max_range_y, 1)
             const dot_range = d3.range(0, max_range, 1)
 
 
@@ -105,7 +106,7 @@ export default {
             const icon_height = icon_width * this.vis.ratio
             const icon_padding_px = x.step() - x.bandwidth() //padding in pixel to compute height
 
-            const row_height = (icon_height + icon_padding_px) * this.vis.grid[1]
+            const row_height = (icon_height + icon_padding_px) * max_range_y
             //y position inside each row
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
@@ -153,8 +154,8 @@ export default {
                     d3.select(node[index]).selectAll("text")
                         .data(dot_range)
                         .join("text")
-                        .attr("x", d => x(Math.floor(d / this.vis.grid[1])))
-                        .attr("y", d => y_row(par.name) + y(d % this.vis.grid[1]) + icon_height)
+                        .attr("x", d => x(Math.floor(d / max_range_y)))
+                        .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height)
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(this.getIcon)
