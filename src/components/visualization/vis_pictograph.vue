@@ -94,6 +94,10 @@ export default {
             const dot_range_Y = d3.range(0, max_range_y, 1)
             const dot_range = d3.range(0, max_range, 1)
 
+            const max_icon_width = 30
+
+            if ((width/max_range_x) > max_icon_width) width = max_icon_width * max_range_x
+
 
 
 
@@ -155,7 +159,7 @@ export default {
                         .data(dot_range)
                         .join("text")
                         .attr("x", d => x(Math.floor(d / max_range_y)))
-                        .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height)
+                        .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height )
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(this.getIcon)
@@ -170,7 +174,7 @@ export default {
                 .attr("y", d => y_row(d.name) + row_height / 2)
                 .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "end")
-                .attr("dy", 7)
+                .attr("dy", 7*this.vis.ratio)
 
             if (!this.preview) {
                 svg.selectAll("textValue")
@@ -188,7 +192,7 @@ export default {
                             .text(d => d.text)
                             .style("fill", d => d.color)
                     })
-                    .attr("dy", 7)
+                    .attr("dy", 7*this.vis.ratio)
 
 
                 //column name
@@ -233,7 +237,7 @@ export default {
                         .attr("y", mean_y + i * 15 + row_height / 2)
                         .attr("width", 200)
                         .style("font-style", "italic")
-                        .attr("dy", 7)
+                        .attr("dy", 7*this.vis.ratio)
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
 
