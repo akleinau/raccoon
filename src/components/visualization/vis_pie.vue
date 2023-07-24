@@ -83,6 +83,7 @@ export default {
 
             let pie = d3.pie()
                 .value(d => d.value)
+                .sort(null)
 
             let y = d3.scaleBand()
                 .domain(data.map(d => d.name))
