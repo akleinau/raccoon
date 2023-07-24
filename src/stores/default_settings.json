@@ -18,8 +18,8 @@
             "significance": {
                 "graph": "pictograph",
                 "grid": [25, 2],
-                "icon": "circle",
-                "ratio": 1,
+                "icon": "human-male",
+                "ratio": 2,
                 "size": 1,
                 "range": "percent",
                 "axis": [{"text": "likelihood of", "color": "black"}, {"text": " $target_label", "color": "$color"}],
