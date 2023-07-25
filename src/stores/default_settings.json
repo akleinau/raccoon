@@ -10,7 +10,7 @@
                 "title": [{"text": "Amount of $rows per $column", "color": "black"}],
                 "unit": "percent",
                 "context": true,
-                "font_size": 2,
+                "font_size": 1,
                 "color": 0,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
@@ -27,7 +27,7 @@
                     {"text": " $target_label", "color": "$color"}, {"text": " per $column", "color": "black"}],
                 "unit": "percent",
                 "context": true,
-                "font_size": 2,
+                "font_size": 1,
                 "color": 1,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
@@ -43,7 +43,7 @@
                 "title": [{"text": "Context", "color": "black"}],
                 "unit": "percent",
                 "context": true,
-                "font_size": 2,
+                "font_size": 1,
                 "color": 3,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
@@ -71,7 +71,7 @@
                 "title": [{"text": "Correlations with $column", "color": "black"}],
                 "unit": "percent",
                 "context": true,
-                "font_size": 2,
+                "font_size": 1,
                 "color": 2,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"

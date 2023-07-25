@@ -34,7 +34,8 @@
                 </div>
 
                 <!-- Size -->
-                <h4>Size</h4>
+                <h4 v-if="has_attribute['graph']">Size</h4>
+                <div class="ml-2 text-grey" v-else>Size</div>
                 <v-slider v-model="vis.size" :disabled="!has_attribute['graph']"
                           min="0.7" max="1" append-icon="mdi-plus" prepend-icon="mdi-minus" thumb-label>
                     <template v-slot:thumb-label="{ modelValue }">
@@ -47,28 +48,36 @@
 
                     <div class="d-flex justify-space-start w-100 px-5">
                         <!-- grid -->
-                        <div v-if="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'">
-                            <div class="mb-2 flex-grow-0"><b>Grid</b></div>
-                            <v-text-field
+                        <div v-if="get('graph') === 'pictograph' || get('unit') === 'natural_frequencies' && get('graph') !== 'pie'">
+                            <div class="mb-2 flex-grow-0" v-if="has_attribute['graph']"><b>Grid</b></div>
+                            <div class="ml-2 text-grey" v-else>Grid</div>
+
+                            <v-text-field v-if="vis.grid !== undefined" :disabled="!has_attribute['graph']"
                                     type="number" label="#rows" style="min-width:200px"
                                     v-model="vis.grid[0]"/>
-                            <v-text-field
+                            <v-text-field v-else
+                                    type="number" label="#rows" style="min-width:200px"/>
+                            <v-text-field v-if="vis.grid !== undefined" :disabled="!has_attribute['graph']"
                                     type="number" label="#columns" style="min-width:200px"
                                     v-model="vis.grid[1]"/>
+                            <v-text-field v-else
+                                    type="number" label="#columns" style="min-width:200px"/>
                         </div>
-                        <v-divider v-if="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
+                        <v-divider :disabled="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
 
                         <!-- Font size -->
-                        <div v-if="vis.graph === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
-                            <h4>Font Size</h4>
+                        <div v-if="get('graph') === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
+                            <h4 v-if="!has_attribute['graph']">Font Size</h4>
+                            <div class="ml-2 text-grey" v-else>Font Size</div>
                             <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
                                       min="0.5" max="3" step="0.1" show-ticks="always"
                                       :ticks="[0.5,1,1.5,2,2.5,3]"></v-slider>
                         </div>
 
                         <!-- pie labels -->
-                        <div v-if="vis.graph === 'pie'" class="flex flex-grow-1" :disabled="!has_attribute['graph']">
-                            <h4>Pie Labels</h4>
+                        <div v-if="get('graph') === 'pie'" class="flex flex-grow-1" :disabled="!has_attribute['graph']">
+                            <h4 v-if="!has_attribute['graph']">Pie Labels</h4>
+                            <div class="ml-2 text-grey" v-else>Pie Labels</div>
                             <v-radio-group v-model="vis.pie_labels" :disabled="!has_attribute['graph']">
                                 <v-radio label="inside" value="inside"></v-radio>
                                 <v-radio label="outside" value="outside"></v-radio>
@@ -77,9 +86,11 @@
                         </div>
 
                         <!-- pictograph icons -->
-                        <div v-if="vis.graph === 'pictograph'">
-                            <h4> Pictograph </h4> <br>
-                            <div class="d-flex">
+                        <div v-if="get('graph') === 'pictograph'">
+                            <h4 v-if="!has_attribute['graph']"> Pictograph </h4>
+                            <div class="ml-2 text-grey" v-else>Pictograph</div>
+
+                            <div class="d-flex mt-2">
                                 <v-text-field v-model="vis.icon"
                                               placeholder="custom"
                                               style="min-width:250px"
@@ -94,11 +105,11 @@
                                     </template>
                                 </v-text-field>
                             </div>
-                            <v-slider v-model="vis.ratio" min="0" max="2"
+                            <v-slider v-model="vis.ratio" min="0" max="2" :disabled="!has_attribute['graph']"
                                       step="0.01"
                                       label="ratio" thumb-label></v-slider>
                             <div class=" mt-2">presets:</div>
-                            <v-btn-toggle v-model="vis.icon" inline class="mb-5">
+                            <v-btn-toggle v-model="vis.icon" inline class="mb-5" :disabled="!has_attribute['graph']">
                                 <v-btn v-for="icon in icons" v-bind:key="icon"
                                        :value="icon">
                                     <v-icon :icon="'mdi-'+icon"/>
@@ -329,6 +340,7 @@ export default {
                                     this.vis["icon"] = this.get_default("icon")
                                     this.vis["ratio"] = this.get_default("ratio")
                                     this.vis["pie_labels"] = this.get_default("pie_labels")
+                                    this.vis["font_size"] = this.get_default("font_size")
                                 }
 
                                 this.vis["size"] = this.get_default("size")
@@ -435,10 +447,24 @@ export default {
             return this.dashboardStore.default_settings[this.vis.type][attribute]
         },
         /**
+         * gets the value of the given attribute
+         *
+         * @param attribute
+         * @returns {*}
+         */
+        get(attribute) {
+            let val = this.vis[attribute]
+            if (val === undefined) {
+                return this.get_default(attribute)
+            } else {
+                return val
+            }
+        },
+        /**
          * sets the default graph settings for the current type
          */
         set_default_graph_settings() {
-            if (this.vis.graph === 'font size') {
+            if (this.vis.graph === 'text') {
                 this.makeDefault('font_size')
             }
 

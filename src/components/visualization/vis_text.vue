@@ -1,5 +1,5 @@
 <template>
-    <div :style="'width: ' + +(width*vis.size) + 'px; font-size: ' + font_size + 'rem; font-family: ' + vis.font_family"
+    <div :style="'width: ' + +(width*vis.size) + 'px; font-size: ' + (this.preview? 1: font_size) + 'rem; font-family: ' + vis.font_family"
          class="pb-3" v-if="!(preview && vis.type==='overall')">
         <span v-for="item in helperStore.parse_text(generate_text, column)" v-bind:key=item
               :style="'color: ' + item.color">{{ item.text }}</span>
@@ -36,11 +36,7 @@ export default {
             if (this.vis.type === 'significance') {
                 //significance
                 if (this.column.significance !== undefined && this.column.significance.significant_tuples.length === 0 && this.column.options.length > 1) {
-                    return [{
-                        "text": [{"text": "Not statistically significant!", "color": "black"}],
-                        "target": [],
-                        "score": 10,
-                    }]
+                    return [{"text": "Not statistically significant!", "color": "black"}]
                 } else if (this.column.significance !== undefined) {
                     //highest significant percentage
                     let greatest_significance = JSON.parse(JSON.stringify(this.column.significance.significant_tuples)).sort((a, b) => this.column.percent_target_option[b] - this.column.percent_target_option[a])[0]
@@ -52,9 +48,11 @@ export default {
                         const grid_size = grid[0] * grid[1]
 
                         return [{
-                            text: (value * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + label +
-                                " have $target_label",
-                            color: this.vis.color
+                            text: [{
+                                text: (value * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + label +
+                                    " have $target_label",
+                                color: this.vis.color
+                            }]
                         }]
                     } else {
                         return [{
@@ -129,8 +127,7 @@ export default {
                         array.push({
                             text: " These are also the $rows with the highest statistically significant risk."
                         })
-                    }
-                    else if (significance_unit === "natural_frequencies") {
+                    } else if (significance_unit === "natural_frequencies") {
                         array.push({
                             text: " For people with a $column of " + label + " the likelihood increases to " +
                                 (value * grid_size).toFixed(0) + "/" + grid_size + " $rows.",
