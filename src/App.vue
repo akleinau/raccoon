@@ -177,7 +177,7 @@ export default {
                 .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
                 return {
                     column: column,
-                    visList: this.visGeneratorStore.generate_main_fact_visList(column)
+                    visList: this.visGeneratorStore.generate_main_fact_visList()
                 }
             })
 

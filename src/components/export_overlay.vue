@@ -43,10 +43,10 @@ import {useDataStore} from "@/stores/dataStore";
 import vis_parser from "@/components/visualization/vis_parser.vue";
 
 import * as svg2png from "save-svg-as-png/lib/saveSvgAsPng.js";
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.vfs = pdfFonts && pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : globalThis.pdfMake.vfs;
 
 export default {
     name: "export_overlay",
