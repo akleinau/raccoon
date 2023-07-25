@@ -49,9 +49,8 @@
                         <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList"
                                             :column="item.column"/>
                     </div>
-                    <div v-for="item in visGeneratorStore.generate_context_fact_groups()" v-bind:key="item">
-                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"
-                                            v-if="! dashboardStore.dashboard_items.map(i => i.name).includes(item.column.name)"/>
+                    <div v-for="item in context_list" v-bind:key="item">
+                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"/>
                     </div>
                 </div>
 
@@ -166,31 +165,40 @@ export default {
         const visGeneratorStore = useVisGeneratorStore()
         return {dataStore, dashboardStore, regressionStore, scoreStore, visGeneratorStore}
     },
-    computed: {
+    data() {
+        return {
+            risk_list: [],
+            general_list: [],
+            context_list: []
+        }
+    },
+    watch: {
         /**
          * computes a list of risk factors and their visualizations
          *
          * @returns {{column: *, visList: *}[]}
          */
-        risk_list: function () {
-            return this.dataStore.column_list
-                .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
-                return {
-                    column: column,
-                    visList: this.visGeneratorStore.generate_main_fact_visList()
-                }
-            })
-
-        },
-        /**
-         * computes a list of general fact groups and their visualizations
-         *
-         * @returns {{column: *, visList: *}[]}
-         */
-        general_list: function () {
-            return this.visGeneratorStore.generate_general_factGroups()
-                .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
+        column_list: {
+            handler: function () {
+                this.risk_list = this.dataStore.column_list
+                    .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
+                        return {
+                            column: column,
+                            visList: this.visGeneratorStore.generate_main_fact_visList()
+                        }
+                    })
+                this.context_list = this.visGeneratorStore.generate_context_fact_groups()
+                    .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
+                this.general_list = this.visGeneratorStore.generate_general_factGroups()
+                    .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
+            },
+            deep: true
         }
+    },
+    computed: {
+        column_list: function () {
+            return this.dataStore.column_list
+        },
     }
 }
 </script>
