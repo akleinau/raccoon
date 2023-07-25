@@ -227,9 +227,9 @@ export default {
          * loads the diabetes example
          */
         async load_example() {
-            const csvFile = "examples/diabetes_sample.csv";
+            const csvFile = "https://raw.githubusercontent.com/akleinau/raccoon/main/examples/diabetes_sample.csv";
             this.name = "diabetes example"
-            const data = await d3.csv(csvFile)
+            const data = await d3.csv(csvFile, {crossOrigin: "anonymous"})
             this.dataStore.column_names = data.columns
             this.dataStore.csv = data
             this.dataStore.min_bin_size = Math.max(Math.floor(data.length / 20), 10) //at least 5% of people per bin
