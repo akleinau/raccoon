@@ -3,12 +3,12 @@
         <start_overlay/>
         <fact_group_view v-if="this.dashboardStore.current_fact_group !== null"/>
 
-        <v-app-bar>
-            <v-app-bar-title>Raccoon</v-app-bar-title>
-            <template v-slot:append>
-                <v-btn @click="this.dataStore.reset()">Reset</v-btn>
-            </template>
-        </v-app-bar>
+        <v-card style="z-index: 5">
+            <v-card-text class="d-flex mx-2 align-center">
+                <v-app-bar-title>Raccoon</v-app-bar-title>
+                <v-btn @click="this.dataStore.reset()" class="justify-end" variant="text">Reset</v-btn>
+            </v-card-text>
+        </v-card>
 
         <v-main>
 
@@ -201,17 +201,17 @@ export default {
     },
     methods: {
         recompute_recommendations() {
-            this.risk_list = this.dataStore.column_list
+            this.risk_list = this.column_list
                     .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
                         return {
                             column: column,
                             visList: this.visGeneratorStore.generate_main_fact_visList()
                         }
                     })
-                this.context_list = this.visGeneratorStore.generate_context_fact_groups()
-                    .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
-                this.general_list = this.visGeneratorStore.generate_general_factGroups()
-                    .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
+            this.context_list = this.visGeneratorStore.generate_context_fact_groups()
+                .filter(d => !this.dashboard_items.map(i => i.name).includes(d.column.name))
+            this.general_list = this.visGeneratorStore.generate_general_factGroups()
+                .filter(d => !this.dashboard_items.map(i => i.name).includes(d.column.name))
         }
     }
 }
