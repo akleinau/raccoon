@@ -1,4 +1,52 @@
 <template>
+    <!-- help -->
+    <div>
+        <v-dialog activator="parent" style="width: 700px">
+            <template v-slot:activator="{ props }">
+                <v-btn v-bind="props" prepend-icon="mdi-help-circle-outline" variant="plain"> help
+                </v-btn>
+            </template>
+            <v-card title="Help">
+                <v-card-text>
+                    <div class="mb-2">
+                        Modify text. Use the menu over a text element to change the color, delete the element or add another
+                        element for differently colored text.
+                    </div>
+                    <div class="mb-2">
+                        You can use the following variables to make sure that your visualizations are consistent:
+                    </div>
+                    <table>
+                    <tr>
+                        <td><v-chip>$rows</v-chip></td>
+                        <td>rows equal ...</td>
+                        <td>Here: <b>{{dataStore.row_label}} </b></td>
+                    </tr>
+                    <tr>
+                        <td><v-chip>$columns</v-chip></td>
+                        <td>label of the current column</td>
+                        <td>Here: <b>{{dashboardStore.current_fact_group.column.label}} </b></td>
+                    </tr>
+                    <tr>
+                        <td><v-chip>$target_label</v-chip></td>
+                        <td>label of the target</td>
+                        <td>Here: <b>{{dataStore.target_label}} </b></td>
+                    </tr>
+                    <tr>
+                        <td><v-chip>$target_column</v-chip></td>
+                        <td>label of the target column</td>
+                        <td>Here: <b>{{dataStore.target_column}} </b></td>
+                    </tr>
+                    <tr>
+                        <td><v-chip>$target_option</v-chip></td>
+                        <td>label of the target option</td>
+                        <td>Here: <b>{{dataStore.target_option}} </b></td>
+                    </tr>
+                    </table>
+                </v-card-text>
+
+            </v-card>
+        </v-dialog>
+    </div>
     <div class="d-flex flex-wrap">
         <div v-for="(el,i) in new_text" v-bind:key="el">
             <!-- menu buttons -->
@@ -42,6 +90,8 @@
 
 <script>
 import ColorDialog from "@/components/helpers/color-dialog.vue";
+import {useDataStore} from "@/stores/dataStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 
 export default {
     name: "text-input",
@@ -54,6 +104,11 @@ export default {
             new_text: "",
             custom_colors: []
         }
+    },
+    setup() {
+        const dataStore = useDataStore()
+        const dashboardStore = useDashboardStore()
+        return {dataStore, dashboardStore}
     },
     watch: {
         text: {
@@ -121,5 +176,8 @@ export default {
 </script>
 
 <style scoped>
-
+th, td {
+  padding-right: 10px;
+  padding-bottom: 5px;
+}
 </style>
