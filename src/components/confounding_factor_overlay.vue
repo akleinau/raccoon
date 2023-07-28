@@ -63,7 +63,10 @@ export default {
          * Update the list of confounding factors
          */
         update_factors() {
-            this.confounding_factors = this.dashboardStore.dashboard_items.filter(item => item.name !== this.dataStore.target.name).map(item => ({
+            this.confounding_factors = this.dashboardStore.dashboard_items
+                .filter(item => item.name !== this.dataStore.target.name)
+                .filter(item => this.dataStore.column_list.find(c => c.name ===item.name))
+                .map(item => ({
                 name: item.column.label,
                 column: item.column,
                 factor: this.dashboardStore.is_confounding_factor(item.column)

@@ -67,7 +67,7 @@
 
                         <!-- Font size -->
                         <div v-if="get('graph') === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
-                            <h4 v-if="!has_attribute['graph']">Font Size</h4>
+                            <h4 v-if="has_attribute['graph']">Font Size</h4>
                             <div class="ml-2 text-grey" v-else>Font Size</div>
                             <v-slider v-model="vis.font_size" :disabled="!has_attribute['graph']"
                                       min="0.5" max="3" step="0.1" show-ticks="always"

@@ -150,7 +150,7 @@
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                     I want to...
-                    <v-btn-toggle v-model="dashboardStore.intention"
+                    <v-btn-toggle v-model="dashboardStore.intention" mandatory
                                   @update:modelValue="dashboardStore.update_settings_by_intention()"
                                   class="mb-1">
                         <v-btn value="explore">
@@ -170,21 +170,21 @@
                     </v-btn-toggle>
 
                     <div v-if="dashboardStore.intention === 'explore'">
-                        For scientists to explore the data. Showing detailed information about the dataset.
+                        Optimize visualizations for scientists to explore the data. Showing detailed information about the dataset.
                         <ul class="ml-5">
                             <li>Pictographs with percentages</li>
                             <li>Bar charts showing absolute numbers of participants</li>
                         </ul>
                     </div>
                     <div v-if="dashboardStore.intention === 'convince'">
-                        Visualizations to convince the public about a certain topic.
+                        Optimize visualizations to convince the public about a certain topic.
                         <ul class="ml-5">
-                            <li>showing only nominators increases perceived risk</li>
-                            <li>Pictographs and bar charts are easy to understand</li>
+                            <li>hiding context information increases perceived risk</li>
+                            <li>Pictographs and bar charts as simple, easy to understand visualizations</li>
                         </ul>
                     </div>
                     <div v-if="dashboardStore.intention === 'educate'">
-                        For scientists to educate the public about their findings. Showing only the most important
+                        Optimize visualizations for scientists to educate the public about their findings. Showing only the most important
                         information about the dataset.
                         <ul class="ml-5">
                             <li>Pictographs showing natural frequencies (eg 22/100) best for understanding risks</li>

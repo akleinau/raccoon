@@ -12,19 +12,19 @@
             </v-card-title>
 
             <!-- hints -->
-            <div v-if="dashboardStore.current_fact_group.column.significance !== undefined &&
-                dashboardStore.current_fact_group.column['significance'].significant_tuples.length === 0">
+            <div v-if="column.significance !== undefined &&
+                column['significance'].significant_tuples.length === 0">
                 <v-icon icon="mdi-alert"/>
                 not statistically significant
             </div>
-            <div v-if=" dashboardStore.is_recommendation_column(dashboardStore.current_fact_group.column) &&
-                dashboardStore.current_fact_group.column.significance !== undefined &&
-                dashboardStore.current_fact_group.column['significance'].score['regression'] < 0.001">
+            <div v-if=" dashboardStore.is_recommendation_column(column) &&
+                column.significance !== undefined &&
+                column['significance'].score['regression'] < 0.001">
                 <v-icon icon="mdi-alert"/>
                 Adding this factor will not improve risk prediction further.
             </div>
-            <div v-if="dashboardStore.current_fact_group.column.occurrence !== undefined &&
-            Object.values(dashboardStore.current_fact_group.column.occurrence).filter( b => b < 100).length > 0">
+            <div v-if="column.occurrence !== undefined && current_fact_group.visList.find(vis => vis.type === 'significance') &&
+                Object.values(column.occurrence).filter( b => b < 100).length > 0">
                 <v-icon icon="mdi-alert"/>
                 Calculated frequencies are less accurate for options with less than 100 rows.
             </div>
@@ -90,17 +90,22 @@
                         <v-expansion-panel v-if="column.significance !== undefined" @click="calculate_similar_facts()">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2">
-                                statistically significant risk factor: {{
+                                <!-- risk factor? -->
+                                <div v-if="current_fact_group.visList.find(vis => vis.type === 'significance')">
+                                    statistically significant risk factor: {{
                                     column['significance'].significant_tuples.length > 0 ? "yes" : "no"
-                                }}
-                                <div v-if="column.significance"> Risk factor despite selected confounding factors:
-                                    {{
-                                        column['significance'].score[scoreStore.score] > 0 ? "yes" : "no"
                                     }}
+                                    <div v-if="column.significance"> Risk factor despite selected confounding factors:
+                                        {{
+                                        column['significance'].score[scoreStore.score] > 0 ? "yes" : "no"
+                                        }}
+                                    </div>
+                                    <div v-if="column.correlation_with_target" class="mt-5"> Correlation with Target:
+                                        {{ column['correlation_with_target'].toFixed(2) }}
+                                    </div>
                                 </div>
-                                <div v-if="column.correlation_with_target" class="mt-5"> Correlation with Target:
-                                    {{ column['correlation_with_target'].toFixed(2) }}
-                                </div>
+
+                                <!-- similar columns -->
                                 <div class="mt-5">
                                     <b>Correlates strongly with:</b>
                                 </div>
@@ -113,6 +118,10 @@
                                         <div class="d-flex pl-2 align-self-center">Correlation:
                                             {{ item.similarity.toFixed(2) }}
                                         </div>
+                                    </div>
+                                    <div v-if="current_fact_group.similar_columns === undefined || current_fact_group.similar_columns.length === 0"
+                                         class="d-flex align-center justify-center flex-grow-1">
+                                        No similar columns found.
                                     </div>
                                 </div>
                             </v-expansion-panel-text>
@@ -135,7 +144,9 @@
                                                        variant="text" icon="mdi-plus-box" hint="hi"
                                                        density="compact">
                                                     <v-icon>mdi-plus-box</v-icon>
-                                                    <v-tooltip activator="parent" location="start">Add Group in between</v-tooltip>
+                                                    <v-tooltip activator="parent" location="start">Add Group in
+                                                        between
+                                                    </v-tooltip>
                                                 </v-btn>
                                                 <v-text-field variant="underlined" class="mx-2" density="compact"
                                                               :label="column.type === 'categorical' ? item.name : ''"
@@ -150,7 +161,8 @@
                                                 </div>
                                                 <div class="d-flex align-start" density="compact">
                                                     <span class="mt-3 ml-5 mr-1"> Risk group </span>
-                                                    <v-checkbox class="mt-1" v-model="item.risk_group" density="compact"/>
+                                                    <v-checkbox class="mt-1" v-model="item.risk_group"
+                                                                density="compact"/>
                                                 </div>
 
                                             </div>
@@ -162,7 +174,8 @@
                                                        class="mt-1"
                                                        icon="mdi-delete">
                                                     <v-icon>mdi-delete</v-icon>
-                                                    <v-tooltip activator="parent" location="end">Merge Groups</v-tooltip>
+                                                    <v-tooltip activator="parent" location="end">Merge Groups
+                                                    </v-tooltip>
                                                 </v-btn>
                                             </div>
                                         </div>
@@ -211,14 +224,17 @@
                 <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
                     <div class="d-flex w-100 ">
                         <v-btn variant="elevated" @click="close" class="px-9">Close</v-btn>
-                        <v-btn variant="elevated" @click="add" prepend-icon="mdi-plus-thick" class="font-weight-bold px-5"
+                        <v-btn variant="elevated" @click="add" prepend-icon="mdi-plus-thick"
+                               class="font-weight-bold px-5"
                                v-if="!dashboardStore.dashboard_items.find(d => d.name === dashboardStore.current_fact_group.column.name)">
                             Add to dashboard
                         </v-btn>
-                        <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus-thick" class="font-weight-bold px-5" v-else> Remove from
+                        <v-btn variant="elevated" @click="remove" prepend-icon="mdi-minus-thick"
+                               class="font-weight-bold px-5" v-else> Remove from
                             dashboard
                         </v-btn>
-                        <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-export-variant"> Export PDF</v-btn>
+                        <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-export-variant"> Export PDF
+                        </v-btn>
                         <!-- end buttons -->
                         <div class="flex-grow-1 d-flex justify-end">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
@@ -411,7 +427,7 @@ export default {
          * calculates similar facts
          * @param always
          */
-        calculate_similar_facts(always=false) {
+        calculate_similar_facts(always = false) {
             if (!this.dashboardStore.current_fact_group['similar_columns'] || always) {
                 this.dashboardStore.current_fact_group['similar_columns'] = this.similarityStore.compute_similar_columns(this.column)
                 this.dashboardStore.current_fact_group['similar_dashboard_columns'] = this.similarityStore.compute_similar_dashboard_columns(this.column)
@@ -520,7 +536,7 @@ export default {
                 if (exp.type === "svg") {
                     await svg2png.svgAsPngUri(exp.item, this.exportOptions).then(uri => {
                         data.content.push({
-                            image: uri, width: exp.width*0.7, margin: [0, 0, 0, 15]
+                            image: uri, width: exp.width * 0.7, margin: [0, 0, 0, 15]
                         })
                     })
                 } else if (exp.type === "text") {

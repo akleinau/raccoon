@@ -48,11 +48,9 @@ export default {
                         const grid_size = grid[0] * grid[1]
 
                         return [{
-                            text: [{
                                 text: (value * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + label +
                                     " have $target_label",
                                 color: this.vis.color
-                            }]
                         }]
                     } else {
                         return [{
@@ -97,7 +95,7 @@ export default {
                 if (significance_unit === "natural_frequencies") {
                     array.push(
                         {
-                            text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " resulting in a likelihood of " +
+                            text: "Most people have a $column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + " with a likelihood of " +
                                 (this.column.percent_target_option[greatest_occurrence[0]] * grid_size).toFixed(0) + "/" + grid_size + " $rows having $target_label.",
                             color: this.vis.color
                         }

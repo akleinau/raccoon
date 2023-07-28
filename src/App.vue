@@ -73,7 +73,7 @@
                                             {{ item.title }}
                                         <v-tooltip activator="parent" location="left" content-class="bg-grey-darken-2">
                                             <span v-if="item.title === 'differences'" >
-                                                Sort risk factors by the difference in target likelihood between groups.
+                                                Sort risk factors by their maximum difference in {{dataStore.target_label}} likelihood between groups.
                                             </span>
                                             <span v-if="item.title === 'correlation'">
                                                 Sort risk factors by their correlation with the target.

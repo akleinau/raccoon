@@ -73,8 +73,7 @@ export default {
         visualize(data) {
             let margin_bottom = this.preview ? 20 : 50
             let margin_top = 30
-            let margin_right = this.preview ? 5 : 60
-            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? 0 : 300
+            let margin_right = this.preview ? 20 : 60
             let width = (this.width ? this.width : 300)*this.vis.size - margin_right
             let startBarX = this.helperStore.get_max_length(
                 this.use_column_group_names? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
@@ -82,6 +81,7 @@ export default {
                 startBarX = 100
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
+            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 300
             const icon_padding = 0.1
             const row_padding = 10
             const grid_padding = 10

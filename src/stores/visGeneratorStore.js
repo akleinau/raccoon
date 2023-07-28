@@ -40,7 +40,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                 {
                     type: "custom",
                     graph: "text",
-                    text: [{"text": "add custom text about $column here", "color": "black"}],
+                    text: [{"text": "custom text about $column", "color": "black"}],
                 }
             )
             if (similar_dashboard_columns.length > 0) {
