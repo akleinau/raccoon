@@ -180,7 +180,28 @@ export default {
          */
         column_list: {
             handler: function () {
-                this.risk_list = this.dataStore.column_list
+                this.recompute_recommendations()
+            },
+            deep: true
+        },
+        dashboard_items : {
+            handler: function () {
+                this.recompute_recommendations()
+            },
+            deep: true
+        }
+    },
+    computed: {
+        column_list: function () {
+            return this.dataStore.column_list
+        },
+        dashboard_items: function () {
+            return this.dashboardStore.dashboard_items
+        },
+    },
+    methods: {
+        recompute_recommendations() {
+            this.risk_list = this.dataStore.column_list
                     .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
                         return {
                             column: column,
@@ -191,14 +212,7 @@ export default {
                     .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
                 this.general_list = this.visGeneratorStore.generate_general_factGroups()
                     .filter(d => !this.dashboardStore.dashboard_items.map(i => i.name).includes(d.column.name))
-            },
-            deep: true
         }
-    },
-    computed: {
-        column_list: function () {
-            return this.dataStore.column_list
-        },
     }
 }
 </script>

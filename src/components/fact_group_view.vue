@@ -236,7 +236,7 @@
                         <v-btn variant="elevated" @click="pdfExport" prepend-icon="mdi-export-variant"> Export PDF
                         </v-btn>
                         <!-- end buttons -->
-                        <div class="flex-grow-1 d-flex justify-end">
+                        <div class="flex-grow-1 d-flex justify-end" v-if="current_fact_group.visList.find(vis => vis.type === 'significance')">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
                                    v-if="!dashboardStore.excluded_columns.includes(dashboardStore.current_fact_group.column.name)">
                                 Exclude

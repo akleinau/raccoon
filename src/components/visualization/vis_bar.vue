@@ -120,11 +120,11 @@ export default {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
-                    .attr("x", margin.left)
+                    .attr("x", d => (this.get_value_text(d.value).toString().length*5 < x(d.value) - x(0)) ? margin.left : margin.left + x(d.value) - x(0))
                     .attr("y", d => y(d.name))
                     .text(d => this.get_value_text(d.value))
                     .style("text-anchor", "start")
-                    .style("fill", "white")
+                    .style("fill", d => (this.get_value_text(d.value).toString().length*5 < x(d.value) - x(0)) ? "white" : "#202020")
                     .attr("dy", y.bandwidth() - 5)
 
                 if (this.vis.context === true) {
