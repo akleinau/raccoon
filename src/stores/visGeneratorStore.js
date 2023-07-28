@@ -84,8 +84,8 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
                             unit: "natural_frequencies",
-                            title: [{text: "How many times the risk increases per risk factor", color: "black"}],
-                            axis: [{text: "risk increase through factor", color: "black"}]
+                            title: [{text: "How many times higher is the risk of $target_label?", color: "black"}],
+                            axis: [{text: "risk increase relative to $rows not in risk groups", color: "black"}]
                         }],
                         "column": {name: "RelativeIncrease", label: "Relative Risk Increase", options: options}
                     },
