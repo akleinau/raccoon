@@ -116,7 +116,7 @@
                         <!-- Intention -->
                         <div class="px-5 pb-5" v-if="dataStore.target_option">
                             <h1 class="d-flex justify-center mb-5 mt-16"> I want to... </h1>
-                            <v-btn-toggle v-model="dashboardStore.intention" class="d-flex justify-center">
+                            <v-btn-toggle v-model="dashboardStore.intention" class="d-flex justify-center" mandatory>
                                 <v-btn value="explore">
                                     <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
                                     Explore
