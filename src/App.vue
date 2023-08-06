@@ -16,15 +16,17 @@
             <v-card class="pa-5 bg-blue-grey-lighten-5">
 
                 <v-card-title>
-                    Dashboard
-                    <dashboard_overlay text-button="true"/>
-                    <export_overlay />
+                    <h2>
+                        Your Dashboard
+                        <dashboard_overlay text-button="true"/>
+                        <export_overlay />
+                    </h2>
                 </v-card-title>
 
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
                     <div v-for="item in dashboardStore.dashboard_items" v-bind:key="item" class="d-flex flex-column pa-2">
                         <fact_group_preview :visList="item.visList" :column="item.column"
-                                            style="height:500px" vertical="true"/>
+                                            style="height:400px" vertical="true"/>
 
                     </div>
                     <dashboard_overlay/>
@@ -43,14 +45,19 @@
             </v-card>
 
             <!-- General & Context -->
-            <v-card title="General" class="pa-5 bg-blue-grey-lighten-5">
+            <v-card class="pa-5 bg-blue-grey-lighten-5">
+
+                <v-card-title>
+                   <h2 class="mb-2">Recommendations</h2>
+                </v-card-title>
+
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="item in general_list" v-bind:key="item">
-                        <fact_group_preview style="height:200px" class="pa-2" :visList="item.visList"
+                    <div v-for="item in general_list" v-bind:key="item" class="pa-2">
+                        <fact_group_preview style="height:250px" :visList="item.visList"
                                             :column="item.column"/>
                     </div>
-                    <div v-for="item in context_list" v-bind:key="item">
-                        <fact_group_preview class="pa-2" :visList="item.visList" :column="item.column"/>
+                    <div v-for="item in context_list" v-bind:key="item" class="pa-2">
+                        <fact_group_preview style="height:250px"  :visList="item.visList" :column="item.column"/>
                     </div>
                 </div>
 
@@ -110,8 +117,8 @@
 
                 <!-- Risk Factor Sheets -->
                 <div class="d-flex overflow-x-auto overflow-y-hidden align-stretch">
-                    <div v-for="item in risk_list" v-bind:key="item">
-                        <fact_group_preview class="pa-2" style="height:500px"
+                    <div v-for="item in risk_list" v-bind:key="item" class="pa-2">
+                        <fact_group_preview style="height:400px"
                                             :visList="item.visList"
                                             :column="item.column" :vertical="true"/>
                     </div>

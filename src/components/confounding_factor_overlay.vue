@@ -12,7 +12,9 @@
             <v-card-text>
                 <div class="d-flex ml-2">
                     <v-icon class="mr-2">mdi-help-circle-outline</v-icon>
-                    <span> Risk factor suggestions will consider if the observed
+                    <span>
+                    Raccoon will consider all selected risk factors of the dashboard as confounding factors. <br>
+                    Risk factor suggestions will consider if the observed
                     risk increase can already be explained by the confounding factors. <br>
                     Eg. Obesity increases the risk of diabetes.
                     However, this increase is already explained by the correlation between obesity and bmi.

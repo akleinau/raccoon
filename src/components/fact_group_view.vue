@@ -61,7 +61,7 @@
                                         class="pa-2">
                                     <div class="bg-white pt-3">
                                         <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
-                                                    :width="450" :index="i"/>
+                                                    :width="400" :index="i"/>
                                     </div>
                                     <div class="d-flex justify-center align-center"
                                          v-if="dashboardStore.current_fact_index === i">
@@ -89,7 +89,7 @@
                         <!-- statistical information -->
                         <v-expansion-panel v-if="column.significance !== undefined" @click="calculate_similar_facts()">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text class="text-grey-darken-2">
+                            <v-expansion-panel-text class="text-grey-darken-2" style="min-width: 500px">
                                 <!-- risk factor? -->
                                 <div v-if="current_fact_group.visList.find(vis => vis.type === 'significance')">
                                     statistically significant risk factor: {{
@@ -130,7 +130,7 @@
                         <!-- groups -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Groups/ Bins </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text>
+                            <v-expansion-panel-text style="min-width: 500px">
                                 <div class="d-flex w-100">
                                     <div class="bg-grey-darken-2 mb-2 rounded-pill" style="width:10px"></div>
                                     <div class="flex-grow-1">
@@ -187,7 +187,7 @@
                         <!-- additional visualizations -->
                         <v-expansion-panel>
                             <v-expansion-panel-title><h4> Additional Visualizations </h4></v-expansion-panel-title>
-                            <v-expansion-panel-text>
+                            <v-expansion-panel-text style="min-width: 500px">
                                 <div class="d-flex overflow-y-hidden  pb-5">
                                     <div class="d-flex flex-column pa-1"
                                          v-for="vis in dashboardStore.current_fact_group.additional_vis_list"

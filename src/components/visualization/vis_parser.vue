@@ -153,7 +153,7 @@ export default {
          * @returns {*}
          */
         wrap_text(annotation) {
-            const MAX_LENGTH = 30
+            const MAX_LENGTH = 25
 
             //parse text to get full labels instead of variables
             let all_elements = this.helperStore.parse_text(annotation.text, this.column)

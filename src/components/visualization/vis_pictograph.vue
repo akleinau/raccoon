@@ -81,7 +81,7 @@ export default {
                 startBarX = 100
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
-            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 300
+            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
             const icon_padding = 0.1
             const row_padding = 10
             const grid_padding = 10
@@ -246,9 +246,9 @@ export default {
                     .data(targets_y)
                     .join("line")
                     .attr("x1", width + margin.left + margin.right + gap - 10)
-                    .attr("y1", d => d)
+                    .attr("y1", d => d + 10)
                     .attr("x2", width + margin.left + margin.right + gap - 10)
-                    .attr("y2", d => d + row_height)
+                    .attr("y2", d => d + row_height + 10)
                     .attr("stroke", "#505050")
                     .attr("stroke-width", 3)
             }

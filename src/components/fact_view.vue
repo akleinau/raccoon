@@ -4,7 +4,7 @@
         <!-- Graph -->
         <v-expansion-panel>
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Visualization Type </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['graph']" label="Custom"/>
                 <div class="d-flex">
                     <!-- Graph Type -->
@@ -131,7 +131,7 @@
         <!-- Color -->
         <v-expansion-panel v-if="get_default('color') !== undefined">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Color </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <div class="d-flex">
                     <div>
                         <v-switch v-model="has_attribute['color']" label="Custom"/>
@@ -171,7 +171,7 @@
         <!-- Background -->
         <v-expansion-panel v-if="get_default('background') !== undefined">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Background </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['background']" label="Custom"/>
                 <v-radio-group v-model="vis.background"
                                class="ml-5" :disabled="!has_attribute['background']">
@@ -208,7 +208,7 @@
         <!-- Title -->
         <v-expansion-panel v-if="get_default('title') !== undefined">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Title </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['title']" label="Custom"/>
                 <text_input :text="vis.title" :default="get_default('title')"
                             @change="vis.title = $event" :color="get_color()"
@@ -223,7 +223,7 @@
         <!-- Axis -->
         <v-expansion-panel v-if="get_default('axis') !== undefined">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Axis </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['axis']" label="Custom"/>
                 <text_input :text="vis.axis" :default="get_default('axis')"
                             @change="vis.axis = $event" :color="get_color()"
@@ -238,7 +238,7 @@
         <!-- Annotation -->
         <v-expansion-panel v-if="annotation_list.length !== 0">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Annotation </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['annotation']" label="Custom"/>
                 <v-radio-group v-model="vis.annotation" :disabled="!has_attribute['annotation']">
                     <v-radio label="no annotation" value="None"></v-radio>
@@ -268,7 +268,7 @@
         <!-- Text -->
         <v-expansion-panel v-if="get_default('graph') === 'text' || vis.graph === 'text'">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Text </h4></v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['text']" label="Custom"/>
                 <text_input :text="vis.text" :default="[]"
                             @change="vis.text = $event" :color="get_color()"

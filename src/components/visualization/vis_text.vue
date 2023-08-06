@@ -4,7 +4,7 @@
         <span v-for="item in helperStore.parse_text(generate_text, column)" v-bind:key=item
               :style="'color: ' + item.color + ';font-style:' + item.weight">{{ item.text }}</span>
     </div>
-    <div v-else>[textual summary]</div>
+    <div v-else></div>
 </template>
 
 <script>

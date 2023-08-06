@@ -5,9 +5,9 @@
             <v-card-title>RACCOON - Risk Factor Communication</v-card-title>
 
             <v-card-text>
-                <div style="height:550px" class="d-flex flex-column align-center w-100">
+                <div style="height:400px" class="d-flex flex-column align-center w-100">
                     <!-- Page 0: Dataset selection -->
-                    <div v-if="page === 0" class="w-100 mt-16">
+                    <div v-if="page === 0" class="w-100 mt-6">
                         <h1 class="d-flex justify-center"> Choose dataset</h1>
 
                         <!-- help -->
@@ -45,7 +45,7 @@
 
                         <!-- dataset selection -->
                         <div class="d-flex w-100 mx-3 align-center justify-center">
-                            <div class="mt-5 w-50">
+                            <div class="mt-3 w-50">
                                 <v-file-input label="Choose CSV file" class="px-5" v-model="files"
                                               accept=".csv"
                                               @update:modelValue="uploaded"></v-file-input>
@@ -58,7 +58,7 @@
 
                     <!-- Page 1: Target selection -->
                     <div v-if="page === 1">
-                        <h1 class="d-flex justify-center mt-16"> Choose target</h1>
+                        <h1 class="d-flex justify-center mt-6"> Choose target</h1>
 
                         <!-- help -->
                         <div class="d-flex justify-center">
@@ -89,7 +89,7 @@
                         </div>
 
 
-                        <div v-if="dataStore.column_names.length !== 0" class="mt-5">
+                        <div v-if="dataStore.column_names.length !== 0" class="mt-3">
                             <v-autocomplete v-model="dataStore.target_column" class="px-5" label="Select target"
                                             :items="dataStore.column_names" style="min-width: 500px"
                                             @update:modelValue="target_selected"/>
@@ -100,7 +100,7 @@
                                             :items="dataStore.target_all_options"
                                             @update:modelValue="target_option_selected"/>
                         </div>
-                        <div class="px-5 pb-5 pt-7" v-if="dataStore.target_option">
+                        <div class="px-5 pb-5 pt-3" v-if="dataStore.target_option">
                             <div>Customize target label:</div>
                             <v-text-field v-model="dataStore.target_label"
                                           :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
@@ -115,7 +115,7 @@
                     <div v-if="page === 2">
                         <!-- Intention -->
                         <div class="px-5 pb-5" v-if="dataStore.target_option">
-                            <h1 class="d-flex justify-center mb-5 mt-16"> I want to... </h1>
+                            <h1 class="d-flex justify-center mb-5 mt-6"> I want to... </h1>
                             <v-btn-toggle v-model="dashboardStore.intention" class="d-flex justify-center" mandatory>
                                 <v-btn value="explore">
                                     <v-icon class="mx-1" size="x-large">mdi-map-search</v-icon>
@@ -152,7 +152,7 @@
                                                 style="width:800px">
                                 <v-expansion-panel title="Additional Options">
                                     <v-expansion-panel-text>
-                                        <v-checkbox label="exclude missing values"
+                                        <v-checkbox label="exclude missing values" hide-details
                                                     v-model="dataStore.exclude_missing"></v-checkbox>
                                         <v-text-field label="rows equal" v-model="dataStore.row_label"></v-text-field>
                                     </v-expansion-panel-text>
