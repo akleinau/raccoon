@@ -209,7 +209,7 @@ export default {
     methods: {
         recompute_recommendations() {
             this.risk_list = this.column_list
-                    .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 20).map(column => {
+                    .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 5).map(column => {
                         return {
                             column: column,
                             visList: this.visGeneratorStore.generate_main_fact_visList()
