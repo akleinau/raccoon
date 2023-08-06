@@ -1,7 +1,8 @@
 <template>
-    <div class="w-50">
+    <div :class="show_panels? 'w-100' : 'w-50'">
         <!-- Wording -->
-        <div class="d-flex w-100" v-if="dataStore.target !== undefined && dataStore.target !== null">
+        <v-expand-transition>
+        <div class="d-flex w-100" v-if="dataStore.target !== undefined && dataStore.target !== null && !show_panels" transition="fade-transition">
             <v-text-field
                     :hint="dataStore.target.name + ':' + dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
                     v-model="dataStore.target_label" variant="underlined" label="target label"
@@ -9,10 +10,11 @@
             <v-text-field label="rows equal" v-model="dataStore.row_label" hint="eg people, participants, households"
                           append-inner-icon="mdi-pencil" class="w-25" variant="underlined"></v-text-field>
         </div>
+        </v-expand-transition>
 
-        <v-expansion-panels class="mx-3 mb-3 mt-1 w-100">
+        <v-expansion-panels class="mx-3 mb-1 mt-1 w-100" v-model="show_panels">
             <!-- Design -->
-            <v-expansion-panel>
+            <v-expansion-panel value="design" v-if="!show_panels || show_panels.includes('design')">
                 <v-expansion-panel-title>
                     <h4 class="mr-4">Design:</h4>
                     <span v-for="(color,i) in dashboardStore.default_colors.colors" :key="i">
@@ -23,16 +25,16 @@
                     <div class="d-flex">
                         <!-- Color Scheme -->
                         <div>
-                            <v-radio-group v-model="color_mode" label="Colors" class="mr-5" inline>
-                                <v-radio value="oneColor" label="color based"
-                                         @click="dashboardStore.default_colors.colors=neighbor_color_list"/>
-                                <v-radio value="scheme" label="scheme"
-                                         @click="dashboardStore.default_colors.colors=scheme"/>
-                                <v-radio value="custom" label="custom"
-                                         @click="custom_color_list=dashboardStore.default_colors.colors"/>
-                            </v-radio-group>
+                            <v-btn-toggle v-model="color_mode" label="Colors" class="mb-2" mandatory  >
+                                <v-btn value="oneColor" label="color based"
+                                         @click="dashboardStore.default_colors.colors=neighbor_color_list"> scheme </v-btn>
+                                <v-btn value="scheme" label="scheme"
+                                         @click="dashboardStore.default_colors.colors=scheme"> palette </v-btn>
+                                <v-btn value="custom" label="custom"
+                                         @click="custom_color_list=dashboardStore.default_colors.colors"> custom </v-btn>
+                            </v-btn-toggle>
 
-                            <div v-if="color_mode === 'oneColor'" class="mr-5">
+                            <div v-if="color_mode === 'oneColor'">
                                 <div class="d-flex w-100 justify-center">
                                     Color based:
                                     <v-icon class="ml-2" :style="'color:' + neighborColor">mdi-circle</v-icon>
@@ -84,7 +86,7 @@
 
                         <!-- Background -->
                         <v-radio-group v-model="dashboardStore.default_colors.background" label="Background"
-                                       class="ml-5">
+                                       class="ml-5" hide-details>
                             <v-radio label="auto" :value="background_auto">
                                 <template v-slot:label>
                                     Auto
@@ -109,7 +111,7 @@
                         </v-radio-group>
 
                         <!-- Font Color -->
-                        <v-radio-group v-model="dashboardStore.default_colors.text" label="Font Color">
+                        <v-radio-group v-model="dashboardStore.default_colors.text" label="Font Color" hide-details>
                             <v-radio v-for="color in this.fontColor" :key="color" :value="color">
                                 <template v-slot:label>
                                     <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
@@ -127,13 +129,13 @@
 
                         <!-- Font Family -->
                         <v-radio-group v-model="dashboardStore.default_colors.font_family" label="Font Family"
-                                       class="ml-5 mr-2" style="min-width:120px">
+                                       class="ml-5 mr-2" style="min-width:120px" hide-details>
                             <v-radio v-for="font in this.font_families" :key="font" :label="font" :value="font"
                                      :style="'font-family: ' + font"/>
                             <v-radio label="custom" :value="font_family_custom">
                                 <template v-slot:label>
-                                    <v-text-field v-model="font_family_custom" variant="underlined"
-                                                  style="min-width:100px"
+                                    <v-text-field v-model="font_family_custom" variant="underlined" density="compact"
+                                                  style="min-width:100px" hide-details label="custom" class="mb-3"
                                                   @update:modelValue="dashboardStore.default_colors.font_family = font_family_custom"/>
                                     <v-icon>mdi-pencil</v-icon>
                                 </template>
@@ -145,7 +147,7 @@
             </v-expansion-panel>
 
             <!-- Intention -->
-            <v-expansion-panel>
+            <v-expansion-panel value="intention" v-if="!show_panels || show_panels.includes('intention')">
                 <v-expansion-panel-title><h4>Intention: {{ dashboardStore.intention.toUpperCase() }} </h4>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -196,7 +198,7 @@
             </v-expansion-panel>
 
             <!-- Calculation -->
-            <v-expansion-panel>
+            <v-expansion-panel value="calculation" v-if="!show_panels || show_panels.includes('calculation')">
                 <v-expansion-panel-title><h4>Calculation </h4></v-expansion-panel-title>
                 <v-expansion-panel-text>
                     <div class="d-flex">
@@ -283,7 +285,8 @@ export default {
             fontColor: ["black", "midnightBlue", "darkblue"],
             fontColor_custom: "#000000",
             font_families: ["Verdana", "Arial", "monospace", "Times New Roman"],
-            font_family_custom: "custom",
+            font_family_custom: "",
+            show_panels: null
         }
     },
     methods: {
