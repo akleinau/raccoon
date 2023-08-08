@@ -76,8 +76,9 @@
                                       v-model="scoreStore.score" @update:modelValue="scoreStore.sort_summaries()"
                                       :items="scoreStore.score_choices">
                                 <template v-slot:item="{ item }">
-                                        <v-btn class="d-block" variant="text" @click="scoreStore.score = item.value; scoreStore.sort_summaries()">
+                                        <v-btn class="d-block d-flex w-100 justify-start" variant="text" @click="scoreStore.score = item.value; scoreStore.sort_summaries()">
                                             {{ item.title }}
+                                            <v-chip v-if="item.title === 'regression'" size="x-small" class="ml-2">default</v-chip>
                                         <v-tooltip activator="parent" location="left" content-class="bg-grey-darken-2">
                                             <span v-if="item.title === 'correlation'">
                                                 Sort risk factors by their correlation with the target.
@@ -94,6 +95,7 @@
                                             </span>
                                         </v-tooltip>
                                         </v-btn>
+                                        <v-divider class="w-100"/>
                                 </template>
 
                             </v-select>

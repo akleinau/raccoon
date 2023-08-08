@@ -87,22 +87,26 @@
                     <v-expansion-panels class="mx-3 mb-3" v-model="panels">
 
                         <!-- statistical information -->
-                        <v-expansion-panel v-if="column.significance !== undefined" @click="calculate_similar_facts()">
+                        <v-expansion-panel v-if="column.significance !== undefined" @click="calculate_similar_facts()" value="statistics">
                             <v-expansion-panel-title><h4> Statistical Information </h4></v-expansion-panel-title>
                             <v-expansion-panel-text class="text-grey-darken-2" style="min-width: 500px">
                                 <!-- risk factor? -->
                                 <div v-if="current_fact_group.visList.find(vis => vis.type === 'significance')">
-                                    statistically significant risk factor: {{
-                                    column['significance'].significant_tuples.length > 0 ? "yes" : "no"
-                                    }}
-                                    <div v-if="column.significance"> Risk factor despite selected confounding factors:
+                                    <div v-if="column.riskIncrease !== undefined" class="mb-5">
+                                        <b>Risk Group(s): </b>
+                                        <v-chip v-for="group in column.riskIncrease.risk_factor_groups" :key="group" class="mr-2" outlined>
+                                            {{group}}
+                                        </v-chip>
+                                        <v-btn @click="panels = ['groups']" variant="text" class="ml-3 mb-1" prepend-icon="mdi-pencil" >change</v-btn> <br>
+
+                                        Prevalence Odds Ratio: {{column.riskIncrease.odds_ratio.toFixed(2)}} <br>
+                                        Relative Risk: {{column.riskIncrease.relative_risk.toFixed(2)}}
+                                    </div>
+
+                                    <div v-if="column.significance"> improves model despite selected confounding factors:
                                         {{
                                         column['significance'].score[scoreStore.score] > 0 ? "yes" : "no"
                                         }}
-                                    </div>
-                                    <div v-if="column.riskIncrease !== undefined">
-                                        Prevalence Odds Ratio: {{column.riskIncrease.odds_ratio.toFixed(2)}} <br>
-                                        Relative Risk: {{column.riskIncrease.relative_risk.toFixed(2)}}
                                     </div>
 
                                     <div v-if="column.correlation_with_target" class="mt-5"> Correlation with Target:
@@ -133,7 +137,7 @@
                         </v-expansion-panel>
 
                         <!-- groups -->
-                        <v-expansion-panel>
+                        <v-expansion-panel value="groups">
                             <v-expansion-panel-title><h4> Groups/ Bins </h4></v-expansion-panel-title>
                             <v-expansion-panel-text style="min-width: 500px">
                                 <div class="d-flex w-100">
@@ -190,7 +194,7 @@
                         </v-expansion-panel>
 
                         <!-- additional visualizations -->
-                        <v-expansion-panel>
+                        <v-expansion-panel value="visualizations">
                             <v-expansion-panel-title><h4> Additional Visualizations </h4></v-expansion-panel-title>
                             <v-expansion-panel-text style="min-width: 500px">
                                 <div class="d-flex overflow-y-hidden  pb-5">
