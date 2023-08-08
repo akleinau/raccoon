@@ -63,13 +63,16 @@
                                         <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
                                                     :width="400" :index="i"/>
                                     </div>
-                                    <div class="d-flex justify-center align-center"
+                                    <div class="d-flex align-center mx-5"
                                          v-if="dashboardStore.current_fact_index === i">
-                                        <v-btn variant="text" icon="mdi-arrow-up" @click="move_vis_up(i)"></v-btn>
-                                        <v-btn variant="text" icon="mdi-arrow-down" @click="move_vis_down(i)"></v-btn>
-                                        <v-btn variant="text" @click="remove_vis(i)">remove</v-btn>
-                                        <v-btn variant="text" @click="copy_vis(i)">copy</v-btn>
-                                        <v-btn variant="text" @click="export_vis_as_png(i)">export</v-btn>
+                                        <span>{{vis.type.toString().toUpperCase()}} </span>
+                                        <span class="d-flex justify-center align-center flex-grow-1 mr-10">
+                                            <v-btn variant="text" icon="mdi-arrow-up" @click="move_vis_up(i)"></v-btn>
+                                            <v-btn variant="text" icon="mdi-arrow-down" @click="move_vis_down(i)"></v-btn>
+                                            <v-btn variant="text" @click="remove_vis(i)">remove</v-btn>
+                                            <v-btn variant="text" @click="copy_vis(i)">copy</v-btn>
+                                            <v-btn variant="text" @click="export_vis_as_png(i)">export</v-btn>
+                                        </span>
                                     </div>
                                 </v-card>
                             </v-hover>

@@ -123,7 +123,7 @@
                 <v-btn @click="set_default_graph_settings" variant="tonal"
                        :disabled="!has_attribute['graph']">
                     set as default for {{ vis.type }}
-                    Graphs
+                    facts
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -161,7 +161,7 @@
                         </v-radio-group>
                         <v-btn @click="makeDefault('color')" variant="tonal"
                                :disabled="!has_attribute['color']"> set as default for
-                            {{ vis.type }} Graphs
+                            {{ vis.type }} facts
                         </v-btn>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                 </v-radio-group>
                 <v-btn @click="makeDefault('background')" :disabled="!has_attribute['background']"
                        variant="tonal"> set as default for
-                    {{ vis.type }} Graphs
+                    {{ vis.type }} facts
                 </v-btn>
 
             </v-expansion-panel-text>
@@ -215,7 +215,7 @@
                             :disabled="!has_attribute['title']"/>
                 <v-btn @click="makeDefault('title')" :disabled="!has_attribute['title']"
                        variant="tonal">
-                    set as default for {{ vis.type }} Graphs
+                    set as default for {{ vis.type }} facts
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -230,7 +230,7 @@
                             :disabled="!has_attribute['axis']"/>
                 <v-btn @click="makeDefault('axis')" :disabled="!has_attribute['axis']"
                        variant="tonal">
-                    set as default for {{ vis.type }} Graphs
+                    set as default for {{ vis.type }} facts
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -275,7 +275,7 @@
                             :disabled="!has_attribute['text']"/>
                 <v-btn @click="makeDefault('text')" :disabled="!has_attribute['text']"
                        variant="tonal">
-                    set as default for {{ vis.type }} Graphs
+                    set as default for {{ vis.type }} facts
                 </v-btn>
             </v-expansion-panel-text>
         </v-expansion-panel>
