@@ -79,15 +79,18 @@
                                         <v-btn class="d-block" variant="text" @click="scoreStore.score = item.value; scoreStore.sort_summaries()">
                                             {{ item.title }}
                                         <v-tooltip activator="parent" location="left" content-class="bg-grey-darken-2">
-                                            <span v-if="item.title === 'differences'" >
-                                                Sort risk factors by their maximum difference in {{dataStore.target_label}} likelihood between groups.
-                                            </span>
                                             <span v-if="item.title === 'correlation'">
                                                 Sort risk factors by their correlation with the target.
                                             </span>
                                             <span v-if="item.title === 'regression'">
                                                 Sort risk factors by their ability to predict the target using linear regression,
                                                 considering confounding factors.
+                                            </span>
+                                             <span v-if="item.title === 'odds_ratio'">
+                                                Sort risk factors by the Prevalence Odds Ratio  calculated from the risk groups.
+                                            </span>
+                                             <span v-if="item.title === 'relative_risk'">
+                                               Sort risk factors by their relative risk calculated from the risk groups.
                                             </span>
                                         </v-tooltip>
                                         </v-btn>

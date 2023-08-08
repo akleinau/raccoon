@@ -4,7 +4,7 @@ import {useDataStore} from "@/stores/dataStore";
 export const useScoreStore = defineStore('scoreStore', {
     state: () => ({
         score: "max_difference",
-        score_choices: ["differences", "correlation", "regression"]
+        score_choices: [ "regression", "correlation", "odds_ratio", "relative_risk"]
     }),
     actions: {
         /**
@@ -53,9 +53,10 @@ export const useScoreStore = defineStore('scoreStore', {
                 "significant_tuples": tuples.filter(d => d.significant).map(d => d.option.name),
                 "tuples": tuples,
                 "score": {
-                    "differences": Math.max(...tuples.map(d => d.diff)),
                     "correlation": Math.abs(summary.correlation_with_target),
-                    "regression": 0
+                    "regression": 0,
+                    "odds_ratio": summary.riskIncrease.odds_ratio,
+                    "relative_risk": summary.riskIncrease.relative_risk,
                 }
             }
         },

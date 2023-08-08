@@ -311,12 +311,23 @@ export const useDataStore = defineStore('dataStore', {
             const risk_difference = (above_percentage - below_percentage).toFixed(2)
             const risk_min = d3.min(groups_true.map(a => column.percent_target_option[a]))
 
+            //compute 2x2 table for POR and PRR
+            const a = groups_above_target_option_occurrence_sum
+            const b = groups_above_occurrence_sum - groups_above_target_option_occurrence_sum
+            const c = groups_below_target_option_occurrence_sum
+            const d = groups_below_occurrence_sum - groups_below_target_option_occurrence_sum
+
+            const odds_ratio = (a * d) / (b * c) //POR
+            const relative_risk = (a / (a + c)) / (b / (b + d)) //PRR
+
             column.riskIncrease = {
                 risk_factor_groups: groups_true,
                 name: name_above,
                 risk_difference: risk_difference,
                 risk_multiplier: risk_multiplier,
                 risk_min: risk_min,
+                odds_ratio: odds_ratio,
+                relative_risk: relative_risk,
                 absolute_risk: above_percentage.toFixed(3)
             }
         },

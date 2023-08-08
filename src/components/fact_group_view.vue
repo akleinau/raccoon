@@ -100,6 +100,11 @@
                                         column['significance'].score[scoreStore.score] > 0 ? "yes" : "no"
                                         }}
                                     </div>
+                                    <div v-if="column.riskIncrease !== undefined">
+                                        Prevalence Odds Ratio: {{column.riskIncrease.odds_ratio.toFixed(2)}} <br>
+                                        Relative Risk: {{column.riskIncrease.relative_risk.toFixed(2)}}
+                                    </div>
+
                                     <div v-if="column.correlation_with_target" class="mt-5"> Correlation with Target:
                                         {{ column['correlation_with_target'].toFixed(2) }}
                                     </div>
