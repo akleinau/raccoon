@@ -88,7 +88,7 @@ export default {
 
             //annotations
             if (!this.preview && !vis["annotation"]) {
-                let annotations = this.annotationStore.compute_annotations(this.column, vis.type, vis.unit, vis.grid)
+                let annotations = this.annotationStore.compute_annotations(this.column, vis.type, vis.unit, vis.grid, vis.data)
                 if (annotations.length > 1) { //greater than 1 because of the custom annotation
                     vis["annotation"] = annotations[0]
                 } else {

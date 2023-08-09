@@ -15,7 +15,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
          * @param grid
          * @returns {*[]}
          */
-        compute_annotations(summary, type, unit = null, grid = null) {
+        compute_annotations(summary, type, unit = null, grid = null, data = null) {
             if (type === "significance") {
                 return this.compute_significance_annotations(summary, unit, grid)
             }
@@ -24,6 +24,9 @@ export const useAnnotationStore = defineStore('annotationStore', {
             }
             if (type === "similarity") {
                 return this.compute_similarity_annotations(summary)
+            }
+            if (type === "context") {
+                return this.compute_context_annotations(summary, unit, grid, data)
             }
             return []
         },
@@ -72,7 +75,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     if (unit === "percent") {
                         value = (value * 100).toFixed(0) + "%"
                         text = "$rows with a $column of " + summary.riskIncrease.name + " have a " +
-                                    value + " or higher risk of $target_label"
+                            value + " or higher risk of $target_label"
                     }
                     if (unit === "natural_frequencies") {
                         value = (value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
@@ -176,7 +179,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
          */
         compute_similarity_annotations(summary) {
             let annotations = []
-            annotations.push({"text": [[{"text": "custom", "color": "black"}]], "target": [], "score": 0}) //empty annotation
+            annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
             //similar dashboard columns
             let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(summary)
                 .sort((a, b) => b.similarity - a.similarity)
@@ -194,6 +197,45 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     "score": 10
                 })
             }
+
+            return annotations.sort((a, b) => b.score - a.score)
+        },
+
+        compute_context_annotations(summary, unit, grid, data) {
+            let annotations = []
+            annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
+
+            const max_item = data.sort((a, b) => b[1] - a[1])[0]
+
+            let text = []
+            if (summary.name === "RiskIncrease") {
+                text = [{
+                    "text": '$rows with ' + max_item.name + ' have a ' + max_item.value +
+                        ' higher likelihood of $target_label than the rest', "color": "black"
+                }]
+
+            } else if (summary.name === "AbsoluteValues") {
+                let value = 0
+                let valueText = ""
+                if (unit === "percent") {
+                    value = (max_item.value * 100).toFixed(0) + "%"
+                    valueText = '$rows with ' + max_item.name + ' have a ' + value +
+                        ' likelihood of $target_label'
+                }
+                if (unit === "natural_frequencies") {
+                    value = (max_item.value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
+                    valueText = value + " $rows with " + max_item.name + ' have $target_label'
+                }
+                text = [{
+                    "text": valueText, "color": "black"
+                }]
+
+            } else if (summary.name === "Influence") {
+                text = [{"text": max_item.name + ' has the strongest influence on the model', "color": "black"}]
+            }
+
+
+            annotations.push({"text": text, "target": [max_item.name], "score": 5}) //empty annotation
 
             return annotations.sort((a, b) => b.score - a.score)
         }
