@@ -95,7 +95,7 @@ export const useRegressionStore = defineStore('regressionStore', {
                     count_neg++
                 }
             }
-            return ((error_pos / count_pos) + (error_neg / count_neg)) * 100
+            return 0.5*((error_pos / count_pos) + (error_neg / count_neg)) * 100
         },
         /**
          * calculate f-score

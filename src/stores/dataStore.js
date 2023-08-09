@@ -145,10 +145,9 @@ export const useDataStore = defineStore('dataStore', {
         },
         /**
          * calculates pretty extents for continuous columns.
-         * Favors step sizes that are powers of 10 and ranges that are multiples of 10
+         * Favors step sizes that are powers of 5 and ranges that are multiples of 5
          *
          * @param options
-         * @param steps
          * @returns {(number|number)[]}
          */
         calculate_pretty_bins(options) {
@@ -326,8 +325,8 @@ export const useDataStore = defineStore('dataStore', {
                 risk_difference: risk_difference,
                 risk_multiplier: risk_multiplier,
                 risk_min: risk_min,
-                odds_ratio: odds_ratio,
-                relative_risk: relative_risk,
+                odds_ratio: odds_ratio.toFixed(2),
+                relative_risk: relative_risk.toFixed(2),
                 absolute_risk: above_percentage.toFixed(3)
             }
         },

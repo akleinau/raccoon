@@ -102,14 +102,19 @@
                                         </v-chip>
                                         <v-btn @click="panels = ['groups']" variant="text" class="ml-3 mb-1" prepend-icon="mdi-pencil" >change</v-btn> <br>
 
-                                        Prevalence Odds Ratio: {{column.riskIncrease.odds_ratio.toFixed(2)}} <br>
-                                        Relative Risk: {{column.riskIncrease.relative_risk.toFixed(2)}}
+                                        Prevalence Odds Ratio: {{column.riskIncrease.odds_ratio}} <br>
+                                        Relative Risk: {{column.riskIncrease.relative_risk}}
                                     </div>
 
-                                    <div v-if="column.significance"> improves model despite selected confounding factors:
+                                    <div v-if="column.significance && !dashboardStore.dashboard_items.find(d => d.name === column.name)">
+                                        improves model despite selected confounding factors:
                                         {{
-                                        column['significance'].score[scoreStore.score] > 0 ? "yes" : "no"
+                                        column['significance'].score['regression'] > 0 ? "yes" : "no"
                                         }}
+                                    </div>
+                                    <div v-if="column.significance && dashboardStore.dashboard_items.find(d => d.name === column.name)">
+                                        model influence strength:
+                                        {{column['significance'].score['regression'].toFixed(2)}}
                                     </div>
 
                                     <div v-if="column.correlation_with_target" class="mt-5"> Correlation with Target:

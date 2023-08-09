@@ -68,11 +68,13 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                 d.column.riskIncrease !== undefined)
             if (risk_factor_items.length > 0) {
                 const options = risk_factor_items.map(item => ({
-                    "name": item.column.riskIncrease.name,
+                    "name":  item.column.label + ": " + item.column.riskIncrease.name,
                     "label": item.column.label + ": " + item.column.riskIncrease.name
                 }))
 
                 const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
+                const max_weight = Math.max(...risk_factor_items.map(item => item.column['significance'].score['regression'])) +1
+
                 fact_groups.push(
                     //relative risk increase
                     {
@@ -83,25 +85,12 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                 value: item.column.riskIncrease.risk_multiplier
                             })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
+                            graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "How many times higher is the risk of $target_label?", color: "black"}],
-                            axis: [{text: "risk increase relative to $rows not in risk groups", color: "black"}]
+                            title: [{text: "$target_label", color: "$color"}, {text: " risk increase when exposed", color: "black"}],
+                            axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}]
                         }],
-                        "column": {name: "RelativeIncrease", label: "Relative Risk Increase", options: options}
-                    },
-                    //absolute risk increase
-                    {
-                        "visList": [{
-                            type: "context",
-                            data: risk_factor_items.map(item => ({
-                                name: item.column.label + ": " + item.column.riskIncrease.name,
-                                value: item.column.riskIncrease.risk_difference
-                            })).sort((a, b) => b.value - a.value),
-                            range: [0, 1],
-                            title: [{text: "Risk increase per risk factor", color: "black"}],
-                            axis: [{text: "difference in risk with/ without factor", color: "black"}]
-                        }],
-                        "column": {name: "AbsoluteIncrease", label: "Absolute Risk Increase", options: options}
+                        "column": {name: "RiskIncrease", label: "Risk Increase", options: options}
                     },
                     //absolute risk
                     {
@@ -111,18 +100,37 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                 name: item.column.label + ": " + item.column.riskIncrease.name,
                                 value: item.column.riskIncrease.absolute_risk
                             })).sort((a, b) => b.value - a.value),
-                            range: [0, 1],
                             graph: "pictograph",
+                            range: [0, 1],
+                            unit: "percent",
                             title: [{text: "Likelihood of ", color: "black"},
                                 {text: " $target_label", color: "$color"}, {
-                                    text: " per risk factor",
+                                    text: " per exposed risk",
                                     color: "black"
                                 }],
-                            axis: [{text: "Likelihood of ", color: "black"},
-                                {text: " $target_label", color: "$color"}, ]
+                            axis: [{text: "$target_label", color: "$color"},
+                                {text: " likelihood when exposed", color: "black"}, ]
                         }],
-                        "column": {name: "AbsoluteValues", label: "Absolute Risks", options: options}
-                    })
+                        "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options}
+                    },
+                    //influence strength
+                    {
+                        "visList": [{
+                            type: "context",
+                            data: risk_factor_items.map(item => ({
+                                name: item.column.label,
+                                value: item.column['significance'].score['regression'].toFixed(2)
+                            })).sort((a, b) => b.value - a.value),
+                            range: [0, Math.round(max_weight)],
+                            graph: "bar",
+                            unit: "natural_frequencies",
+                            title: [{text: "influence in regression model", color: "black"}],
+                            axis: [{text: "(maximal) weight of factor", color: "black"}]
+                        }],
+                        "column": {name: "Influence", label: "Influence", options: options}
+                    }
+
+                    )
             }
 
             return fact_groups
