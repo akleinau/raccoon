@@ -87,7 +87,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, Math.round(max_risk_multiplier)],
                             graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "$target_label", color: "$color"}, {text: " risk increase when exposed", color: "black"}],
+                            title: [{text: "$outcome", color: "$color"}, {text: " risk increase when exposed", color: "black"}],
                             axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}]
                         }],
                         "column": {name: "RiskIncrease", label: "Risk Increase", options: options}
@@ -104,11 +104,11 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, 1],
                             unit: "percent",
                             title: [{text: "Likelihood of ", color: "black"},
-                                {text: " $target_label", color: "$color"}, {
+                                {text: " $outcome", color: "$color"}, {
                                     text: " per exposed risk",
                                     color: "black"
                                 }],
-                            axis: [{text: "$target_label", color: "$color"},
+                            axis: [{text: "$outcome", color: "$color"},
                                 {text: " likelihood when exposed", color: "black"}, ]
                         }],
                         "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options}

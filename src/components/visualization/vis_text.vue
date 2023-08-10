@@ -50,13 +50,13 @@ export default {
 
                         return [{
                             text: (value * grid_size).toFixed(0) + "/" + grid_size + " $rows with $column: " + label +
-                                " have $target_label",
+                                " have $outcome",
                             color: this.vis.color
                         }]
                     } else {
                         return [{
                             text: "$rows with $column: " + label + " have a " +
-                                (value * 100).toFixed(0) + "% chance of having $target_label",
+                                (value * 100).toFixed(0) + "% chance of having $outcome",
                             color: this.vis.color
                         }]
                     }
@@ -110,7 +110,7 @@ export default {
                             color: this.vis.color
                         },
                         {
-                            text: "$target_label.",
+                            text: "$outcome.",
                             color: this.vis.color,
                             weight: "italic"
                         },
@@ -132,7 +132,7 @@ export default {
                             color: this.vis.color
                         },
                         {
-                            text: "$target_label.",
+                            text: "$outcome.",
                             color: this.vis.color,
                             weight: "italic"
                         },

@@ -58,7 +58,7 @@
 
                     <!-- Page 1: Target selection -->
                     <div v-if="page === 1">
-                        <h1 class="d-flex justify-center mt-6"> Choose target</h1>
+                        <h1 class="d-flex justify-center mt-6"> Choose outcome</h1>
 
                         <!-- help -->
                         <div class="d-flex justify-center">
@@ -70,14 +70,14 @@
                                 <v-card title="Help">
                                     <v-card-text>
                                         <div class="mb-2">
-                                            Your target is the disease or hazard for which you want to
+                                            Your outcome is the disease or hazard for which you want to
                                             compute risk factors.
                                         </div>
                                         <div class="mb-2">
-                                            First select as <b>target</b> a column of your dataset.
+                                            First select as <b>outcome column</b> a column of your dataset.
                                         </div>
                                         <div class="mb-2">
-                                            Then select as <b>target option</b> one of the values that the column contains.
+                                            Then select as <b>outcome option</b> one of the values that the column contains.
                                         </div>
                                         <div class="mb-2">
                                             Afterwards you can customize the <b>label</b> to improve readability.
@@ -90,18 +90,18 @@
 
 
                         <div v-if="dataStore.column_names.length !== 0" class="mt-3">
-                            <v-autocomplete v-model="dataStore.target_column" class="px-5" label="Select target"
+                            <v-autocomplete v-model="dataStore.target_column" class="px-5" label="Select outcome column"
                                             :items="dataStore.column_names" style="min-width: 500px"
                                             @update:modelValue="target_selected"/>
                         </div>
 
                         <div v-if="dataStore.target_all_options.length !== 0">
-                            <v-autocomplete v-model="dataStore.target_option" class="px-5" label="Select target option"
+                            <v-autocomplete v-model="dataStore.target_option" class="px-5" label="Select outcome option"
                                             :items="dataStore.target_all_options"
                                             @update:modelValue="target_option_selected"/>
                         </div>
                         <div class="px-5 pb-5 pt-3" v-if="dataStore.target_option">
-                            <div>Customize target label:</div>
+                            <div>Customize outcome label:</div>
                             <v-text-field v-model="dataStore.target_label"
                                           :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
                             ></v-text-field>

@@ -81,10 +81,10 @@
                                             <v-chip v-if="item.title === 'regression'" size="x-small" class="ml-2">default</v-chip>
                                         <v-tooltip activator="parent" location="left" content-class="bg-grey-darken-2">
                                             <span v-if="item.title === 'correlation'">
-                                                Sort risk factors by their correlation with the target.
+                                                Sort risk factors by their correlation with the outcome.
                                             </span>
                                             <span v-if="item.title === 'regression'">
-                                                Sort risk factors by their ability to predict the target using linear regression,
+                                                Sort risk factors by their ability to predict the outcome using linear regression,
                                                 considering confounding factors.
                                             </span>
                                              <span v-if="item.title === 'odds_ratio'">

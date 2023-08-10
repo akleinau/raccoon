@@ -61,7 +61,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 annotations.push({
                     "text": [{
                         "text": value + " of $rows with a $column of " +
-                            summary.options.find(d => d.name === greatest_significance).label + " have $target_label",
+                            summary.options.find(d => d.name === greatest_significance).label + " have $outcome",
                         "color": "black"
                     }],
                     "target": [greatest_significance],
@@ -75,11 +75,11 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     if (unit === "percent") {
                         value = (value * 100).toFixed(0) + "%"
                         text = "$rows with a $column of " + summary.riskIncrease.name + " have a " +
-                            value + " or higher risk of $target_label"
+                            value + " or higher risk of $outcome"
                     }
                     if (unit === "natural_frequencies") {
                         value = (value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
-                        text = value + " or more $rows with a $column of " + summary.riskIncrease.name + " have $target_label"
+                        text = value + " or more $rows with a $column of " + summary.riskIncrease.name + " have $outcome"
                     }
                     annotations.push({
                         "text": [
@@ -211,7 +211,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
             if (summary.name === "RiskIncrease") {
                 text = [{
                     "text": '$rows with ' + max_item.name + ' have a ' + max_item.value +
-                        ' higher likelihood of $target_label than the rest', "color": "black"
+                        ' higher likelihood of $outcome than the rest', "color": "black"
                 }]
 
             } else if (summary.name === "AbsoluteValues") {
@@ -220,11 +220,11 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 if (unit === "percent") {
                     value = (max_item.value * 100).toFixed(0) + "%"
                     valueText = '$rows with ' + max_item.name + ' have a ' + value +
-                        ' likelihood of $target_label'
+                        ' likelihood of $outcome'
                 }
                 if (unit === "natural_frequencies") {
                     value = (max_item.value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
-                    valueText = value + " $rows with " + max_item.name + ' have $target_label'
+                    valueText = value + " $rows with " + max_item.name + ' have $outcome'
                 }
                 text = [{
                     "text": valueText, "color": "black"
