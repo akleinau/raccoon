@@ -13,6 +13,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
          * @param type
          * @param unit
          * @param grid
+         * @param data
          * @returns {*[]}
          */
         compute_annotations(summary, type, unit = null, grid = null, data = null) {
@@ -20,7 +21,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 return this.compute_significance_annotations(summary, unit, grid)
             }
             if (type === "impact") {
-                return this.compute_impact_annotations(summary)
+                return this.compute_impact_annotations(summary, unit)
             }
             if (type === "similarity") {
                 return this.compute_similarity_annotations(summary)
@@ -128,7 +129,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
          * @param summary
          * @returns {*[]}
          */
-        compute_impact_annotations(summary) {
+        compute_impact_annotations(summary, unit) {
             let annotations = []
             annotations.push({"text": [{"text": "custom", "color": "black"}], "target": [], "score": 0}) //empty annotation
 
@@ -143,6 +144,32 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 "target": [greatest_occurrence[0]],
                 "score": 7
             })
+
+            //risk factor
+            if (summary.riskIncrease !== undefined && summary.riskIncrease.risk_factor_groups.length >= 1) {
+                let value = summary.riskIncrease.occurrence_sum
+                let occurrence_all = Object.values(summary.occurrence).reduce((a, b) => a + b, 0)
+                let text = ""
+                if (unit === "percent") {
+                    value = (100*value / occurrence_all).toFixed(0) + "%"
+                    text = value + " of $rows have a $column of " + summary.riskIncrease.name
+                }
+                if (unit === "natural_frequencies") {
+                    text = value + " $rows have a $column of " + summary.riskIncrease.name
+                }
+                annotations.push({
+                    "text": [
+                        {
+                            "text": text,
+                            "color": "black"
+                        },
+                    ],
+                    "target": summary.riskIncrease.risk_factor_groups,
+                    "score": 3
+                })
+
+            }
+
 
             let under_hundred = Object.entries(summary.occurrence).filter(([_, value]) => value < 100)
             if (under_hundred.length > 0) {
@@ -211,7 +238,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
             if (summary.name === "RiskIncrease") {
                 text = [{
                     "text": '$rows with ' + max_item.name + ' have a ' + max_item.value +
-                        ' higher likelihood of $outcome than the rest', "color": "black"
+                        'x higher likelihood of $outcome than the rest', "color": "black"
                 }]
 
             } else if (summary.name === "AbsoluteValues") {

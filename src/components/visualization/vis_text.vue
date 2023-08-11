@@ -96,17 +96,17 @@ export default {
                 if (significance_unit === "natural_frequencies") {
                     array.push(
                         {
-                            text: "Most people have a ",
+                            text: "Most $rows have a ",
                             color: this.vis.color
                         },
                         {
-                            text: "$column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label,
+                            text: "$column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + ".",
                             color: this.vis.color,
                             weight: "italic"
                         },
                         {
-                            text: " with a likelihood of " +
-                                (this.column.percent_target_option[greatest_occurrence[0]] * grid_size).toFixed(0) + "/" + grid_size + " $rows having ",
+                            text: " Of those, " +
+                                (this.column.percent_target_option[greatest_occurrence[0]] * grid_size).toFixed(0) + "/" + grid_size + " $rows have ",
                             color: this.vis.color
                         },
                         {
@@ -118,17 +118,17 @@ export default {
                 } else {
                     array.push(
                         {
-                            text: "Most people have a ",
+                            text: "Most $rows have a ",
                             color: this.vis.color
                         },
                         {
-                            text: "$column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label,
+                            text: "$column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + ".",
                             color: this.vis.color,
                             weight: "italic"
                         },
                         {
-                            text: " resulting in a " +
-                                (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% likelihood of ",
+                            text: " Of those, " +
+                                (this.column.percent_target_option[greatest_occurrence[0]] * 100).toFixed(0) + "% have ",
                             color: this.vis.color
                         },
                         {
@@ -164,7 +164,7 @@ export default {
                     } else if (significance_unit === "natural_frequencies") {
                         array.push(
                             {
-                                text: " For people with a ",
+                                text: " For $rows with a ",
                                 color: this.vis.color
                             },
                             {
@@ -181,7 +181,7 @@ export default {
                     } else {
                         array.push(
                             {
-                                text: " For people with a ",
+                                text: " For $rows with a ",
                                 color: this.vis.color
                             },
                             {

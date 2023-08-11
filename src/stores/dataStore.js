@@ -327,7 +327,8 @@ export const useDataStore = defineStore('dataStore', {
                 risk_min: risk_min,
                 odds_ratio: odds_ratio.toFixed(2),
                 relative_risk: relative_risk.toFixed(2),
-                absolute_risk: above_percentage.toFixed(3)
+                absolute_risk: above_percentage.toFixed(3),
+                occurrence_sum: groups_above_occurrence_sum
             }
         },
         /**
@@ -364,7 +365,18 @@ export const useDataStore = defineStore('dataStore', {
                 })
 
             }
-            return group_options.reduce((a, b) => a + ", " + b.label, "").substring(2) //remove first comma
+
+            //combine labels with comma and last one with or
+            if (group_options.length === 1) {
+                return group_options.reduce((a, b) => a + ", " + b.label, "").substring(2) //remove first comma
+            }
+            else {
+                //get last one
+                let last = group_options[group_options.length - 1]
+                let remaining_options = group_options.slice(0, group_options.length - 1)
+                return remaining_options.reduce((a, b) => a + ", " + b.label, "").substring(2) +  " or " + last.label
+            }
+
         },
         /**
          * recalculates a variable summaries when the option bins are changed. For now, people that do not fit in any of

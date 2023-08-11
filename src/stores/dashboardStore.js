@@ -97,6 +97,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     this.default_settings[key].unit = "natural_frequencies"
                 })
                 this.default_settings["impact"].graph = "pie"
+                this.default_settings["impact"].unit = "percent"
             }
         },
         /**
