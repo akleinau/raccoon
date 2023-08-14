@@ -188,10 +188,10 @@ export const useDashboardStore = defineStore('dashboardStore', {
         /**
          * remove column as confounding factor
          *
-         * @param column
+         * @param name
          */
-        remove_confounding_factor(column) {
-            this.confounding_factors = this.confounding_factors.filter(d => d !== column.name)
+        remove_confounding_factor(name) {
+            this.confounding_factors = this.confounding_factors.filter(d => d !== name)
         },
         /**
          * exclude column
