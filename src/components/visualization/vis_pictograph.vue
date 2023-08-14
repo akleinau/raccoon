@@ -220,9 +220,8 @@ export default {
                 .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
-                .style("font-weight", this.preview ? "" : "bold")
                 .style("font-size", this.preview ? "1em" : "1.1em")
-            this.visHelperStore.append_tspans(title, this.vis.title, this.column)
+            this.visHelperStore.append_tspans(title, this.vis.title, this.column, this.preview)
 
             //annotations
             //use this.getComputedTextLength to split up into multiple parts?
@@ -236,7 +235,6 @@ export default {
                         .attr("x", width + margin.left + margin.right + gap)
                         .attr("y", mean_y + i * 15 + row_height / 2)
                         .attr("width", 200)
-                        .style("font-style", "italic")
                         .attr("dy", 7*this.vis.ratio)
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })

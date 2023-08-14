@@ -63,8 +63,9 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
          * @param el
          * @param text
          * @param column
+         * @param preview
          */
-        append_tspans(el, text, column) {
+        append_tspans(el, text, column, preview = false) {
             let text_array = useHelperStore().parse_text(text, column)
 
             el.selectAll("tspan")
@@ -72,6 +73,8 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 .join("tspan")
                 .text(d => d.text)
                 .style("fill", d => d.color)
+                .style("font-weight", d => d.weight && !preview ? "bold" : "normal")
+                .style("font-style", d => d.italic && !preview? "italic" : "normal")
         },
         /**
          * returns background color. If background is set to auto, an appropriate color is selected. Else the background color is returned.

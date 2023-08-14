@@ -219,7 +219,6 @@ export default {
                         .attr("x", width + margin.left + gap)
                         .attr("y", mean_y + i * 15 + y_options.bandwidth() / 2)
                         .attr("width", 200)
-                        .style("font-style", "italic")
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
 

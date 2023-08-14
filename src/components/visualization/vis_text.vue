@@ -2,7 +2,11 @@
     <div :style="'width: ' + +(width*vis.size) + 'px; font-size: ' + font_size + 'rem; font-family: ' + vis.font_family"
          class="pb-3" v-if="!(preview && vis.type==='overall')">
         <span v-for="item in helperStore.parse_text(generate_text, column)" v-bind:key=item
-              :style="'color: ' + item.color + ';font-style:' + item.weight">{{ item.text }}</span>
+              :style="'color: ' + item.color +
+              ' ; font-style: ' + (item.italic? 'italic' : 'normal') +
+              ' ; font-weight: ' + (item.weight? 'bold' : 'normal')">
+            {{ item.text }}
+        </span>
     </div>
     <div v-else></div>
 </template>
@@ -102,7 +106,7 @@ export default {
                         {
                             text: "$column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + ".",
                             color: this.vis.color,
-                            weight: "italic"
+                            italic: true
                         },
                         {
                             text: " Of those, " +
@@ -112,7 +116,7 @@ export default {
                         {
                             text: "$outcome.",
                             color: this.vis.color,
-                            weight: "italic"
+                            italic: true
                         },
                     )
                 } else {
@@ -124,7 +128,7 @@ export default {
                         {
                             text: "$column of " + this.column.options.find(d => d.name === greatest_occurrence[0]).label + ".",
                             color: this.vis.color,
-                            weight: "italic"
+                            italic: true
                         },
                         {
                             text: " Of those, " +
@@ -134,7 +138,7 @@ export default {
                         {
                             text: "$outcome.",
                             color: this.vis.color,
-                            weight: "italic"
+                            italic: true
                         },
                     )
                 }
@@ -148,7 +152,7 @@ export default {
                         {
                             text: "$column.",
                             color: this.vis.color,
-                            weight: "italic"
+                            italic: true
                         }
                     )
                 } else if (this.column.significance !== undefined) {
@@ -170,7 +174,7 @@ export default {
                             {
                                 text: "$column of " + label,
                                 color: this.vis.color,
-                                weight: "italic"
+                                italic: true
                             },
                             {
                                 text: " the likelihood increases to " +
@@ -187,7 +191,7 @@ export default {
                             {
                                 text: "$column of " + label,
                                 color: this.vis.color,
-                                weight: "italic"
+                                italic: true
                             },
                             {
                                 text: " the likelihood increases to " +

@@ -271,7 +271,7 @@
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['text']" label="Custom"/>
                 <text_input :text="vis.text" :default="[]"
-                            @change="vis.text = $event" :color="get_color()"
+                            @change="vis.text = $event" :color="dashboardStore.default_colors.text"
                             :disabled="!has_attribute['text']"/>
                 <v-btn @click="makeDefault('text')" :disabled="!has_attribute['text']"
                        variant="tonal">

@@ -87,7 +87,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, Math.round(max_risk_multiplier)],
                             graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "$outcome", color: "$color"}, {text: " risk increase when exposed", color: "black"}],
+                            title: [{text: "$outcome", color: "$color", weight: true}, {text: " risk increase when exposed", color: "black", weight: true}],
                             axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}]
                         }],
                         "column": {name: "RiskIncrease", label: "Risk Increase", options: options}
@@ -106,7 +106,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             title: [{text: "Likelihood of ", color: "black"},
                                 {text: " $outcome", color: "$color"}, {
                                     text: " per exposed risk",
-                                    color: "black"
+                                    color: "black", weight: true
                                 }],
                             axis: [{text: "$outcome", color: "$color"},
                                 {text: " likelihood when exposed", color: "black"}, ]
@@ -124,7 +124,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, Math.round(max_weight)],
                             graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "influence in regression model", color: "black"}],
+                            title: [{text: "influence in regression model", color: "black", weight: true}],
                             axis: [{text: "(maximal) weight of factor", color: "black"}]
                         }],
                         "column": {name: "Influence", label: "Influence", options: options}
