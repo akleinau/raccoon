@@ -108,13 +108,13 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 d.column.riskIncrease !== undefined)
 
             const options = risk_factor_items.map(item => ({
-                "name": item.column.riskIncrease.name,
+                "name": item.column.label + ": " + item.column.riskIncrease.name,
                 "label": item.column.label + ": " + item.column.riskIncrease.name
             }))
 
             const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
             this.dashboard_items.forEach(item => {
-                if (item.column.name === "RelativeIncrease") {
+                if (item.column.name === "RiskIncrease") {
                     item.visList.forEach(vis => {
                         vis.data = risk_factor_items.map(item => ({
                             name: item.column.riskIncrease.name,
@@ -124,20 +124,20 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     })
                     item.column.options = options
                 }
-                if (item.column.name === "AbsoluteIncrease") {
-                    item.visList.forEach(vis => {
-                        vis.data = risk_factor_items.map(item => ({
-                            name: item.column.riskIncrease.name,
-                            value: item.column.riskIncrease.risk_difference
-                        })).sort((a, b) => b.value - a.value)
-                    })
-                    item.column.options = options
-                }
                 if (item.column.name === "AbsoluteValues") {
                     item.visList.forEach(vis => {
                         vis.data = risk_factor_items.map(item => ({
                             name: item.column.riskIncrease.name,
                             value: item.column.riskIncrease.absolute_risk
+                        })).sort((a, b) => b.value - a.value)
+                    })
+                    item.column.options = options
+                }
+                if (item.column.name === "Influence") {
+                    item.visList.forEach(vis => {
+                        vis.data = risk_factor_items.map(item => ({
+                            name: item.column.label,
+                            value: item.column['significance'].score['regression'].toFixed(2)
                         })).sort((a, b) => b.value - a.value)
                     })
                     item.column.options = options
