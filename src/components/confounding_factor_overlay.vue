@@ -8,14 +8,14 @@
 
         </template>
         <v-card>
-            <v-card-title class="mx-3">Confounding Factors</v-card-title>
+            <v-card-title class="mx-3">interaction terms</v-card-title>
             <v-card-text>
                 <div class="d-flex ml-2">
                     <v-icon class="mr-2">mdi-help-circle-outline</v-icon>
                     <span>
-                    Raccoon will consider all selected risk factors of the dashboard as confounding factors. <br>
+                    Raccoon will consider all selected risk factors of the dashboard as interaction terms. <br>
                     Risk factor suggestions will consider if the observed
-                    risk increase can already be explained by the confounding factors. <br>
+                    risk increase can already be explained by the interaction terms. <br>
                     Eg. Obesity increases the risk of diabetes.
                     However, this increase is already explained by the correlation between obesity and bmi.
                     </span>
@@ -62,7 +62,7 @@ export default {
     },
     methods: {
         /**
-         * Update the list of confounding factors
+         * Update the list of interaction terms
          */
         update_factors() {
             this.confounding_factors = this.dashboardStore.dashboard_items
@@ -75,7 +75,7 @@ export default {
             }))
         },
         /**
-         * when the user clicks on a checkbox, the corresponding column is added or removed from the list of confounding factors
+         * when the user clicks on a checkbox, the corresponding column is added or removed from the list of interaction terms
          *
          * @param item
          */

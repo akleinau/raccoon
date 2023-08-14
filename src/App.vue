@@ -85,7 +85,7 @@
                                             </span>
                                             <span v-if="item.title === 'regression'">
                                                 Sort risk factors by their ability to predict the outcome using linear regression,
-                                                considering confounding factors.
+                                                considering interaction terms.
                                             </span>
                                              <span v-if="item.title === 'odds_ratio'">
                                                 Sort risk factors by the Prevalence Odds Ratio  calculated from the risk groups.
@@ -103,9 +103,9 @@
                     </div>
                 </v-card-title>
 
-                <!-- Confounding Factors -->
+                <!-- interaction terms -->
                 <div class="ml-3 mb-2" :style="scoreStore.score !== 'regression'? 'visibility:hidden' : ''">
-                    Confounding factors:
+                    Interaction terms:
                     <span v-for="name in dashboardStore.confounding_factors" v-bind:key="name" class="ml-2">
                         <v-chip variant="elevated" class="bg-shades-white">
                             {{dashboardStore.dashboard_items.find(d => d.column.name === name).column.label}}

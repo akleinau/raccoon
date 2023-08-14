@@ -107,7 +107,7 @@
                                     </div>
 
                                     <div v-if="column.significance && !dashboardStore.dashboard_items.find(d => d.name === column.name)">
-                                        improves model despite selected confounding factors:
+                                        improves model despite selected interaction terms:
                                         {{
                                         column['significance'].score['regression'] > 0 ? "yes" : "no"
                                         }}
