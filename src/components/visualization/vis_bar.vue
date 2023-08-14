@@ -166,7 +166,6 @@ export default {
                 .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
-                .style("font-weight", this.preview ? "" : "bold")
                 .style("font-size", this.preview ? "1em" : "1.1em")
             this.visHelperStore.append_tspans(title, this.vis.title, this.column, this.preview)
 
