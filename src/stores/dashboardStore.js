@@ -117,7 +117,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 if (item.column.name === "RiskIncrease") {
                     item.visList.forEach(vis => {
                         vis.data = risk_factor_items.map(item => ({
-                            name: item.column.riskIncrease.name,
+                            name: item.column.label + ": " + item.column.riskIncrease.name,
                             value: item.column.riskIncrease.risk_multiplier
                         })).filter(d => d.value !== null).sort((a, b) => b.value - a.value)
                         vis.range = [0, Math.round(max_risk_multiplier)]
@@ -127,7 +127,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 if (item.column.name === "AbsoluteValues") {
                     item.visList.forEach(vis => {
                         vis.data = risk_factor_items.map(item => ({
-                            name: item.column.riskIncrease.name,
+                            name: item.column.label + ": " + item.column.riskIncrease.name,
                             value: item.column.riskIncrease.absolute_risk
                         })).sort((a, b) => b.value - a.value)
                     })
