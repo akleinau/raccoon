@@ -56,15 +56,20 @@ export default {
         visualize(data) {
             let startBarX = this.helperStore.get_max_length(
                 this.use_column_group_names ? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
-            if (this.preview || this.vis.pie_labels === "inside") {
-                startBarX = 0
-            }
             let margin_colors = 30
             startBarX = startBarX + margin_colors
             let margin_bottom = this.preview ? 20 : 50
             let margin = {top: 30, bottom: margin_bottom, left: startBarX, right: 5}
 
             let width = (this.width ? this.width : 300) * this.vis.size - margin.right
+
+            if (this.preview || this.vis.pie_labels === "inside") {
+                const margin_axis = 40
+                width += startBarX -margin_colors - margin_axis
+                margin.left=margin_axis
+                startBarX = 0
+            }
+
             let height = 200
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
 
@@ -214,7 +219,7 @@ export default {
 
             //title
             let title = svg.append("text")
-                .attr("x", margin.left + ( width + margin.right) / 2)
+                .attr("x", margin.left + (width + margin.right) / 2)
                 .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
