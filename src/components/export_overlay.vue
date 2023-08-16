@@ -14,7 +14,7 @@
 
                 <div v-for="item in items" v-bind:key="item" >
                     <v-divider></v-divider>
-                    <h2 class="ma-3 d-flex justify-center w-100">{{ item.column.name }} </h2>
+                    <h2 class="ma-3 d-flex justify-center w-100">{{ item.column.label }} </h2>
                     <div v-for="(vis,i) in item.visList" v-bind:key="vis" class="d-flex w-100 justify-center">
                         <vis_parser :vis="vis" :column="item.column"
                                     :width="450" :index="item.start_index + i"/>
