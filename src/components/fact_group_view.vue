@@ -362,6 +362,7 @@ export default {
             this.dashboardStore.current_fact_index = null
             this.dashboardStore.current_fact_group = null
             this.dashboardStore.current_fact_group_exports = []
+            this.dashboardStore.update_dashboard_context()
         },
         /**
          * adds the fact group to the dashboard
