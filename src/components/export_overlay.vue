@@ -124,7 +124,7 @@ export default {
                         })
                     } else if (exp.type === "text") {
                         data.content.push({
-                            text: this.helperStore.parse_text(exp.item, item.column).map(d => d.text).join(' '),
+                            text: this.helperStore.parse_text(exp.item, item.column).map(d => d.text).join(''),
                             style: 'text',
                             margin: [0, 0, 0, 15]
                         })
