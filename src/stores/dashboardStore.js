@@ -91,6 +91,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     this.default_settings[key].unit = "natural_frequencies"
                 })
                 this.default_settings["impact"].graph = "bar"
+                this.default_settings["impact"].unit = "percent"
             } else if (this.intention === "educate") {
                 ["impact", "significance", "context", "custom"].forEach((key) => {
                     this.default_settings[key].context = true
