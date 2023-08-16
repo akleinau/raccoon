@@ -21,7 +21,7 @@
                     </span>
                 </div>
                 <div v-for="item in confounding_factors" v-bind:key="item">
-                    <v-checkbox v-model="item.factor" :label="item.name" @change="factor_changed(item)" hide-details/>
+                    <v-checkbox v-model="item.factor" :label="item.column.label" @change="factor_changed(item)" hide-details/>
                 </div>
             </v-card-text>
 
@@ -83,7 +83,7 @@ export default {
             if (item.factor === true) {
                 this.dashboardStore.add_confounding_factor(item.column)
             } else {
-                this.dashboardStore.remove_confounding_factor(item.column)
+                this.dashboardStore.remove_confounding_factor(item.column.name)
             }
             this.regressionStore.compute_score()
         }
