@@ -93,11 +93,10 @@ export default {
                 let array = []
 
                 let greatest_occurrence = Object.entries(this.column.occurrence).sort((a, b) => b[1] - a[1])[0]
-                const significance_unit = this.dashboardStore.default_settings.significance.unit
-                const grid = this.dashboardStore.default_settings.significance.grid
-                const grid_size = grid[0] * grid[1]
 
-                if (significance_unit === "natural_frequencies") {
+                const grid_size = this.vis.grid[0] * this.vis.grid[1]
+
+                if (this.vis.unit === "natural_frequencies") {
                     array.push(
                         {
                             text: "Most $rows have a ",
@@ -165,7 +164,7 @@ export default {
                         array.push({
                             text: " These are also the $rows with the highest statistically significant risk."
                         })
-                    } else if (significance_unit === "natural_frequencies") {
+                    } else if (this.vis.unit === "natural_frequencies") {
                         array.push(
                             {
                                 text: " For $rows with a ",

@@ -57,6 +57,8 @@
             "overall": {
                 "graph": "text",
                 "font_size": 1,
+                "unit": "natural_frequencies",
+                "grid": [25, 2],
                 "size": 1,
                 "text": [{"text": "", "color": "black"}]
             },

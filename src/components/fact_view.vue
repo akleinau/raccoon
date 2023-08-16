@@ -335,7 +335,7 @@ export default {
                             if (attr === "graph") {
                                 this.vis["unit"] = this.get_default("unit")
                                 this.vis["context"] = this.get_default("context")
-                                if (this.has_data()) {
+                                if (this.has_data() || this.vis.type==="overall") {
                                     this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
                                     this.vis["icon"] = this.get_default("icon")
                                     this.vis["ratio"] = this.get_default("ratio")
