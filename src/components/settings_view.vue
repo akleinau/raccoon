@@ -294,6 +294,11 @@ export default {
             this.show = false
         }
     },
+    watch: {
+        current_fact_group() {
+            this.show_panels = null
+        }
+    },
     computed: {
         /**
          * given the current color, computes neighboring colors
@@ -309,6 +314,9 @@ export default {
                 if (color.h < 0) color.h += 360
             }
             return list
+        },
+        current_fact_group() {
+            return this.dashboardStore.current_fact_group
         }
     }
 }
