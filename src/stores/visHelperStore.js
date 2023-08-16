@@ -19,7 +19,7 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 }
             }
             else {
-                let max = d3.max(data, d => d.value)
+                let max = d3.max(data, d => +d.value)
                 let margin = 0.05 //percent added as margin
                 if (vis.range === "percent") {
                     return [0, max+(max*margin)]
