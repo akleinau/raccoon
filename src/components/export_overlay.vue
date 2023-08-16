@@ -2,7 +2,7 @@
     <v-dialog v-model="show" style="width:95%">
         <template v-slot:activator="{ props }">
 
-            <v-btn v-bind="props" class="h-auto px-4 mx-2" variant="plain" prepend-icon="mdi-export-variant">
+            <v-btn v-bind="props" class="h-auto px-4 mx-2" :variant="textButton? 'plain' : 'elevated'" prepend-icon="mdi-export-variant">
                 Export
             </v-btn>
 
@@ -51,6 +51,9 @@ pdfMake.vfs = pdfFonts && pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : globalThis.p
 export default {
     name: "export_overlay",
     components: {vis_parser},
+    props: [
+        "textButton"
+    ],
     setup() {
         const dashboardStore = useDashboardStore()
         const helperStore = useHelperStore()

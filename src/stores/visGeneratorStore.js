@@ -102,9 +102,9 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).sort((a, b) => b.value - a.value),
                             graph: "pictograph",
                             range: [0, 1],
-                            title: [{text: "Likelihood of ", color: "black"},
-                                {text: " $outcome", color: "$color"}, {
-                                    text: " per exposed risk",
+                            title: [{text: "Risk of ", color: "black", weight: true},
+                                {text: " $outcome", color: "$color", weight: true}, {
+                                    text: " when exposed",
                                     color: "black", weight: true
                                 }],
                             axis: [{text: "$outcome", color: "$color"},

@@ -19,7 +19,7 @@
                     <h2>
                         Your Dashboard
                         <dashboard_overlay text-button="true"/>
-                        <export_overlay />
+                        <export_overlay text-button="true"/>
                     </h2>
                 </v-card-title>
 

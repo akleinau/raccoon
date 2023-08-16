@@ -21,6 +21,7 @@
             <v-card-actions class="w-100 bg-grey-lighten-2 pa-5">
                 <div class="d-flex w-100">
                     <v-btn variant="elevated" class="px-9" @click="close">Close</v-btn>
+                    <export_overlay/>
                 </div>
             </v-card-actions>
         </v-card>
@@ -29,13 +30,14 @@
 
 <script>
 import fact_group_preview from "@/components/fact_group_preview.vue";
+import export_overlay from "@/components/export_overlay.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
 import {useDataStore} from "@/stores/dataStore";
 
 export default {
     name: "dashboard_overlay",
     components: {
-        fact_group_preview
+        fact_group_preview, export_overlay
     },
     props: [
         "textButton"

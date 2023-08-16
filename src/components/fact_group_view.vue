@@ -8,6 +8,7 @@
                 <div v-if="column.riskIncrease">
                     Risk group:
                     {{ column.riskIncrease.name }}
+                     <v-btn @click="panels = ['groups']" variant="text" class="ml-3 mb-1" prepend-icon="mdi-pencil" >change</v-btn>
                 </div>
             </v-card-title>
 
@@ -255,10 +256,9 @@
                         <!-- end buttons -->
                         <div class="flex-grow-1 d-flex justify-end" v-if="current_fact_group.visList.find(vis => vis.type === 'significance')">
                             <v-btn variant="text" @click="exclude" prepend-icon="mdi-delete"
-                                   v-if="!dashboardStore.excluded_columns.includes(dashboardStore.current_fact_group.column.name)">
+                                   v-if="!dashboardStore.excluded_columns.includes(column.name) && !dashboardStore.dashboard_items.find(d => d.name === column.name)">
                                 Exclude
                             </v-btn>
-                            <v-btn variant="elevated" @click="include" prepend-icon="mdi-restore" v-else>restore</v-btn>
                         </div>
                     </div>
                 </v-card-actions>
