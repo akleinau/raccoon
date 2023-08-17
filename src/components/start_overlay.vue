@@ -105,7 +105,7 @@
                             <v-text-field v-model="dataStore.target_label"
                                           :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
                             ></v-text-field>
-                            <i> Example: "The likelihood of <span class="text-primary">
+                            <i> Example: "The risk of <span class="text-primary">
                                 {{ dataStore.target_label }} </span> is X%."
                             </i>
                         </div>

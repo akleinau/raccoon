@@ -108,7 +108,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                                     color: "black", weight: true
                                 }],
                             axis: [{text: "$outcome", color: "$color"},
-                                {text: " likelihood when exposed", color: "black"}, ]
+                                {text: " risk when exposed", color: "black"}, ]
                         }],
                         "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options}
                     },

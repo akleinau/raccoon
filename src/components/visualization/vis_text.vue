@@ -145,7 +145,7 @@ export default {
                 if (this.column.significance !== undefined && this.column.significance.significant_tuples.length === 0 && this.column.options.length > 1) {
                     array.push(
                         {
-                            text: "There are no statistically significant differences in likelihood depending on ",
+                            text: "There are no statistically significant differences in risk depending on ",
                             color: this.vis.color,
                         },
                         {
@@ -176,7 +176,7 @@ export default {
                                 italic: true
                             },
                             {
-                                text: " the likelihood increases to " +
+                                text: " the risk increases to " +
                                     (value * grid_size).toFixed(0) + "/" + grid_size + " $rows.",
                                 color: this.vis.color
                             }
@@ -193,7 +193,7 @@ export default {
                                 italic: true
                             },
                             {
-                                text: " the likelihood increases to " +
+                                text: " the risk increases to " +
                                     (value * 100).toFixed(0) + "%.",
                                 color: this.vis.color
                             }
