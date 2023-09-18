@@ -1,39 +1,26 @@
-# raccoon
+# Raccoon
 
-A tool for Risk Factor Communication
+A tool for Risk Factor Communication. 
 
-# Installation
+The software RACCOON makes it possible to
+calculate risk factors directly from epidemiological data and visualize them for laypersons. 
+This enables rapid and data-based communication of
+risk factors based on current research in risk communication. The
+visualizations can be exported for presentations or data stories.
 
-This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+# Run Project
+In root directory, run the following commands:
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+### Installation
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Start the tool
 
 ```sh
 npm run serve
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
