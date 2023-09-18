@@ -212,6 +212,10 @@ export default {
         },
     },
     methods: {
+        /**
+         * computes recommendations in the three categories risk_list (risk factors), context_list (context visualizations)
+         * and general_list (general visualizations)
+         */
         recompute_recommendations() {
             this.risk_list = this.column_list
                     .filter(d => this.dashboardStore.is_recommendation_column(d)).slice(0, 5).map(column => {

@@ -56,6 +56,9 @@ export default {
                     {"text": "%", "color": "black"}]
             }
         },
+        /**
+         * computes the data to visualize, either directly or from the data_map
+         */
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {

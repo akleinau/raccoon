@@ -60,7 +60,9 @@ export default {
         get_value_float(value) {
             return (this.vis.range === "percent") ? value : (value / this.visHelperStore.get_range(this.vis)[1])
         },
-
+        /**
+         * computes the data to visualize, either directly or from the data_map
+         */
         data_to_vis() {
             let data = this.vis.data
             if (this.vis.data_map !== undefined) {

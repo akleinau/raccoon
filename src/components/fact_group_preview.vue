@@ -69,6 +69,9 @@ export default {
             this.dashboardStore.set_fact_group(this.column, this.visList)
         },
 
+        /**
+         * adds or removes the fact group from the dashboard
+         */
         move_item() {
             if (this.dashboardStore.dashboard_items.find(d => d.name === this.column.name) !== undefined) {
                 this.dashboardStore.remove_dashboard_item(this.column.name)
