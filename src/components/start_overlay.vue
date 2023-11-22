@@ -152,9 +152,17 @@
                                                 style="width:800px">
                                 <v-expansion-panel title="Additional Options">
                                     <v-expansion-panel-text>
-                                        <v-checkbox label="exclude missing values" hide-details
+                                        <div class="d-flex">
+                                            <v-checkbox class="pr-2" label="exclude missing values" hide-details
                                                     v-model="dataStore.exclude_missing"></v-checkbox>
-                                        <v-text-field label="rows equal" v-model="dataStore.row_label"></v-text-field>
+                                            <v-text-field label="rows equal" v-model="dataStore.row_label" hide-details></v-text-field>
+                                        </div>
+                                        <v-checkbox label="only consider (randomly selected) subset of observations" hide-details
+                                                    v-model="subset"></v-checkbox>
+                                        <div class="d-flex justify-end">
+                                            <v-text-field v-if="subset" label="Size of subset" v-model="row_number" type="number"></v-text-field>
+                                            <div class="px-2 text-grey-darken-1">full dataset size: {{this.dataStore.csv.length}}</div>
+                                        </div>
                                     </v-expansion-panel-text>
                                 </v-expansion-panel>
                             </v-expansion-panels>
@@ -210,7 +218,9 @@ export default {
             files: null,
             starting_items: 1,
             name: null,
-            page: 0
+            page: 0,
+            subset: false,
+            row_number: 0
         }
     },
     computed: {
@@ -239,6 +249,7 @@ export default {
                 this.dataStore.column_names = data.columns
                 this.dataStore.csv = data
                 this.dataStore.min_bin_size = Math.max(Math.floor(data.length / 20), 10) //at least 5% of people per bin
+                this.row_number = data.length
             }
             reader.readAsText(csvFile)
             this.page++
@@ -262,6 +273,9 @@ export default {
          */
         visualize() {
             this.dataStore.start = false
+            if (this.subset) {
+                this.subset_data()
+            }
             this.dashboardStore.set_initial_default_settings(this.dataStore.csv.length, this.dataStore.target_column, this.dataStore.target_option)
             this.dataStore.calc_column_list()
             this.dashboardStore.add_dashboard_item(this.dataStore.column_list.find(d => d.name === useDataStore().target_column),
@@ -300,8 +314,17 @@ export default {
             this.dataStore.target_option = "Yes"
             this.target_option_selected()
             this.dataStore.target_label = "diabetes"
+            this.row_number = data.length
 
             this.page++
+        },
+        /**
+         * only considers randomly selected subset of data
+         */
+
+        subset_data() {
+            this.dataStore.csv = this.dataStore.csv.sort(() => Math.random() - Math.random()).slice(0, this.row_number)
+            this.dataStore.min_bin_size = Math.max(Math.floor(this.dataStore.csv.length / 20), 10) //at least 5% of people per bin
         }
     }
 }
