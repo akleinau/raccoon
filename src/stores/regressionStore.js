@@ -257,12 +257,26 @@ export const useRegressionStore = defineStore('regressionStore', {
             let dataStore = useDataStore()
             let y = []
             dataStore.csv.forEach(d => {
-                if (d[dataStore.target_column] === dataStore.target_option) {
-                    y.push(1)
-                } else {
-                    y.push(0)
+                if (dataStore.target_type === "categorical") {
+                    if (d[dataStore.target_column] === dataStore.target_option) {
+                        y.push(1)
+                    } else {
+                        y.push(0)
+                    }
+                }
+                if (dataStore.target_type === "continuous") {
+                    if (dataStore.target_operator === "=") {
+                        y.push(d[dataStore.target_column] === dataStore.target_value ? 1 : 0)
+                    }
+                    if (dataStore.target_operator === ">") {
+                        y.push(d[dataStore.target_column] > dataStore.target_value ? 1 : 0)
+                    }
+                    if (dataStore.target_operator === "<") {
+                        y.push(d[dataStore.target_column] < dataStore.target_value ? 1 : 0)
+                    }
                 }
             })
+            if (y.length === 0) console.log("Error, target neither categorical nor continuous")
             return y
         },
         /**

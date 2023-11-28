@@ -45,13 +45,6 @@
                             <td>label of the target column</td>
                             <td>Here: <b>{{ dataStore.target_column }} </b></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <v-chip>$outcome_option</v-chip>
-                            </td>
-                            <td>label of the target option</td>
-                            <td>Here: <b>{{ dataStore.target_option }} </b></td>
-                        </tr>
                     </table>
                 </v-card-text>
 

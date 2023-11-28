@@ -15,7 +15,10 @@ export const useDataStore = defineStore('dataStore', {
         column_names: [],
         target_column: null,
         target_all_options: [],
+        target_type: null,
         target_option: null,
+        target_operator: null,
+        target_value: null,
         target: null,
         target_label: "",
         row_label: "people",
@@ -127,7 +130,23 @@ export const useDataStore = defineStore('dataStore', {
          * @returns {*}
          */
         filter_for_target_option(d) {
-            return d.filter(d => d[this.target_column] === this.target_option)
+            if (this.target_type === "categorical") {
+                return d.filter(d => d[this.target_column] === this.target_option)
+            }
+            else if (this.target_type === "continuous") {
+                if (this.target_operator === "=") {
+                    return d.filter(d => d[this.target_column] === this.target_value)
+                }
+                else if (this.target_operator === ">") {
+                    return d.filter(d => d[this.target_column] > this.target_value)
+                }
+                else if (this.target_operator === "<") {
+                    return d.filter(d => d[this.target_column] < this.target_value)
+                }
+            }
+            else {
+                return false
+            }
         },
         /**
          * divides values of two maps per key

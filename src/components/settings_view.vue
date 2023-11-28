@@ -3,8 +3,12 @@
         <!-- Wording -->
         <v-expand-transition>
         <div class="d-flex w-100" v-if="dataStore.target !== undefined && dataStore.target !== null && !show_panels" transition="fade-transition">
-            <v-text-field
+            <v-text-field v-if="dataStore.target_type === 'categorical'"
                     :hint="dataStore.target.name + ':' + dataStore.target.options.find(d => d.name ===dataStore.target_option).label"
+                    v-model="dataStore.target_label" variant="underlined" label="target label"
+                    append-inner-icon="mdi-pencil" class="ml-3 mr-5 w-25"></v-text-field>
+            <v-text-field v-if="dataStore.target_type === 'continuous'"
+                    :hint="dataStore.target.name + dataStore.target_operator + dataStore.target_value"
                     v-model="dataStore.target_label" variant="underlined" label="target label"
                     append-inner-icon="mdi-pencil" class="ml-3 mr-5 w-25"></v-text-field>
             <v-text-field label="rows equal" v-model="dataStore.row_label" hint="eg people, participants, households"

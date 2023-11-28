@@ -95,15 +95,27 @@
                                             @update:modelValue="target_selected"/>
                         </div>
 
-                        <div v-if="dataStore.target_all_options.length !== 0">
+                        <div v-if="dataStore.target_type === 'categorical'">
                             <v-autocomplete v-model="dataStore.target_option" class="px-5" label="Select outcome option"
                                             :items="dataStore.target_all_options"
                                             @update:modelValue="target_option_selected"/>
                         </div>
-                        <div class="px-5 pb-5 pt-3" v-if="dataStore.target_option">
+                        <div v-if="dataStore.target_type === 'continuous'" class="d-flex px-5">
+                            <v-select v-model="dataStore.target_operator" :items="['=','>','<']" class="mr-2"
+                                      @update:modelValue="target_option_selected" label="operator" />
+                            <v-text-field v-model="dataStore.target_value" type="number"
+                                          @update:modelValue="target_option_selected" label="number" />
+                        </div>
+                        <div v-if="dataStore.target_type === 'unknown'">
+                            Please select another variable.
+                        </div>
+                        <div class="px-5 pb-5 pt-3" v-if="dataStore.target_option || (dataStore.target_operator && dataStore.target_value)">
                             <div>Customize outcome label:</div>
-                            <v-text-field v-model="dataStore.target_label"
+                            <v-text-field v-if="dataStore.target_type === 'categorical'" v-model="dataStore.target_label"
                                           :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_option"
+                            ></v-text-field>
+                            <v-text-field v-if="dataStore.target_type === 'continuous'" v-model="dataStore.target_label"
+                                          :hint="'eg. ' + dataStore.target_column + ':' + dataStore.target_operator + dataStore.target_value"
                             ></v-text-field>
                             <i> Example: "The risk of <span class="text-primary">
                                 {{ dataStore.target_label }} </span> is X%."
@@ -114,7 +126,7 @@
                     <!-- Page 2: Additional Choices -->
                     <div v-if="page === 2">
                         <!-- Intention -->
-                        <div class="px-5 pb-5" v-if="dataStore.target_option">
+                        <div class="px-5 pb-5">
                             <h1 class="d-flex justify-center mb-5 mt-6"> I want to... </h1>
                             <v-btn-toggle v-model="dashboardStore.intention" class="d-flex justify-center" mandatory>
                                 <v-btn value="explore">
@@ -148,8 +160,7 @@
 
                         <!-- Additional options -->
                         <div class="px-5 pt-2 d-flex justify-center">
-                            <v-expansion-panels v-if="dataStore.target_option !== undefined"
-                                                style="width:800px">
+                            <v-expansion-panels style="width:800px">
                                 <v-expansion-panel title="Additional Options">
                                     <v-expansion-panel-text>
                                         <div class="d-flex">
@@ -181,7 +192,7 @@
                     <!-- page 1 -->
                     <div class="w-100 d-flex justify-space-between px-5" v-if="page === 1">
                         <v-btn @click="page--" variant="outlined"> Prev</v-btn>
-                        <v-btn @click="page++" v-if="dataStore.target_option !== null"
+                        <v-btn @click="page++" v-if="dataStore.target_option !== null || (dataStore.target_operator && dataStore.target_value)"
                                variant="outlined"> Next
                         </v-btn>
                     </div>
@@ -220,7 +231,7 @@ export default {
             name: null,
             page: 0,
             subset: false,
-            row_number: 0
+            row_number: 0,
         }
     },
     computed: {
@@ -261,12 +272,29 @@ export default {
             this.dataStore.target_all_options = [...new Set(this.dataStore.csv.map(d => d[this.dataStore.target_column]))]
             this.dataStore.target_all_options = this.dataStore.target_all_options.filter(d => !(d === null || d === ""))
             this.dataStore.target_option = null
+            this.dataStore.target_operator = null
+            this.dataStore.target_value = null
+            if (this.dataStore.target_all_options.length <= 10) {
+                this.dataStore.target_type= "categorical"
+            } else {
+                let options_num = this.dataStore.target_all_options.filter(d => !isNaN(d) && d !== "")
+                if (options_num.length > 5) {
+                    this.dataStore.target_type = "continuous"
+                } else {
+                    this.dataStore.target_type = "unknown"
+                }
+            }
         },
         /**
          * gets called when a target option is selected
          */
         target_option_selected() {
-            this.dataStore.target_label = this.dataStore.target_column + ":" + this.dataStore.target_option
+            if (this.dataStore.target_type === "categorical") {
+                this.dataStore.target_label = this.dataStore.target_column + ":" + this.dataStore.target_option
+            }
+            if (this.dataStore.target_type === "continuous") {
+                this.dataStore.target_label = this.dataStore.target_column + this.dataStore.target_operator + this.dataStore.target_value
+            }
         },
         /**
          * start the calculation of the visualizations and closes the overlay

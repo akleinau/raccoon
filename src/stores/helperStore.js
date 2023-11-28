@@ -49,7 +49,6 @@ export const useHelperStore = defineStore('helperStore', {
                     d.text = d.text.replace("$rows", useDataStore().row_label)
                     d.text = d.text.replace("$outcome", useDataStore().target_label)
                     d.text = d.text.replace("$outcome_column", useDataStore().target.label)
-                    d.text = d.text.replace("$outcome_option", useDataStore().target.options.find(x => x.name === useDataStore().target_option).label)
                     d.text = d.text.replace("$column", column.label)
                     return d
                 })
