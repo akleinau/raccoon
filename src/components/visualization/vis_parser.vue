@@ -76,10 +76,9 @@ export default {
                 if (vis.graph === "text") {
                     vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].text
                 } else {
-                    vis["color"] = this.dashboardStore.default_settings[vis.type]["color"]
+                    vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].colors
                 }
             }
-            vis["color"] = this.dashboardStore.get_color(vis["color"])
 
             //font
             if (!vis["font_family"]) {

@@ -134,7 +134,7 @@ export default {
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top + grid_padding * 2])
                 .attr("font-family", this.vis.font_family)
 
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color[1])
 
             //background
             svg.append("rect")
@@ -163,7 +163,7 @@ export default {
                         .join("text")
                         .attr("x", d => x(Math.floor(d / max_range_y)))
                         .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height )
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color : emptyCircleColor)
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color[index] : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(this.getIcon)
                         .style("font-size", d3.max([icon_height, icon_width]) + "px")
@@ -193,7 +193,7 @@ export default {
                             .data(this.get_value_text(par.value))
                             .join("tspan")
                             .text(d => d.text)
-                            .style("fill", d => d.color)
+                            .style("fill", d => d.color[index])
                     })
                     .attr("dy", 7*this.vis.ratio)
 

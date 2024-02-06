@@ -90,7 +90,7 @@ export default {
                 .padding(0.2)
 
             //background
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color[0])
 
             svg.append("rect")
                 .attr("x", margin.left)
@@ -108,7 +108,7 @@ export default {
                 .attr("y", d => y(d.name))
                 .attr("width", d => x(d.value) - x(0))
                 .attr("height", y.bandwidth())
-                .attr("fill", this.vis.color)
+                .attr("fill", (d, i) => this.vis.color[i])
 
             svg.selectAll("textName")
                 .data(data)
