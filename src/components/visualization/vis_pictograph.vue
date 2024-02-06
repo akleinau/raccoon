@@ -1,5 +1,6 @@
 <template>
     <i v-show="false" class="mdi" :class="'mdi-' + this.vis.icon"/>
+    <i v-show="false" class="mdi" :class="'mdi-' + this.vis.icon2"/>
     <div ref="container"/>
 </template>
 
@@ -165,7 +166,7 @@ export default {
                         .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height )
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color[index] : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
-                        .html(this.getIcon)
+                        .html(d => ((d + 1) <= this.get_value(par.value)) ?this.getIcon(0) : this.getIcon(1))
                         .style("font-size", d3.max([icon_height, icon_width]) + "px")
                 })
 
@@ -267,9 +268,10 @@ export default {
          *
          * @returns {string}
          */
-        getIcon() {
+        getIcon(i) {
             // this copies the content from the pseudo element :before as it's needed to show the icon from material design
-            const ele = document.querySelector('.mdi-' + this.vis.icon);
+            const icon = (i === 0) ? this.vis.icon : this.vis.icon2
+            const ele = document.querySelector('.mdi-' + icon);
             if (ele) {
                 const styles = window.getComputedStyle(ele, ':before');
                 return styles.content.replaceAll('"', "");

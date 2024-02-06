@@ -105,9 +105,8 @@
                                     </template>
                                 </v-text-field>
                             </div>
-                            <v-slider v-model="vis.ratio" min="0" max="2" :disabled="!has_attribute['graph']"
-                                      step="0.01"
-                                      label="ratio" thumb-label></v-slider>
+
+
                             <div class=" mt-2">presets:</div>
                             <v-btn-toggle v-model="vis.icon" inline class="mb-5" :disabled="!has_attribute['graph']">
                                 <v-btn v-for="icon in icons" v-bind:key="icon"
@@ -115,6 +114,34 @@
                                     <v-icon :icon="'mdi-'+icon"/>
                                 </v-btn>
                             </v-btn-toggle>
+
+                                                      <div class="d-flex mt-2">
+                                <v-text-field v-model="vis.icon2"
+                                              placeholder="custom"
+                                              style="min-width:250px"
+                                              :prepend-icon="'mdi-' + vis.icon2"
+                                              append-inner-icon="mdi-pencil">
+                                    <template v-slot:details>
+                                        <div>
+                                            see <a
+                                                href="https://pictogrammers.com/library/mdi/"
+                                                target="_blank">here</a> for more icons
+                                        </div>
+                                    </template>
+                                </v-text-field>
+                            </div>
+
+
+                            <div class=" mt-2">presets:</div>
+                            <v-btn-toggle v-model="vis.icon2" inline class="mb-5" :disabled="!has_attribute['graph']">
+                                <v-btn v-for="icon in icons" v-bind:key="icon"
+                                       :value="icon">
+                                    <v-icon :icon="'mdi-'+icon"/>
+                                </v-btn>
+                            </v-btn-toggle>
+
+                            <v-slider v-model="vis.ratio" min="0" max="2" :disabled="!has_attribute['graph']"
+                                      step="0.01" label="ratio" thumb-label></v-slider>
 
                         </div>
                     </div>
@@ -326,7 +353,7 @@ export default {
             }],
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
-            icons: ['circle', 'human-male', 'account', 'bed', 'home'],
+            icons: ['circle', 'human-male', 'account', "emoticon", "emoticon-confused", 'bed', 'home'],
             annotation_list: []
         }
     },
@@ -353,6 +380,7 @@ export default {
                                 if (this.has_data() || this.vis.type==="overall") {
                                     this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
                                     this.vis["icon"] = this.get_default("icon")
+                                    this.vis["icon2"] = this.get_default("icon2")
                                     this.vis["ratio"] = this.get_default("ratio")
                                     this.vis["pie_labels"] = this.get_default("pie_labels")
                                     this.vis["font_size"] = this.get_default("font_size")
@@ -372,7 +400,7 @@ export default {
                     } else {
                         this.vis[attr] = undefined
                         if (attr === "graph") {
-                            ['font_size', 'grid', 'icon', 'ratio', 'graph', 'unit', 'context', 'size', 'pie_labels'].forEach(key => {
+                            ['font_size', 'grid', 'icon', 'icon2', 'ratio', 'graph', 'unit', 'context', 'size', 'pie_labels'].forEach(key => {
                                 this.vis[key] = undefined
                             })
                         }
@@ -486,6 +514,7 @@ export default {
             if (this.vis.graph === 'pictograph') {
                 this.makeDefault('grid')
                 this.makeDefault('icon')
+                this.makeDefault('icon2')
                 this.makeDefault('ratio')
             }
             if (this.vis.graph === 'pie') {
