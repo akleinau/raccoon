@@ -49,8 +49,8 @@ export default {
          */
         get_value_text(value) {
             if (this.vis.unit === "natural_frequencies") {
-                return [{"text": this.get_value(value), "color": this.vis.color},
-                    {"text": "/" + this.vis.grid[0] * this.vis.grid[1], "color": "black"}]
+                return [{"text": (value * this.vis.denominator).toFixed(0), "color": this.vis.color},
+                    {"text": "/" + this.vis.denominator, "color": "black"}]
             } else if (this.vis.unit === "percent") {
                 let percent = (this.vis.range === "percent") ? value : (value / this.visHelperStore.get_range(this.vis)[1])
                 return [{"text": (percent*100).toFixed(0), "color": this.vis.color},
@@ -158,12 +158,13 @@ export default {
                 .join("g")
                 .attr("x", margin.left)
                 .attr("y", d => y_row(d.name))
+                .style("overflow", "hidden")
                 .each((par, index, node) => {
                     d3.select(node[index]).selectAll("text")
                         .data(dot_range)
                         .join("text")
                         .attr("x", d => x(Math.floor(d / max_range_y)))
-                        .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height )
+                        .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height)
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color[index] : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(d => ((d + 1) <= this.get_value(par.value)) ?this.getIcon(0) : this.getIcon(1))
