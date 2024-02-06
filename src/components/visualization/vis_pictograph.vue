@@ -199,12 +199,13 @@ export default {
 
 
                 //column name
-                svg.append("text")
+                let yaxis_title = svg.append("text")
                     .attr("x", -(margin.top + (height + grid_padding * 2) / 2))
                     .attr("y", 20)
-                    .text(this.column.label)
+                    .text("")
                     .style("text-anchor", "middle")
                     .attr("transform", "rotate(-90)")
+                this.visHelperStore.append_tspans(yaxis_title, this.vis.yaxis, this.column)
 
 
                 //axis

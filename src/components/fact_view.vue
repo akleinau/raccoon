@@ -222,13 +222,28 @@
 
         <!-- Axis -->
         <v-expansion-panel v-if="get_default('axis') !== undefined">
-            <v-expansion-panel-title class="text-blue-darken-3"><h4>Axis </h4></v-expansion-panel-title>
+            <v-expansion-panel-title class="text-blue-darken-3"><h4>X Axis </h4></v-expansion-panel-title>
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['axis']" label="Custom"/>
                 <text_input :text="vis.axis" :default="get_default('axis')"
                             @change="vis.axis = $event" :color="get_color()"
                             :disabled="!has_attribute['axis']"/>
                 <v-btn @click="makeDefault('axis')" :disabled="!has_attribute['axis']"
+                       variant="tonal">
+                    set as default for {{ vis.type }} facts
+                </v-btn>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <!-- y Axis -->
+        <v-expansion-panel v-if="get_default('yaxis') !== undefined">
+            <v-expansion-panel-title class="text-blue-darken-3"><h4>Y Axis </h4></v-expansion-panel-title>
+            <v-expansion-panel-text style="min-width: 500px">
+                <v-switch v-model="has_attribute['yaxis']" label="Custom"/>
+                <text_input :text="vis.yaxis" :default="get_default('yaxis')"
+                            @change="vis.yaxis = $event" :color="get_color()"
+                            :disabled="!has_attribute['yaxis']"/>
+                <v-btn @click="makeDefault('yaxis')" :disabled="!has_attribute['yaxis']"
                        variant="tonal">
                     set as default for {{ vis.type }} facts
                 </v-btn>
@@ -404,7 +419,7 @@ export default {
          */
         updateView() {
             if (this.vis !== null && this.vis !== undefined) {
-                let attributes = ["graph", "color", "background", "title", "axis", "annotation", "text"]
+                let attributes = ["graph", "color", "background", "title", "axis", "yaxis", "annotation", "text"]
                 attributes.forEach(key => {
                     this.has_attribute[key] = this.vis[key] !== undefined
                 })
@@ -480,6 +495,7 @@ export default {
             this.makeDefault('unit')
             this.makeDefault('context')
             this.makeDefault('size')
+            this.makeDefault('yaxis')
         },
         /**
          * returns the color of the current visualization
