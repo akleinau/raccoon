@@ -137,7 +137,7 @@
                         <v-switch v-model="has_attribute['color']" label="Custom"/>
                         <v-radio-group v-model="vis.color"
                                        :disabled="!has_attribute['color']">
-                            <v-radio v-for="(el,i) in dashboardStore.default_colors.colors" v-bind:key="el"
+                            <v-radio v-for="(el,i) in dashboardStore.default_colors[dashboardStore.intention].colors" v-bind:key="el"
                                      :value="i">
                                 <template v-slot:label>
                                     <v-icon :style="'color:' + el">
@@ -286,7 +286,7 @@
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['text']" label="Custom"/>
                 <text_input :text="vis.text" :default="[]"
-                            @change="vis.text = $event" :color="dashboardStore.default_colors.text"
+                            @change="vis.text = $event" :color="dashboardStore.default_colors[dashboardStore.intention].text"
                             :disabled="!has_attribute['text']"/>
                 <v-btn @click="makeDefault('text')" :disabled="!has_attribute['text']"
                        variant="tonal">

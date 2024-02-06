@@ -21,7 +21,7 @@
             <v-expansion-panel value="design" v-if="!show_panels || show_panels.includes('design')">
                 <v-expansion-panel-title>
                     <h4 class="mr-4">Design:</h4>
-                    <span v-for="(color,i) in dashboardStore.default_colors.colors" :key="i">
+                    <span v-for="(color,i) in dashboardStore.default_colors[dashboardStore.intention].colors" :key="i">
                     <v-icon :style="'color:' + color">mdi-circle</v-icon>
                 </span>
                 </v-expansion-panel-title>
@@ -31,27 +31,27 @@
                         <div>
                             <v-btn-toggle v-model="color_mode" label="Colors" class="mb-2" mandatory  >
                                 <v-btn value="oneColor" label="color based"
-                                         @click="dashboardStore.default_colors.colors=neighbor_color_list"> scheme </v-btn>
+                                         @click="dashboardStore.default_colors[dashboardStore.intention].colors=neighbor_color_list"> scheme </v-btn>
                                 <v-btn value="scheme" label="scheme"
-                                         @click="dashboardStore.default_colors.colors=scheme"> palette </v-btn>
+                                         @click="dashboardStore.default_colors[dashboardStore.intention].colors=scheme"> palette </v-btn>
                                 <v-btn value="custom" label="custom"
-                                         @click="custom_color_list=dashboardStore.default_colors.colors"> custom </v-btn>
+                                         @click="custom_color_list=dashboardStore.default_colors[dashboardStore.intention].colors"> custom </v-btn>
                             </v-btn-toggle>
 
                             <div v-if="color_mode === 'oneColor'">
                                 <div class="d-flex w-100 justify-center">
                                     Color based:
-                                    <v-icon class="ml-2" :style="'color:' + neighborColor">mdi-circle</v-icon>
+                                    <v-icon class="ml-2" :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors[0]">mdi-circle</v-icon>
                                     <v-icon class="ml-1">mdi-pencil</v-icon>
-                                    <color-dialog :color="neighborColor"
-                                                  @update="neighborColor = $event; dashboardStore.default_colors.colors=neighbor_color_list "></color-dialog>
+                                    <color-dialog :color="dashboardStore.default_colors[dashboardStore.intention].colors[0]"
+                                                  @update="neighborColor = $event; dashboardStore.default_colors[dashboardStore.intention].colors=neighbor_color_list "></color-dialog>
                                 </div>
                                 <v-slider v-model="color_spread" label="spread" start="20" end="100" step="5"
-                                          @click="dashboardStore.default_colors.colors=neighbor_color_list"
+                                          @click="dashboardStore.default_colors[dashboardStore.intention].colors=neighbor_color_list"
                                           style="max-width:200px"/>
                                 <v-divider class="mt-2"></v-divider>
                                 <div class="d-flex w-100 justify-center mt-2">
-                            <span v-for="(color,i) in dashboardStore.default_colors.colors" :key="i">
+                            <span v-for="(color,i) in dashboardStore.default_colors[dashboardStore.intention].colors" :key="i">
                                 <v-icon :style="'color:' + color">mdi-circle</v-icon>
                             </span>
                                 </div>
@@ -65,7 +65,7 @@
                                     </template>
                                     <template v-slot:item="{item}">
                                         <div>
-                                            <v-btn @click="scheme = item.value; dashboardStore.default_colors.colors=scheme"
+                                            <v-btn @click="scheme = item.value; dashboardStore.default_colors[dashboardStore.intention].colors=scheme"
                                                    variant="plain">
                                                 <v-icon v-for="color in item.value" :key="color"
                                                         :style="'color:' + color">
@@ -83,13 +83,13 @@
                                         <v-icon :style="'color:' + color">mdi-circle</v-icon>
                                         <v-icon class="mr-2">mdi-pencil</v-icon>
                                         <color-dialog :color="color"
-                                                      @update="custom_color_list[i] = $event; dashboardStore.default_colors.colors=custom_color_list; color=$event"></color-dialog>
+                                                      @update="custom_color_list[i] = $event; dashboardStore.default_colors[dashboardStore.intention].colors=custom_color_list; color=$event"></color-dialog>
                                     </span>
                             </div>
                         </div>
 
                         <!-- Background -->
-                        <v-radio-group v-model="dashboardStore.default_colors.background" label="Background"
+                        <v-radio-group v-model="dashboardStore.default_colors[dashboardStore.intention].background" label="Background"
                                        class="ml-5" hide-details>
                             <v-radio label="auto" :value="background_auto">
                                 <template v-slot:label>
@@ -109,13 +109,13 @@
                                     <v-icon class="ml-2">mdi-pencil</v-icon>
                                 </template>
                                 <color-dialog :color="background_custom.color"
-                                              @update="background_custom.color = $event; dashboardStore.default_colors.background.color = $event"></color-dialog>
+                                              @update="background_custom.color = $event; dashboardStore.default_colors[dashboardStore.intention].background.color = $event"></color-dialog>
                             </v-radio>
 
                         </v-radio-group>
 
                         <!-- Font Color -->
-                        <v-radio-group v-model="dashboardStore.default_colors.text" label="Font Color" hide-details>
+                        <v-radio-group v-model="dashboardStore.default_colors[dashboardStore.intention].text" label="Font Color" hide-details>
                             <v-radio v-for="color in this.fontColor" :key="color" :value="color">
                                 <template v-slot:label>
                                     <v-icon class="mr-2" :style="'color:' + color">mdi-circle</v-icon>
@@ -127,12 +127,12 @@
                                     <v-icon>mdi-pencil</v-icon>
                                 </template>
                                 <color-dialog :color="fontColor_custom"
-                                              @update="fontColor_custom = $event; dashboardStore.default_colors.text = $event"></color-dialog>
+                                              @update="fontColor_custom = $event; dashboardStore.default_colors[dashboardStore.intention].text = $event"></color-dialog>
                             </v-radio>
                         </v-radio-group>
 
                         <!-- Font Family -->
-                        <v-radio-group v-model="dashboardStore.default_colors.font_family" label="Font Family"
+                        <v-radio-group v-model="dashboardStore.default_colors[dashboardStore.intention].font_family" label="Font Family"
                                        class="ml-5 mr-2" style="min-width:120px" hide-details>
                             <v-radio v-for="font in this.font_families" :key="font" :label="font" :value="font"
                                      :style="'font-family: ' + font"/>
@@ -140,7 +140,7 @@
                                 <template v-slot:label>
                                     <v-text-field v-model="font_family_custom" variant="underlined" density="compact"
                                                   style="min-width:100px" hide-details label="custom" class="mb-3"
-                                                  @update:modelValue="dashboardStore.default_colors.font_family = font_family_custom"/>
+                                                  @update:modelValue="dashboardStore.default_colors[dashboardStore.intention].font_family = font_family_custom"/>
                                     <v-icon>mdi-pencil</v-icon>
                                 </template>
                             </v-radio>

@@ -17,11 +17,28 @@ export const useDashboardStore = defineStore('dashboardStore', {
         intention: "explore",
         default_settings: JSON.parse(JSON.stringify(default_settings_json)),
         default_colors: {
-            "background": {color: "auto", stroke: "None"},
-            "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
-            "text": "#181818",
-            "font_family": "verdana",
-        },
+                "explore":
+                    {
+                        "background": {color: "auto", stroke: "None"},
+                        "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
+                        "text": "#181818",
+                        "font_family": "inherit",
+                    },
+                "convince":
+                    {
+                        "background": {color: "auto", stroke: "None"},
+                        "colors": ["#e6a203", "#e6030f", "#e603ba", "#6903e6", "#0347e6"],
+                        "text": "#181818",
+                        "font_family": "inherit",
+                    },
+                "educate":
+                    {
+                        "background": {color: "auto", stroke: "None"},
+                        "colors": ["#ce0286", "#7d02ce", "#0220ce", "#02bace", "#04ce4b"],
+                        "text": "#181818",
+                        "font_family": "inherit",
+                    }
+        }
 
     }),
     actions: {
@@ -84,7 +101,6 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 this.default_settings["impact"].context = true
                 this.default_settings["impact"].unit = "natural_frequencies"
                 this.default_settings["impact"].graph = "bar"
-
             } else if (this.intention === "convince") {
                 ["impact", "significance", "context", "custom", "overall"].forEach((key) => {
                     this.default_settings[key].context = false
@@ -228,7 +244,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
          */
         get_color(color_name) {
             if (!isNaN(color_name)) {
-                return this.default_colors.colors[color_name]
+                return this.default_colors[this.intention].colors[color_name]
             }
             return color_name
         },
@@ -244,10 +260,27 @@ export const useDashboardStore = defineStore('dashboardStore', {
             this.intention = "explore"
             this.default_settings = JSON.parse(JSON.stringify(default_settings_json))
             this.default_colors = {
-                "background": {color: "auto", stroke: "None"},
-                "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
-                "text": "#181818",
-                "font_family": "inherit",
+                "explore":
+                    {
+                        "background": {color: "auto", stroke: "None"},
+                        "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
+                        "text": "#181818",
+                        "font_family": "inherit",
+                    },
+                "convince":
+                    {
+                        "background": {color: "auto", stroke: "None"},
+                        "colors": ["#e6a203", "#e6030f", "#e603ba", "#6903e6", "#0347e6"],
+                        "text": "#181818",
+                        "font_family": "inherit",
+                    },
+                "educate":
+                    {
+                        "background": {color: "auto", stroke: "None"},
+                        "colors": ["#ce0286", "#7d02ce", "#0220ce", "#02bace", "#04ce4b"],
+                        "text": "#181818",
+                        "font_family": "inherit",
+                    }
             }
         }
     }

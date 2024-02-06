@@ -69,12 +69,12 @@ export default {
                 if (this.dashboardStore.default_settings[vis.type]["background"] !== undefined) {
                     vis["background"] = this.dashboardStore.default_settings[vis.type]["background"]
                 } else {
-                    vis["background"] = this.dashboardStore.default_colors.background
+                    vis["background"] = this.dashboardStore.default_colors[this.dashboardStore.intention].background
                 }
             }
             if (vis["color"] === null || vis["color"] === undefined) {
                 if (vis.graph === "text") {
-                    vis["color"] = this.dashboardStore.default_colors.text
+                    vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].text
                 } else {
                     vis["color"] = this.dashboardStore.default_settings[vis.type]["color"]
                 }
@@ -83,7 +83,7 @@ export default {
 
             //font
             if (!vis["font_family"]) {
-                vis["font_family"] = this.dashboardStore.default_colors["font_family"]
+                vis["font_family"] = this.dashboardStore.default_colors[this.dashboardStore.intention]["font_family"]
             }
 
             //annotations
@@ -93,7 +93,7 @@ export default {
                     vis["annotation"] = annotations[0]
                     vis["annotation"].text.forEach(t => {
                       t.color = t.color.replace("$color", vis.color)
-                      t.color = t.color.replace("$text", this.dashboardStore.default_colors["text"])
+                      t.color = t.color.replace("$text", this.dashboardStore.default_colors[this.dashboardStore.intention]["text"])
                     })
                 } else {
                     vis["annotation"] = "None"
