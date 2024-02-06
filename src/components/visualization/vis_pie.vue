@@ -99,7 +99,7 @@ export default {
                 .padding(0.2)
 
             //background
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color[0])
 
             svg.append("rect")
                 .attr("x", margin.left)
@@ -125,7 +125,7 @@ export default {
                 .enter()
                 .append('path')
                 .attr('d', arc)
-                .attr('fill', d => color(d.data.name))
+                .attr('fill', (d,i) => this.vis.color[i])
                 .attr("stroke", "black")
                 .style("stroke-width", "1.5px")
 

@@ -103,13 +103,13 @@ export default {
             let height = data.length * (radius * 2 + 20)
 
             //background
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color)
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color[1])
 
             let emptyCircleColor = this.vis.context === true ? d3.color("white").darker(0.1) : bgcolor
 
             let color = d3.scaleOrdinal()
                 .domain(["value", "rest"])
-                .range([this.vis.color, emptyCircleColor])
+                .range(["id", emptyCircleColor])
 
 
             let y_options = d3.scaleBand()
@@ -151,7 +151,7 @@ export default {
                             .innerRadius(0)
                             .outerRadius(radius)
                         )
-                        .attr('fill', d => color(d.data.name))
+                        .attr('fill', d => (color(d) === "id" ? this.vis.color[index] : color(d)))
                 })
 
 
