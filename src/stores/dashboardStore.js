@@ -19,7 +19,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
         default_colors: {
             "background": {color: "auto", stroke: "None"},
             "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
-            "text": "midnightBlue",
+            "text": "#181818",
             "font_family": "verdana",
         },
 
@@ -246,7 +246,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
             this.default_colors = {
                 "background": {color: "auto", stroke: "None"},
                 "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
-                "text": "midnightBlue",
+                "text": "#181818",
                 "font_family": "inherit",
             }
         }

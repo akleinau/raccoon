@@ -91,6 +91,10 @@ export default {
                 let annotations = this.annotationStore.compute_annotations(this.column, vis.type, vis.unit, vis.grid, vis.data)
                 if (annotations.length > 1) { //greater than 1 because of the custom annotation
                     vis["annotation"] = annotations[0]
+                    vis["annotation"].text.forEach(t => {
+                      t.color = t.color.replace("$color", vis.color)
+                      t.color = t.color.replace("$text", this.dashboardStore.default_colors["text"])
+                    })
                 } else {
                     vis["annotation"] = "None"
                 }
@@ -103,6 +107,7 @@ export default {
                 if (vis[a]) {
                     vis[a] = vis[a].map(t => {
                         t.color = t.color.replace("$color", vis.color)
+                        t.color = t.color.replace("$text", "red")
                         return t
                     })
                 }

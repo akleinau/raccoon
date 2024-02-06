@@ -286,7 +286,7 @@ export default {
             }],
             background_custom: {color: "#efe7de", stroke: "None"},
             background_auto: {color: "auto", stroke: "None"},
-            fontColor: ["black", "midnightBlue", "darkblue"],
+            fontColor: ["black", "midnightBlue", "#181818"],
             fontColor_custom: "#000000",
             font_families: ["Verdana", "Arial", "monospace", "Times New Roman"],
             font_family_custom: "",
