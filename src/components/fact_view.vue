@@ -10,8 +10,10 @@
                     <!-- Graph Type -->
                     <v-radio-group v-model="vis.graph" v-if="vis.type !== 'overall'"
                                    :disabled="!has_attribute['graph']">
-                        <v-radio label="bar" value="bar" v-if="has_data()"></v-radio>
-                        <v-radio label="pictograph" value="pictograph" v-if="has_data()"></v-radio>
+                        <v-radio label="bar (horizontal)" value="bar" v-if="has_data()"></v-radio>
+                        <v-radio label="bar (vertical)" value="bar_flip" v-if="has_data()"></v-radio>
+                        <v-radio label="pictograph (horizontal)" value="pictograph" v-if="has_data()"></v-radio>
+                        <v-radio label="pictograph (vertical)" value="pictograph_flip" v-if="has_data()"></v-radio>
                         <v-radio label="pie" value="pie" v-if="has_data() && vis.type === 'impact'"></v-radio>
                         <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>

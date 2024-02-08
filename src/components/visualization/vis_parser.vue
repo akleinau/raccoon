@@ -1,7 +1,11 @@
 <template>
     <vis_bar v-if="graph === 'bar'" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_bar_flip v-if="graph === 'bar_flip'" @svg="saveSVG"
+             :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pictograph v-if="graph === 'pictograph'" @svg="saveSVG"
+                    :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_pictograph_flip v-if="graph === 'pictograph_flip'" @svg="saveSVG"
                     :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_text v-if="graph === 'text'" @text="saveText"
               :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
@@ -16,6 +20,8 @@ import vis_pictograph from "@/components/visualization/vis_pictograph.vue";
 import vis_bar from "@/components/visualization/vis_bar.vue";
 import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
+import vis_pictograph_flip from "@/components/visualization/vis_pictograph_flip.vue";
+import vis_bar_flip from "@/components/visualization/vis_bar_flip.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
 import {useDataStore} from "@/stores/dataStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
@@ -34,7 +40,7 @@ export default {
         const helperStore = useHelperStore()
         return {dashboardStore, dataStore, annotationStore, helperStore}
     },
-    components: {vis_bar, vis_pictograph, vis_text, vis_pie, vis_multiple_pie},
+    components: {vis_bar, vis_pictograph, vis_text, vis_pie, vis_multiple_pie, vis_pictograph_flip, vis_bar_flip},
     data() {
         return {
             rerender: 0
