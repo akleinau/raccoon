@@ -135,7 +135,7 @@ export default {
                 .attr("viewBox", [0, 0, width + margin.left + margin.right + annotation_width, height + margin.bottom + margin.top + grid_padding * 2])
                 .attr("font-family", this.vis.font_family)
 
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color[1])
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.bgcolor)
 
             //background
             svg.append("rect")

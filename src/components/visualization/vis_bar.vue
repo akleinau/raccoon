@@ -90,7 +90,7 @@ export default {
                 .padding(0.2)
 
             //background
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color[0])
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.bgcolor)
 
             svg.append("rect")
                 .attr("x", margin.left)

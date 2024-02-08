@@ -63,7 +63,7 @@ export default {
          */
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
-            let type_attr = ["title", "range", "grid", "axis", "yaxis", "unit", "context", "icon", "icon2", "ratio", "graph", "size", "pie_labels"]
+            let type_attr = ["title", "range", "grid", "axis", "yaxis", "unit", "context", "icon", "icon2", "ratio", "graph", "size", "pie_labels", "bgcolor"]
             type_attr.forEach(a => {
                 if (vis[a] === null || vis[a] === undefined) {
                     vis[a] = this.dashboardStore.default_settings[vis.type][a]
@@ -85,6 +85,9 @@ export default {
                     vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].colors
                 }
             }
+
+            vis["bgcolor"] = this.dashboardStore.get_color(vis["bgcolor"])
+
 
             //font
             if (!vis["font_family"]) {

@@ -13,7 +13,7 @@
                 "unit": "percent",
                 "context": true,
                 "font_size": 1,
-                "color": 0,
+                "bgcolor": 0,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
             },
@@ -32,7 +32,7 @@
                 "unit": "percent",
                 "context": true,
                 "font_size": 1,
-                "color": 1,
+                "bgcolor": 1,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
             },
@@ -50,7 +50,7 @@
                 "unit": "percent",
                 "context": true,
                 "font_size": 1,
-                "color": 3,
+                "bgcolor": 3,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
             },
@@ -82,7 +82,7 @@
                 "unit": "percent",
                 "context": true,
                 "font_size": 1,
-                "color": 2,
+                "bgcolor": 2,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
 

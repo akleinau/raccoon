@@ -158,14 +158,14 @@
         </v-expansion-panel>
 
         <!-- Color -->
-        <v-expansion-panel v-if="get_default('color') !== undefined">
-            <v-expansion-panel-title class="text-blue-darken-3"><h4>Color </h4></v-expansion-panel-title>
+        <v-expansion-panel v-if="get_default('bgcolor') !== undefined">
+            <v-expansion-panel-title class="text-blue-darken-3"><h4>Background Color </h4></v-expansion-panel-title>
             <v-expansion-panel-text style="min-width: 500px">
                 <div class="d-flex">
                     <div>
-                        <v-switch v-model="has_attribute['color']" label="Custom"/>
-                        <v-radio-group v-model="vis.color"
-                                       :disabled="!has_attribute['color']">
+                        <v-switch v-model="has_attribute['bgcolor']" label="Custom"/>
+                        <v-radio-group v-model="vis.bgcolor"
+                                       :disabled="!has_attribute['bgcolor']">
                             <v-radio v-for="(el,i) in dashboardStore.default_colors[dashboardStore.intention].colors" v-bind:key="el"
                                      :value="i">
                                 <template v-slot:label>
@@ -175,62 +175,25 @@
                                 </template>
                             </v-radio>
 
-                            <v-radio class="d-flex align-center" :value="custom_color">
+                            <v-radio class="d-flex align-center" :value="custom_bgcolor">
                                 <template v-slot:label>
-                                    <v-icon :style="'color:' + custom_color" class="mr-2">
+                                    <v-icon :style="'color:' + custom_bgcolor" class="mr-2">
                                         mdi-circle
                                     </v-icon>
                                     custom
                                     <v-icon class="ml-2">mdi-pencil</v-icon>
-                                    <color-dialog v-if="vis.color !== '$color'"
-                                                  :color="get_color()"
-                                                  @update="vis.color = $event; custom_color= $event"></color-dialog>
+                                    <color-dialog v-if="vis.bgcolor !== '$color'"
+                                                  :color="get_bgcolor()"
+                                                  @update="vis.bgcolor = $event; custom_bgcolor= $event"></color-dialog>
                                 </template>
                             </v-radio>
                         </v-radio-group>
-                        <v-btn @click="makeDefault('color')" variant="tonal"
-                               :disabled="!has_attribute['color']"> set as default for
+                        <v-btn @click="makeDefault('bgcolor')" variant="tonal"
+                               :disabled="!has_attribute['bgcolor']"> set as default for
                             {{ vis.type }} facts
                         </v-btn>
                     </div>
                 </div>
-            </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <!-- Background -->
-        <v-expansion-panel v-if="get_default('background') !== undefined">
-            <v-expansion-panel-title class="text-blue-darken-3"><h4>Background </h4></v-expansion-panel-title>
-            <v-expansion-panel-text style="min-width: 500px">
-                <v-switch v-model="has_attribute['background']" label="Custom"/>
-                <v-radio-group v-model="vis.background"
-                               class="ml-5" :disabled="!has_attribute['background']">
-                    <v-radio label="auto" :value="background_auto">
-                        <template v-slot:label>
-                            Auto
-                        </template>
-                    </v-radio>
-                    <v-radio v-for="item in this.background" :key="item" :value="item">
-                        <template v-slot:label>
-                            <div class="mr-2"
-                                 :style="'background:' + item.color + '; border: 1px solid ' + item.stroke + '; width: 100px; height: 30px'"/>
-                        </template>
-                    </v-radio>
-                    <v-radio label="custom" :value="background_custom">
-                        <template v-slot:label>
-                            <div class="mr-2"
-                                 :style="'background:' + background_custom.color + '; border: 1px solid ' + background_custom.stroke + '; width: 100px; height: 30px'"/>
-                            <v-icon class="ml-2">mdi-pencil</v-icon>
-                        </template>
-                        <color-dialog :color="background_custom.color"
-                                      @update="background_custom.color = $event; vis.background = $event"></color-dialog>
-                    </v-radio>
-
-                </v-radio-group>
-                <v-btn @click="makeDefault('background')" :disabled="!has_attribute['background']"
-                       variant="tonal"> set as default for
-                    {{ vis.type }} facts
-                </v-btn>
-
             </v-expansion-panel-text>
         </v-expansion-panel>
 
@@ -240,7 +203,7 @@
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['title']" label="Custom"/>
                 <text_input :text="vis.title" :default="get_default('title')"
-                            @change="vis.title = $event" :color="get_color()"
+                            @change="vis.title = $event" :color="get_bgcolor()"
                             :disabled="!has_attribute['title']"/>
                 <v-btn @click="makeDefault('title')" :disabled="!has_attribute['title']"
                        variant="tonal">
@@ -255,7 +218,7 @@
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['axis']" label="Custom"/>
                 <text_input :text="vis.axis" :default="get_default('axis')"
-                            @change="vis.axis = $event" :color="get_color()"
+                            @change="vis.axis = $event" :color="get_bgcolor()"
                             :disabled="!has_attribute['axis']"/>
                 <v-btn @click="makeDefault('axis')" :disabled="!has_attribute['axis']"
                        variant="tonal">
@@ -270,7 +233,7 @@
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['yaxis']" label="Custom"/>
                 <text_input :text="vis.yaxis" :default="get_default('yaxis')"
-                            @change="vis.yaxis = $event" :color="get_color()"
+                            @change="vis.yaxis = $event" :color="get_bgcolor()"
                             :disabled="!has_attribute['yaxis']"/>
                 <v-btn @click="makeDefault('yaxis')" :disabled="!has_attribute['yaxis']"
                        variant="tonal">
@@ -304,7 +267,7 @@
                                     vis.annotation !== null">
                     <text_input :text="vis.annotation.text"
                                 @change="vis.annotation.text = $event"
-                                :color="get_color()"/>
+                                :color="get_bgcolor()"/>
                 </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
@@ -348,13 +311,8 @@ export default {
     data() {
         return {
             display: true,
-            custom_color: '#000000',
+            custom_bgcolor: '#000000',
             has_attribute: {},
-            background: [{color: "Gainsboro", stroke: "None"}, {color: "#D3D9E6", stroke: "None"}, {
-                color: "white", stroke: "darkgray"
-            }],
-            background_custom: {color: "#efe7de", stroke: "None"},
-            background_auto: {color: "auto", stroke: "None"},
             icons: ['circle', 'human-male', 'account', "emoticon", "emoticon-confused", 'bed', 'home'],
             annotation_list: []
         }
@@ -449,7 +407,7 @@ export default {
          */
         updateView() {
             if (this.vis !== null && this.vis !== undefined) {
-                let attributes = ["graph", "color", "background", "title", "axis", "yaxis", "annotation", "text"]
+                let attributes = ["graph", "bgcolor", "background", "title", "axis", "yaxis", "annotation", "text"]
                 attributes.forEach(key => {
                     this.has_attribute[key] = this.vis[key] !== undefined
                 })
@@ -532,11 +490,11 @@ export default {
          * returns the color of the current visualization
          * @returns {string}
          */
-        get_color() {
-            if (this.vis.color) {
-                return this.dashboardStore.get_color(this.vis.color)
+        get_bgcolor() {
+            if (this.vis.bgcolor) {
+                return this.dashboardStore.get_color(this.vis.bgcolor)
             } else {
-                return this.dashboardStore.get_color(this.dashboardStore.default_settings[this.vis.type].color)
+                return this.dashboardStore.get_color(this.dashboardStore.default_settings[this.vis.type].bgcolor)
             }
         },
         /**
