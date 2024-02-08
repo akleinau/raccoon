@@ -101,7 +101,7 @@ export default {
 
             let y = d3.scaleBand()
                 .domain(dot_range_X)
-                .range([margin.top + grid_padding + margin_top_labels, height + margin.top])
+                .range([height + margin.top, margin.top + grid_padding + margin_top_labels])
                 .padding(icon_padding)
 
             const icon_height = y.bandwidth()
