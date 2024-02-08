@@ -21,6 +21,7 @@ export default {
     data: function () {
         return {
             use_column_group_names: false,
+            num_colors: 5
         }
     },
     methods: {
@@ -125,7 +126,7 @@ export default {
                 .enter()
                 .append('path')
                 .attr('d', arc)
-                .attr('fill', (d,i) => this.vis.color[i])
+                .attr('fill', (d,i) => this.vis.color[i%this.num_colors])
                 .attr("stroke", "black")
                 .style("stroke-width", "1.5px")
 

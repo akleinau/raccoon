@@ -25,6 +25,7 @@ export default {
     data: function () {
         return {
             use_column_group_names: false,
+            num_colors: 5
         }
     },
     methods: {
@@ -164,7 +165,7 @@ export default {
                         .join("text")
                         .attr("x", d => x(Math.floor(d / max_range_y)))
                         .attr("y", d => y_row(par.name) + y(d % max_range_y) + icon_height )
-                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color[index] : emptyCircleColor)
+                        .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color[index%this.num_colors] : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(d => ((d + 1) <= this.get_value(par.value)) ?this.getIcon(0) : this.getIcon(1))
                         .style("font-size", d3.max([icon_height, icon_width]) + "px")

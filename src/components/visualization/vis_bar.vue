@@ -21,6 +21,7 @@ export default {
     data: function() {
         return {
             use_column_group_names: false,
+            num_colors: 5
         }
     },
     methods: {
@@ -108,7 +109,7 @@ export default {
                 .attr("y", d => y(d.name))
                 .attr("width", d => x(d.value) - x(0))
                 .attr("height", y.bandwidth())
-                .attr("fill", (d, i) => this.vis.color[i])
+                .attr("fill", (d, i) => this.vis.color[i%this.num_colors])
 
             svg.selectAll("textName")
                 .data(data)

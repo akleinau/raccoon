@@ -23,6 +23,7 @@ export default {
     data: function () {
         return {
             use_column_group_names: false,
+            num_colors: 5
         }
     },
     methods: {
@@ -151,7 +152,7 @@ export default {
                             .innerRadius(0)
                             .outerRadius(radius)
                         )
-                        .attr('fill', d => (color(d) === "id" ? this.vis.color[index] : color(d)))
+                        .attr('fill', d => (color(d) === "id" ? this.vis.color[index%this.num_colors] : color(d)))
                 })
 
 

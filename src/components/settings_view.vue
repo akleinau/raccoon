@@ -270,6 +270,7 @@ export default {
             show: false,
             color_mode: "oneColor",
             color_spread: 45,
+            color_num: 5,
             neighborColor: "#1302B5",
             scheme: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
             colors: [
@@ -312,7 +313,7 @@ export default {
         neighbor_color_list() {
             let color = d3.hsl(this.neighborColor)
             let list = []
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < this.color_num; i++) {
                 list.push(color.formatHex())
                 color.h -= this.color_spread
                 if (color.h < 0) color.h += 360
