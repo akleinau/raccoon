@@ -63,11 +63,13 @@ export default {
          */
         visualize(data) {
             let margin_bottom = this.preview ? 20 : 50
-            let margin = {top: 30, bottom: margin_bottom, left: 50, right: 5}
+            let margin_right = this.preview? 20 : 50
+            let margin_left = this.preview? 20 : 50
+            let margin = {top: 30, bottom: margin_bottom, left: margin_left, right: margin_right}
             let annotation_height = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 30
 
             let width = (this.width ? this.width : 300)*this.vis.size - margin.right
-            let height = data.length * 35*this.vis.size
+            let height = 3*35*this.vis.size
 
 
             let svg = d3.create("svg")
@@ -109,7 +111,7 @@ export default {
             svg.selectAll("textName")
                 .data(data)
                 .join("text")
-                .attr("y", margin.top + 15)
+                .attr("y", margin.top + 30)
                 .attr("x", d => x(d.name) + x.bandwidth() / 2)
                 .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "middle")
@@ -118,12 +120,12 @@ export default {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
-                    .attr("y", d => (this.get_value_text(d.value).toString().length*5 < y(d.value) - y(0)) ? margin.top : margin.top + y(d.value) - y(0))
+                    .attr("y", d => (this.get_value_text(d.value).toString().length*5 < y(d.value) - y(0)) ?
+                        margin.top + height - 5: margin.top + height -5- y(d.value) + y(0))
                     .attr("x", d => x(d.name)+ x.bandwidth() / 2)
                     .text(d => this.get_value_text(d.value))
                     .style("text-anchor", "middle")
                     .style("fill", d => (this.get_value_text(d.value).toString().length*5 < y(d.value) - y(0)) ? "white" : "#202020")
-                    .attr("dy", x.bandwidth() - 5)
 
                 if (this.vis.context === true) {
                     //x axis texts
