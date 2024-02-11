@@ -1,6 +1,6 @@
 {
             "impact": {
-                "graph": "bar",
+                "graph": "bar_flip",
                 "grid": [25, 2],
                 "icon": "human-male",
                 "icon2": "human-male",
@@ -18,8 +18,8 @@
                 "pie_labels": "inside"
             },
             "significance": {
-                "graph": "pictograph",
-                "grid": [10, 1],
+                "graph": "pictograph_flip",
+                "grid": [10, 10],
                 "icon": "emoticon-confused",
                 "icon2": "emoticon",
                 "ratio": 1,

@@ -38,7 +38,9 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
          */
         get_column_label(d, column, preview) {
             let label = (d.name === "") ? "null" : column.options.find(x => x.name === d.name).label
-            return (preview && label.length > 10) ? label.substring(0, 6) + "..." : label
+            let boundary = 30 / column.options.length
+            let text_length = Math.max(boundary-4, 2)
+            return (preview && label.length > boundary) ? label.substring(0, text_length) + "..." : label
         },
         /**
          * converts datamap of a column to an array

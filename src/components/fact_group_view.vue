@@ -62,7 +62,7 @@
                                         class="pa-2">
                                     <div class="bg-white pt-3">
                                         <vis_parser :vis="vis" :column="dashboardStore.current_fact_group.column"
-                                                    :width="400" :index="i"/>
+                                                    :width="vis_width" :index="i"/>
                                     </div>
                                     <div class="d-flex align-center mx-5"
                                          v-if="dashboardStore.current_fact_index === i">
@@ -307,7 +307,8 @@ export default {
                 backgroundColor: "white",
                 encoderOptions: 1,
                 scale: 2,
-            }
+            },
+            vis_width: 700
         }
     },
     created() {
