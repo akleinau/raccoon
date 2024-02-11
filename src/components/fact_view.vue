@@ -50,7 +50,7 @@
 
                     <div class="d-flex justify-space-start w-100 px-5">
                         <!-- grid -->
-                        <div v-if="get('graph') === 'pictograph' || get('unit') === 'natural_frequencies' && get('graph') !== 'pie'">
+                        <div v-if="get('graph') === 'pictograph' || get('graph') === 'pictograph_flip'|| get('unit') === 'natural_frequencies' && get('graph') !== 'pie'">
                             <div class="mb-2 flex-grow-0" v-if="has_attribute['graph']"><b>Grid</b></div>
                             <div class="ml-2 text-grey" v-else>Grid</div>
 
@@ -65,7 +65,7 @@
                             <v-text-field v-else
                                     type="number" label="#columns" style="min-width:200px"/>
                         </div>
-                        <v-divider :disabled="vis.graph === 'pictograph' || vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
+                        <v-divider :disabled="vis.graph === 'pictograph' || vis.graph === 'pictograph_flip' ||vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
 
                         <!-- Font size -->
                         <div v-if="get('graph') === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
@@ -88,7 +88,7 @@
                         </div>
 
                         <!-- pictograph icons -->
-                        <div v-if="get('graph') === 'pictograph'">
+                        <div v-if="get('graph') === 'pictograph' || get('graph') === 'pictograph_flip'">
                             <h4 v-if="!has_attribute['graph']"> Pictograph </h4>
                             <div class="ml-2 text-grey" v-else>Pictograph</div>
 
