@@ -50,7 +50,7 @@
                 "unit": "percent",
                 "context": true,
                 "font_size": 1,
-                "bgcolor": 3,
+                "bgcolor": -1,
                 "text": [{"text": "", "color": "black"}],
                 "pie_labels": "inside"
             },

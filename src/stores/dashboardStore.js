@@ -5,6 +5,7 @@ import {useSimilarityStore} from "@/stores/similarityStore";
 import {useVisGeneratorStore} from "@/stores/visGeneratorStore";
 
 import default_settings_json from "@/stores/default_settings.json"
+import * as d3 from "d3";
 
 export const useDashboardStore = defineStore('dashboardStore', {
     state: () => ({
@@ -20,21 +21,21 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "explore":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
+                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "convince":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": ["#e6a203", "#e6030f", "#e603ba", "#6903e6", "#0347e6"],
+                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "educate":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": ["#ce0286", "#7d02ce", "#0220ce", "#02bace", "#04ce4b"],
+                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     }
@@ -263,21 +264,21 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "explore":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": ["#1302b5", "#0277b5", "#02b56c", "#1eb502", "#a4b502"],
+                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "convince":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": ["#e6a203", "#e6030f", "#e603ba", "#6903e6", "#0347e6"],
+                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "educate":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": ["#ce0286", "#7d02ce", "#0220ce", "#02bace", "#04ce4b"],
+                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     }

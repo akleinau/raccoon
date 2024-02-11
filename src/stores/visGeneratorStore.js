@@ -90,7 +90,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             title: [{text: "$outcome", color: "$color", weight: true}, {text: " risk increase when exposed", color: "black", weight: true}],
                             axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}]
                         }],
-                        "column": {name: "RiskIncrease", label: "Risk Increase", options: options}
+                        "column": {name: "RiskIncrease", label: "Risk Increase", options: options, color: useDataStore().get_rand_color()}
                     },
                     //absolute risk
                     {
@@ -110,7 +110,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             axis: [{text: "$outcome", color: "$color"},
                                 {text: " risk when exposed", color: "black"}, ]
                         }],
-                        "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options}
+                        "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options, color: useDataStore().get_rand_color()}
                     },
                     //influence strength
                     {
@@ -126,7 +126,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             title: [{text: "influence in regression model", color: "black", weight: true}],
                             axis: [{text: "(maximal) weight of factor", color: "black"}]
                         }],
-                        "column": {name: "Influence", label: "Influence", options: options}
+                        "column": {name: "Influence", label: "Influence", options: options, color: useDataStore().get_rand_color()}
                     }
 
                     )

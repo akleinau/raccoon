@@ -50,6 +50,7 @@ export const useDataStore = defineStore('dataStore', {
                         occurrence: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
                         //how often each option occurs together with the target option
                         occurrence_target_option: Object.fromEntries(new Map(options.map(d => [d.name, 0]))),
+                        color: this.get_rand_color()
                     }
                     this.csv.forEach(d => column.occurrence[d[name]]++)
                     this.filter_for_target_option(this.csv).forEach(d => column.occurrence_target_option[d[name]]++)
@@ -78,6 +79,7 @@ export const useDataStore = defineStore('dataStore', {
                             occurrence: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
                             //how often each option occurs together with the target option
                             occurrence_target_option: Object.fromEntries(new Map(options_bin.map(d => [d.name, 0]))),
+                            color: this.get_rand_color()
                         }
 
                         column.data_binned.forEach(d => column.occurrence[d]++)
@@ -459,6 +461,12 @@ export const useDataStore = defineStore('dataStore', {
         find_bin(value, options) {
             const option = options.find(d => d.range !== undefined ? +value >= +d.range[0] && +value < +d.range[1] : d.name === value)
             return option ? option.name : null
+        },
+        /**
+         * get random color offset
+         */
+        get_rand_color() {
+          return {type: "standard", value: Math.random()-0.5}
         },
         /**
          * resets all variables to their initial state

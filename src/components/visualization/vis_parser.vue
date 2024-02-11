@@ -27,6 +27,7 @@ import {useDataStore} from "@/stores/dataStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
 import {useHelperStore} from "@/stores/helperStore";
+import * as d3 from "d3";
 
 export default {
     name: "vis_parser",
@@ -82,11 +83,14 @@ export default {
                 if (vis.graph === "text") {
                     vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].text
                 } else {
-                    vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].colors
+                    console.log(this.column)
+                    vis["color"] = this.create_color_list(this.column.color,
+                        this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
+                        this.column.options.length)
                 }
             }
 
-            vis["bgcolor"] = this.dashboardStore.get_color(vis["bgcolor"])
+            vis["bgcolor"] = this.get_bg_color(vis["color"],vis["bgcolor"])
 
 
             //font
@@ -159,6 +163,53 @@ export default {
         }
     },
     methods: {
+        /**
+         * create color list out of color specifications
+         *
+         * @param specification
+         * @param standard
+         * @param length
+         * @returns {*[]}
+         */
+        create_color_list(specification, standard, length) {
+            if (standard.type === "scheme") {
+                let color = d3.hsl(standard.color)
+                let spread = standard.spread
+
+                //start in the middle
+                let start_h_offset = spread * (length - 1) / 2
+                color.h += start_h_offset
+
+                //individualize h
+                color.h += Math.floor(specification.value  * standard.global_spread)
+
+                if (color.h < 0) color.h += 360
+
+                //create list
+                let list = []
+                for (let i = 0; i < length; i++) {
+                    list.push(color.formatHex())
+                    color.h -= spread
+                    if (color.h < 0) color.h += 360
+                }
+                return list
+            }
+            else return standard.list
+        },
+        /**
+         * get background color
+         *
+         * @param color
+         * @param bgcolor
+         * @returns {*}
+         */
+        get_bg_color(color, bgcolor) {
+            let length = color.length
+            let index = Math.floor(length / 2) + bgcolor
+            if (index < 0) index += length
+            if (index >= length) index -= length
+            return color[index]
+        },
         /**
          * add line breaks to annotation text
          *

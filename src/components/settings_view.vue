@@ -21,43 +21,45 @@
             <v-expansion-panel value="design" v-if="!show_panels || show_panels.includes('design')">
                 <v-expansion-panel-title>
                     <h4 class="mr-4">Design:</h4>
-                    <span v-for="(color,i) in dashboardStore.default_colors[dashboardStore.intention].colors" :key="i">
-                    <v-icon :style="'color:' + color">mdi-circle</v-icon>
-                </span>
+
+                    <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'scheme'">
+                        <v-icon :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors.color">mdi-auto-mode </v-icon>
+                    </div>
+                    <div v-else>
+                        <span v-for="(color,i) in dashboardStore.default_colors[dashboardStore.intention].colors.list" :key="i">
+                            <v-icon :style="'color:' + color">mdi-circle</v-icon>
+                        </span>
+                    </div>
+
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                     <div class="d-flex">
                         <!-- Color Scheme -->
                         <div>
-                            <v-btn-toggle v-model="color_mode" label="Colors" class="mb-2" mandatory  >
-                                <v-btn value="oneColor" label="color based"
-                                         @click="dashboardStore.default_colors[dashboardStore.intention].colors=neighbor_color_list"> scheme </v-btn>
-                                <v-btn value="scheme" label="scheme"
-                                         @click="dashboardStore.default_colors[dashboardStore.intention].colors=scheme"> palette </v-btn>
+                            <v-btn-toggle v-model="dashboardStore.default_colors[dashboardStore.intention].colors.type" label="Colors" class="mb-2" mandatory  >
+                                <v-btn value="scheme" label="color based"> scheme </v-btn>
+                                <v-btn value="palette" label="scheme"> palette </v-btn>
                                 <v-btn value="custom" label="custom"
-                                         @click="custom_color_list=dashboardStore.default_colors[dashboardStore.intention].colors"> custom </v-btn>
+                                         @click="custom_color_list=dashboardStore.default_colors[dashboardStore.intention].colors.list"> custom </v-btn>
                             </v-btn-toggle>
 
-                            <div v-if="color_mode === 'oneColor'">
-                                <div class="d-flex w-100 justify-center">
+                            <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'scheme'">
+                                <div class="d-flex w-100 mb-2">
                                     Color based:
-                                    <v-icon class="ml-2" :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors[0]">mdi-circle</v-icon>
+                                    <v-icon class="ml-2" :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors.color">mdi-circle</v-icon>
                                     <v-icon class="ml-1">mdi-pencil</v-icon>
-                                    <color-dialog :color="dashboardStore.default_colors[dashboardStore.intention].colors[0]"
-                                                  @update="neighborColor = $event; dashboardStore.default_colors[dashboardStore.intention].colors=neighbor_color_list "></color-dialog>
+                                    <color-dialog :color="dashboardStore.default_colors[dashboardStore.intention].colors.color"
+                                                  @update="neighborColor = $event; dashboardStore.default_colors[dashboardStore.intention].colors.color = neighborColor "></color-dialog>
                                 </div>
-                                <v-slider v-model="color_spread" label="spread" start="20" end="100" step="5"
-                                          @click="dashboardStore.default_colors[dashboardStore.intention].colors=neighbor_color_list"
+                                color variance between bins
+                                <v-slider v-model="dashboardStore.default_colors[dashboardStore.intention].colors.spread" min="0" max="200" step="5"
                                           style="max-width:200px"/>
-                                <v-divider class="mt-2"></v-divider>
-                                <div class="d-flex w-100 justify-center mt-2">
-                            <span v-for="(color,i) in dashboardStore.default_colors[dashboardStore.intention].colors" :key="i">
-                                <v-icon :style="'color:' + color">mdi-circle</v-icon>
-                            </span>
-                                </div>
+                                color variance between factors
+                                <v-slider v-model="dashboardStore.default_colors[dashboardStore.intention].colors.global_spread" min="0" max="500" step="5"
+                                          style="max-width:200px"/>
                             </div>
 
-                            <div v-if="color_mode === 'scheme'" class="mr-5">
+                            <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'palette'" class="mr-5">
                                 <div>Color scheme:</div>
                                 <v-select v-model="scheme" :items="colors" dense variant="underlined">
                                     <template v-slot:selection="{item}">
@@ -65,7 +67,7 @@
                                     </template>
                                     <template v-slot:item="{item}">
                                         <div>
-                                            <v-btn @click="scheme = item.value; dashboardStore.default_colors[dashboardStore.intention].colors=scheme"
+                                            <v-btn @click="scheme = item.value; dashboardStore.default_colors[dashboardStore.intention].colors.list=scheme"
                                                    variant="plain">
                                                 <v-icon v-for="color in item.value" :key="color"
                                                         :style="'color:' + color">
@@ -77,13 +79,13 @@
                                 </v-select>
                             </div>
 
-                            <div v-if="color_mode === 'custom'">
+                            <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'custom'">
                                 <div>Custom:</div>
                                 <span v-for="(color,i) in custom_color_list" :key="i">
                                         <v-icon :style="'color:' + color">mdi-circle</v-icon>
                                         <v-icon class="mr-2">mdi-pencil</v-icon>
                                         <color-dialog :color="color"
-                                                      @update="custom_color_list[i] = $event; dashboardStore.default_colors[dashboardStore.intention].colors=custom_color_list; color=$event"></color-dialog>
+                                                      @update="custom_color_list[i] = $event; dashboardStore.default_colors[dashboardStore.intention].colors.list=custom_color_list; color=$event"></color-dialog>
                                     </span>
                             </div>
                         </div>
@@ -269,7 +271,6 @@ export default {
         return {
             show: false,
             color_mode: "oneColor",
-            color_spread: 45,
             color_num: 5,
             neighborColor: "#1302B5",
             scheme: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
