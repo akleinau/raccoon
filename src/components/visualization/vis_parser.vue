@@ -27,6 +27,7 @@ import {useDataStore} from "@/stores/dataStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
 import {useHelperStore} from "@/stores/helperStore";
+import {useVisHelperStore} from "@/stores/visHelperStore";
 import * as d3 from "d3";
 
 export default {
@@ -39,7 +40,8 @@ export default {
         const dataStore = useDataStore()
         const annotationStore = useAnnotationStore()
         const helperStore = useHelperStore()
-        return {dashboardStore, dataStore, annotationStore, helperStore}
+        const visHelperStore = useVisHelperStore()
+        return {dashboardStore, dataStore, annotationStore, helperStore, visHelperStore}
     },
     components: {vis_bar, vis_pictograph, vis_text, vis_pie, vis_multiple_pie, vis_pictograph_flip, vis_bar_flip},
     data() {
@@ -84,7 +86,7 @@ export default {
                     vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].text
                 } else {
                     console.log(this.column)
-                    vis["color"] = this.create_color_list(this.column.color,
+                    vis["color"] = this.visHelperStore.create_color_list(this.column.color,
                         this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
                         this.column.options.length)
                 }
@@ -163,39 +165,6 @@ export default {
         }
     },
     methods: {
-        /**
-         * create color list out of color specifications
-         *
-         * @param specification
-         * @param standard
-         * @param length
-         * @returns {*[]}
-         */
-        create_color_list(specification, standard, length) {
-            if (standard.type === "scheme") {
-                let color = d3.hsl(standard.color)
-                let spread = standard.spread
-
-                //start in the middle
-                let start_h_offset = spread * (length - 1) / 2
-                color.h += start_h_offset
-
-                //individualize h
-                color.h += Math.floor(specification.value  * standard.global_spread)
-
-                if (color.h < 0) color.h += 360
-
-                //create list
-                let list = []
-                for (let i = 0; i < length; i++) {
-                    list.push(color.formatHex())
-                    color.h -= spread
-                    if (color.h < 0) color.h += 360
-                }
-                return list
-            }
-            else return standard.list
-        },
         /**
          * get background color
          *

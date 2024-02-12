@@ -202,6 +202,24 @@
                             </v-expansion-panel-text>
                         </v-expansion-panel>
 
+                        <!-- colors -->
+                        <v-expansion-panel value="colors">
+                            <v-expansion-panel-title><h4> Colors </h4></v-expansion-panel-title>
+                            <v-expansion-panel-text style="min-width: 500px">
+                                <v-switch v-model="customColors" label="Custom"/>
+                                <div v-if="column.color.list !== undefined && column.color.type === 'custom'" >
+                                    <span  v-for="(color,i) in column.color.list" :key="i" class="mx-3">
+                                            {{column.options[i].label}}
+                                            <v-icon :style="'color:' + color">mdi-circle</v-icon>
+                                            <v-icon class="mr-2">mdi-pencil</v-icon>
+                                            <color-dialog :color="color"
+                                                          @update="column.color.list[i] = $event; color=$event"></color-dialog>
+                                    </span>
+                                </div>
+
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+
                         <!-- additional visualizations -->
                         <v-expansion-panel value="visualizations">
                             <v-expansion-panel-title><h4> Additional Visualizations </h4></v-expansion-panel-title>
@@ -279,24 +297,27 @@ import {useDataStore} from "@/stores/dataStore";
 import {useScoreStore} from "@/stores/scoreStore"
 import {useSimilarityStore} from "@/stores/similarityStore";
 import {useHelperStore} from "@/stores/helperStore";
+import {useVisHelperStore} from "@/stores/visHelperStore";
 import * as d3 from "d3";
 
 import * as svg2png from "save-svg-as-png/lib/saveSvgAsPng.js";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import pdfMake from "pdfmake/build/pdfmake";
+import ColorDialog from "@/components/helpers/color-dialog.vue";
 
 pdfMake.vfs = pdfFonts && pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : globalThis.pdfMake.vfs;
 
 export default {
     name: "fact_group_view",
-    components: {vis_parser, fact_group_preview, fact_view},
+    components: {ColorDialog, vis_parser, fact_group_preview, fact_view},
     setup() {
         const dashboardStore = useDashboardStore()
         const dataStore = useDataStore()
         const scoreStore = useScoreStore()
         const similarityStore = useSimilarityStore()
         const helperStore = useHelperStore()
-        return {dashboardStore, dataStore, scoreStore, similarityStore, helperStore}
+        const visHelperStore = useVisHelperStore()
+        return {dashboardStore, dataStore, scoreStore, similarityStore, helperStore, visHelperStore}
     },
     data() {
         return {
@@ -308,11 +329,13 @@ export default {
                 encoderOptions: 1,
                 scale: 2,
             },
-            vis_width: 700
+            vis_width: 700,
+            customColors: false
         }
     },
     created() {
         this.options_to_steps()
+        this.customColors = this.column.color.type === "custom"
     },
     watch: {
         display: function () {
@@ -324,6 +347,17 @@ export default {
         risk_groups: function () {
             if (this.column) {
                 this.dataStore.compute_risk_increase(this.column)
+            }
+        },
+        customColors: function () {
+            if (this.customColors) {
+                this.column.color.list = this.visHelperStore.create_color_list(this.column.color,
+                        this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
+                        this.column.options.length)
+                this.column.color.type = "custom"
+            }
+            else {
+                this.column.color.type = "standard"
             }
         }
     },

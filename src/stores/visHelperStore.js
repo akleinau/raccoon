@@ -93,6 +93,43 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 bgcolor.l += (1 - bgcolor.l) * 0.8
             }
             return bgcolor
-        }
+        },
+        /**
+         * create color list out of color specifications
+         *
+         * @param specification
+         * @param standard
+         * @param length
+         * @returns {*[]}
+         */
+        create_color_list(specification, standard, length) {
+            if (specification.type === "standard") {
+                if (standard.type === "scheme") {
+                    let color = d3.hsl(standard.color)
+                    let spread = standard.spread
+
+                    //start in the middle
+                    let start_h_offset = spread * (length - 1) / 2
+                    color.h += start_h_offset
+
+                    //individualize h
+                    color.h += Math.floor(specification.value * standard.global_spread)
+
+                    if (color.h < 0) color.h += 360
+
+                    //create list
+                    let list = []
+                    for (let i = 0; i < length; i++) {
+                        list.push(color.formatHex())
+                        color.h -= spread
+                        if (color.h < 0) color.h += 360
+                    }
+                    return list
+                } else return standard.list
+            }
+            else {
+                return specification.list
+            }
+        },
     }
 })
