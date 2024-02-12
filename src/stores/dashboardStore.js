@@ -27,7 +27,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     },
                 "convince":
                     {
-                        "background": {color: "auto", stroke: "None"},
+                        "background": {color: "white", stroke: "darkgray"},
                         "colors": {"type": "scheme", "color": "#EE1062", "spread": 30, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
@@ -98,6 +98,9 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 ["significance", "context", "custom", "overall"].forEach((key) => {
                     this.default_settings[key].context = true
                     this.default_settings[key].unit = "percent"
+                    this.default_settings[key].icon = "circle"
+                    this.default_settings[key].icon2 = "circle"
+
                 })
                 this.default_settings["impact"].context = true
                 this.default_settings["impact"].unit = "natural_frequencies"
@@ -106,6 +109,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 ["impact", "significance", "context", "custom", "overall"].forEach((key) => {
                     this.default_settings[key].context = false
                     this.default_settings[key].unit = "natural_frequencies"
+                    this.default_settings[key].icon = "emoticon-confused"
+                    this.default_settings[key].icon2 = "emoticon"
                 })
                 this.default_settings["impact"].graph = "bar_flip"
                 this.default_settings["impact"].unit = "percent"
@@ -113,6 +118,8 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 ["impact", "significance", "context", "custom", "overall"].forEach((key) => {
                     this.default_settings[key].context = true
                     this.default_settings[key].unit = "natural_frequencies"
+                    this.default_settings[key].icon = "account"
+                    this.default_settings[key].icon2 = "circle"
                 })
                 this.default_settings["impact"].graph = "pie"
                 this.default_settings["impact"].unit = "percent"
@@ -270,7 +277,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     },
                 "convince":
                     {
-                        "background": {color: "auto", stroke: "None"},
+                        "background": {color: "white", stroke: "darkgray"},
                         "colors": {"type": "scheme", "color": "#EE1062", "spread": 30, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
