@@ -28,7 +28,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "convince":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#EE1062", "spread": 30, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
@@ -271,7 +271,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "convince":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#EE1062", "spread": 30, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
