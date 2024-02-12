@@ -82,17 +82,23 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
          * returns background color. If background is set to auto, an appropriate color is selected. Else the background color is returned.
          *
          * @param background
-         * @param foreground
+         * @param colors
          * @returns {*}
          */
-        get_bgcolor(background, foreground) {
+        get_bgcolor(background, colors, bg_index) {
             let bgcolor = background
             if (background === "auto") {
-                bgcolor = d3.hsl(foreground)
+
+                let length = colors.length
+                let index = Math.floor(length / 2) + bg_index
+                if (index < 0) index += length
+                if (index >= length) index -= length
+
+                bgcolor = d3.hsl(colors[index])
                 bgcolor.s = bgcolor.s * 0.2
                 bgcolor.l += (1 - bgcolor.l) * 0.8
             }
-            return bgcolor
+            return d3.color(bgcolor).formatHex()
         },
         /**
          * create color list out of color specifications

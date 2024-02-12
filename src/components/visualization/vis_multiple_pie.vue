@@ -104,7 +104,7 @@ export default {
             let height = data.length * (radius * 2 + 20)
 
             //background
-            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.bgcolor)
+            let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color, this.vis.bgcolor)
 
             let emptyCircleColor = this.vis.context === true ? d3.color("white").darker(0.1) : bgcolor
 

@@ -157,37 +157,22 @@
             </v-expansion-panel-text>
         </v-expansion-panel>
 
-        <!-- Color -->
-        <v-expansion-panel v-if="get_default('bgcolor') !== undefined">
+        <!-- Background Color -->
+        <v-expansion-panel v-if="get_default('background') !== undefined">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Background Color </h4></v-expansion-panel-title>
             <v-expansion-panel-text style="min-width: 500px">
                 <div class="d-flex">
                     <div>
-                        <v-switch v-model="has_attribute['bgcolor']" label="Custom"/>
-                        <v-radio-group v-model="vis.bgcolor"
-                                       :disabled="!has_attribute['bgcolor']">
-                            <v-radio v-for="(el,i) in dashboardStore.default_colors[dashboardStore.intention].colors" v-bind:key="el"
-                                     :value="i">
-                                <template v-slot:label>
-                                    <v-icon :style="'color:' + el">
-                                        mdi-circle
-                                    </v-icon>
-                                </template>
-                            </v-radio>
+                        <v-switch v-model="has_attribute['background']" label="Custom"/>
 
-                            <v-radio class="d-flex align-center" :value="custom_bgcolor">
-                                <template v-slot:label>
-                                    <v-icon :style="'color:' + custom_bgcolor" class="mr-2">
-                                        mdi-circle
-                                    </v-icon>
-                                    custom
-                                    <v-icon class="ml-2">mdi-pencil</v-icon>
-                                    <color-dialog v-if="vis.bgcolor !== '$color'"
-                                                  :color="get_bgcolor()"
-                                                  @update="vis.bgcolor = $event; custom_bgcolor= $event"></color-dialog>
-                                </template>
-                            </v-radio>
-                        </v-radio-group>
+                        <div v-if="has_attribute['background']"  class="mb-5">
+                            <v-icon :style="'color:' + vis.background.color">mdi-circle</v-icon>
+                            <color-dialog :color="vis.background.color"
+                                          @update="vis.background.color = $event;"></color-dialog>
+                            <v-icon class="ml-2">mdi-pencil</v-icon>
+
+                        </div>
+
                         <v-btn @click="makeDefault('bgcolor')" variant="tonal"
                                :disabled="!has_attribute['bgcolor']"> set as default for
                             {{ vis.type }} facts
@@ -297,6 +282,7 @@ import {useDataStore} from "@/stores/dataStore";
 import ColorDialog from "@/components/helpers/color-dialog.vue";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import {useHelperStore} from "@/stores/helperStore";
+import {useVisHelperStore} from "@/stores/visHelperStore";
 
 export default {
     name: "fact_view",
@@ -306,7 +292,8 @@ export default {
         const dataStore = useDataStore()
         const annotationStore = useAnnotationStore()
         const helperStore = useHelperStore()
-        return {dashboardStore, dataStore, annotationStore, helperStore}
+        const visHelperStore = useVisHelperStore()
+        return {dashboardStore, dataStore, annotationStore, helperStore, visHelperStore}
     },
     data() {
         return {
@@ -407,7 +394,7 @@ export default {
          */
         updateView() {
             if (this.vis !== null && this.vis !== undefined) {
-                let attributes = ["graph", "bgcolor", "background", "title", "axis", "yaxis", "annotation", "text"]
+                let attributes = ["graph", "background", "title", "axis", "yaxis", "annotation", "text"]
                 attributes.forEach(key => {
                     this.has_attribute[key] = this.vis[key] !== undefined
                 })
@@ -445,6 +432,17 @@ export default {
 
             if (this.vis === null || this.vis === undefined) {
                 return null
+            }
+
+            if (attribute === "background") {
+                let bg = this.dashboardStore.default_colors[this.dashboardStore.intention].background
+                //calculates foreground colors
+                let color = this.visHelperStore.create_color_list(this.dashboardStore.current_fact_group.column.color,
+                        this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
+                        this.dashboardStore.current_fact_group.column.options.length)
+                //calculates background out of foreground, default background and index
+                return {color: this.visHelperStore.get_bgcolor(bg.color, color, this.get_default("bgcolor")),
+                    stroke: "None"}
             }
 
             return this.dashboardStore.default_settings[this.vis.type][attribute]

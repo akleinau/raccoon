@@ -85,14 +85,11 @@ export default {
                 if (vis.graph === "text") {
                     vis["color"] = this.dashboardStore.default_colors[this.dashboardStore.intention].text
                 } else {
-                    console.log(this.column)
                     vis["color"] = this.visHelperStore.create_color_list(this.column.color,
                         this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
                         this.column.options.length)
                 }
             }
-
-            vis["bgcolor"] = this.get_bg_color(vis["color"],vis["bgcolor"])
 
 
             //font
@@ -165,20 +162,6 @@ export default {
         }
     },
     methods: {
-        /**
-         * get background color
-         *
-         * @param color
-         * @param bgcolor
-         * @returns {*}
-         */
-        get_bg_color(color, bgcolor) {
-            let length = color.length
-            let index = Math.floor(length / 2) + bgcolor
-            if (index < 0) index += length
-            if (index >= length) index -= length
-            return color[index]
-        },
         /**
          * add line breaks to annotation text
          *
