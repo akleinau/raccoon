@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import * as d3 from "d3";
 import {useSimilarityStore} from "@/stores/similarityStore";
+import {useDashboardStore} from "@/stores/dashboardStore";
 
 
 export const useAnnotationStore = defineStore('annotationStore', {
@@ -39,14 +40,17 @@ export const useAnnotationStore = defineStore('annotationStore', {
          */
         compute_significance_annotations(summary, unit, grid) {
             let annotations = []
-            annotations.push({"text": [{"text": "custom", "color": "$text", "italic": "true"}], "target": [], "score": 0}) //empty annotation
+            annotations.push({
+                "text": [{"text": "custom", "color": "$text", "italic": "true"}],
+                "target": [],
+                "score": {explore: 0, convince: 0, educate: 0},}) //empty annotation
 
             //significance
             if (summary.significance !== undefined && summary.significance.significant_tuples.length === 0 && summary.options.length > 1) {
                 annotations.push({
                     "text": [{"text": "Not statistically significant!", "color": "$text", "italic": "true"}],
                     "target": [],
-                    "score": 10,
+                    "score": {explore: 10, convince: 1, educate: 1},
                 })
             } else if (summary.significance !== undefined) {
                 //highest significant percentage
@@ -66,7 +70,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "color": "$text", "italic": "true"
                     }],
                     "target": [greatest_significance],
-                    "score": 3,
+                    "score": {explore: 3, convince: 3, educate: 3},
                 })
 
                 //risk factor
@@ -90,7 +94,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             },
                         ],
                         "target": summary.riskIncrease.risk_factor_groups,
-                        "score": 7
+                        "score": {explore: 6, convince: 7, educate: 7},
                     })
 
                 }
@@ -103,7 +107,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "text": [
                             {"text": "Based on only " + under_hundred[0][1] + " $rows.", "color": "$text", "italic": "true"}],
                         "target": [under_hundred[0][0]],
-                        "score": 5
+                        "score": {explore: 7, convince: 1, educate: 1}
                     })
                 } else {
                     let upper_boundary = d3.max(under_hundred.map(([_, value]) => value))
@@ -115,12 +119,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "$text", "italic": "true"
                             }],
                         "target": under_hundred.map(([key, _]) => key),
-                        "score": 5
+                        "score": {explore: 7, convince: 1, educate: 1},
                     })
                 }
             }
 
-            return annotations.sort((a, b) => b.score - a.score)
+            return this.sort_by_intention(annotations)
         },
 
         /**
@@ -131,7 +135,10 @@ export const useAnnotationStore = defineStore('annotationStore', {
          */
         compute_impact_annotations(summary, unit) {
             let annotations = []
-            annotations.push({"text": [{"text": "custom", "color": "$text", "italic": "true"}], "target": [], "score": 0}) //empty annotation
+            annotations.push({
+                "text": [{"text": "custom", "color": "$text", "italic": "true"}],
+                "target": [],
+                "score": {explore: 0, convince: 0, educate: 0},}) //empty annotation
 
             //occurrence
             let greatest_occurrence = Object.entries(summary.occurrence).sort((a, b) => b[1] - a[1])[0]
@@ -142,7 +149,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "color": "$text", "italic": "true"
                     }],
                 "target": [greatest_occurrence[0]],
-                "score": 7
+                "score": {explore: 5, convince: 3, educate: 7}
             })
 
             //risk factor
@@ -165,7 +172,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         },
                     ],
                     "target": summary.riskIncrease.risk_factor_groups,
-                    "score": 3
+                    "score": {explore: 3, convince: 7, educate: 3}
                 })
 
             }
@@ -178,7 +185,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                         "text": [
                             {"text": "Only " + under_hundred[0][1] + " $rows.", "color": "$text", "italic": "true"}],
                         "target": [under_hundred[0][0]],
-                        "score": 5
+                        "score": {explore: 7, convince: 1, educate: 1},
                     })
                 } else {
                     let upper_boundary = d3.max(under_hundred.map(([_, value]) => value))
@@ -190,12 +197,12 @@ export const useAnnotationStore = defineStore('annotationStore', {
                                 "color": "$text", "italic": "true"
                             }],
                         "target": under_hundred.map(([key, _]) => key),
-                        "score": 5
+                        "score": {explore: 7, convince: 1, educate: 1},
                     })
                 }
             }
 
-            return annotations.sort((a, b) => b.score - a.score)
+            return this.sort_by_intention(annotations)
         },
 
         /**
@@ -206,7 +213,10 @@ export const useAnnotationStore = defineStore('annotationStore', {
          */
         compute_similarity_annotations(summary) {
             let annotations = []
-            annotations.push({"text": [{"text": "custom", "color": "$text", "italic": "true"}], "target": [], "score": 0}) //empty annotation
+            annotations.push({
+                "text": [{"text": "custom", "color": "$text", "italic": "true"}],
+                "target": [],
+                "score": {explore: 0, convince: 0, educate: 0},}) //empty annotation
             //similar dashboard columns
             let similar_dashboard_columns = useSimilarityStore().compute_similar_dashboard_columns(summary)
                 .sort((a, b) => b.similarity - a.similarity)
@@ -221,16 +231,19 @@ export const useAnnotationStore = defineStore('annotationStore', {
                             "color": "$text", "italic": "true"
                         }],
                     "target": [],
-                    "score": 10
+                    "score": {explore: 10, convince: 10, educate: 10},
                 })
             }
 
-            return annotations.sort((a, b) => b.score - a.score)
+            return this.sort_by_intention(annotations)
         },
 
         compute_context_annotations(summary, unit, grid, data) {
             let annotations = []
-            annotations.push({"text": [{"text": "custom", "color": "$text", "italic": "true"}], "target": [], "score": 0}) //empty annotation
+            annotations.push({
+                "text": [{"text": "custom", "color": "$text", "italic": "true"}],
+                "target": [],
+                "score": {explore: 0, convince: 0, educate: 0},}) //empty annotation
 
             const max_item = data.sort((a, b) => b[1] - a[1])[0]
 
@@ -262,9 +275,21 @@ export const useAnnotationStore = defineStore('annotationStore', {
             }
 
 
-            annotations.push({"text": text, "target": [max_item.name], "score": 5}) //empty annotation
+            annotations.push({
+                "text": text,
+                "target": [max_item.name],
+                "score": {explore: 5, convince: 5, educate: 5},}) //empty annotation
 
-            return annotations.sort((a, b) => b.score - a.score)
+            return this.sort_by_intention(annotations)
+        },
+
+        /**
+         * sort by intention
+         */
+        sort_by_intention(annotations) {
+            let intention = useDashboardStore().intention
+            annotations.sort( (a,b) => b.score[intention] - a.score[intention])
+            return annotations
         }
 
     }
