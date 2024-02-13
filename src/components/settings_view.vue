@@ -25,6 +25,9 @@
                     <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'scheme'">
                         <v-icon :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors.color">mdi-auto-mode </v-icon>
                     </div>
+                    <div v-else-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'focus'">
+                        <v-icon :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors.color">mdi-circle </v-icon>
+                    </div>
                     <div v-else>
                         <span v-for="(color,i) in dashboardStore.default_colors[dashboardStore.intention].colors.list" :key="i">
                             <v-icon :style="'color:' + color">mdi-circle</v-icon>
@@ -38,12 +41,13 @@
                         <div>
                             <v-btn-toggle v-model="dashboardStore.default_colors[dashboardStore.intention].colors.type" label="Colors" class="mb-2" mandatory  >
                                 <v-btn value="scheme" label="color based"> scheme </v-btn>
+                                <v-btn value="focus" label="focus"> focus </v-btn>
                                 <v-btn value="palette" label="scheme"> palette </v-btn>
                                 <v-btn value="custom" label="custom"
                                          @click="custom_color_list=dashboardStore.default_colors[dashboardStore.intention].colors.list"> custom </v-btn>
                             </v-btn-toggle>
 
-                            <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'scheme'">
+                            <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'scheme' || dashboardStore.default_colors[dashboardStore.intention].colors.type === 'focus'">
                                 <div class="d-flex w-100 mb-2">
                                     Color based:
                                     <v-icon class="ml-2" :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors.color">mdi-circle</v-icon>
@@ -51,9 +55,18 @@
                                     <color-dialog :color="dashboardStore.default_colors[dashboardStore.intention].colors.color"
                                                   @update="neighborColor = $event; dashboardStore.default_colors[dashboardStore.intention].colors.color = neighborColor "></color-dialog>
                                 </div>
-                                color variance between bins
-                                <v-slider v-model="dashboardStore.default_colors[dashboardStore.intention].colors.spread" min="0" max="200" step="5"
-                                          style="max-width:200px"/>
+                                <div class="d-flex w-100 mb-2" v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'focus'">
+                                    Neutral Color:
+                                    <v-icon class="ml-2" :style="'color:' + dashboardStore.default_colors[dashboardStore.intention].colors.neutralColor">mdi-circle</v-icon>
+                                    <v-icon class="ml-1">mdi-pencil</v-icon>
+                                    <color-dialog :color="dashboardStore.default_colors[dashboardStore.intention].colors.neutralColor"
+                                                  @update="neutralColor = $event; dashboardStore.default_colors[dashboardStore.intention].colors.neutralColor = neutralColor "></color-dialog>
+                                </div>
+                                <div v-if="dashboardStore.default_colors[dashboardStore.intention].colors.type === 'scheme'">
+                                  color variance between bins
+                                  <v-slider v-model="dashboardStore.default_colors[dashboardStore.intention].colors.spread" min="0" max="200" step="5"
+                                            style="max-width:200px"/>
+                                </div>
                                 color variance between factors
                                 <v-slider v-model="dashboardStore.default_colors[dashboardStore.intention].colors.global_spread" min="0" max="500" step="5"
                                           style="max-width:200px"/>
@@ -273,6 +286,7 @@ export default {
             color_mode: "oneColor",
             color_num: 5,
             neighborColor: "#1302B5",
+            neutralColor: "grey",
             scheme: d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
             colors: [
                 d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex()),
@@ -306,22 +320,7 @@ export default {
         }
     },
     computed: {
-        /**
-         * given the current color, computes neighboring colors
-         *
-         * @returns {*[]}
-         */
-        neighbor_color_list() {
-            let color = d3.hsl(this.neighborColor)
-            let list = []
-            for (let i = 0; i < this.color_num; i++) {
-                list.push(color.formatHex())
-                color.h -= this.color_spread
-                if (color.h < 0) color.h += 360
-            }
-            return list
-        },
-        current_fact_group() {
+      current_fact_group() {
             return this.dashboardStore.current_fact_group
         }
     }

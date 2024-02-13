@@ -353,7 +353,7 @@ export default {
             if (this.customColors) {
                 this.column.color.list = this.visHelperStore.create_color_list(this.column.color,
                         this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
-                        this.column.options.length)
+                        this.column.options)
                 this.column.color.type = "custom"
             }
             else {

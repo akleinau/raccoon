@@ -105,10 +105,11 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
          *
          * @param specification
          * @param standard
-         * @param length
+         * @param options
          * @returns {*[]}
          */
-        create_color_list(specification, standard, length) {
+        create_color_list(specification, standard, options) {
+            let length = options.length
             if (specification.type === "standard") {
                 if (standard.type === "scheme") {
                     let color = d3.hsl(standard.color)
@@ -131,7 +132,25 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                         if (color.h < 0) color.h += 360
                     }
                     return list
-                } else return standard.list
+                } else if (standard.type === "focus") {
+                    let color = d3.hsl(standard.color)
+                    color.h += Math.floor(specification.value * standard.global_spread)
+
+                    //create list
+                    let list = []
+                    for (let i = 0; i < length; i++) {
+                        if (options[i].risk_group) {
+                            list.push(color.formatHex())
+                        }
+                        else {
+                            list.push(standard.neutralColor)
+                        }
+                    }
+                    return list
+
+
+                } else
+                    return standard.list
             }
             else {
                 return specification.list

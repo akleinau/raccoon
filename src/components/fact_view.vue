@@ -439,7 +439,7 @@ export default {
                 //calculates foreground colors
                 let color = this.visHelperStore.create_color_list(this.dashboardStore.current_fact_group.column.color,
                         this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
-                        this.dashboardStore.current_fact_group.column.options.length)
+                        this.dashboardStore.current_fact_group.column.options)
                 //calculates background out of foreground, default background and index
                 return {color: this.visHelperStore.get_bgcolor(bg.color, color, this.get_default("bgcolor")),
                     stroke: "None"}

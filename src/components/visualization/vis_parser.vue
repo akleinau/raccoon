@@ -87,7 +87,7 @@ export default {
                 } else {
                     vis["color"] = this.visHelperStore.create_color_list(this.column.color,
                         this.dashboardStore.default_colors[this.dashboardStore.intention].colors,
-                        this.column.options.length)
+                        this.column.options)
                 }
             }
 

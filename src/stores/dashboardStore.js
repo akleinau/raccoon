@@ -21,21 +21,21 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "explore":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#1302b5", "neutralColor": "#A8A8A8", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "convince":
                     {
                         "background": {color: "white", stroke: "darkgray"},
-                        "colors": {"type": "scheme", "color": "#EE1062", "spread": 30, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "focus", "color": "#D3003B", "neutralColor": "#A8A8A8", "spread": 30, "global_spread": 0, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "educate":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#1302b5", "neutralColor": "#A8A8A8", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     }
@@ -271,21 +271,21 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "explore":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#1302b5", "neutralColor": "#A8A8A8", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "convince":
                     {
                         "background": {color: "white", stroke: "darkgray"},
-                        "colors": {"type": "scheme", "color": "#EE1062", "spread": 30, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "focus", "color": "#D3003B", "neutralColor": "#A8A8A8", "spread": 30, "global_spread": 0, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     },
                 "educate":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#1302b5", "neutralColor": "#A8A8A8", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     }
