@@ -14,8 +14,10 @@
                         <v-radio label="bar (vertical)" value="bar_flip" v-if="has_data()"></v-radio>
                         <v-radio label="pictograph (horizontal)" value="pictograph" v-if="has_data()"></v-radio>
                         <v-radio label="pictograph (vertical)" value="pictograph_flip" v-if="has_data()"></v-radio>
-                        <v-radio label="pie" value="pie" v-if="has_data() && vis.type === 'impact'"></v-radio>
-                        <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
+                        <v-radio label="pie (horizontal)" value="pie" v-if="has_data() && vis.type === 'impact'"></v-radio>
+                        <v-radio label="pie (vertical)" value="pie_flip" v-if="has_data() && vis.type === 'impact'"></v-radio>
+                        <v-radio label="multiple pies (horizontal)" value="multiPie" v-if="has_data()"></v-radio>
+                        <v-radio label="multiple pies (vertical)" value="multiPie_flip" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
 

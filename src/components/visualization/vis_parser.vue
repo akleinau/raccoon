@@ -11,7 +11,11 @@
               :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_pie v-if="graph === 'pie'" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_pie_flip v-if="graph === 'pie_flip'" @svg="saveSVG"
+             :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_multiple_pie v-if="graph === 'multiPie'" @svg="saveSVG"
+                      :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
+    <vis_multiple_pie_flip v-if="graph === 'multiPie_flip'" @svg="saveSVG"
                       :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
 </template>
 
@@ -20,12 +24,14 @@ import vis_pictograph from "@/components/visualization/vis_pictograph.vue";
 import vis_bar from "@/components/visualization/vis_bar.vue";
 import vis_text from "@/components/visualization/vis_text.vue";
 import vis_pie from "@/components/visualization/vis_pie.vue";
+import vis_pie_flip from "@/components/visualization/vis_pie_flip.vue";
 import vis_pictograph_flip from "@/components/visualization/vis_pictograph_flip.vue";
 import vis_bar_flip from "@/components/visualization/vis_bar_flip.vue";
 import {useDashboardStore} from "@/stores/dashboardStore";
 import {useDataStore} from "@/stores/dataStore";
 import {useAnnotationStore} from "@/stores/annotationStore";
 import vis_multiple_pie from "@/components/visualization/vis_multiple_pie.vue";
+import vis_multiple_pie_flip from "@/components/visualization/vis_multiple_pie_flip.vue";
 import {useHelperStore} from "@/stores/helperStore";
 import {useVisHelperStore} from "@/stores/visHelperStore";
 import * as d3 from "d3";
@@ -43,7 +49,7 @@ export default {
         const visHelperStore = useVisHelperStore()
         return {dashboardStore, dataStore, annotationStore, helperStore, visHelperStore}
     },
-    components: {vis_bar, vis_pictograph, vis_text, vis_pie, vis_multiple_pie, vis_pictograph_flip, vis_bar_flip},
+    components: {vis_bar, vis_pictograph, vis_text, vis_pie, vis_multiple_pie, vis_pictograph_flip, vis_bar_flip, vis_pie_flip, vis_multiple_pie_flip},
     data() {
         return {
             rerender: 0
