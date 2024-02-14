@@ -1,7 +1,7 @@
 {
             "impact": {
                 "graph": "bar_flip",
-                "grid": [25, 2],
+                "grid": [10, 10],
                 "icon": "human-male",
                 "icon2": "human-male",
                 "ratio": 1,
@@ -64,20 +64,20 @@
                 "graph": "text",
                 "font_size": 1,
                 "unit": "natural_frequencies",
-                "grid": [25, 2],
+                "grid": [10, 10],
                 "size": 1,
                 "text": [{"text": "", "color": "black"}]
             },
             "similarity": {
                 "graph": "bar",
-                "grid": [25, 2],
+                "grid": [10, 10],
                 "icon": "circle",
                 "icon2": "circle",
                 "ratio": 1,
                 "size": 1,
                 "range": [0, 1],
                 "axis": [{"text": "correlation strength", "color": "black"}],
-                "yaxis": [{"text": "$column", "color":  "black"}],
+                "yaxis": [{"text": "", "color":  "black"}],
                 "title": [{"text": "Correlations with $column", "color": "black", "weight": true}],
                 "unit": "percent",
                 "context": true,
