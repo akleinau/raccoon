@@ -79,6 +79,13 @@ export default {
                 }
             })
 
+            //range: sometimes for a specific column, there are fewer values than the default range
+            if (vis.type === "impact" && vis.range !== "percent") {
+                let max  = Object.values(this.column.occurrence).reduce((a, b) => a + b, 0)
+                vis.range = [0,max]
+            }
+
+
             //colors
             if (!vis["background"]) {
                 if (this.dashboardStore.default_settings[vis.type]["background"] !== undefined) {
