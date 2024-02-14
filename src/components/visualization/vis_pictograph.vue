@@ -79,7 +79,6 @@ export default {
             let margin_bottom = this.preview ? 20 : 50
             let margin_top = 30
             let margin_right = this.preview ? 20 : 70
-            let width = (this.width ? this.width : 300)*this.vis.size - margin_right
             let startBarX = this.helperStore.get_max_length(
                 this.use_column_group_names? this.column.options.map(a => a.label) : data.map(d => d.name)) * 10 + 30
             if (this.preview && startBarX > 100) {
@@ -87,6 +86,7 @@ export default {
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
+            let width = (this.width ? this.width : 300)*this.vis.size - margin_right - annotation_width
             const icon_padding = 0.1
             const row_padding = 10
             const grid_padding = 10
@@ -213,7 +213,7 @@ export default {
 
                 //axis
                 let axis_title = svg.append("text")
-                    .attr("x", margin.left + width / 2)
+                    .attr("x", margin.left + ( width + margin.right) / 2)
                     .attr("y", height + grid_padding * 2 + margin.top + margin.bottom / 2)
                     .style("text-anchor", "middle")
                     .text("")

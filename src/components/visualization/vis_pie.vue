@@ -65,7 +65,9 @@ export default {
             let margin_bottom = this.preview ? 20 : 50
             let margin = {top: 30, bottom: margin_bottom, left: startBarX, right: 5}
 
-            let width = (this.width ? this.width : 300) * this.vis.size - margin.right
+            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
+            
+            let width = (this.width ? this.width : 300) * this.vis.size - margin.right - annotation_width
 
             if (this.preview || this.vis.pie_labels === "inside") {
                 const margin_axis = 40
@@ -76,7 +78,7 @@ export default {
             this.num_colors = this.vis.color.length
 
             let height = 200
-            let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
+
 
 
             let svg = d3.create("svg")

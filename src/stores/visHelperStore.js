@@ -146,6 +146,13 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                             list.push(standard.neutralColor)
                         }
                     }
+                    //if none of the options was a risk group, use the risk group color for all
+                    if (list.every(x => x === standard.neutralColor)) {
+                        for (let i = 0; i < length; i++) {
+                            list[i] = color.formatHex()
+                        }
+                    }
+
                     return list
 
 

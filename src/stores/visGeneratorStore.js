@@ -87,8 +87,9 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, Math.round(max_risk_multiplier)],
                             graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "$outcome", color: "$color", weight: true}, {text: " risk increase when exposed", color: "black", weight: true}],
-                            axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}]
+                            title: [{text: "$outcome", color: "$color", weight: true}, {text: " risk increase", color: "black", weight: true}],
+                            axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}],
+                            yaxis: [{text: "", color: "black"}]
                         }],
                         "column": {name: "RiskIncrease", label: "Risk Increase", options: options, color: useDataStore().get_rand_color()}
                     },
@@ -102,13 +103,11 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).sort((a, b) => b.value - a.value),
                             graph: "pictograph",
                             range: [0, 1],
-                            title: [{text: "Risk of ", color: "black", weight: true},
-                                {text: " $outcome", color: "$color", weight: true}, {
-                                    text: " when exposed",
-                                    color: "black", weight: true
-                                }],
+                            title: [{text: "risk of ", color: "black", weight: true},
+                                {text: " $outcome", color: "$color", weight: true}],
                             axis: [{text: "$outcome", color: "$color"},
-                                {text: " risk when exposed", color: "black"}, ]
+                                {text: " risk when exposed", color: "black"}, ],
+                            yaxis: [{text: "", color: "black"}]
                         }],
                         "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options, color: useDataStore().get_rand_color()}
                     },
@@ -123,8 +122,9 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, Math.round(max_weight)],
                             graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "influence in regression model", color: "black", weight: true}],
-                            axis: [{text: "(maximal) weight of factor", color: "black"}]
+                            title: [{text: "influence on regression model", color: "black", weight: true}],
+                            axis: [{text: "(maximal) weight of factor", color: "black"}],
+                            yaxis: [{text: "", color: "black"}]
                         }],
                         "column": {name: "Influence", label: "Influence", options: options, color: useDataStore().get_rand_color()}
                     }
