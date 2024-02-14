@@ -76,14 +76,9 @@ export default {
          * @param data
          */
         visualize(data) {
-            let margin_bottom = this.preview? 10 : 30
-            let margin_top = 30
-            let margin_top_labels = 50
-            let margin_right = this.preview? 20 : 50
-            let margin_left = this.preview? 20 : 50
-            let width = (this.width ? this.width : 300)*this.vis.size - margin_right
-            let margin = {top: margin_top + margin_top_labels, right: margin_right, bottom: margin_bottom, left: margin_left}
-            let annotation_height = this.preview? 0 : this.vis.annotation === "None" ? margin.top : 70
+            let margin = this.visHelperStore.get_margins(this.preview, this.vis.annotation)
+
+            let width = (this.width ? this.width : 300)*this.vis.size - margin.right
             const grid_padding = 10
             this.num_colors = this.vis.color.length
 
@@ -114,23 +109,19 @@ export default {
 
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
-                .range([height + margin.top+ grid_padding, margin.top + grid_padding])
+                .range([height + margin.top+margin.labels+ grid_padding, margin.top  + margin.labels + grid_padding])
 
 
 
-            let svg = d3.create("svg")
-                .attr("height", height + margin.top + margin.bottom + annotation_height)
-                .attr("width", width + margin.right + margin.left)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom + annotation_height])
-                .attr("font-family", this.vis.font_family)
+            let svg = this.visHelperStore.create_svg(margin, height, width, this.vis.font_family)
 
             let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color, this.vis.bgcolor)
 
             //background
             svg.append("rect")
-                .attr("y", margin.top - margin_top_labels)
+                .attr("y", margin.top)
                 .attr("x", margin.left)
-                .attr("height", height + margin.bottom + margin_top_labels)
+                .attr("height", height + margin.bottom + margin.labels)
                 .attr("width", width)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
@@ -145,7 +136,7 @@ export default {
             svg.selectAll("option")
                 .data(data)
                 .join("g")
-                .attr("y", margin.top)
+                .attr("y", margin.top + margin.labels)
                 .attr("x", d => x_row(d.name))
                 .each((par, index, node) => {
                     d3.select(node[index]).selectAll("text")
@@ -163,7 +154,7 @@ export default {
             svg.selectAll("textName")
                 .data(data)
                 .join("text")
-                .attr("y", margin.top - margin_top_labels/2)
+                .attr("y", margin.top + margin.labels/2)
                 .attr("x", d => x_row(d.name) + x_row.bandwidth() / 2 - grid_padding)
                 .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "middle")
@@ -173,7 +164,7 @@ export default {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
-                    .attr("y", height + margin.top + margin.bottom/2)
+                    .attr("y", height + margin.top  + margin.labels + margin.bottom/2)
                     .attr("x", d => x_row(d.name) + x_row.bandwidth() / 2 - grid_padding)
                     .text("")
                     .style("text-anchor", "middle")
@@ -185,53 +176,21 @@ export default {
                             .text(d => d.text)
                             .style("fill", d => d.color[index])
                     })
-                    .attr("dy", 7*this.vis.ratio)
 
 
             }
 
             //title
-            let title = svg.append("text")
-                .attr("x", margin.left + width / 2)
-                .attr("y", (margin.top- margin_top_labels) / 2)
-                .style("text-anchor", "middle")
-                .text("")
-                .style("font-size", this.preview ? "1em" : "1.1em")
-            this.visHelperStore.append_tspans(title, this.vis.title, this.column, this.preview)
+            this.visHelperStore.create_title(svg, margin, width, this.vis.title, this.column, this.preview)
 
             //annotations
-            //use this.getComputedTextLength to split up into multiple parts?
-            let gap = 20
-            if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
-                let targets_y = this.vis.annotation.target.map(d => x_row(d))
-                //text
-                this.vis.annotation.text.forEach((t, i) => {
-                    let annotation = svg.append("text")
-                        .attr("y", height + margin.top + margin.bottom + gap + 15*i)
-                        .attr("x", margin.left + width/2)
-                        .style("text-anchor", "middle")
-                        .attr("width", width)
-                        .attr("dy", 7*this.vis.ratio)
-                    this.visHelperStore.append_tspans(annotation, t, this.column)
-                })
-
-                //lines
-                svg.selectAll("line")
-                    .data(targets_y)
-                    .join("line")
-                    .attr("y1", height + margin.top + margin.bottom + gap - 10)
-                    .attr("x1", d => d + 10 - grid_padding)
-                    .attr("y2", height + margin.top + margin.bottom + gap - 10)
-                    .attr("x2", d => d + x_row.bandwidth() + 10 - grid_padding)
-                    .attr("stroke", "#505050")
-                    .attr("stroke-width", 3)
-            }
+            this.visHelperStore.create_annotations(svg, margin, width, height, x_row, this.vis.annotation, this.column, this.preview, true)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())
             if (!this.preview) {
-                this.$emit('svg', svg.node(), height + margin.left + margin.right + annotation_height)
+                this.$emit('svg', svg.node(), height + margin.left + margin.right)
             }
         },
         /**

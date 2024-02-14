@@ -79,14 +79,8 @@ export default {
          * @param data
          */
         visualize(data) {
-            let margin_bottom = this.preview ? 10 : 30
-            let margin_top = 30
-            let margin_top_labels = 50
-            let margin_right = this.preview? 20 : 50
-            let margin_left = this.preview? 20 : 50
-            let width = (this.width ? this.width : 300)*this.vis.size - margin_right
-            let margin = {top: margin_top + margin_top_labels, right: margin_right, bottom: margin_bottom, left: margin_left}
-            let annotation_height = this.preview? 0 : this.vis.annotation === "None" ? margin.top : 70
+            let margin = this.visHelperStore.get_margins(this.preview, this.vis.annotation)
+            let width = (this.width ? this.width : 300)*this.vis.size - margin.right
             this.num_colors = this.vis.color.length
 
 
@@ -96,7 +90,7 @@ export default {
                 .value(d => d.value)
                 .sort(a => a.name === "value" ? 1 : -1)
 
-            let height = 1.7 * (radius * 2 + 20)
+            let height = radius * 2 + 20
 
             //background
             let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color, this.vis.bgcolor)
@@ -113,17 +107,13 @@ export default {
                 .range([margin.left + 10, width + margin.left]) //radius times three as outer padding
 
 
-            let svg = d3.create("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.bottom + margin.top + annotation_height)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top + annotation_height])
-                .attr("font-family", this.vis.font_family)
+            let svg = this.visHelperStore.create_svg(margin, height, width, this.vis.font_family)
 
             svg.append("rect")
                 .attr("x", margin.left)
-                .attr("y", margin.top - margin_top_labels)
+                .attr("y", margin.top)
                 .attr("width", width)
-                .attr("height", height)
+                .attr("height", height + margin.top + margin.labels)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
                 .attr("stroke-width", 2)
@@ -132,8 +122,8 @@ export default {
             svg.selectAll("option")
                 .data(data)
                 .join("g")
-                .attr("transform", d => "translate("+ +(x_options(d.name) + x_options.bandwidth() / 2)  + "," + +(margin.top + radius )  + ")")
-                .attr("y", margin.top)
+                .attr("transform", d => "translate("+ +(x_options(d.name) + x_options.bandwidth() / 2)  + "," + +(margin.top + margin.labels + radius )  + ")")
+                .attr("y", margin.top + margin.labels)
                 .attr("x", d => x_options(d.name))
                 .each((par, index, node) => {
                     d3.select(node[index]).selectAll('pieParts')
@@ -154,7 +144,7 @@ export default {
             svg.selectAll("textName")
                 .data(data)
                 .join("text")
-                .attr("y", margin.top - margin_top_labels/2)
+                .attr("y", margin.top + margin.labels/2)
                 .attr("x", d => x_options(d.name) + x_options.bandwidth() / 2)
                 .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "middle")
@@ -163,7 +153,7 @@ export default {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
-                    .attr("y", height)
+                    .attr("y", height + margin.top  + margin.labels + margin.bottom/2)
                     .attr("x", d => x_options(d.name) + x_options.bandwidth() / 2)
                     .text("")
                     .style("text-anchor", "middle")
@@ -176,62 +166,13 @@ export default {
                             .style("fill", d => d.color)
                     })
 
-                //column name
-                let yaxis_title = svg.append("text")
-                    .attr("x", -(margin.top + height / 2))
-                    .attr("y", 20)
-                    .text("")
-                    .style("text-anchor", "middle")
-                    .attr("transform", "rotate(-90)")
-                this.visHelperStore.append_tspans(yaxis_title, this.vis.yaxis, this.column)
-
-
-                //axis
-                let axis_title = svg.append("text")
-                    .attr("x", margin.left + width / 2)
-                    .attr("y", height + margin.top + margin.bottom / 2)
-                    .style("text-anchor", "middle")
-                    .text("")
-                this.visHelperStore.append_tspans(axis_title, this.vis.axis, this.column)
-
             }
 
             //title
-            let title = svg.append("text")
-                .attr("x", margin.left + width / 2)
-                .attr("y", (margin.top- margin_top_labels) / 2)
-                .style("text-anchor", "middle")
-                .text("")
-                .style("font-size", this.preview ? "1em" : "1.1em")
-            this.visHelperStore.append_tspans(title, this.vis.title, this.column, this.preview)
+            this.visHelperStore.create_title(svg, margin, width, this.vis.title, this.column, this.preview)
 
             //annotations
-            //use this.getComputedTextLength to split up into multiple parts?
-            let gap = 15
-            if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
-                let targets_y = this.vis.annotation.target.map(d => x_options(d))
-                //text
-                this.vis.annotation.text.forEach((t, i) => {
-                    let annotation = svg.append("text")
-                        .attr("x", width/2 + margin.left)
-                        .attr("y", height + margin.top - margin_top_labels + gap + i*15 + 10)
-                        .attr("width", 200)
-                        .style("font-style", "italic")
-                        .style("text-anchor", "middle")
-                    this.visHelperStore.append_tspans(annotation, t, this.column)
-                })
-
-                //lines
-                svg.selectAll("line")
-                    .data(targets_y)
-                    .join("line")
-                    .attr("y1", height + margin.top - margin_top_labels + gap - 10)
-                    .attr("x1", d => d)
-                    .attr("y2", height + margin.top - margin_top_labels + gap - 10)
-                    .attr("x2", d => d + x_options.bandwidth())
-                    .attr("stroke", "#505050")
-                    .attr("stroke-width", 3)
-            }
+            this.visHelperStore.create_annotations(svg, margin, width, height, x_options, this.vis.annotation, this.column, this.preview, true)
 
             d3.select(this.$refs.container).selectAll("*").remove()
             d3.select(this.$refs.container).node().append(svg.node())

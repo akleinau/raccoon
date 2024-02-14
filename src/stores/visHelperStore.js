@@ -156,5 +156,74 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 return specification.list
             }
         },
+        /**
+         * return margins
+         */
+        get_margins(preview, annotation) {
+            let margin_bottom = preview? 10 : 30
+            let margin_top = 30
+            let labels_height = 50
+            let margin_right = preview? 20 : 50
+            let margin_left = preview? 20 : 50
+            let annotation_height = preview? 0 : annotation === "None" ? margin.top : 70
+            let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: margin_left,
+                            labels: labels_height, annotation: annotation_height, gap: 20}
+            return margin
+        },
+        /**
+         * create SVG
+         */
+        create_svg(margin, height, width, font_family) {
+            return d3.create("svg")
+                .attr("height", height + margin.top + margin.labels + margin.bottom + margin.annotation)
+                .attr("width", width + margin.right + margin.left)
+                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.labels +margin.bottom + margin.annotation])
+                .attr("font-family", font_family)
+        },
+        /**
+         * create title
+         */
+        create_title(svg, margin, width, text, column, preview) {
+            let title = svg.append("text")
+                .attr("x", margin.left + width / 2)
+                .attr("y", margin.top / 2)
+                .style("text-anchor", "middle")
+                .text("")
+                .style("font-size", preview ? "1em" : "1.1em")
+            this.append_tspans(title, text, column, preview)
+        },
+        /**
+         * create annotation
+         */
+        create_annotations(svg, margin, width, height, x, annotation, column, preview, addLine) {
+                        //use this.getComputedTextLength to split up into multiple parts?
+            if (!preview && annotation !== undefined && annotation !== "None") {
+                let targets_y = annotation.target.map(d => x(d))
+                //text
+                annotation.text.forEach((t, i) => {
+                    let annotation = svg.append("text")
+                        .attr("y", height + margin.top + margin.labels + margin.bottom + margin.gap + 15*i)
+                        .attr("x", margin.left + width/2)
+                        .style("text-anchor", "middle")
+                        .attr("width", width)
+                        .attr("dy", 7)
+                    this.append_tspans(annotation, t, column)
+                })
+
+                //lines
+                if (addLine) {
+                    svg.selectAll("line")
+                    .data(targets_y)
+                    .join("line")
+                    .attr("y1", height + margin.top + margin.labels + margin.bottom + margin.gap - 10)
+                    .attr("x1", d => d )
+                    .attr("y2", height + margin.top + margin.labels + margin.bottom + margin.gap - 10)
+                    .attr("x2", d => d + x.bandwidth() )
+                    .attr("stroke", "#505050")
+                    .attr("stroke-width", 3)
+                }
+
+            }
+        }
     }
 })

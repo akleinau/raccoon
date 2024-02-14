@@ -58,23 +58,18 @@ export default {
          * @param data
          */
         visualize(data) {
-            let margin_bottom = this.preview ? 20 : 50
-            let margin_right = this.preview? 20 : 50
-            let margin_left = this.preview? 20 : 50
+            let margin = this.visHelperStore.get_margins(this.preview, this.vis.annotation)
             let margin_colors = 40
-            let margin = {top: 30, bottom: margin_bottom, left: margin_left, right: margin_right}
-            let annotation_height = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 30
 
             let width = (this.width ? this.width : 300)*this.vis.size - margin.right
             let height = (this.preview? 3 : 6)*35*this.vis.size
             this.num_colors = this.vis.color.length
+            let showOuterLabels = this.vis.pie_labels === "outside" || this.vis.pie_labels === "both"
 
+            if (!showOuterLabels) margin.labels = 0
+            margin.bottom = 0
 
-            let svg = d3.create("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.bottom + margin.top + annotation_height)
-                .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.bottom + margin.top + annotation_height])
-                .attr("font-family", this.vis.font_family)
+            let svg = this.visHelperStore.create_svg(margin, height, width, this.vis.font_family)
 
             let pie = d3.pie()
                 .value(d => d.value)
@@ -82,7 +77,7 @@ export default {
 
             let y = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin.top, height + margin.top])
+                .range([margin.top+ margin.labels, height + margin.top+ margin.labels])
                 .padding(0.2)
 
             //background
@@ -92,7 +87,7 @@ export default {
                 .attr("x", margin.left)
                 .attr("y", margin.top)
                 .attr("width", width)
-                .attr("height", height)
+                .attr("height", height + margin.bottom + margin.labels)
                 .attr("fill", bgcolor)
                 .attr("stroke", this.vis.background.stroke)
                 .attr("stroke-width", 2)
@@ -100,7 +95,7 @@ export default {
             let radius = Math.min(width, height) / 3
 
             let pie_container = svg.append("g")
-                .attr("transform", "translate(" + +(margin.left + width / 2) + "," + +(margin.top + height / 2) + ")")
+                .attr("transform", "translate(" + +(margin.left + width / 2) + "," + +(margin.top + margin.labels + height / 2) + ")")
 
             const arc = d3.arc()
                 .innerRadius(0)
@@ -187,65 +182,15 @@ export default {
                         .attr("fill", (d,i) => this.vis.color[i%this.num_colors])
 
                 }
-
-                //column name
-                let yaxis_title = svg.append("text")
-                    .attr("x", -(margin.top + height / 2))
-                    .attr("y", 20)
-                    .text("")
-                    .style("text-anchor", "middle")
-                    .attr("transform", "rotate(-90)")
-                this.visHelperStore.append_tspans(yaxis_title, this.vis.yaxis, this.column)
-
-
-                //axis
-                let axis_title = svg.append("text")
-                    .attr("x", margin.left + width / 2)
-                    .attr("y", height + margin.top + margin.bottom / 2)
-                    .style("text-anchor", "middle")
-                    .text("")
-                this.visHelperStore.append_tspans(axis_title, this.vis.axis, this.column)
             }
 
 
             //title
-            let title = svg.append("text")
-                .attr("x", margin.left + (width + margin.right) / 2)
-                .attr("y", margin.top / 2)
-                .style("text-anchor", "middle")
-                .text("")
-                .style("font-size", this.preview ? "1em" : "1.1em")
-            this.visHelperStore.append_tspans(title, this.vis.title, this.column, this.preview)
+            this.visHelperStore.create_title(svg, margin, width, this.vis.title, this.column, this.preview)
 
             //annotations
-            //use this.getComputedTextLength to split up into multiple parts?
-            let gap = 15
-            if (!this.preview && this.vis.annotation !== undefined && this.vis.annotation !== "None") {
-                 let targets_y = this.vis.annotation.target.map(d => y(d))
-                //text
-                this.vis.annotation.text.forEach((t, i) => {
-                    let annotation = svg.append("text")
-                        .attr("x", width/2 + margin.left)
-                        .attr("y", height + margin.top + gap + i*15 + 10)
-                        .attr("width", 200)
-                        .style("font-style", "italic")
-                        .style("text-anchor", "middle")
-                    this.visHelperStore.append_tspans(annotation, t, this.column)
-                })
-
-                if (this.vis.pie_labels === "outside" || this.vis.pie_labels === "both") {
-                    //lines
-                    svg.selectAll("line")
-                        .data(targets_y)
-                        .join("line")
-                        .attr("x1", width + margin.left + margin.right + gap - 10)
-                        .attr("y1", d => d)
-                        .attr("x2", width + margin.left + margin.right + gap - 10)
-                        .attr("y2", d => d + y.bandwidth())
-                        .attr("stroke", "#505050")
-                        .attr("stroke-width", 3)
-                }
-            }
+            let x_function = d => 0
+            this.visHelperStore.create_annotations(svg, margin, width, height, x_function, this.vis.annotation, this.column, this.preview, showOuterLabels)
 
 
             d3.select(this.$refs.container).selectAll("*").remove()
