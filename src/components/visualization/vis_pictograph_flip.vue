@@ -79,7 +79,6 @@ export default {
             let margin = this.visHelperStore.get_margins(this.preview, this.vis.annotation)
 
             let width = (this.width ? this.width : 300)*this.vis.size - margin.right
-            const grid_padding = 10
             this.num_colors = this.vis.color.length
 
             let max_range = this.get_value(this.visHelperStore.get_range(this.vis, data)[1])
@@ -93,13 +92,14 @@ export default {
             //x position of each row
             let x_row = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin.left + grid_padding, margin.left + grid_padding + width])
+                .range([margin.left, margin.left + width])
                 .padding(0.1)
 
             //x position inside each row
             let x = d3.scaleBand()
                 .domain(dot_range_X)
                 .range([0, x_row.bandwidth()])
+                .padding(0.1)
 
             const icon_width = x.bandwidth()
             const icon_height = icon_width * this.vis.ratio
@@ -109,7 +109,8 @@ export default {
 
             let y = d3.scaleBand()
                 .domain(dot_range_Y)
-                .range([height + margin.top+margin.labels+ grid_padding, margin.top  + margin.labels + grid_padding])
+                .range([height + margin.top+margin.labels, margin.top  + margin.labels])
+                .padding(0.7)
 
 
 
@@ -143,7 +144,7 @@ export default {
                         .data(dot_range)
                         .join("text")
                         .attr("y", d => y(Math.floor(d / max_range_x)))
-                        .attr("x", d => x_row(par.name) + x(d % max_range_x) - grid_padding )
+                        .attr("x", d => x_row(par.name) + x(d % max_range_x) )
                         .attr("fill", d => ((d + 1) <= this.get_value(par.value)) ? this.vis.color[index%this.num_colors] : emptyCircleColor)
                         .style("font-family", "Material Design Icons")
                         .html(d => ((d + 1) <= this.get_value(par.value)) ?this.getIcon(0) : this.getIcon(1))
@@ -155,17 +156,17 @@ export default {
                 .data(data)
                 .join("text")
                 .attr("y", margin.top + margin.labels/2)
-                .attr("x", d => x_row(d.name) + x_row.bandwidth() / 2 - grid_padding)
+                .attr("x", d => x_row(d.name) + x_row.bandwidth() / 2)
                 .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "middle")
-                .attr("dy", 7*this.vis.ratio)
+                .attr("dy", 5)
 
             if (!this.preview) {
                 svg.selectAll("textValue")
                     .data(data)
                     .join("text")
                     .attr("y", height + margin.top  + margin.labels + margin.bottom/2)
-                    .attr("x", d => x_row(d.name) + x_row.bandwidth() / 2 - grid_padding)
+                    .attr("x", d => x_row(d.name) + x_row.bandwidth() / 2)
                     .text("")
                     .style("text-anchor", "middle")
                     .style("fill", "black")

@@ -109,6 +109,7 @@ export default {
                 .attr("x", d => x(d.name) + x.bandwidth() / 2)
                 .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
                 .style("text-anchor", "middle")
+                .attr("dy", 5)
 
             if (!this.preview) {
                 svg.selectAll("textValue")

@@ -172,9 +172,10 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
             let labels_height = 50
             let margin_right = preview? 20 : 50
             let margin_left = preview? 20 : 50
-            let annotation_height = preview? 0 : annotation === "None" ? margin.top : 70
+            let gap = 20
+            let annotation_height = preview? 0 : annotation === "None" ? 10 : annotation.text.length * 18 + gap + 5
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: margin_left,
-                            labels: labels_height, annotation: annotation_height, gap: 20}
+                            labels: labels_height, annotation: annotation_height, gap: gap}
             return margin
         },
         /**
@@ -196,7 +197,7 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
-                .style("font-size", preview ? "1em" : "1.1em")
+                .style("font-size", preview ? "1em" : "1.2em")
             this.append_tspans(title, text, column, preview)
         },
         /**
@@ -214,6 +215,7 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                         .style("text-anchor", "middle")
                         .attr("width", width)
                         .attr("dy", 9)
+                        .style("font-size", "1.09em")
                     this.append_tspans(annotation, t, column)
                 })
 
@@ -226,8 +228,8 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                     .attr("x1", d => d )
                     .attr("y2", height + margin.top + margin.labels + margin.bottom + 5)
                     .attr("x2", d => d + x.bandwidth() )
-                    .attr("stroke", "#505050")
-                    .attr("stroke-width", 3)
+                    .attr("stroke", "darkgrey")
+                    .attr("stroke-width", 5)
                 }
 
             }
