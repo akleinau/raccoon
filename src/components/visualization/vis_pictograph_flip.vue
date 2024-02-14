@@ -85,6 +85,7 @@ export default {
             let margin = {top: margin_top + margin_top_labels, right: margin_right, bottom: margin_bottom, left: margin_left}
             let annotation_height = this.preview? 0 : this.vis.annotation === "None" ? margin.top : 70
             const grid_padding = 10
+            this.num_colors = this.vis.color.length
 
             let max_range = this.get_value(this.visHelperStore.get_range(this.vis, data)[1])
             let max_range_x = Math.ceil(this.vis.grid[1])

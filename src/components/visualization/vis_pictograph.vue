@@ -90,6 +90,7 @@ export default {
             const icon_padding = 0.1
             const row_padding = 10
             const grid_padding = 10
+            this.num_colors = this.vis.color.length
 
             let max_range = this.get_value(this.visHelperStore.get_range(this.vis, data)[1])
             let max_range_y = Math.ceil(max_range / this.vis.grid[0])

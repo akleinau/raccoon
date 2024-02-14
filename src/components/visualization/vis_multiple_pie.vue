@@ -90,6 +90,7 @@ export default {
             }
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: startBarX}
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
+            this.num_colors = this.vis.color.length
 
 
             const radius = 30

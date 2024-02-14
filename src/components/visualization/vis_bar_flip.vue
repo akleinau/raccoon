@@ -70,6 +70,7 @@ export default {
 
             let width = (this.width ? this.width : 300)*this.vis.size - margin.right
             let height = 3*35*this.vis.size
+            this.num_colors = this.vis.color.length
 
 
             let svg = d3.create("svg")

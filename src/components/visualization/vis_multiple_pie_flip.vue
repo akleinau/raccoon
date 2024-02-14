@@ -87,6 +87,7 @@ export default {
             let width = (this.width ? this.width : 300)*this.vis.size - margin_right
             let margin = {top: margin_top + margin_top_labels, right: margin_right, bottom: margin_bottom, left: margin_left}
             let annotation_height = this.preview? 0 : this.vis.annotation === "None" ? margin.top : 70
+            this.num_colors = this.vis.color.length
 
 
             const radius = 50

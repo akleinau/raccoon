@@ -73,6 +73,7 @@ export default {
                 margin.left=margin_axis
                 startBarX = 0
             }
+            this.num_colors = this.vis.color.length
 
             let height = 200
             let annotation_width = this.preview ? 0 : this.vis.annotation === "None" ? margin.left : 250
