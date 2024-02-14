@@ -83,15 +83,6 @@ export default {
             let width = (this.width ? this.width : 300)*this.vis.size - margin.right
             this.num_colors = this.vis.color.length
 
-
-            const radius = 50
-
-            let pie = d3.pie()
-                .value(d => d.value)
-                .sort(a => a.name === "value" ? 1 : -1)
-
-            let height = radius * 2 + 20
-
             //background
             let bgcolor = this.visHelperStore.get_bgcolor(this.vis.background.color, this.vis.color, this.vis.bgcolor)
 
@@ -104,8 +95,17 @@ export default {
 
             let x_options = d3.scaleBand()
                 .domain(data.map(d => d.name))
-                .range([margin.left + 10, width + margin.left]) //radius times three as outer padding
+                .range([margin.left, width + margin.left]) //radius times three as outer padding
+                .paddingInner(0.3)
+                .paddingOuter(0.2)
 
+            const radius = d3.min([60, x_options.bandwidth() / 2])
+
+            let pie = d3.pie()
+                .value(d => d.value)
+                .sort(a => a.name === "value" ? 1 : -1)
+
+            let height = radius * 2 + 20
 
             let svg = this.visHelperStore.create_svg(margin, height, width, this.vis.font_family)
 

@@ -209,11 +209,11 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
                 //text
                 annotation.text.forEach((t, i) => {
                     let annotation = svg.append("text")
-                        .attr("y", height + margin.top + margin.labels + margin.bottom + margin.gap + 15*i)
+                        .attr("y", height + margin.top + margin.labels + margin.bottom + margin.gap + 18*i)
                         .attr("x", margin.left + width/2)
                         .style("text-anchor", "middle")
                         .attr("width", width)
-                        .attr("dy", 7)
+                        .attr("dy", 9)
                     this.append_tspans(annotation, t, column)
                 })
 

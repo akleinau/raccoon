@@ -121,7 +121,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     this.default_settings[key].icon = "account"
                     this.default_settings[key].icon2 = "circle"
                 })
-                this.default_settings["impact"].graph = "pie_flip"
+                this.default_settings["impact"].graph = "multiPie_flip"
                 this.default_settings["impact"].unit = "percent"
             }
         },
