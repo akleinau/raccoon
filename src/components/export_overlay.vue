@@ -99,7 +99,7 @@ export default {
                     text: {
                         fontSize: 14,
                         margin: [0, 0, 0, 10],
-                        alignment: 'left'
+                        alignment: 'center'
                     },
                     textCentered: {
                         fontSize: 14,
@@ -107,7 +107,8 @@ export default {
                         alignment: 'center'
                     }
                 },
-                pageOrientation: 'landscape',
+                pageSize: 'A4',
+                pageOrientation: 'portrait',
             }
 
             for (let i = 0; i < this.items.length; i++) {
@@ -122,14 +123,14 @@ export default {
                     if (exp.type === "svg") {
                         await svg2png.svgAsPngUri(exp.item, this.exportOptions).then(uri => {
                             data.content.push({
-                                image: uri, width: exp.width * 0.7, margin: [0, 0, 0, 15]
+                                image: uri, width: exp.width, margin: [0, 15, 0, 15]
                             })
                         })
                     } else if (exp.type === "text") {
                         data.content.push({
                             text: this.helperStore.parse_text(exp.item, item.column).map(d => d.text).join(''),
                             style: 'text',
-                            margin: [0, 0, 0, 15]
+                            margin: [0, 15, 0, 15]
                         })
                     }
                 }

@@ -144,20 +144,6 @@ export default {
                     .style("fill", d => (this.get_value_text(d.value).toString().length*5 < x(d.value) - x(0)) ? "white" : "#202020")
                     .attr("dy", y.bandwidth() - 5)
 
-                if (this.vis.context === true) {
-                    //x axis texts
-                    svg.append("text")
-                        .attr("x", margin.left)
-                        .attr("y", height + margin.top + margin.bottom / 2)
-                        .text(this.get_value_text(0))
-
-                    svg.append("text")
-                        .attr("x", width + margin.left)
-                        .attr("y", height + margin.top + margin.bottom / 2)
-                        .style("text-anchor", "end")
-                        .text(this.get_value_text(this.visHelperStore.get_range(this.vis)[1]))
-                }
-
                 //column name
                 let yaxis_title = svg.append("text")
                     .attr("x", -(margin.top + height / 2))
