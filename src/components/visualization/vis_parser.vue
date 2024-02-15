@@ -1,21 +1,21 @@
 <template>
-    <vis_bar v-if="graph === 'bar'" @svg="saveSVG"
+    <vis_bar v-if="graph === 'bar' & !flip" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_bar_flip v-if="graph === 'bar_flip'" @svg="saveSVG"
+    <vis_bar_flip v-if="graph === 'bar' & flip" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pictograph v-if="graph === 'pictograph'" @svg="saveSVG"
+    <vis_pictograph v-if="graph === 'pictograph' & !flip" @svg="saveSVG"
                     :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pictograph_flip v-if="graph === 'pictograph_flip'" @svg="saveSVG"
+    <vis_pictograph_flip v-if="graph === 'pictograph' & flip" @svg="saveSVG"
                     :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
     <vis_text v-if="graph === 'text'" @text="saveText"
               :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pie v-if="graph === 'pie'" @svg="saveSVG"
+    <vis_pie v-if="graph === 'pie' & !flip" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_pie_flip v-if="graph === 'pie_flip'" @svg="saveSVG"
+    <vis_pie_flip v-if="graph === 'pie' & flip" @svg="saveSVG"
              :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_multiple_pie v-if="graph === 'multiPie'" @svg="saveSVG"
+    <vis_multiple_pie v-if="graph === 'multiPie' & !flip" @svg="saveSVG"
                       :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
-    <vis_multiple_pie_flip v-if="graph === 'multiPie_flip'" @svg="saveSVG"
+    <vis_multiple_pie_flip v-if="graph === 'multiPie' & flip" @svg="saveSVG"
                       :vis="full_vis" :column="column" :width="width" :preview="preview" :key="rerender"/>
 </template>
 
@@ -59,6 +59,9 @@ export default {
         graph() {
             return this.vis.graph ? this.vis.graph : this.dashboardStore.default_settings[this.vis.type].graph
         },
+        flip() {
+            return this.vis.flip !== undefined ? this.vis.flip : this.dashboardStore.default_settings[this.vis.type].flip
+        },
         target() {
             return this.dataStore.target_label
         },
@@ -72,7 +75,7 @@ export default {
          */
         full_vis() {
             let vis = JSON.parse((JSON.stringify(this.vis)))
-            let type_attr = ["title", "range", "grid", "axis", "yaxis", "unit", "context", "icon", "icon2", "ratio", "graph", "size", "pie_labels", "bgcolor"]
+            let type_attr = ["title", "range", "grid", "axis", "yaxis", "unit", "context", "flip", "icon", "icon2", "ratio", "graph", "size", "pie_labels", "bgcolor"]
             type_attr.forEach(a => {
                 if (vis[a] === null || vis[a] === undefined) {
                     vis[a] = this.dashboardStore.default_settings[vis.type][a]
@@ -182,7 +185,7 @@ export default {
          * @returns {*}
          */
         wrap_text(annotation) {
-            let MAX_LENGTH = this.graph.includes("flip")? 50 : 25
+            let MAX_LENGTH = this.flip? 50 : 25
             //parse text to get full labels instead of variables
             let all_elements = this.helperStore.parse_text(annotation.text, this.column)
 

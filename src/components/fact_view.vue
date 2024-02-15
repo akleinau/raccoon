@@ -10,14 +10,10 @@
                     <!-- Graph Type -->
                     <v-radio-group v-model="vis.graph" v-if="vis.type !== 'overall'"
                                    :disabled="!has_attribute['graph']">
-                        <v-radio label="bar (horizontal)" value="bar" v-if="has_data()"></v-radio>
-                        <v-radio label="bar (vertical)" value="bar_flip" v-if="has_data()"></v-radio>
-                        <v-radio label="pictograph (horizontal)" value="pictograph" v-if="has_data()"></v-radio>
-                        <v-radio label="pictograph (vertical)" value="pictograph_flip" v-if="has_data()"></v-radio>
-                        <v-radio label="pie (horizontal)" value="pie" v-if="has_data() && vis.type === 'impact'"></v-radio>
-                        <v-radio label="pie (vertical)" value="pie_flip" v-if="has_data() && vis.type === 'impact'"></v-radio>
-                        <v-radio label="multiple pies (horizontal)" value="multiPie" v-if="has_data()"></v-radio>
-                        <v-radio label="multiple pies (vertical)" value="multiPie_flip" v-if="has_data()"></v-radio>
+                        <v-radio label="bar" value="bar" v-if="has_data()"></v-radio>
+                        <v-radio label="pictograph" value="pictograph" v-if="has_data()"></v-radio>
+                        <v-radio label="pie" value="pie" v-if="has_data() && vis.type === 'impact'"></v-radio>
+                        <v-radio label="multiple pies" value="multiPie" v-if="has_data()"></v-radio>
                         <v-radio label="text" value="text"></v-radio>
                     </v-radio-group>
 
@@ -32,7 +28,10 @@
                         </v-radio-group>
                         <v-checkbox v-model="vis.context" label="Context"
                                     v-if="vis.graph === 'bar' || vis.graph === 'pictograph' || vis.graph === 'multiPie'"
-                                    :disabled="!has_attribute['graph']">
+                                    :disabled="!has_attribute['graph']" hide-details >
+                        </v-checkbox>
+                        <v-checkbox v-model="vis.flip" label="Flip"
+                                    :disabled="!has_attribute['graph']" hide-details>
                         </v-checkbox>
                     </div>
                 </div>
@@ -52,7 +51,7 @@
 
                     <div class="d-flex justify-space-start w-100 px-5">
                         <!-- grid -->
-                        <div v-if="get('graph') === 'pictograph' || get('graph') === 'pictograph_flip'|| get('unit') === 'natural_frequencies' && get('graph') !== 'pie'">
+                        <div v-if="get('graph') === 'pictograph' || get('unit') === 'natural_frequencies' && get('graph') !== 'pie'">
                             <div class="mb-2 flex-grow-0" v-if="has_attribute['graph']"><b>Grid</b></div>
                             <div class="ml-2 text-grey" v-else>Grid</div>
 
@@ -67,7 +66,7 @@
                             <v-text-field v-else
                                     type="number" label="#columns" style="min-width:200px"/>
                         </div>
-                        <v-divider :disabled="vis.graph === 'pictograph' || vis.graph === 'pictograph_flip' ||vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
+                        <v-divider :disabled="vis.graph === 'pictograph' ||vis.unit === 'natural_frequencies' && vis.graph !== 'pie'" vertical class="mx-5"></v-divider>
 
                         <!-- Font size -->
                         <div v-if="get('graph') === 'text'" :disabled="!has_attribute['graph']" class="flex-grow-1">
@@ -90,7 +89,7 @@
                         </div>
 
                         <!-- pictograph icons -->
-                        <div v-if="get('graph') === 'pictograph' || get('graph') === 'pictograph_flip'">
+                        <div v-if="get('graph') === 'pictograph'">
                             <h4 v-if="!has_attribute['graph']"> Pictograph </h4>
                             <div class="ml-2 text-grey" v-else>Pictograph</div>
 
@@ -326,6 +325,7 @@ export default {
                             if (attr === "graph") {
                                 this.vis["unit"] = this.get_default("unit")
                                 this.vis["context"] = this.get_default("context")
+                                this.vis["flip"] = this.get_default("flip")
                                 if (this.has_data() || this.vis.type==="overall") {
                                     this.vis["grid"] = JSON.parse(JSON.stringify(this.get_default("grid")))
                                     this.vis["icon"] = this.get_default("icon")
@@ -349,7 +349,7 @@ export default {
                     } else {
                         this.vis[attr] = undefined
                         if (attr === "graph") {
-                            ['font_size', 'grid', 'icon', 'icon2', 'ratio', 'graph', 'unit', 'context', 'size', 'pie_labels'].forEach(key => {
+                            ['font_size', 'grid', 'icon', 'icon2', 'ratio', 'graph', 'unit', 'context', 'flip', 'size', 'pie_labels'].forEach(key => {
                                 this.vis[key] = undefined
                             })
                         }
@@ -483,6 +483,7 @@ export default {
             this.makeDefault('graph')
             this.makeDefault('unit')
             this.makeDefault('context')
+            this.makeDefault('flip')
             this.makeDefault('size')
             this.makeDefault('yaxis')
         },
