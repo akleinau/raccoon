@@ -200,7 +200,7 @@
         </v-expansion-panel>
 
         <!-- Axis -->
-        <v-expansion-panel v-if="get_default('axis') !== undefined">
+        <v-expansion-panel v-if="get_default('axis') !== undefined & !get('flip')">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>X Axis </h4></v-expansion-panel-title>
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['axis']" label="Custom"/>
@@ -215,7 +215,7 @@
         </v-expansion-panel>
 
         <!-- y Axis -->
-        <v-expansion-panel v-if="get_default('yaxis') !== undefined">
+        <v-expansion-panel v-if="get_default('yaxis') !== undefined & !get('flip')">
             <v-expansion-panel-title class="text-blue-darken-3"><h4>Y Axis </h4></v-expansion-panel-title>
             <v-expansion-panel-text style="min-width: 500px">
                 <v-switch v-model="has_attribute['yaxis']" label="Custom"/>
