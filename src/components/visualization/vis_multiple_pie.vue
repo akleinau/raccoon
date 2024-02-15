@@ -187,7 +187,7 @@ export default {
                             .data(this.get_value_text(par.value))
                             .join("tspan")
                             .text(d => d.text)
-                            .style("fill", d => d.color)
+                            .style("fill", d => d.color[index])
                     })
 
                 //column name

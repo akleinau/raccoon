@@ -41,9 +41,6 @@ export default {
 
         /**
          * returns value as frequency with nominator/denominator
-         *
-         * @param value
-         * @returns {[{color, text: string},{color: string, text: string}]}
          */
         get_value_text(value) {
             if (this.vis.unit === "natural_frequencies") {
@@ -172,7 +169,7 @@ export default {
                             .data(this.get_value_text(par.value))
                             .join("tspan")
                             .text(d => d.text)
-                            .style("fill", d => d.color)
+                            .style("fill", d => d.color[index])
                     })
 
             }
