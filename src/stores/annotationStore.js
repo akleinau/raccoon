@@ -22,7 +22,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
                 return this.compute_significance_annotations(summary, unit, grid)
             }
             if (type === "impact") {
-                return this.compute_impact_annotations(summary, unit)
+                return this.compute_impact_annotations(summary, unit, grid)
             }
             if (type === "similarity") {
                 return this.compute_similarity_annotations(summary)
@@ -140,7 +140,7 @@ export const useAnnotationStore = defineStore('annotationStore', {
          * @param summary
          * @returns {*[]}
          */
-        compute_impact_annotations(summary, unit) {
+        compute_impact_annotations(summary, unit, grid) {
             let annotations = []
             annotations.push({
                 "text": [{"text": "custom", "color": "$text", "italic": "true"}],
@@ -169,6 +169,10 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     text = value + " of $rows have a $column of " + summary.riskIncrease.name
                 }
                 if (unit === "natural_frequencies") {
+                    value = value/occurrence_all
+                    text = (value*grid[0]*grid[1]) .toFixed(0)+ "/" + (grid[0]*grid[1]) + " $rows have a $column of " + summary.riskIncrease.name
+                }
+                if (unit === "absolute") {
                     text = value + " $rows have a $column of " + summary.riskIncrease.name
                 }
                 annotations.push({
