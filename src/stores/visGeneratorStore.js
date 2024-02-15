@@ -106,7 +106,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             title: [{text: "risk of ", color: "black", weight: true},
                                 {text: " $outcome", color: "$color", weight: true}],
                             axis: [{text: "$outcome", color: "$color"},
-                                {text: " risk when exposed", color: "black"}, ],
+                                {text: " risk per factor", color: "black"}, ],
                             yaxis: [{text: "", color: "black"}]
                         }],
                         "column": {name: "AbsoluteValues", label: "Absolute Risk", options: options, color: useDataStore().get_rand_color()}
