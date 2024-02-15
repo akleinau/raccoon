@@ -231,7 +231,7 @@ export default {
                 .attr("y", margin.top / 2)
                 .style("text-anchor", "middle")
                 .text("")
-                .style("font-size", this.preview ? "1em" : "1.1em")
+                .style("font-size", this.preview ? "1em" : "1.2em")
             this.visHelperStore.append_tspans(title, this.vis.title, this.column, this.preview)
 
             //annotations
@@ -249,6 +249,7 @@ export default {
                         .attr("x", width + margin.left + margin.right + gap)
                         .attr("y", mean_y + i * 15 + y.bandwidth() / 2)
                         .attr("width", 200)
+                        .style("font-size", "1.09em")
                     this.visHelperStore.append_tspans(annotation, t, this.column)
                 })
 

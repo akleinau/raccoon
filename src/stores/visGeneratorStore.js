@@ -86,7 +86,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
                             graph: "bar",
-                            unit: "natural_frequencies",
+                            unit: "absolute",
                             title: [{text: "$outcome", color: "$color", weight: true}, {text: " risk increase", color: "black", weight: true}],
                             axis: [{text: "(risk exposed) / (risk not exposed)", color: "black"}],
                             yaxis: [{text: "", color: "black"}]
@@ -103,7 +103,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             })).sort((a, b) => b.value - a.value),
                             graph: "pictograph",
                             range: [0, 1],
-                            title: [{text: "risk of ", color: "black", weight: true},
+                            title: [{text: "Risk of ", color: "black", weight: true},
                                 {text: " $outcome", color: "$color", weight: true}],
                             axis: [{text: "$outcome", color: "$color"},
                                 {text: " risk per factor", color: "black"}, ],
@@ -122,7 +122,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                             range: [0, Math.round(max_weight)],
                             graph: "bar",
                             unit: "natural_frequencies",
-                            title: [{text: "influence on regression model", color: "black", weight: true}],
+                            title: [{text: "Influence on regression model", color: "black", weight: true}],
                             axis: [{text: "(maximal) weight of factor", color: "black"}],
                             yaxis: [{text: "", color: "black"}]
                         }],

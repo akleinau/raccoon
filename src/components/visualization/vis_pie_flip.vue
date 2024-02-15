@@ -168,7 +168,7 @@ export default {
                         .join("text")
                         .attr("x", margin.left + margin_colors)
                         .attr("y", d => y(d.name))
-                        .text(d => this.use_column_group_names ? this.visHelperStore.get_column_label(d, this.column, this.preview) : d.name)
+                        .text(d => this.visHelperStore.get_column_label(d, this.column, this.preview,this.use_column_group_names))
                         .style("text-anchor", "start")
                         .attr("dy", y.bandwidth() / 2 + 5)
 

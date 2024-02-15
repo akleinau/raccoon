@@ -34,10 +34,16 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
          * returns the label of the column
          *
          * @param d
+         * @param column
+         * @param preview
+         * @param use_column_names
          * @returns {string}
          */
-        get_column_label(d, column, preview) {
-            let label = (d.name === "") ? "null" : column.options.find(x => x.name === d.name).label
+        get_column_label(d, column, preview, use_column_names) {
+            let label = d.name
+            if (use_column_names) {
+                label = (d.name === "") ? "null" : column.options.find(x => x.name === d.name).label
+            }
             let boundary = 30 / column.options.length
             let text_length = Math.max(boundary-4, 2)
             return (preview && label.length > boundary) ? label.substring(0, text_length) + "..." : label

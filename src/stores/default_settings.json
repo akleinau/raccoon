@@ -40,8 +40,8 @@
             },
             "context": {
                 "graph": "bar",
-                "flip": false,
-                "grid": [25, 4],
+                "flip": true,
+                "grid": [10, 10],
                 "icon": "human-male",
                 "icon2": "human-male",
                 "ratio": 1,
@@ -59,14 +59,14 @@
             },
             "custom": {
                 "graph": "text",
-                "flip": false,
+                "flip": true,
                 "font_size": 2,
                 "size": 1,
                 "text": [{"text": "", "color": "black"}]
             },
             "overall": {
                 "graph": "text",
-                "flip": false,
+                "flip": true,
                 "font_size": 1,
                 "unit": "natural_frequencies",
                 "grid": [10, 10],
@@ -75,7 +75,7 @@
             },
             "similarity": {
                 "graph": "bar",
-                "flip": false,
+                "flip": true,
                 "grid": [10, 10],
                 "icon": "circle",
                 "icon2": "circle",
