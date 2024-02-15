@@ -103,7 +103,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
 
                 })
                 this.default_settings["impact"].context = true
-                this.default_settings["impact"].unit = "natural_frequencies"
+                this.default_settings["impact"].unit = "absolute"
                 this.default_settings["impact"].graph = "bar"
             } else if (this.intention === "convince") {
                 ["impact", "significance", "context", "custom", "overall"].forEach((key) => {
@@ -113,7 +113,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     this.default_settings[key].icon2 = "emoticon"
                 })
                 this.default_settings["impact"].graph = "bar"
-                this.default_settings["impact"].unit = "percent"
+                this.default_settings["impact"].unit = "natural_frequencies"
             } else if (this.intention === "educate") {
                 ["impact", "significance", "context", "custom", "overall"].forEach((key) => {
                     this.default_settings[key].context = true
@@ -122,7 +122,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                     this.default_settings[key].icon2 = "circle"
                 })
                 this.default_settings["impact"].graph = "multiPie"
-                this.default_settings["impact"].unit = "percent"
+                this.default_settings["impact"].unit = "natural_frequencies"
             }
         },
         /**

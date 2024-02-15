@@ -63,6 +63,9 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     value = (value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
 
                 }
+                if (unit === "absolute") {
+                        value = value.toFixed(2)
+                }
                 annotations.push({
                     "text": [{
                         "text": value + " of $rows with a $column of " +
@@ -84,6 +87,10 @@ export const useAnnotationStore = defineStore('annotationStore', {
                     }
                     if (unit === "natural_frequencies") {
                         value = (value * grid[0] * grid[1]).toFixed(0) + "/" + grid[0] * grid[1]
+                        text = value + " or more $rows with a $column of " + summary.riskIncrease.name + " have $outcome"
+                    }
+                    if (unit === "absolute") {
+                        value = value.toFixed(2)
                         text = value + " or more $rows with a $column of " + summary.riskIncrease.name + " have $outcome"
                     }
                     annotations.push({

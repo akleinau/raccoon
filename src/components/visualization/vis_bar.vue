@@ -37,10 +37,22 @@ export default {
                     let grid_size = this.vis.grid[0] * this.vis.grid[1]
                     return (value * grid_size).toFixed(0) + "/" + grid_size
                 }
-                return (value * 100).toFixed(0) + "%"
+                else if (this.vis.unit === "percent") {
+                    return (value * 100).toFixed(0) + "%"
+                }
+                else {
+                    return value.toFixed(2)
+                }
             }
-            if (this.vis.unit === "percent") {
-                return (value / this.visHelperStore.get_range(this.vis)[1] * 100).toFixed(0) + "%"
+            else {
+                let frequency = value / this.visHelperStore.get_range(this.vis)[1]
+                if (this.vis.unit === "percent") {
+                    return (frequency * 100).toFixed(0) + "%"
+                }
+                if (this.vis.unit === "natural_frequencies") {
+                    let grid_size = this.vis.grid[0] * this.vis.grid[1]
+                    return (frequency* grid_size).toFixed(0) + "/" + grid_size
+                }
             }
             return value
         },

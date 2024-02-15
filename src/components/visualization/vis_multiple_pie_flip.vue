@@ -54,6 +54,14 @@ export default {
                 return [{"text": (percent*100).toFixed(0), "color": this.vis.color},
                     {"text": "%", "color": "black"}]
             }
+            else {
+                if (this.vis.range === "percent") {
+                    return [{"text": (value).toFixed(2), "color": this.vis.color}]
+                }
+                else {
+                    return [{"text": value.toFixed(0), "color": this.vis.color}]
+                }
+            }
         },
         /*
         * returns value as float between 0 and 1

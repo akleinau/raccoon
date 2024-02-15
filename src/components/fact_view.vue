@@ -23,6 +23,7 @@
                         <div class="ml-2 text-grey" v-else>Unit & Context</div>
                         <v-radio-group v-model="vis.unit"
                                        :disabled="!has_attribute['graph']">
+                            <v-radio label="absolute values" value="absolute"></v-radio>
                             <v-radio label="natural frequencies" value="natural_frequencies"></v-radio>
                             <v-radio label="percent" value="percent"></v-radio>
                         </v-radio-group>
