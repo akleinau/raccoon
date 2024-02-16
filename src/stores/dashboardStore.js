@@ -35,7 +35,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "educate":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "neutralColor": "#A8A8A8", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#40AD7B", "neutralColor": "#A8A8A8", "spread": 55, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     }
@@ -285,7 +285,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
                 "educate":
                     {
                         "background": {color: "auto", stroke: "None"},
-                        "colors": {"type": "scheme", "color": "#1302b5", "neutralColor": "#A8A8A8", "spread": 45, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
+                        "colors": {"type": "scheme", "color": "#40AD7B", "neutralColor": "#A8A8A8", "spread": 55, "global_spread": 100, "list": d3.quantize(d3.interpolateCool, 5).map(d => d3.color(d).hex())},
                         "text": "#181818",
                         "font_family": "inherit",
                     }
