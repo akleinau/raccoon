@@ -68,8 +68,8 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                 d.column.riskIncrease !== undefined)
             if (risk_factor_items.length > 0) {
                 const options = risk_factor_items.map(item => ({
-                    "name":  item.column.label + ": " + item.column.riskIncrease.name,
-                    "label": item.column.label + ": " + item.column.riskIncrease.name
+                    "name":  item.column.label + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label,
+                    "label": item.column.label + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label
                 }))
 
                 const max_risk_multiplier = Math.max(...risk_factor_items.map(item => item.column.riskIncrease.risk_multiplier)) + 1
@@ -81,7 +81,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.label + ": " + item.column.riskIncrease.name,
+                                name: item.column.label + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label,
                                 value: item.column.riskIncrease.risk_multiplier
                             })).filter(d => d.value !== null).sort((a, b) => b.value - a.value),
                             range: [0, Math.round(max_risk_multiplier)],
@@ -98,7 +98,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                         "visList": [{
                             type: "context",
                             data: risk_factor_items.map(item => ({
-                                name: item.column.label + ": " + item.column.riskIncrease.name,
+                                name: item.column.label + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label,
                                 value: item.column.riskIncrease.absolute_risk
                             })).sort((a, b) => b.value - a.value),
                             graph: "pictograph",
