@@ -6,7 +6,7 @@
                 "icon": "human-male",
                 "icon2": "human-male",
                 "ratio": 1,
-                "size": 1,
+                "size": 0.85,
                 "range": [0, 100],
                 "axis": [{"text": "", "color": "black"}],
                 "yaxis": [{"text": "", "color":  "black"}],
@@ -25,7 +25,7 @@
                 "icon": "emoticon-confused",
                 "icon2": "emoticon",
                 "ratio": 1,
-                "size": 1,
+                "size": 0.85,
                 "range": "percent",
                 "axis": [{"text": "", "color": "black"}],
                 "yaxis": [{"text": "", "color":  "black"}],
@@ -45,7 +45,7 @@
                 "icon": "human-male",
                 "icon2": "human-male",
                 "ratio": 1,
-                "size": 1,
+                "size": 0.85,
                 "range": [0, 5],
                 "axis": [{"text": "Context", "color": "black"}],
                 "yaxis": [{"text": "$column", "color":  "black"}],
@@ -61,7 +61,7 @@
                 "graph": "text",
                 "flip": true,
                 "font_size": 2,
-                "size": 1,
+                "size": 0.85,
                 "text": [{"text": "", "color": "black"}]
             },
             "overall": {
@@ -70,7 +70,7 @@
                 "font_size": 1,
                 "unit": "natural_frequencies",
                 "grid": [10, 10],
-                "size": 1,
+                "size": 0.85,
                 "text": [{"text": "", "color": "black"}]
             },
             "similarity": {
@@ -80,7 +80,7 @@
                 "icon": "circle",
                 "icon2": "circle",
                 "ratio": 1,
-                "size": 1,
+                "size": 0.85,
                 "range": [0, 1],
                 "axis": [{"text": "correlation strength", "color": "black"}],
                 "yaxis": [{"text": "", "color":  "black"}],

@@ -172,8 +172,8 @@ export const useVisHelperStore = defineStore('VisHelperStore', {
             let margin_bottom = preview? 10 : 30
             let margin_top = 30
             let labels_height = 50
-            let margin_right = preview? 20 : 50
-            let margin_left = preview? 20 : 50
+            let margin_right = preview? 5 : 10
+            let margin_left = preview? 5 : 10
             let gap = 20
             let annotation_height = preview? 0 : annotation === "None" ? 10 : annotation.text.length * 18 + gap + 5
             let margin = {top: margin_top, right: margin_right, bottom: margin_bottom, left: margin_left,
