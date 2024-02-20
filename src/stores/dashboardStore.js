@@ -134,7 +134,7 @@ export const useDashboardStore = defineStore('dashboardStore', {
 
             const options = risk_factor_items.map(item => ({
                 "name": item.column.name + ": " + item.column.riskIncrease.name,
-                "label": item.column.name + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label
+                "label": item.column.label + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label
             }))
             const options_short = risk_factor_items.map(item => ({
                 "name": item.column.name,

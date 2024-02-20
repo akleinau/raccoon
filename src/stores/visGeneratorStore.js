@@ -68,7 +68,7 @@ export const useVisGeneratorStore = defineStore('VisGeneratorStore', {
                 d.column.riskIncrease !== undefined)
             if (risk_factor_items.length > 0) {
                 const options = risk_factor_items.map(item => ({
-                    "name":  item.column.label + ": " + item.column.riskIncrease.name,
+                    "name":  item.column.name + ": " + item.column.riskIncrease.name,
                     "label": item.column.label + ": " + item.column.options.find(d => d.name === item.column.riskIncrease.name).label
                 }))
                 const options_short = risk_factor_items.map(item => ({
