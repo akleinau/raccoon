@@ -134,7 +134,7 @@ export default {
                 if (vis[a]) {
                     vis[a] = vis[a].map(t => {
                         t.color = t.color.replace("$color", vis.color)
-                        t.color = t.color.replace("$text", "red")
+                        t.color = t.color.replace("$text", this.dashboardStore.default_colors[this.dashboardStore.intention]["text"])
                         return t
                     })
                 }
@@ -200,10 +200,10 @@ export default {
                     e.text.split(" ").forEach(s => {
                         if (current_line_length + s.length > MAX_LENGTH) {
                             new_lines.push(current_line)
-                            current_line = [{text: s, color: e.color}]
+                            current_line = [{text: s, color: e.color, weight: e.weight, italic: e.italic}]
                             current_line_length = s.length
                         } else {
-                            current_line.push({text: " " + s, color: e.color})
+                            current_line.push({text: " " + s, color: e.color, italic: e.italic})
                             current_line_length += s.length + 1
                         }
                     })
